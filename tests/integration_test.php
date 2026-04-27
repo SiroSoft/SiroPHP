@@ -42,45 +42,134 @@ function test(string $name, callable $test): void {
 }
 
 function httpGet(string $url): array {
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HEADER => true,
-        CURLOPT_TIMEOUT => 5,
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'GET',
+            'timeout' => 5,
+            'ignore_errors' => true,
+        ],
     ]);
-    $response = curl_exec($ch);
-    $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
     
-    $headers = substr($response, 0, $headerSize);
-    $body = substr($response, $headerSize);
+    $response = @file_get_contents($url, false, $context);
+    
+    // Get response code from $http_response_header
+    $httpCode = 200;
+    if (isset($http_response_header[0])) {
+        preg_match('/HTTP\/\d\.\d\s+(\d+)/', $http_response_header[0], $matches);
+        $httpCode = isset($matches[1]) ? (int) $matches[1] : 200;
+    }
+    
+    $headers = isset($http_response_header) ? implode("\r\n", $http_response_header) : '';
     
     return [
         'code' => $httpCode,
         'headers' => $headers,
-        'body' => $body,
-        'json' => json_decode($body, true),
+        'body' => $response ?: '',
+        'json' => json_decode($response ?: '{}', true),
     ];
 }
 
 function httpPost(string $url, array $data): array {
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => json_encode($data),
-        CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
-        CURLOPT_TIMEOUT => 5,
+    $payload = json_encode($data);
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => "Content-Type: application/json\r\n",
+            'content' => $payload,
+            'timeout' => 5,
+            'ignore_errors' => true,
+        ],
     ]);
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    
+    $response = @file_get_contents($url, false, $context);
+    
+    // Get response code
+    $httpCode = 200;
+    if (isset($http_response_header[0])) {
+        preg_match('/HTTP\/\d\.\d\s+(\d+)/', $http_response_header[0], $matches);
+        $httpCode = isset($matches[1]) ? (int) $matches[1] : 200;
+    }
     
     return [
         'code' => $httpCode,
-        'body' => $response,
-        'json' => json_decode($response, true),
+        'body' => $response ?: '',
+        'json' => json_decode($response ?: '{}', true),
+    ];
+}
+
+function httpPostRaw(string $url, string $rawBody, string $contentType = 'application/json'): array {
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => "Content-Type: {$contentType}\r\n",
+            'content' => $rawBody,
+            'timeout' => 5,
+            'ignore_errors' => true,
+        ],
+    ]);
+    
+    $response = @file_get_contents($url, false, $context);
+    
+    $httpCode = 200;
+    if (isset($http_response_header[0])) {
+        preg_match('/HTTP\/\d\.\d\s+(\d+)/', $http_response_header[0], $matches);
+        $httpCode = isset($matches[1]) ? (int) $matches[1] : 200;
+    }
+    
+    return [
+        'code' => $httpCode,
+        'body' => $response ?: '',
+        'json' => json_decode($response ?: '{}', true),
+    ];
+}
+
+function httpGetWithAuth(string $url, string $token): array {
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'GET',
+            'header' => "Authorization: Bearer {$token}\r\n",
+            'timeout' => 5,
+            'ignore_errors' => true,
+        ],
+    ]);
+    
+    $response = @file_get_contents($url, false, $context);
+    
+    $httpCode = 200;
+    if (isset($http_response_header[0])) {
+        preg_match('/HTTP\/\d\.\d\s+(\d+)/', $http_response_header[0], $matches);
+        $httpCode = isset($matches[1]) ? (int) $matches[1] : 200;
+    }
+    
+    return [
+        'code' => $httpCode,
+        'body' => $response ?: '',
+        'json' => json_decode($response ?: '{}', true),
+    ];
+}
+
+function httpPostWithAuth(string $url, string $token): array {
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => "Authorization: Bearer {$token}\r\n",
+            'timeout' => 5,
+            'ignore_errors' => true,
+        ],
+    ]);
+    
+    $response = @file_get_contents($url, false, $context);
+    
+    $httpCode = 200;
+    if (isset($http_response_header[0])) {
+        preg_match('/HTTP\/\d\.\d\s+(\d+)/', $http_response_header[0], $matches);
+        $httpCode = isset($matches[1]) ? (int) $matches[1] : 200;
+    }
+    
+    return [
+        'code' => $httpCode,
+        'body' => $response ?: '',
+        'json' => json_decode($response ?: '{}', true),
     ];
 }
 
@@ -149,24 +238,13 @@ echo "\n--- Security & Validation Tests ---\n\n";
 
 // Test 4: Malformed JSON returns 400
 test('Malformed JSON returns 400 error', function() use ($baseUrl) {
-    $ch = curl_init("{$baseUrl}/api/auth/login");
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => '{invalid json}',
-        CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
-        CURLOPT_TIMEOUT => 5,
-    ]);
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    $response = httpPostRaw("{$baseUrl}/api/auth/login", '{invalid json}');
     
-    if ($httpCode !== 400) {
-        return "Expected 400, got {$httpCode}";
+    if ($response['code'] !== 400) {
+        return "Expected 400, got {$response['code']}";
     }
     
-    $json = json_decode($response, true);
-    if (!is_array($json) || !isset($json['error'])) {
+    if (!is_array($response['json']) || !isset($response['json']['error'])) {
         return "Invalid error response format";
     }
     
@@ -252,22 +330,13 @@ test('Protected route accessible with valid token', function() use ($baseUrl, $t
         return "No token available";
     }
     
-    $ch = curl_init("{$baseUrl}/api/auth/me");
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => ["Authorization: Bearer {$testToken}"],
-        CURLOPT_TIMEOUT => 5,
-    ]);
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    $response = httpGetWithAuth("{$baseUrl}/api/auth/me", $testToken);
     
-    if ($httpCode !== 200) {
-        return "Expected 200, got {$httpCode}";
+    if ($response['code'] !== 200) {
+        return "Expected 200, got {$response['code']}";
     }
     
-    $json = json_decode($response, true);
-    if (!isset($json['data']['email'])) {
+    if (!isset($response['json']['data']['email'])) {
         return "Invalid user data";
     }
     
@@ -292,34 +361,17 @@ test('Logout revokes token', function() use ($baseUrl, $testToken) {
     }
     
     // Logout
-    $ch = curl_init("{$baseUrl}/api/auth/logout");
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_CUSTOMREQUEST => 'POST',
-        CURLOPT_HTTPHEADER => ["Authorization: Bearer {$testToken}"],
-        CURLOPT_TIMEOUT => 5,
-    ]);
-    $logoutResponse = curl_exec($ch);
-    $logoutCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    $logoutResponse = httpPostWithAuth("{$baseUrl}/api/auth/logout", $testToken);
     
-    if ($logoutCode !== 200) {
-        return "Logout failed: {$logoutCode}";
+    if ($logoutResponse['code'] !== 200) {
+        return "Logout failed: {$logoutResponse['code']}";
     }
     
     // Try to use old token
-    $ch = curl_init("{$baseUrl}/api/auth/me");
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => ["Authorization: Bearer {$testToken}"],
-        CURLOPT_TIMEOUT => 5,
-    ]);
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    $response = httpGetWithAuth("{$baseUrl}/api/auth/me", $testToken);
     
-    if ($httpCode !== 401) {
-        return "Old token should be revoked (expected 401, got {$httpCode})";
+    if ($response['code'] !== 401) {
+        return "Old token should be revoked (expected 401, got {$response['code']})";
     }
     
     return true;
