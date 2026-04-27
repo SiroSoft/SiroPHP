@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Siro\Core\DB;
 
 use RuntimeException;
+use Siro\Core\Cache;
 use Siro\Core\Database;
 
 final class QueryBuilder
@@ -227,6 +228,7 @@ final class QueryBuilder
 
         $stmt = Database::connection()->prepare($sql);
         $stmt->execute($bindings);
+        Cache::flush('qb:');
 
         $lastId = Database::connection()->lastInsertId();
         return $lastId !== '0' ? $lastId : $stmt->rowCount();
@@ -252,6 +254,7 @@ final class QueryBuilder
 
         $stmt = Database::connection()->prepare($sql);
         $stmt->execute([...$bindings, ...$whereBindings]);
+        Cache::flush('qb:');
 
         return $stmt->rowCount();
     }
@@ -263,6 +266,7 @@ final class QueryBuilder
 
         $stmt = Database::connection()->prepare($sql);
         $stmt->execute($whereBindings);
+        Cache::flush('qb:');
 
         return $stmt->rowCount();
     }

@@ -16,27 +16,28 @@ final class CorsMiddleware
         $allowedMethods = (string) Env::get('CORS_ALLOWED_METHODS', 'GET,POST,PUT,DELETE,OPTIONS');
         $allowedHeaders = (string) Env::get('CORS_ALLOWED_HEADERS', 'Content-Type,Authorization,X-Requested-With');
 
-        $origin = $request->header('origin', '*');
-        $allowOrigin = $allowedOrigins === '*' ? '*' : $this->resolveOrigin($origin, $allowedOrigins);
+        $origin = (string) $request->header('origin', '');
+        $allowOrigin = $allowedOrigins === '*' ? ($origin !== '' ? $origin : '*') : $this->resolveOrigin($origin, $allowedOrigins);
+        $allowCredentials = $allowedOrigins !== '*';
 
         if ($request->method() === 'OPTIONS') {
             $response = Response::noContent();
-            $this->appendHeaders($allowOrigin, $allowedMethods, $allowedHeaders);
+            $this->appendHeaders($allowOrigin, $allowedMethods, $allowedHeaders, $allowCredentials);
             return $response;
         }
 
         $result = $next($request);
-        $this->appendHeaders($allowOrigin, $allowedMethods, $allowedHeaders);
+        $this->appendHeaders($allowOrigin, $allowedMethods, $allowedHeaders, $allowCredentials);
 
         return $result;
     }
 
-    private function appendHeaders(string $allowOrigin, string $allowedMethods, string $allowedHeaders): void
+    private function appendHeaders(string $allowOrigin, string $allowedMethods, string $allowedHeaders, bool $allowCredentials): void
     {
         header('Access-Control-Allow-Origin: ' . $allowOrigin);
         header('Access-Control-Allow-Methods: ' . $allowedMethods);
         header('Access-Control-Allow-Headers: ' . $allowedHeaders);
-        header('Access-Control-Allow-Credentials: true');
+        header('Access-Control-Allow-Credentials: ' . ($allowCredentials ? 'true' : 'false'));
         header('Vary: Origin');
     }
 

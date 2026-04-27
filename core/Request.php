@@ -16,19 +16,23 @@ final class Request
     private readonly array $bodyData;
     /** @var array<string, string> */
     private array $routeParams = [];
+    /** @var array<string, mixed>|null */
+    private ?array $authenticatedUser = null;
+    private readonly string $clientIp;
 
     /**
      * @param array<string, mixed> $query
      * @param array<string, string> $headers
      * @param array<string, mixed> $jsonBody
      */
-    public function __construct(string $method, string $path, array $query, array $headers, array $jsonBody)
+    public function __construct(string $method, string $path, array $query, array $headers, array $jsonBody, string $clientIp)
     {
         $this->method = strtoupper($method);
         $this->path = $path;
         $this->queryParams = $query;
         $this->headerBag = $headers;
         $this->bodyData = $jsonBody;
+        $this->clientIp = $clientIp;
     }
 
     public static function fromGlobals(): self
@@ -51,7 +55,9 @@ final class Request
             }
         }
 
-        return new self($method, $path, $query, $headers, $jsonBody);
+        $clientIp = self::resolveClientIp();
+
+        return new self($method, $path, $query, $headers, $jsonBody, $clientIp);
     }
 
     public function method(): string
@@ -138,6 +144,23 @@ final class Request
         return $default;
     }
 
+    /** @param array<string, mixed>|null $user */
+    public function setUser(?array $user): void
+    {
+        $this->authenticatedUser = $user;
+    }
+
+    /** @return array<string, mixed>|null */
+    public function user(): ?array
+    {
+        return $this->authenticatedUser;
+    }
+
+    public function ip(): string
+    {
+        return $this->clientIp;
+    }
+
     public function cacheKey(): string
     {
         $query = $this->queryParams;
@@ -159,6 +182,56 @@ final class Request
 
         $normalized = '/' . trim($path, '/');
         return $normalized === '//' || $normalized === '' ? '/' : ($normalized === '/.' ? '/' : $normalized);
+    }
+
+    private static function resolveClientIp(): string
+    {
+        $remoteAddr = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        $remoteIp = (is_string($remoteAddr) && self::isValidIp($remoteAddr)) ? $remoteAddr : '0.0.0.0';
+
+        $trustedProxies = self::trustedProxies();
+        $isFromTrustedProxy = $remoteIp !== '0.0.0.0' && in_array($remoteIp, $trustedProxies, true);
+        if (!$isFromTrustedProxy) {
+            return $remoteIp;
+        }
+
+        $forwardedFor = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '';
+        if (is_string($forwardedFor) && $forwardedFor !== '') {
+            foreach (explode(',', $forwardedFor) as $candidate) {
+                $ip = trim($candidate);
+                if (self::isValidIp($ip)) {
+                    return $ip;
+                }
+            }
+        }
+
+        $realIp = $_SERVER['HTTP_X_REAL_IP'] ?? '';
+        if (is_string($realIp) && self::isValidIp(trim($realIp))) {
+            return trim($realIp);
+        }
+
+        return $remoteIp;
+    }
+
+    /** @return array<int, string> */
+    private static function trustedProxies(): array
+    {
+        $raw = Env::get('APP_TRUSTED_PROXIES', '') ?? '';
+        $items = array_map('trim', explode(',', $raw));
+
+        $trusted = [];
+        foreach ($items as $item) {
+            if ($item !== '' && self::isValidIp($item)) {
+                $trusted[] = $item;
+            }
+        }
+
+        return $trusted;
+    }
+
+    private static function isValidIp(string $ip): bool
+    {
+        return filter_var($ip, FILTER_VALIDATE_IP) !== false;
     }
 
     /** @return array<string, string> */

@@ -40,6 +40,7 @@ final class MigrateCommand
 
         $executed = $this->executedMigrations($pdo);
         $ran = 0;
+        $batch = $this->nextBatch($pdo);
 
         foreach ($files as $file) {
             $migrationName = basename($file);
@@ -56,8 +57,11 @@ final class MigrateCommand
             try {
                 $pdo->beginTransaction();
                 $instance->up($pdo);
-                $stmt = $pdo->prepare('INSERT INTO migrations (migration) VALUES (:migration)');
-                $stmt->execute(['migration' => $migrationName]);
+                $stmt = $pdo->prepare('INSERT INTO migrations (migration, batch) VALUES (:migration, :batch)');
+                $stmt->execute([
+                    'migration' => $migrationName,
+                    'batch' => $batch,
+                ]);
                 $pdo->commit();
                 $ran++;
                 $this->write('Migrated: ' . $migrationName);
@@ -86,11 +90,17 @@ final class MigrateCommand
         $driver = (string) $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 
         $sql = match ($driver) {
-            'pgsql' => 'CREATE TABLE IF NOT EXISTS migrations (id BIGSERIAL PRIMARY KEY, migration VARCHAR(255) NOT NULL UNIQUE, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)',
-            default => 'CREATE TABLE IF NOT EXISTS migrations (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, migration VARCHAR(255) NOT NULL UNIQUE, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)',
+            'pgsql' => 'CREATE TABLE IF NOT EXISTS migrations (id BIGSERIAL PRIMARY KEY, migration VARCHAR(255) NOT NULL UNIQUE, batch INT NOT NULL DEFAULT 1, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)',
+            default => 'CREATE TABLE IF NOT EXISTS migrations (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, migration VARCHAR(255) NOT NULL UNIQUE, batch INT NOT NULL DEFAULT 1, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)',
         };
 
         $pdo->exec($sql);
+
+        try {
+            $pdo->exec('ALTER TABLE migrations ADD COLUMN batch INT NOT NULL DEFAULT 1');
+        } catch (Throwable) {
+            // batch column already exists
+        }
     }
 
     /** @return array<string, true> */
@@ -107,5 +117,14 @@ final class MigrateCommand
         }
 
         return $executed;
+    }
+
+    private function nextBatch(PDO $pdo): int
+    {
+        $stmt = $pdo->query('SELECT MAX(batch) AS max_batch FROM migrations');
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $max = (int) ($row['max_batch'] ?? 0);
+
+        return $max + 1;
     }
 }

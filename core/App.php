@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Siro\Core;
 
+use RuntimeException;
 use Throwable;
 
 final class App
@@ -26,6 +27,8 @@ final class App
     public function boot(): void
     {
         Env::load($this->basePath . DIRECTORY_SEPARATOR . '.env');
+        Logger::boot($this->basePath);
+        $this->validateSecurityConfig();
 
         $debug = Env::bool('APP_DEBUG', false);
         $appEnv = strtolower((string) Env::get('APP_ENV', 'production'));
@@ -46,6 +49,19 @@ final class App
         Cache::boot($this->basePath);
     }
 
+    private function validateSecurityConfig(): void
+    {
+        $jwtSecret = (string) Env::get('JWT_SECRET', '');
+        $lower = strtolower($jwtSecret);
+        $looksLikePlaceholder = str_contains($lower, 'change_this')
+            || str_contains($lower, 'please_set')
+            || str_contains($lower, 'your_secret');
+
+        if ($jwtSecret === '' || strlen($jwtSecret) < 32 || $looksLikePlaceholder) {
+            throw new RuntimeException('Invalid JWT_SECRET. Configure a strong secret with at least 32 characters.');
+        }
+    }
+
     public function router(): Router
     {
         return $this->router;
@@ -62,14 +78,21 @@ final class App
     {
         Response::enableDebug($this->debug);
         Cache::resetRequestState();
+        $requestStartedAt = microtime(true);
+        $method = 'GET';
+        $path = '/';
+        $status = 500;
 
         try {
             $request = Request::fromGlobals();
+            $method = $request->method();
+            $path = $request->path();
             $response = $this->router->dispatch($request);
+            $status = $response->statusCode();
             $this->setDebugMeta();
             $response->send();
         } catch (Throwable $e) {
-            $this->logException($e);
+            Logger::error($e);
 
             $errors = [];
             if ($this->showDebugTrace) {
@@ -80,7 +103,13 @@ final class App
             }
 
             $this->setDebugMeta();
-            Response::error('Internal Server Error', 500, $errors)->send();
+            $errorResponse = Response::error('Internal Server Error', 500, $errors);
+            $status = $errorResponse->statusCode();
+            $errorResponse->send();
+        } finally {
+            $timeMs = (microtime(true) - $requestStartedAt) * 1000;
+            Logger::request($method, $path, $status, $timeMs);
+            Logger::slowRequest($method, $path, $status, $timeMs);
         }
     }
 
@@ -100,22 +129,4 @@ final class App
         ]);
     }
 
-    private function logException(Throwable $e): void
-    {
-        $logDir = $this->basePath . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'logs';
-        if (!is_dir($logDir)) {
-            mkdir($logDir, 0775, true);
-        }
-
-        $logLine = sprintf(
-            "[%s] %s: %s in %s:%d\n",
-            date('Y-m-d H:i:s'),
-            $e::class,
-            $e->getMessage(),
-            $e->getFile(),
-            $e->getLine()
-        );
-
-        file_put_contents($logDir . DIRECTORY_SEPARATOR . 'app.log', $logLine, FILE_APPEND);
-    }
 }

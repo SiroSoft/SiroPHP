@@ -94,6 +94,8 @@ final class Response
 
         http_response_code($this->statusCode);
         header('Content-Type: application/json; charset=utf-8');
+        header('X-Content-Type-Options: nosniff');
+        header('X-Frame-Options: DENY');
 
         $encoded = json_encode(
             $this->payload,

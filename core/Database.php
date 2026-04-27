@@ -136,7 +136,7 @@ final class Database
             return self::select($sql, $params);
         }
 
-        $cacheKey = self::queryCacheKey('qb_select', $sql, $params);
+        $cacheKey = 'qb:' . sha1('qb_select|' . $sql . '|' . json_encode($params, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         $cached = Cache::remember($cacheKey, $ttl, static function () use ($sql, $params): array {
             $stmt = self::prepareAndExecute($sql, $params);
             $rows = $stmt->fetchAll();

@@ -9,6 +9,7 @@ use Siro\Core\Commands\MakeControllerCommand;
 use Siro\Core\Commands\MakeMigrationCommand;
 use Siro\Core\Commands\MakeResourceCommand;
 use Siro\Core\Commands\MigrateCommand;
+use Siro\Core\Commands\MigrateRollbackCommand;
 
 final class Console
 {
@@ -38,6 +39,8 @@ final class Console
                 return (new MakeResourceCommand($this->basePath))->run($args);
             case 'migrate':
                 return (new MigrateCommand($this->basePath))->run($args);
+            case 'migrate:rollback':
+                return (new MigrateRollbackCommand($this->basePath))->run($args);
             default:
                 return $this->unknownCommand($command);
         }
@@ -52,6 +55,7 @@ final class Console
         $this->write('  php siro make:migration create_users_table');
         $this->write('  php siro make:resource UserResource');
         $this->write('  php siro migrate');
+        $this->write('  php siro migrate:rollback');
     }
 
     private function unknownCommand(string $command): int

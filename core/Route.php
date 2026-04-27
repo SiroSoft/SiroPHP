@@ -14,10 +14,14 @@ final class Route
     }
 
     /**
-     * @param array<int, callable|string> $middleware
+     * @param array<int, callable|string>|callable|string $middleware
      */
-    public function middleware(array $middleware): self
+    public function middleware(array|callable|string $middleware): self
     {
+        if (!is_array($middleware)) {
+            $middleware = [$middleware];
+        }
+
         $this->router->setRouteMiddleware($this->method, $this->path, $middleware);
         return $this;
     }

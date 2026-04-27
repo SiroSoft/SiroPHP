@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Siro\Core;
 
+use App\Middleware\AuthMiddleware;
+use App\Middleware\CorsMiddleware;
+use App\Middleware\JsonMiddleware;
+use App\Middleware\ThrottleMiddleware;
 use Closure;
 use RuntimeException;
 
@@ -387,15 +391,43 @@ final class Router
             return $this->normalizeHandlerResult($middleware($request, $next));
         }
 
-        if (!class_exists($middleware)) {
+        $params = [];
+        $middlewareClass = $middleware;
+
+        if (str_contains($middleware, ':')) {
+            [$name, $paramString] = explode(':', $middleware, 2);
+            $middlewareClass = $this->resolveMiddlewareAlias(trim($name));
+            $params = $paramString === '' ? [] : array_map('trim', explode(',', $paramString));
+        } else {
+            $middlewareClass = $this->resolveMiddlewareAlias($middleware);
+        }
+
+        if (!class_exists($middlewareClass)) {
             throw new RuntimeException(sprintf('Middleware class %s not found.', $middleware));
         }
 
-        $instance = new $middleware();
+        $instance = new $middlewareClass();
         if (!method_exists($instance, 'handle')) {
-            throw new RuntimeException(sprintf('Middleware %s must have handle() method.', $middleware));
+            throw new RuntimeException(sprintf('Middleware %s must have handle() method.', $middlewareClass));
         }
 
-        return $this->normalizeHandlerResult($instance->handle($request, $next));
+        if ($params === []) {
+            return $this->normalizeHandlerResult($instance->handle($request, $next));
+        }
+
+        return $this->normalizeHandlerResult($instance->handle($request, $next, ...$params));
+    }
+
+    private function resolveMiddlewareAlias(string $name): string
+    {
+        $normalized = strtolower(trim($name));
+
+        return match ($normalized) {
+            'auth' => AuthMiddleware::class,
+            'throttle' => ThrottleMiddleware::class,
+            'cors' => CorsMiddleware::class,
+            'json' => JsonMiddleware::class,
+            default => $name,
+        };
     }
 }

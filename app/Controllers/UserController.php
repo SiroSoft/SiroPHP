@@ -56,15 +56,22 @@ final class UserController
         $errors = Validator::make($request->body(), [
             'name' => 'required|min:3|max:120',
             'email' => 'required|email|max:255',
+            'password' => 'required|min:6|max:255',
         ]);
 
         if ($errors !== []) {
             return Response::error('Validation failed', 422, $errors);
         }
 
+        $passwordHash = password_hash((string) $request->input('password'), PASSWORD_DEFAULT);
+        if ($passwordHash === false) {
+            return Response::error('Unable to create user', 500);
+        }
+
         $insertedId = DB::table('users')->insert([
             'name' => (string) $request->input('name'),
             'email' => (string) $request->input('email'),
+            'password' => $passwordHash,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
 
