@@ -13,6 +13,7 @@ use Siro\Core\Commands\MigrateCommand;
 use Siro\Core\Commands\MigrateRollbackCommand;
 use Siro\Core\Commands\MigrateStatusCommand;
 use Siro\Core\Commands\ServeCommand;
+use Siro\Core\Commands\DoctorCommand;
 
 final class Console
 {
@@ -50,6 +51,8 @@ final class Console
                 return (new ServeCommand($this->basePath))->run($args);
             case 'key:generate':
                 return (new KeyGenerateCommand($this->basePath))->run($args);
+            case 'doctor':
+                return (new DoctorCommand($this->basePath))->run($args);
             default:
                 return $this->unknownCommand($command);
         }
@@ -69,6 +72,7 @@ final class Console
         $this->write('  php siro migrate:status');
         $this->write('  php siro serve');
         $this->write('  php siro key:generate');
+        $this->write('  php siro doctor');
     }
 
     private function unknownCommand(string $command): int

@@ -11,10 +11,10 @@ use Siro\Core\Response;
 $app->router->get('/', function (): array {
     return [
         'success' => true,
-        'message' => 'Siro API Framework v0.7.2 is running',
+        'message' => 'Siro API Framework v0.7.3 is running',
         'data' => [
             'name' => 'Siro API Framework',
-            'version' => '0.7.2',
+            'version' => '0.7.3',
             'php' => PHP_VERSION,
         ],
         'meta' => [],

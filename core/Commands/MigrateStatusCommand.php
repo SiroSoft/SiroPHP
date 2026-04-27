@@ -31,7 +31,18 @@ final class MigrateStatusCommand
         $config = require $this->basePath . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.php';
         Database::configure($config);
 
-        $pdo = Database::connection();
+        try {
+            $pdo = Database::connection();
+        } catch (\PDOException $e) {
+            fwrite(STDERR, "Error: Cannot connect to database\n");
+            fwrite(STDERR, "Details: " . $e->getMessage() . "\n");
+            fwrite(STDERR, "\nPlease check:\n");
+            fwrite(STDERR, "  1. Your .env DB configuration (DB_HOST, DB_PORT, DB_DATABASE)\n");
+            fwrite(STDERR, "  2. Database server is running and accessible\n");
+            fwrite(STDERR, "  3. Network connectivity and firewall settings\n");
+            exit(1);
+        }
+        
         $this->ensureMigrationTable($pdo);
 
         $migrationDir = $this->basePath . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations';
