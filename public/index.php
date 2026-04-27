@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 use Siro\Core\App;
-use Siro\Core\Response;
-use Throwable;
 
 define('BASE_PATH', dirname(__DIR__));
 
