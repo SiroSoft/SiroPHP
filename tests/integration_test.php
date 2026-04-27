@@ -274,8 +274,12 @@ test('Malformed JSON returns 400 error', function() use ($baseUrl) {
         return "Expected 400, got {$response['code']}";
     }
     
-    if (!is_array($response['json']) || !isset($response['json']['error'])) {
+    if (!is_array($response['json']) || !isset($response['json']['success'])) {
         return "Invalid error response format";
+    }
+    
+    if ($response['json']['success'] !== false) {
+        return "Expected success=false";
     }
     
     return true;
@@ -289,8 +293,9 @@ test('Missing required fields returns 422', function() use ($baseUrl) {
         return "Expected 422, got {$response['code']}";
     }
     
-    if (!isset($response['json']['errors'])) {
-        return "Missing validation errors";
+    // Validation errors are in meta.errors
+    if (!isset($response['json']['meta']['errors'])) {
+        return "Missing validation errors in meta.errors";
     }
     
     return true;
