@@ -45,7 +45,10 @@ final class Response
         return new self([
             'success' => false,
             'message' => $message,
-            'errors' => $errors,
+            'data' => null,
+            'meta' => [
+                'errors' => $errors,
+            ],
         ], $statusCode);
     }
 

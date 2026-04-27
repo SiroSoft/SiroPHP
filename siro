@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+use Siro\Core\Console;
+
+define('BASE_PATH', __DIR__);
+
+require BASE_PATH . '/vendor/autoload.php';
+
+$console = new Console(BASE_PATH);
+exit($console->run($argv));

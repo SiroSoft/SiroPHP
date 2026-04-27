@@ -10,10 +10,10 @@ use Siro\Core\Response;
 $app->router->get('/', function (): array {
     return [
         'success' => true,
-        'message' => 'Siro API Framework v0.3 is running',
+        'message' => 'Siro API Framework v0.4 is running',
         'data' => [
             'name' => 'Siro API Framework',
-            'version' => '0.3.0',
+            'version' => '0.4.0',
             'php' => PHP_VERSION,
         ],
         'meta' => [],
@@ -30,7 +30,7 @@ $app->router->group('/api', [CorsMiddleware::class], function ($router): void {
     $router->put('/users/{id}', [UserController::class, 'update'])
         ->middleware([JsonMiddleware::class]);
 
-    $router->delete('/users/{id}', [UserController::class, 'destroy']);
+    $router->delete('/users/{id}', [UserController::class, 'delete']);
 
     $router->options('/users', fn (): Response => Response::noContent());
     $router->options('/users/{id}', fn (): Response => Response::noContent());
@@ -41,7 +41,7 @@ $app->router->group('', [CorsMiddleware::class], function ($router): void {
     $router->get('/users/{id}', [UserController::class, 'show'])->cache(60);
     $router->post('/users', [UserController::class, 'store'])->middleware([JsonMiddleware::class]);
     $router->put('/users/{id}', [UserController::class, 'update'])->middleware([JsonMiddleware::class]);
-    $router->delete('/users/{id}', [UserController::class, 'destroy']);
+    $router->delete('/users/{id}', [UserController::class, 'delete']);
     $router->options('/users', fn (): Response => Response::noContent());
     $router->options('/users/{id}', fn (): Response => Response::noContent());
 });

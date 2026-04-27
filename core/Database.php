@@ -7,6 +7,7 @@ namespace Siro\Core;
 use PDO;
 use PDOStatement;
 use RuntimeException;
+use Siro\Core\DB\QueryBuilder;
 
 final class Database
 {
@@ -117,6 +118,11 @@ final class Database
     {
         self::$queryCacheTtl = max(0, $ttl);
         return new self();
+    }
+
+    public static function table(string $table): QueryBuilder
+    {
+        return new QueryBuilder($table);
     }
 
     /**
