@@ -13,7 +13,10 @@
   "repositories": [
     {
       "type": "path",
-      "url": "../siro-core"
+      "url": "./core",
+      "options": {
+        "symlink": false
+      }
     }
   ],
   "scripts": {

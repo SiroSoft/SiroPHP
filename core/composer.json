@@ -1,11 +1,12 @@
 {
   "name": "siro/core",
   "description": "Siro API Framework Core",
+  "version": "0.7.4",
   "type": "library",
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "Siro\\": "core/"
+      "Siro\\Core\\": ""
     }
   },
   "require": {

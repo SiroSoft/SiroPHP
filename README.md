@@ -1,4 +1,4 @@
-# Siro API Framework v0.7.1
+# Siro API Framework v0.7.4
 
 Minimal, high-performance PHP micro-framework for REST APIs.
 
@@ -8,11 +8,14 @@ Minimal, high-performance PHP micro-framework for REST APIs.
 - Minimal bootstrap overhead and lightweight request pipeline
 - Focused on REST API development (no unnecessary layers)
 
-## Quick Start (local)
+## Quick Start (Git Clone)
 
 ```bash
+git clone https://github.com/SiroSoft/SiroPHP.git my-app
+cd my-app
 composer install
 cp .env.example .env
+php siro key:generate
 php siro migrate
 php -S localhost:8080 -t public
 ```
@@ -23,7 +26,9 @@ php -S localhost:8080 -t public
 chmod +x benchmark/wrk.sh
 ```
 
-## Install (create-project)
+## Install (Composer create-project)
+
+Once published to Packagist:
 
 ```bash
 composer create-project siro/api my-app
