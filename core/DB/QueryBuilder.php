@@ -31,6 +31,7 @@ final class QueryBuilder
     private int $havingCounter = 0;
     private int $inCounter = 0;
     private int $cacheTtl = 0;
+    private string $cacheTable = '';
 
     public function __construct(string $table)
     {
@@ -43,6 +44,8 @@ final class QueryBuilder
         if ($this->table === '') {
             throw new RuntimeException('QueryBuilder table name cannot be empty.');
         }
+
+        $this->cacheTable = $this->detectTableName($this->table);
 
         return $this;
     }
@@ -228,7 +231,7 @@ final class QueryBuilder
 
         $stmt = Database::connection()->prepare($sql);
         $stmt->execute($bindings);
-        Cache::flush('qb:');
+        Cache::flushQueryBuilderTable($this->cacheTable);
 
         $lastId = Database::connection()->lastInsertId();
         return $lastId !== '0' ? $lastId : $stmt->rowCount();
@@ -254,7 +257,7 @@ final class QueryBuilder
 
         $stmt = Database::connection()->prepare($sql);
         $stmt->execute([...$bindings, ...$whereBindings]);
-        Cache::flush('qb:');
+        Cache::flushQueryBuilderTable($this->cacheTable);
 
         return $stmt->rowCount();
     }
@@ -266,7 +269,7 @@ final class QueryBuilder
 
         $stmt = Database::connection()->prepare($sql);
         $stmt->execute($whereBindings);
-        Cache::flush('qb:');
+        Cache::flushQueryBuilderTable($this->cacheTable);
 
         return $stmt->rowCount();
     }
@@ -575,6 +578,30 @@ final class QueryBuilder
      */
     private function runSelect(string $sql, array $bindings): array
     {
-        return Database::selectCached($sql, $bindings, $this->cacheTtl);
+        $cachePrefix = 'qb:' . $this->cacheTable . ':';
+        return Database::selectCached($sql, $bindings, $this->cacheTtl, $cachePrefix);
+    }
+
+    private function detectTableName(string $table): string
+    {
+        $normalized = strtolower(trim($table));
+        if ($normalized === '') {
+            return 'default';
+        }
+
+        $parts = preg_split('/\s+/', $normalized) ?: [];
+        $first = (string) ($parts[0] ?? '');
+        $first = trim($first, "`\" ");
+
+        if ($first === '') {
+            return 'default';
+        }
+
+        if (str_contains($first, '.')) {
+            $segments = explode('.', $first);
+            $first = (string) end($segments);
+        }
+
+        return $first !== '' ? $first : 'default';
     }
 }

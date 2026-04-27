@@ -34,13 +34,24 @@ final class ThrottleMiddleware
         $key = sprintf('rate:%s:%s', $ip, $route);
 
         try {
-            $count = (int) $redis->incr($key);
-            if ($count === 1) {
-                $redis->expire($key, $ttl);
+            $result = $redis->eval(
+                "local current = redis.call('INCR', KEYS[1])\n"
+                . "if current == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end\n"
+                . "local ttl = redis.call('TTL', KEYS[1])\n"
+                . "if ttl < 0 then redis.call('EXPIRE', KEYS[1], ARGV[1]); ttl = tonumber(ARGV[1]) end\n"
+                . "return {current, ttl}",
+                [$key, (string) $ttl],
+                1
+            );
+
+            $count = (int) (($result[0] ?? 0));
+            $retryAfter = max(0, (int) ($result[1] ?? 0));
+
+            if ($count <= 0) {
+                throw new \RuntimeException('Invalid rate limiter counter state.');
             }
 
             $remaining = max(0, $limit - $count);
-            $retryAfter = max(0, (int) $redis->ttl($key));
 
             header('X-RateLimit-Limit: ' . $limit);
             header('X-RateLimit-Remaining: ' . $remaining);

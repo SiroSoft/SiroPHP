@@ -20,7 +20,11 @@ final class MigrateRollbackCommand
     /** @param array<int, string> $args */
     public function run(array $args): int
     {
-        unset($args);
+        $step = $this->parseStep($args);
+        if ($step <= 0) {
+            $this->write('Invalid --step value. Example: php siro migrate:rollback --step=1');
+            return 1;
+        }
 
         Env::load($this->basePath . DIRECTORY_SEPARATOR . '.env');
         /** @var array<string, mixed> $config */
@@ -28,15 +32,8 @@ final class MigrateRollbackCommand
         Database::configure($config);
 
         $pdo = Database::connection();
-        $batch = $this->lastBatch($pdo);
-        if ($batch <= 0) {
-            $this->write('Nothing to rollback.');
-            return 0;
-        }
-
-        $stmt = $pdo->prepare('SELECT migration FROM migrations WHERE batch = :batch ORDER BY id DESC');
-        $stmt->execute(['batch' => $batch]);
-        $migrations = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $this->ensureMigrationTable($pdo);
+        $migrations = $this->lastAppliedMigrations($pdo, $step);
 
         if (!is_array($migrations) || $migrations === []) {
             $this->write('Nothing to rollback.');
@@ -85,18 +82,63 @@ final class MigrateRollbackCommand
             return 0;
         }
 
-        $this->write('Rollback completed. Rolled back ' . $rolledBack . ' migration(s) from batch ' . $batch . '.');
+        $this->write('Rollback completed. Rolled back ' . $rolledBack . ' migration(s).');
         return 0;
     }
 
-    private function lastBatch(PDO $pdo): int
+    /** @return array<int, string> */
+    private function lastAppliedMigrations(PDO $pdo, int $step): array
     {
         try {
-            $stmt = $pdo->query('SELECT MAX(batch) AS max_batch FROM migrations');
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return (int) ($row['max_batch'] ?? 0);
+            $stmt = $pdo->prepare('SELECT migration FROM migrations ORDER BY id DESC LIMIT :step');
+            $stmt->bindValue(':step', max(1, $step), PDO::PARAM_INT);
+            $stmt->execute();
+
+            $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            return is_array($rows) ? array_values(array_filter($rows, 'is_string')) : [];
         } catch (Throwable) {
-            return 0;
+            return [];
+        }
+    }
+
+    /** @param array<int, string> $args */
+    private function parseStep(array $args): int
+    {
+        $count = count($args);
+        for ($i = 0; $i < $count; $i++) {
+            $arg = $args[$i];
+
+            if ($arg === '--step') {
+                $next = $args[$i + 1] ?? '';
+                return (int) trim((string) $next);
+            }
+
+            if (!str_starts_with($arg, '--step=')) {
+                continue;
+            }
+
+            $value = trim(substr($arg, 7));
+            return (int) $value;
+        }
+
+        return 1;
+    }
+
+    private function ensureMigrationTable(PDO $pdo): void
+    {
+        $driver = (string) $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+
+        $sql = match ($driver) {
+            'pgsql' => 'CREATE TABLE IF NOT EXISTS migrations (id BIGSERIAL PRIMARY KEY, migration VARCHAR(255) NOT NULL UNIQUE, batch INT NOT NULL DEFAULT 1, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)',
+            default => 'CREATE TABLE IF NOT EXISTS migrations (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, migration VARCHAR(255) NOT NULL UNIQUE, batch INT NOT NULL DEFAULT 1, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)',
+        };
+
+        $pdo->exec($sql);
+
+        try {
+            $pdo->exec('ALTER TABLE migrations ADD COLUMN batch INT NOT NULL DEFAULT 1');
+        } catch (Throwable) {
+            // already exists
         }
     }
 }

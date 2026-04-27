@@ -39,8 +39,25 @@ final class MigrateCommand
         sort($files);
 
         $executed = $this->executedMigrations($pdo);
+        $pending = 0;
+        foreach ($files as $file) {
+            $name = basename($file);
+            if (!isset($executed[$name])) {
+                $pending++;
+            }
+        }
+
+        if ($pending === 0) {
+            $this->write('Nothing to migrate.');
+            $this->write('Use "php siro migrate:status" to view migration state.');
+            return 0;
+        }
+
         $ran = 0;
         $batch = $this->nextBatch($pdo);
+
+        $this->write('Pending migrations: ' . $pending);
+        $this->write('Running batch: ' . $batch);
 
         foreach ($files as $file) {
             $migrationName = basename($file);
@@ -74,11 +91,6 @@ final class MigrateCommand
                 $this->write($e->getMessage());
                 return 1;
             }
-        }
-
-        if ($ran === 0) {
-            $this->write('Nothing to migrate.');
-            return 0;
         }
 
         $this->write('Migration completed. Ran ' . $ran . ' migration(s).');

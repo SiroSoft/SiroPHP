@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Services\User;
 use Siro\Core\Auth\JWT;
 use Siro\Core\DB;
 use Siro\Core\Env;
@@ -127,13 +128,37 @@ final class AuthController
         return Response::success($user, 'Authenticated user');
     }
 
+    public function logout(Request $request): Response
+    {
+        $user = $request->user();
+        $userId = (int) ($user['id'] ?? 0);
+
+        if ($userId <= 0) {
+            return Response::error('Unauthorized', 401);
+        }
+
+        $revoked = User::incrementTokenVersion($userId);
+        if (!$revoked) {
+            return Response::error('Unable to revoke token', 500);
+        }
+
+        return Response::success(null, 'Logout successful. Token revoked.');
+    }
+
     /** @return array{token:string,ttl:int} */
     private function issueToken(int $userId): array
     {
         $ttl = max(60, (int) Env::get('JWT_TTL', '3600'));
         $now = time();
+        $versionRow = DB::table('users')
+            ->select(['token_version'])
+            ->where('id', '=', $userId)
+            ->first();
+        $tokenVersion = (int) ($versionRow['token_version'] ?? 1);
+
         $token = JWT::encode([
             'sub' => $userId,
+            'ver' => $tokenVersion > 0 ? $tokenVersion : 1,
             'iat' => $now,
             'exp' => $now + $ttl,
         ]);

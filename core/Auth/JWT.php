@@ -67,6 +67,16 @@ final class JWT
             throw new RuntimeException('Token issued in the future.');
         }
 
+        $sub = isset($payload['sub']) ? (int) $payload['sub'] : 0;
+        if ($sub <= 0) {
+            throw new RuntimeException('Invalid token subject.');
+        }
+
+        $ver = isset($payload['ver']) ? (int) $payload['ver'] : 0;
+        if ($ver <= 0) {
+            throw new RuntimeException('Invalid token version.');
+        }
+
         return $payload;
     }
 

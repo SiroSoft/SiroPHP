@@ -32,7 +32,11 @@ final class App
 
         $debug = Env::bool('APP_DEBUG', false);
         $appEnv = strtolower((string) Env::get('APP_ENV', 'production'));
-        $this->debug = $debug;
+        if ($appEnv === 'production' && $debug) {
+            throw new RuntimeException('APP_DEBUG must be false in production environment.');
+        }
+
+        $this->debug = $debug && $appEnv !== 'production';
         $this->showDebugTrace = $debug && $appEnv !== 'production';
 
         if ($this->showDebugTrace) {

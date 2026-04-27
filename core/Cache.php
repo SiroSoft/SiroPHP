@@ -91,6 +91,16 @@ final class Cache
         return self::driver()->flush(self::normalizeKey($prefix));
     }
 
+    public static function flushQueryBuilderTable(string $table): int
+    {
+        $table = strtolower(trim($table));
+        if ($table === '') {
+            return 0;
+        }
+
+        return self::flush('qb:' . $table . ':');
+    }
+
     private static function normalizeKey(string $key): string
     {
         return self::$prefix . $key;

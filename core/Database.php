@@ -15,6 +15,7 @@ final class Database
     private static array $config = [];
     private static ?PDO $pdo = null;
     private static int $queryCacheTtl = 0;
+    private static int $transactionDepth = 0;
 
     /**
      * @param array<string, mixed> $config
@@ -125,18 +126,59 @@ final class Database
         return new QueryBuilder($table);
     }
 
+    public static function transaction(callable $callback): mixed
+    {
+        $pdo = self::connection();
+        $isRootTransaction = self::$transactionDepth === 0;
+        $savepoint = 'siro_sp_' . self::$transactionDepth;
+
+        if ($isRootTransaction) {
+            $pdo->beginTransaction();
+        } else {
+            $pdo->exec('SAVEPOINT ' . $savepoint);
+        }
+
+        self::$transactionDepth++;
+
+        try {
+            $result = $callback();
+            self::$transactionDepth--;
+
+            if ($isRootTransaction) {
+                $pdo->commit();
+            } else {
+                $pdo->exec('RELEASE SAVEPOINT ' . $savepoint);
+            }
+
+            return $result;
+        } catch (\Throwable $e) {
+            self::$transactionDepth = max(0, self::$transactionDepth - 1);
+
+            if ($isRootTransaction) {
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+            } else {
+                $pdo->exec('ROLLBACK TO SAVEPOINT ' . $savepoint);
+            }
+
+            throw $e;
+        }
+    }
+
     /**
      * @param array<string, mixed> $params
      * @return array<int, array<string, mixed>>
      */
-    public static function selectCached(string $sql, array $params, int $ttl): array
+    public static function selectCached(string $sql, array $params, int $ttl, string $cachePrefix = 'qb:default:'): array
     {
         $ttl = max(0, $ttl);
         if ($ttl === 0) {
             return self::select($sql, $params);
         }
 
-        $cacheKey = 'qb:' . sha1('qb_select|' . $sql . '|' . json_encode($params, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        $normalizedPrefix = rtrim(trim($cachePrefix), ':') . ':';
+        $cacheKey = $normalizedPrefix . sha1('qb_select|' . $sql . '|' . json_encode($params, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         $cached = Cache::remember($cacheKey, $ttl, static function () use ($sql, $params): array {
             $stmt = self::prepareAndExecute($sql, $params);
             $rows = $stmt->fetchAll();

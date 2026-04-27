@@ -31,14 +31,22 @@ final class AuthMiddleware
         try {
             $claims = JWT::decode($token);
             $userId = (int) ($claims['sub'] ?? 0);
+            $tokenVersion = (int) ($claims['ver'] ?? 0);
+
             if ($userId <= 0) {
                 return Response::error('Unauthorized', 401, [
                     'token' => ['Invalid token subject'],
                 ]);
             }
 
+            if ($tokenVersion <= 0) {
+                return Response::error('Unauthorized', 401, [
+                    'token' => ['Invalid token version'],
+                ]);
+            }
+
             $user = DB::table('users')
-                ->select(['id', 'name', 'email', 'status', 'created_at'])
+                ->select(['id', 'name', 'email', 'status', 'token_version', 'created_at'])
                 ->where('id', '=', $userId)
                 ->first();
 
@@ -48,11 +56,18 @@ final class AuthMiddleware
                 ]);
             }
 
+            if ((int) ($user['token_version'] ?? 1) !== $tokenVersion) {
+                return Response::error('Unauthorized', 401, [
+                    'token' => ['Token has been revoked'],
+                ]);
+            }
+
             $request->setUser([
                 'id' => (int) $user['id'],
                 'name' => (string) ($user['name'] ?? ''),
                 'email' => (string) ($user['email'] ?? ''),
                 'status' => (int) ($user['status'] ?? 0),
+                'token_version' => (int) ($user['token_version'] ?? 1),
                 'created_at' => (string) ($user['created_at'] ?? ''),
                 'claims' => $claims,
             ]);

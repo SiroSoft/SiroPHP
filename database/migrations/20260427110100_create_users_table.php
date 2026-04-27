@@ -12,6 +12,7 @@ return new class {
                 email VARCHAR(255) NOT NULL UNIQUE,
                 password VARCHAR(255) NOT NULL,
                 status TINYINT(1) NOT NULL DEFAULT 1,
+                token_version INT NOT NULL DEFAULT 1,
                 amount DECIMAL(12,2) NOT NULL DEFAULT 0,
                 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             )'

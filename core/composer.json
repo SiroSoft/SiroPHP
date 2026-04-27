@@ -1,0 +1,9 @@
+{
+  "name": "siro/core",
+  "type": "library",
+  "autoload": {
+    "psr-4": {
+      "Siro\\": "core/"
+    }
+  }
+}
