@@ -15,6 +15,17 @@ $passed = 0;
 $failed = 0;
 $total = 0;
 
+// Setup testing environment
+echo "Setting up test environment...\n";
+$envFile = $basePath . '/.env.testing';
+if (file_exists($envFile)) {
+    copy($envFile, $basePath . '/.env');
+    echo "✅ Using .env.testing (SQLite in-memory DB)\n";
+} else {
+    echo "⚠️  .env.testing not found, using existing .env\n";
+}
+echo "\n";
+
 echo "========================================\n";
 echo "SiroPHP v0.7.2 Integration Test Suite\n";
 echo "========================================\n\n";
