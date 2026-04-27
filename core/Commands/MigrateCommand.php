@@ -76,18 +76,30 @@ final class MigrateCommand
             }
 
             try {
-                $pdo->beginTransaction();
+                // Check if transaction is supported
+                $canTransaction = true;
+                try {
+                    $pdo->beginTransaction();
+                } catch (Throwable $te) {
+                    // Transaction not supported, continue without it
+                    $canTransaction = false;
+                }
+
                 $instance->up($pdo);
                 $stmt = $pdo->prepare('INSERT INTO migrations (migration, batch) VALUES (:migration, :batch)');
                 $stmt->execute([
                     'migration' => $migrationName,
                     'batch' => $batch,
                 ]);
-                $pdo->commit();
+                
+                if ($canTransaction && $pdo->inTransaction()) {
+                    $pdo->commit();
+                }
+                
                 $ran++;
                 $this->write('Migrated: ' . $migrationName);
             } catch (Throwable $e) {
-                if ($pdo->inTransaction()) {
+                if ($canTransaction && $pdo->inTransaction()) {
                     $pdo->rollBack();
                 }
 
