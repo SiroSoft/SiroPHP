@@ -46,15 +46,26 @@ final class Database
         $dsn = match ($driver) {
             'mysql' => sprintf('mysql:host=%s;port=%d;dbname=%s;charset=%s', $host, $port, $database, $charset),
             'pgsql', 'postgres', 'postgresql' => sprintf('pgsql:host=%s;port=%d;dbname=%s', $host, $port, $database),
+            'sqlite' => sprintf('sqlite:%s', $database === ':memory:' ? ':memory:' : $database),
             default => throw new RuntimeException(sprintf('Unsupported DB driver: %s', $driver)),
         };
 
-        self::$pdo = new PDO($dsn, $username, $password, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_PERSISTENT => true,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ]);
+        // SQLite doesn't use username/password
+        if ($driver === 'sqlite') {
+            self::$pdo = new PDO($dsn, null, null, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_PERSISTENT => false,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]);
+        } else {
+            self::$pdo = new PDO($dsn, $username, $password, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_PERSISTENT => true,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]);
+        }
 
         return self::$pdo;
     }
