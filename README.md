@@ -7,14 +7,14 @@ Minimal, high-performance PHP micro-framework for REST APIs.
 - ⚡ Faster than full-stack frameworks for API-only workloads
 - 🚀 Minimal bootstrap overhead and lightweight request pipeline
 - 🎯 Focused on REST API development (no unnecessary layers)
-- 📦 Two-package architecture: `siro/core` (library) + `siro/api` (skeleton)
+- 📦 Two-package architecture: `sirosoft/core` (library) + `sirosoft/api` (skeleton)
 
 ## Quick Start
 
 ### Option 1: Install via Composer (Recommended)
 
 ```bash
-composer create-project siro/api my-app
+composer create-project sirosoft/api my-app
 cd my-app
 php siro key:generate
 php siro migrate
@@ -51,12 +51,12 @@ php siro doctor                   # Check environment
 
 Siro uses a **two-package architecture**:
 
-- **siro/core** - Framework core library (router, database, cache, JWT, etc.)
-  - Install: `composer require siro/core`
+- **sirosoft/core** - Framework core library (router, database, cache, JWT, etc.)
+  - Install: `composer require sirosoft/core`
   - Repository: https://github.com/SiroSoft/siro-core
 
-- **siro/api** - Application skeleton (this package)
-  - Install: `composer create-project siro/api my-app`
+- **sirosoft/api** - Application skeleton (this package)
+  - Install: `composer create-project sirosoft/api my-app`
   - Repository: https://github.com/SiroSoft/SiroPHP
 
 This architecture allows you to:

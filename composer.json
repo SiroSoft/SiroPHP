@@ -1,5 +1,5 @@
 {
-  "name": "siro/api",
+  "name": "sirosoft/api",
   "description": "Siro API Framework - Application Skeleton",
   "type": "project",
   "license": "MIT",
@@ -11,7 +11,7 @@
   },
   "require": {
     "php": ">=8.2",
-    "siro/core": "^0.7.4",
+    "sirosoft/core": "^0.7.4",
     "ext-pdo": "*",
     "ext-json": "*",
     "ext-mbstring": "*"

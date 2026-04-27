@@ -15,9 +15,9 @@ This release introduces **two-package architecture** and prepares SiroPHP for Pa
 
 ### Major Changes:
 
-1. ✅ **Two-Package Architecture** - Split into `siro/core` (library) and `siro/api` (skeleton)
+1. ✅ **Two-Package Architecture** - Split into `sirosoft/core` (library) and `sirosoft/api` (skeleton)
 2. ✅ **Packagist Ready** - Both packages ready for publishing
-3. ✅ **Clean Installation** - `composer create-project siro/api` works perfectly
+3. ✅ **Clean Installation** - `composer create-project sirosoft/api` works perfectly
 4. ✅ **Improved Documentation** - Updated README with clear installation guides
 5. ✅ **Repository Cleanup** - Organized documentation files
 
@@ -25,15 +25,15 @@ This release introduces **two-package architecture** and prepares SiroPHP for Pa
 
 ## 📦 Two-Package Architecture
 
-### siro/core (Library)
+### sirosoft/core (Library)
 - **Purpose:** Reusable framework core
-- **Install:** `composer require siro/core`
+- **Install:** `composer require sirosoft/core`
 - **Repository:** https://github.com/SiroSoft/siro-core
 - **Contains:** Router, Database, Cache, JWT, Console Commands, etc.
 
-### siro/api (Project Skeleton)
+### sirosoft/api (Project Skeleton)
 - **Purpose:** Application starter kit
-- **Install:** `composer create-project siro/api my-app`
+- **Install:** `composer create-project sirosoft/api my-app`
 - **Repository:** https://github.com/SiroSoft/SiroPHP
 - **Contains:** App structure, controllers, routes, config
 
