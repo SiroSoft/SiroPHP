@@ -63,8 +63,32 @@ final class App
             || str_contains($lower, 'your_secret');
 
         if ($jwtSecret === '' || strlen($jwtSecret) < 32 || $looksLikePlaceholder) {
-            throw new RuntimeException('Invalid JWT_SECRET. Configure a strong secret with at least 32 characters.');
+            // Auto-generate JWT secret if placeholder detected
+            $this->autoGenerateJwtSecret();
         }
+    }
+
+    private function autoGenerateJwtSecret(): void
+    {
+        $envPath = $this->basePath . DIRECTORY_SEPARATOR . '.env';
+        
+        if (!is_file($envPath)) {
+            throw new RuntimeException('.env file not found. Copy .env.example to .env first.');
+        }
+
+        $secret = bin2hex(random_bytes(32));
+        $content = (string) file_get_contents($envPath);
+
+        if (preg_match('/^JWT_SECRET=.*/m', $content) === 1) {
+            $content = (string) preg_replace('/^JWT_SECRET=.*/m', 'JWT_SECRET=' . $secret, $content);
+        } else {
+            $content = rtrim($content) . PHP_EOL . 'JWT_SECRET=' . $secret . PHP_EOL;
+        }
+
+        file_put_contents($envPath, $content);
+        
+        // Reload env to pick up new value
+        Env::load($envPath);
     }
 
     private function checkRequiredExtensions(): void
