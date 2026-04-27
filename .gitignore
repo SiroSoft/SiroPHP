@@ -11,5 +11,8 @@
 /storage/rate_limit/*
 /storage/*.db
 
+# Archive documentation (kept locally only)
+/docs/archive/
+
 .DS_Store
 Thumbs.db

@@ -11,14 +11,37 @@
 
 ## 🚀 What's New in v0.7.4
 
-This release focuses on **fixing critical release blockers** identified in QA Round 3 to make SiroPHP fully production-ready and installable.
+This release introduces **two-package architecture** and prepares SiroPHP for Packagist publishing.
 
-### Key Improvements:
+### Major Changes:
 
-1. ✅ **Composer Integrity Fixed** - Clean installs work perfectly
-2. ✅ **Installation Flow Documented** - Clear Git clone instructions
-3. ✅ **Cache Invalidation Verified** - No stale data after mutations
-4. ✅ **Autoloader Corrected** - Proper PSR-4 namespace mapping
+1. ✅ **Two-Package Architecture** - Split into `siro/core` (library) and `siro/api` (skeleton)
+2. ✅ **Packagist Ready** - Both packages ready for publishing
+3. ✅ **Clean Installation** - `composer create-project siro/api` works perfectly
+4. ✅ **Improved Documentation** - Updated README with clear installation guides
+5. ✅ **Repository Cleanup** - Organized documentation files
+
+---
+
+## 📦 Two-Package Architecture
+
+### siro/core (Library)
+- **Purpose:** Reusable framework core
+- **Install:** `composer require siro/core`
+- **Repository:** https://github.com/SiroSoft/siro-core
+- **Contains:** Router, Database, Cache, JWT, Console Commands, etc.
+
+### siro/api (Project Skeleton)
+- **Purpose:** Application starter kit
+- **Install:** `composer create-project siro/api my-app`
+- **Repository:** https://github.com/SiroSoft/SiroPHP
+- **Contains:** App structure, controllers, routes, config
+
+**Benefits:**
+- ✅ Reusable core library
+- ✅ Scalable ecosystem
+- ✅ Industry-standard architecture (like Laravel)
+- ✅ Independent versioning
 
 ---
 
