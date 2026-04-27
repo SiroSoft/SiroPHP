@@ -14,5 +14,10 @@
 # Archive documentation (kept locally only)
 /docs/archive/
 
+# IDE and AI assistant folders (kept locally only)
+/.cline/
+.vscode/
+.idea/
+
 .DS_Store
 Thumbs.db
