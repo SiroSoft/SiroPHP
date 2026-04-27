@@ -1,12 +1,17 @@
 /vendor/
+/core/vendor/
 /.env
 /composer.lock
+/core/composer.lock
 
 /storage/cache/*
 !/storage/cache/.gitkeep
 
 /storage/logs/*
 !/storage/logs/.gitkeep
+
+/storage/rate_limit/*
+/storage/*.db
 
 .DS_Store
 Thumbs.db

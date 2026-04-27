@@ -1,8 +1,14 @@
 {
   "name": "siro/api",
-  "description": "Siro API Framework Starter Project",
+  "description": "Siro API Framework - Starter Project Template",
   "type": "project",
   "license": "MIT",
+  "keywords": ["framework", "api", "starter", "template"],
+  "homepage": "https://github.com/SiroSoft/siro-api",
+  "support": {
+    "issues": "https://github.com/SiroSoft/siro-api/issues",
+    "source": "https://github.com/SiroSoft/siro-api"
+  },
   "require": {
     "php": ">=8.2",
     "ext-pdo": "*",
@@ -30,5 +36,7 @@
     "psr-4": {
       "App\\": "app/"
     }
-  }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }

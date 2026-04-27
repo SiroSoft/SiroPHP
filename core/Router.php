@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Siro\Core;
 
-use App\Middleware\AuthMiddleware;
-use App\Middleware\CorsMiddleware;
-use App\Middleware\JsonMiddleware;
-use App\Middleware\ThrottleMiddleware;
 use Closure;
 use RuntimeException;
 
@@ -422,11 +418,12 @@ final class Router
     {
         $normalized = strtolower(trim($name));
 
+        // Return fully qualified class names as strings - these will be resolved by the app
         return match ($normalized) {
-            'auth' => AuthMiddleware::class,
-            'throttle' => ThrottleMiddleware::class,
-            'cors' => CorsMiddleware::class,
-            'json' => JsonMiddleware::class,
+            'auth' => '\App\Middleware\AuthMiddleware',
+            'throttle' => '\App\Middleware\ThrottleMiddleware',
+            'cors' => '\App\Middleware\CorsMiddleware',
+            'json' => '\App\Middleware\JsonMiddleware',
             default => $name,
         };
     }
