@@ -27,6 +27,10 @@ final class MigrateRollbackCommand
         }
 
         Env::load($this->basePath . DIRECTORY_SEPARATOR . '.env');
+        
+        // Preflight check
+        $this->checkRequiredExtensions();
+        
         /** @var array<string, mixed> $config */
         $config = require $this->basePath . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.php';
         Database::configure($config);
@@ -139,6 +143,35 @@ final class MigrateRollbackCommand
             $pdo->exec('ALTER TABLE migrations ADD COLUMN batch INT NOT NULL DEFAULT 1');
         } catch (Throwable) {
             // already exists
+        }
+    }
+
+    private function checkRequiredExtensions(): void
+    {
+        $required = ['pdo', 'json'];
+        $missing = [];
+
+        foreach ($required as $ext) {
+            if (!extension_loaded($ext)) {
+                $missing[] = $ext;
+            }
+        }
+
+        $dbConnection = strtolower((string) Env::get('DB_CONNECTION', 'mysql'));
+        $pdoDriver = match ($dbConnection) {
+            'pgsql' => 'pdo_pgsql',
+            'sqlite' => 'pdo_sqlite',
+            default => 'pdo_mysql',
+        };
+
+        if (!extension_loaded($pdoDriver)) {
+            $missing[] = $pdoDriver . " (for {$dbConnection})";
+        }
+
+        if ($missing !== []) {
+            fwrite(STDERR, "Error: Missing required PHP extensions: " . implode(', ', $missing) . PHP_EOL);
+            fwrite(STDERR, "Please install them or update your php.ini configuration." . PHP_EOL);
+            exit(1);
         }
     }
 }

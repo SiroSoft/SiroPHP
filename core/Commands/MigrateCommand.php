@@ -23,6 +23,10 @@ final class MigrateCommand
         unset($args);
 
         Env::load($this->basePath . DIRECTORY_SEPARATOR . '.env');
+        
+        // Preflight check before attempting DB connection
+        $this->checkRequiredExtensions();
+        
         /** @var array<string, mixed> $config */
         $config = require $this->basePath . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.php';
         Database::configure($config);
@@ -138,5 +142,35 @@ final class MigrateCommand
         $max = (int) ($row['max_batch'] ?? 0);
 
         return $max + 1;
+    }
+
+    private function checkRequiredExtensions(): void
+    {
+        $required = ['pdo', 'json'];
+        $missing = [];
+
+        foreach ($required as $ext) {
+            if (!extension_loaded($ext)) {
+                $missing[] = $ext;
+            }
+        }
+
+        // Check PDO drivers based on DB_CONNECTION
+        $dbConnection = strtolower((string) Env::get('DB_CONNECTION', 'mysql'));
+        $pdoDriver = match ($dbConnection) {
+            'pgsql' => 'pdo_pgsql',
+            'sqlite' => 'pdo_sqlite',
+            default => 'pdo_mysql',
+        };
+
+        if (!extension_loaded($pdoDriver)) {
+            $missing[] = $pdoDriver . " (for {$dbConnection})";
+        }
+
+        if ($missing !== []) {
+            fwrite(STDERR, "Error: Missing required PHP extensions: " . implode(', ', $missing) . PHP_EOL);
+            fwrite(STDERR, "Please install them or update your php.ini configuration." . PHP_EOL);
+            exit(1);
+        }
     }
 }
