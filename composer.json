@@ -1,30 +1,20 @@
 {
-  "name": "siro/api",
-  "description": "Siro API Framework - Starter Project Template",
+  "name": "siro/framework",
+  "description": "Siro API Framework - Lightweight PHP Micro-Framework",
   "type": "project",
   "license": "MIT",
-  "keywords": ["framework", "api", "starter", "template"],
-  "homepage": "https://github.com/SiroSoft/siro-api",
+  "keywords": ["framework", "api", "micro-framework", "php", "rest"],
+  "homepage": "https://github.com/SiroSoft/SiroPHP",
   "support": {
-    "issues": "https://github.com/SiroSoft/siro-api/issues",
-    "source": "https://github.com/SiroSoft/siro-api"
+    "issues": "https://github.com/SiroSoft/SiroPHP/issues",
+    "source": "https://github.com/SiroSoft/SiroPHP"
   },
   "require": {
     "php": ">=8.2",
     "ext-pdo": "*",
     "ext-json": "*",
-    "ext-mbstring": "*",
-    "siro/core": "^0.7"
+    "ext-mbstring": "*"
   },
-  "repositories": [
-    {
-      "type": "path",
-      "url": "./core",
-      "options": {
-        "symlink": false
-      }
-    }
-  ],
   "scripts": {
     "post-create-project-cmd": [
       "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
@@ -34,6 +24,7 @@
   "bin": ["siro"],
   "autoload": {
     "psr-4": {
+      "Siro\\Core\\": "core/",
       "App\\": "app/"
     }
   },
