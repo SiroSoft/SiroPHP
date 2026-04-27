@@ -1,9 +1,9 @@
 {
-  "name": "siro/framework",
-  "description": "Siro API Framework - Lightweight PHP Micro-Framework",
+  "name": "siro/api",
+  "description": "Siro API Framework - Application Skeleton",
   "type": "project",
   "license": "MIT",
-  "keywords": ["framework", "api", "micro-framework", "php", "rest"],
+  "keywords": ["framework", "api", "micro-framework", "php", "rest", "skeleton"],
   "homepage": "https://github.com/SiroSoft/SiroPHP",
   "support": {
     "issues": "https://github.com/SiroSoft/SiroPHP/issues",
@@ -11,6 +11,7 @@
   },
   "require": {
     "php": ">=8.2",
+    "siro/core": "^0.7.4",
     "ext-pdo": "*",
     "ext-json": "*",
     "ext-mbstring": "*"
@@ -24,7 +25,6 @@
   "bin": ["siro"],
   "autoload": {
     "psr-4": {
-      "Siro\\Core\\": "core/",
       "App\\": "app/"
     }
   },

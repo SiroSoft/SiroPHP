@@ -1,8 +1,6 @@
 /vendor/
-/core/vendor/
 /.env
 /composer.lock
-/core/composer.lock
 
 /storage/cache/*
 !/storage/cache/.gitkeep
