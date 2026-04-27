@@ -18,6 +18,15 @@ final class JsonMiddleware
             if ($contentType !== '' && !str_contains(strtolower($contentType), 'application/json')) {
                 return Response::error('Content-Type must be application/json', 415);
             }
+
+            // Check for malformed JSON
+            $rawBody = file_get_contents('php://input') ?: '';
+            if ($rawBody !== '') {
+                json_decode($rawBody);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    return Response::error('Invalid JSON format: ' . json_last_error_msg(), 400);
+                }
+            }
         }
 
         return $next($request);

@@ -19,6 +19,15 @@ final class Logger
         if (!is_dir(self::$logDir)) {
             mkdir(self::$logDir, 0775, true);
         }
+
+        // Ensure all log files exist
+        $logFiles = ['request.log', 'error.log', 'slow.log'];
+        foreach ($logFiles as $file) {
+            $filePath = self::$logDir . DIRECTORY_SEPARATOR . $file;
+            if (!file_exists($filePath)) {
+                file_put_contents($filePath, '');
+            }
+        }
     }
 
     public static function request(string $method, string $path, int $status, float $timeMs): void

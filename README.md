@@ -28,9 +28,8 @@ chmod +x benchmark/wrk.sh
 ```bash
 composer create-project siro/api my-app
 cd my-app
-cp .env.example .env
 php siro migrate
-php -S localhost:8080 -t public
+php siro serve
 ```
 
 ## CLI usage
@@ -38,6 +37,7 @@ php -S localhost:8080 -t public
 ```bash
 php siro migrate
 php siro make:api users
+php siro serve
 ```
 
 ## API example

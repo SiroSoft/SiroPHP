@@ -46,7 +46,7 @@ final class Validator
 
                 if (str_starts_with($rule, 'min:')) {
                     $min = (int) substr($rule, 4);
-                    if (is_string($value) && mb_strlen($value) < $min) {
+                    if (is_string($value) && strlen($value) < $min) {
                         $errors[$field][] = sprintf('%s must be at least %d characters', self::label($field), $min);
                         continue;
                     }
@@ -59,7 +59,7 @@ final class Validator
 
                 if (str_starts_with($rule, 'max:')) {
                     $max = (int) substr($rule, 4);
-                    if (is_string($value) && mb_strlen($value) > $max) {
+                    if (is_string($value) && strlen($value) > $max) {
                         $errors[$field][] = sprintf('%s must not be greater than %d characters', self::label($field), $max);
                         continue;
                     }

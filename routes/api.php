@@ -76,3 +76,5 @@ $app->router->group('', [CorsMiddleware::class], function ($router): void {
     $router->options('/auth/me', fn (): Response => Response::noContent());
     $router->options('/auth/logout', fn (): Response => Response::noContent());
 });
+
+

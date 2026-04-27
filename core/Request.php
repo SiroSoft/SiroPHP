@@ -50,7 +50,11 @@ final class Request
 
         if ($rawBody !== '') {
             $decoded = json_decode($rawBody, true);
-            if (is_array($decoded)) {
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                // Malformed JSON - will be caught by validation later
+                // Store empty array to prevent fatal errors
+                $jsonBody = [];
+            } elseif (is_array($decoded)) {
                 $jsonBody = $decoded;
             }
         }

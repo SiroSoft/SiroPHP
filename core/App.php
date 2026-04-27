@@ -29,6 +29,7 @@ final class App
         Env::load($this->basePath . DIRECTORY_SEPARATOR . '.env');
         Logger::boot($this->basePath);
         $this->validateSecurityConfig();
+        $this->checkRequiredExtensions();
 
         $debug = Env::bool('APP_DEBUG', false);
         $appEnv = strtolower((string) Env::get('APP_ENV', 'production'));
@@ -63,6 +64,37 @@ final class App
 
         if ($jwtSecret === '' || strlen($jwtSecret) < 32 || $looksLikePlaceholder) {
             throw new RuntimeException('Invalid JWT_SECRET. Configure a strong secret with at least 32 characters.');
+        }
+    }
+
+    private function checkRequiredExtensions(): void
+    {
+        $required = ['pdo', 'json', 'mbstring'];
+        $missing = [];
+
+        foreach ($required as $ext) {
+            if (!extension_loaded($ext)) {
+                $missing[] = $ext;
+            }
+        }
+
+        // Check PDO drivers based on DB_CONNECTION
+        $dbConnection = strtolower((string) Env::get('DB_CONNECTION', 'mysql'));
+        $pdoDriver = match ($dbConnection) {
+            'pgsql' => 'pdo_pgsql',
+            'sqlite' => 'pdo_sqlite',
+            default => 'pdo_mysql',
+        };
+
+        if (!extension_loaded($pdoDriver)) {
+            $missing[] = $pdoDriver . " (for {$dbConnection})";
+        }
+
+        if ($missing !== []) {
+            throw new RuntimeException(
+                'Missing required PHP extensions: ' . implode(', ', $missing) . 
+                '. Install them or update your php.ini configuration.'
+            );
         }
     }
 

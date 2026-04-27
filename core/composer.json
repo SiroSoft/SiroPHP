@@ -1,9 +1,17 @@
 {
   "name": "siro/core",
+  "description": "Siro API Framework Core",
   "type": "library",
+  "license": "MIT",
   "autoload": {
     "psr-4": {
       "Siro\\": "core/"
     }
+  },
+  "require": {
+    "php": ">=8.2",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "ext-mbstring": "*"
   }
 }

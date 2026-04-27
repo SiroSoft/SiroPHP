@@ -6,11 +6,13 @@ namespace Siro\Core;
 
 use Siro\Core\Commands\MakeApiCommand;
 use Siro\Core\Commands\MakeControllerCommand;
+use Siro\Core\Commands\KeyGenerateCommand;
 use Siro\Core\Commands\MakeMigrationCommand;
 use Siro\Core\Commands\MakeResourceCommand;
 use Siro\Core\Commands\MigrateCommand;
 use Siro\Core\Commands\MigrateRollbackCommand;
 use Siro\Core\Commands\MigrateStatusCommand;
+use Siro\Core\Commands\ServeCommand;
 
 final class Console
 {
@@ -44,6 +46,10 @@ final class Console
                 return (new MigrateRollbackCommand($this->basePath))->run($args);
             case 'migrate:status':
                 return (new MigrateStatusCommand($this->basePath))->run($args);
+            case 'serve':
+                return (new ServeCommand($this->basePath))->run($args);
+            case 'key:generate':
+                return (new KeyGenerateCommand($this->basePath))->run($args);
             default:
                 return $this->unknownCommand($command);
         }
@@ -61,6 +67,8 @@ final class Console
         $this->write('  php siro migrate:rollback');
         $this->write('  php siro migrate:rollback --step=1');
         $this->write('  php siro migrate:status');
+        $this->write('  php siro serve');
+        $this->write('  php siro key:generate');
     }
 
     private function unknownCommand(string $command): int

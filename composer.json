@@ -1,16 +1,28 @@
 {
   "name": "siro/api",
+  "description": "Siro API Framework Starter Project",
   "type": "project",
+  "license": "MIT",
   "require": {
     "php": ">=8.2",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "ext-mbstring": "*",
     "siro/core": "^0.7"
   },
   "repositories": [
     {
       "type": "path",
-      "url": "./core"
+      "url": "../siro-core"
     }
   ],
+  "scripts": {
+    "post-create-project-cmd": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+      "@php siro key:generate || true"
+    ]
+  },
+  "bin": ["siro"],
   "autoload": {
     "psr-4": {
       "App\\": "app/"
