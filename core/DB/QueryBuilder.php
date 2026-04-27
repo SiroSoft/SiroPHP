@@ -12,15 +12,24 @@ final class QueryBuilder
     private string $table = '';
     /** @var array<int, string> */
     private array $columns = ['*'];
-    /** @var array<int, array{boolean:string,column:string,operator:string,param:string}> */
+    /** @var array<int, array<string, mixed>> */
     private array $wheres = [];
-    /** @var array<string, mixed> */
-    private array $bindings = [];
+    /** @var array<int, array<string, mixed>> */
+    private array $havings = [];
+    /** @var array<int, array{type:string,table:string,first:string,operator:string,second:string}> */
+    private array $joins = [];
+    /** @var array<int, string> */
+    private array $groups = [];
     /** @var array<int, array{column:string,direction:string}> */
     private array $orders = [];
+    /** @var array<string, mixed> */
+    private array $bindings = [];
     private ?int $limitValue = null;
     private ?int $offsetValue = null;
     private int $whereCounter = 0;
+    private int $havingCounter = 0;
+    private int $inCounter = 0;
+    private int $cacheTtl = 0;
 
     public function __construct(string $table)
     {
@@ -30,7 +39,6 @@ final class QueryBuilder
     public function table(string $table): self
     {
         $this->table = trim($table);
-
         if ($this->table === '') {
             throw new RuntimeException('QueryBuilder table name cannot be empty.');
         }
@@ -56,14 +64,85 @@ final class QueryBuilder
         return $this;
     }
 
-    public function where(string $column, mixed $value): self
+    public function where(string $column, mixed $operatorOrValue, mixed $value = null): self
     {
-        return $this->addWhere('AND', $column, $value);
+        $hasExplicitValue = func_num_args() >= 3;
+        return $this->addWhere('AND', $column, $operatorOrValue, $value, $hasExplicitValue);
     }
 
-    public function orWhere(string $column, mixed $value): self
+    public function orWhere(string $column, mixed $operatorOrValue, mixed $value = null): self
     {
-        return $this->addWhere('OR', $column, $value);
+        $hasExplicitValue = func_num_args() >= 3;
+        return $this->addWhere('OR', $column, $operatorOrValue, $value, $hasExplicitValue);
+    }
+
+    public function whereIn(string $column, array $values): self
+    {
+        return $this->addWhereIn('AND', $column, $values, false);
+    }
+
+    public function orWhereIn(string $column, array $values): self
+    {
+        return $this->addWhereIn('OR', $column, $values, false);
+    }
+
+    public function whereNotIn(string $column, array $values): self
+    {
+        return $this->addWhereIn('AND', $column, $values, true);
+    }
+
+    public function join(string $table, string $first, string $operator, string $second): self
+    {
+        $this->joins[] = [
+            'type' => 'INNER',
+            'table' => trim($table),
+            'first' => trim($first),
+            'operator' => $this->normalizeOperator($operator),
+            'second' => trim($second),
+        ];
+
+        return $this;
+    }
+
+    public function leftJoin(string $table, string $first, string $operator, string $second): self
+    {
+        $this->joins[] = [
+            'type' => 'LEFT',
+            'table' => trim($table),
+            'first' => trim($first),
+            'operator' => $this->normalizeOperator($operator),
+            'second' => trim($second),
+        ];
+
+        return $this;
+    }
+
+    public function groupBy(array|string $columns): self
+    {
+        if (is_string($columns)) {
+            $columns = [$columns];
+        }
+
+        foreach ($columns as $column) {
+            $column = trim((string) $column);
+            if ($column !== '') {
+                $this->groups[] = $column;
+            }
+        }
+
+        return $this;
+    }
+
+    public function having(string $column, mixed $operatorOrValue, mixed $value = null): self
+    {
+        $hasExplicitValue = func_num_args() >= 3;
+        return $this->addHaving('AND', $column, $operatorOrValue, $value, $hasExplicitValue);
+    }
+
+    public function orHaving(string $column, mixed $operatorOrValue, mixed $value = null): self
+    {
+        $hasExplicitValue = func_num_args() >= 3;
+        return $this->addHaving('OR', $column, $operatorOrValue, $value, $hasExplicitValue);
     }
 
     public function orderBy(string $column, string $direction = 'asc'): self
@@ -85,11 +164,17 @@ final class QueryBuilder
         return $this;
     }
 
+    public function cache(int $ttl = 60): self
+    {
+        $this->cacheTtl = max(0, $ttl);
+        return $this;
+    }
+
     /** @return array<int, array<string, mixed>> */
     public function get(): array
     {
         [$sql, $bindings] = $this->buildSelectQuery();
-        return Database::select($sql, $bindings);
+        return $this->runSelect($sql, $bindings);
     }
 
     /** @return array<string, mixed>|null */
@@ -99,6 +184,21 @@ final class QueryBuilder
         $clone->limit(1);
         $rows = $clone->get();
         return $rows[0] ?? null;
+    }
+
+    public function count(string $column = '*'): int
+    {
+        return (int) $this->aggregate('COUNT', $column);
+    }
+
+    public function sum(string $column): float|int
+    {
+        return $this->aggregate('SUM', $column);
+    }
+
+    public function avg(string $column): float|int
+    {
+        return $this->aggregate('AVG', $column);
     }
 
     public function insert(array $data): int|string
@@ -177,10 +277,9 @@ final class QueryBuilder
         $page = max(1, $page);
         $offset = ($page - 1) * $perPage;
 
-        [$countSql, $whereBindings] = $this->buildCountQuery();
-        $countStmt = Database::connection()->prepare($countSql);
-        $countStmt->execute($whereBindings);
-        $total = (int) ($countStmt->fetchColumn() ?: 0);
+        [$countSql, $countBindings] = $this->buildCountQuery();
+        $countRows = $this->runSelect($countSql, $countBindings);
+        $total = (int) (($countRows[0]['aggregate'] ?? 0));
 
         $clone = clone $this;
         $rows = $clone->limit($perPage)->offset($offset)->get();
@@ -198,36 +297,122 @@ final class QueryBuilder
         ];
     }
 
-    private function addWhere(string $boolean, string $column, mixed $value): self
+    private function aggregate(string $function, string $column): float|int
     {
+        [$sql, $bindings] = $this->buildAggregateQuery($function, $column);
+        $rows = $this->runSelect($sql, $bindings);
+        $value = $rows[0]['aggregate'] ?? 0;
+
+        if (is_numeric($value)) {
+            return str_contains((string) $value, '.') ? (float) $value : (int) $value;
+        }
+
+        return 0;
+    }
+
+    private function addWhere(string $boolean, string $column, mixed $operatorOrValue, mixed $value, bool $hasExplicitValue): self
+    {
+        [$operator, $resolvedValue] = $this->resolveOperatorAndValue($operatorOrValue, $value, $hasExplicitValue);
         $param = 'w_' . $this->whereCounter;
         $this->whereCounter++;
 
         $this->wheres[] = [
+            'type' => 'basic',
             'boolean' => $boolean,
             'column' => trim($column),
-            'operator' => '=',
+            'operator' => $operator,
             'param' => $param,
         ];
-        $this->bindings[$param] = $value;
+        $this->bindings[$param] = $resolvedValue;
 
         return $this;
+    }
+
+    private function addWhereIn(string $boolean, string $column, array $values, bool $not): self
+    {
+        if ($values === []) {
+            $this->wheres[] = [
+                'type' => 'raw',
+                'boolean' => $boolean,
+                'sql' => $not ? '1 = 1' : '1 = 0',
+            ];
+            return $this;
+        }
+
+        $prefix = 'wi_' . $this->inCounter;
+        $this->inCounter++;
+        $params = [];
+
+        foreach (array_values($values) as $idx => $value) {
+            $param = $prefix . '_' . $idx;
+            $params[] = $param;
+            $this->bindings[$param] = $value;
+        }
+
+        $this->wheres[] = [
+            'type' => 'in',
+            'boolean' => $boolean,
+            'column' => trim($column),
+            'not' => $not,
+            'params' => $params,
+        ];
+
+        return $this;
+    }
+
+    private function addHaving(string $boolean, string $column, mixed $operatorOrValue, mixed $value, bool $hasExplicitValue): self
+    {
+        [$operator, $resolvedValue] = $this->resolveOperatorAndValue($operatorOrValue, $value, $hasExplicitValue);
+        $param = 'h_' . $this->havingCounter;
+        $this->havingCounter++;
+
+        $this->havings[] = [
+            'boolean' => $boolean,
+            'column' => trim($column),
+            'operator' => $operator,
+            'param' => $param,
+        ];
+        $this->bindings[$param] = $resolvedValue;
+
+        return $this;
+    }
+
+    /** @return array{0:string,1:mixed} */
+    private function resolveOperatorAndValue(mixed $operatorOrValue, mixed $value, bool $hasExplicitValue): array
+    {
+        if (!$hasExplicitValue) {
+            return ['=', $operatorOrValue];
+        }
+
+        $operator = $this->normalizeOperator((string) $operatorOrValue);
+        return [$operator, $value];
+    }
+
+    private function normalizeOperator(string $operator): string
+    {
+        $operator = strtoupper(trim($operator));
+        $allowed = ['=', '!=', '<>', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE'];
+
+        if (!in_array($operator, $allowed, true)) {
+            throw new RuntimeException('Unsupported SQL operator: ' . $operator);
+        }
+
+        return $operator;
     }
 
     /** @return array{0:string,1:array<string,mixed>} */
     private function buildSelectQuery(): array
     {
         [$whereSql, $whereBindings] = $this->compileWhere();
+        [$havingSql, $havingBindings] = $this->compileHaving();
         $columns = implode(', ', $this->columns);
-        $sql = sprintf('SELECT %s FROM %s%s', $columns, $this->table, $whereSql);
 
-        if ($this->orders !== []) {
-            $orderParts = [];
-            foreach ($this->orders as $order) {
-                $orderParts[] = $order['column'] . ' ' . $order['direction'];
-            }
-            $sql .= ' ORDER BY ' . implode(', ', $orderParts);
-        }
+        $sql = sprintf('SELECT %s FROM %s', $columns, $this->table);
+        $sql .= $this->compileJoins();
+        $sql .= $whereSql;
+        $sql .= $this->compileGroupBy();
+        $sql .= $havingSql;
+        $sql .= $this->compileOrderBy();
 
         if ($this->limitValue !== null) {
             $sql .= ' LIMIT ' . $this->limitValue;
@@ -237,15 +422,93 @@ final class QueryBuilder
             $sql .= ' OFFSET ' . $this->offsetValue;
         }
 
-        return [$sql, $whereBindings];
+        return [$sql, [...$whereBindings, ...$havingBindings]];
     }
 
     /** @return array{0:string,1:array<string,mixed>} */
     private function buildCountQuery(): array
     {
         [$whereSql, $whereBindings] = $this->compileWhere();
-        $sql = sprintf('SELECT COUNT(*) AS aggregate FROM %s%s', $this->table, $whereSql);
-        return [$sql, $whereBindings];
+        [$havingSql, $havingBindings] = $this->compileHaving();
+
+        if ($this->groups === []) {
+            $sql = sprintf('SELECT COUNT(*) AS aggregate FROM %s', $this->table);
+            $sql .= $this->compileJoins() . $whereSql . $havingSql;
+            return [$sql, [...$whereBindings, ...$havingBindings]];
+        }
+
+        $subQuery = sprintf('SELECT 1 FROM %s', $this->table)
+            . $this->compileJoins()
+            . $whereSql
+            . $this->compileGroupBy()
+            . $havingSql;
+
+        return ['SELECT COUNT(*) AS aggregate FROM (' . $subQuery . ') AS siro_count_table', [...$whereBindings, ...$havingBindings]];
+    }
+
+    /** @return array{0:string,1:array<string,mixed>} */
+    private function buildAggregateQuery(string $function, string $column): array
+    {
+        [$whereSql, $whereBindings] = $this->compileWhere();
+        [$havingSql, $havingBindings] = $this->compileHaving();
+
+        if ($this->groups === []) {
+            $sql = sprintf('SELECT %s(%s) AS aggregate FROM %s', strtoupper($function), $column, $this->table);
+            $sql .= $this->compileJoins() . $whereSql . $havingSql;
+            return [$sql, [...$whereBindings, ...$havingBindings]];
+        }
+
+        $subQuery = sprintf('SELECT %s(%s) AS aggregate FROM %s', strtoupper($function), $column, $this->table)
+            . $this->compileJoins()
+            . $whereSql
+            . $this->compileGroupBy()
+            . $havingSql;
+
+        return ['SELECT ' . strtoupper($function) . '(aggregate) AS aggregate FROM (' . $subQuery . ') AS siro_aggregate_table', [...$whereBindings, ...$havingBindings]];
+    }
+
+    private function compileJoins(): string
+    {
+        if ($this->joins === []) {
+            return '';
+        }
+
+        $parts = [];
+        foreach ($this->joins as $join) {
+            $parts[] = sprintf(
+                ' %s JOIN %s ON %s %s %s',
+                $join['type'],
+                $join['table'],
+                $join['first'],
+                $join['operator'],
+                $join['second']
+            );
+        }
+
+        return implode('', $parts);
+    }
+
+    private function compileGroupBy(): string
+    {
+        if ($this->groups === []) {
+            return '';
+        }
+
+        return ' GROUP BY ' . implode(', ', $this->groups);
+    }
+
+    private function compileOrderBy(): string
+    {
+        if ($this->orders === []) {
+            return '';
+        }
+
+        $parts = [];
+        foreach ($this->orders as $order) {
+            $parts[] = $order['column'] . ' ' . $order['direction'];
+        }
+
+        return ' ORDER BY ' . implode(', ', $parts);
     }
 
     /** @return array{0:string,1:array<string,mixed>} */
@@ -256,11 +519,58 @@ final class QueryBuilder
         }
 
         $parts = [];
+        $bindings = [];
+
         foreach ($this->wheres as $index => $where) {
             $prefix = $index === 0 ? '' : ' ' . $where['boolean'] . ' ';
+
+            if (($where['type'] ?? 'basic') === 'raw') {
+                $parts[] = $prefix . $where['sql'];
+                continue;
+            }
+
+            if (($where['type'] ?? 'basic') === 'in') {
+                $holderParts = [];
+                foreach ($where['params'] as $param) {
+                    $holderParts[] = ':' . $param;
+                    $bindings[$param] = $this->bindings[$param];
+                }
+
+                $parts[] = $prefix . $where['column'] . ($where['not'] ? ' NOT IN (' : ' IN (') . implode(', ', $holderParts) . ')';
+                continue;
+            }
+
             $parts[] = $prefix . $where['column'] . ' ' . $where['operator'] . ' :' . $where['param'];
+            $bindings[$where['param']] = $this->bindings[$where['param']];
         }
 
-        return [' WHERE ' . implode('', $parts), $this->bindings];
+        return [' WHERE ' . implode('', $parts), $bindings];
+    }
+
+    /** @return array{0:string,1:array<string,mixed>} */
+    private function compileHaving(): array
+    {
+        if ($this->havings === []) {
+            return ['', []];
+        }
+
+        $parts = [];
+        $bindings = [];
+
+        foreach ($this->havings as $index => $having) {
+            $prefix = $index === 0 ? '' : ' ' . $having['boolean'] . ' ';
+            $parts[] = $prefix . $having['column'] . ' ' . $having['operator'] . ' :' . $having['param'];
+            $bindings[$having['param']] = $this->bindings[$having['param']];
+        }
+
+        return [' HAVING ' . implode('', $parts), $bindings];
+    }
+
+    /** @param array<string,mixed> $bindings
+     *  @return array<int, array<string,mixed>>
+     */
+    private function runSelect(string $sql, array $bindings): array
+    {
+        return Database::selectCached($sql, $bindings, $this->cacheTtl);
     }
 }

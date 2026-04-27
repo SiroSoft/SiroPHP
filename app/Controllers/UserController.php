@@ -19,7 +19,9 @@ final class UserController
 
         $result = DB::table('users')
             ->select(['id', 'name', 'email', 'created_at'])
+            ->where('status', '=', 1)
             ->orderBy('id', 'desc')
+            ->cache(60)
             ->paginate($perPage);
 
         $users = UserResource::collection($result['data']);
@@ -38,7 +40,8 @@ final class UserController
 
         $user = DB::table('users')
             ->select(['id', 'name', 'email', 'created_at'])
-            ->where('id', $id)
+            ->where('id', '=', $id)
+            ->cache(60)
             ->first();
 
         if ($user === null) {
@@ -108,7 +111,7 @@ final class UserController
         }
 
         $affected = DB::table('users')
-            ->where('id', $id)
+            ->where('id', '=', $id)
             ->update($payload);
 
         if ($affected === 0) {
@@ -117,7 +120,7 @@ final class UserController
 
         $updated = DB::table('users')
             ->select(['id', 'name', 'email', 'created_at'])
-            ->where('id', $id)
+            ->where('id', '=', $id)
             ->first();
 
         return Response::success(
@@ -136,7 +139,7 @@ final class UserController
         }
 
         $deleted = DB::table('users')
-            ->where('id', $id)
+            ->where('id', '=', $id)
             ->delete();
 
         if ($deleted === 0) {

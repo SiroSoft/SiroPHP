@@ -127,6 +127,27 @@ final class Database
 
     /**
      * @param array<string, mixed> $params
+     * @return array<int, array<string, mixed>>
+     */
+    public static function selectCached(string $sql, array $params, int $ttl): array
+    {
+        $ttl = max(0, $ttl);
+        if ($ttl === 0) {
+            return self::select($sql, $params);
+        }
+
+        $cacheKey = self::queryCacheKey('qb_select', $sql, $params);
+        $cached = Cache::remember($cacheKey, $ttl, static function () use ($sql, $params): array {
+            $stmt = self::prepareAndExecute($sql, $params);
+            $rows = $stmt->fetchAll();
+            return is_array($rows) ? $rows : [];
+        });
+
+        return is_array($cached) ? $cached : [];
+    }
+
+    /**
+     * @param array<string, mixed> $params
      */
     private static function prepareAndExecute(string $sql, array $params): PDOStatement
     {

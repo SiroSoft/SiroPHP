@@ -1,0 +1,111 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Siro\Core\Commands;
+
+use PDO;
+use Siro\Core\Database;
+use Siro\Core\Env;
+use Throwable;
+
+final class MigrateCommand
+{
+    use CommandSupport;
+
+    public function __construct(private readonly string $basePath)
+    {
+    }
+
+    /** @param array<int, string> $args */
+    public function run(array $args): int
+    {
+        unset($args);
+
+        Env::load($this->basePath . DIRECTORY_SEPARATOR . '.env');
+        /** @var array<string, mixed> $config */
+        $config = require $this->basePath . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.php';
+        Database::configure($config);
+
+        $pdo = Database::connection();
+        $this->ensureMigrationTable($pdo);
+
+        $migrationDir = $this->basePath . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations';
+        if (!is_dir($migrationDir)) {
+            mkdir($migrationDir, 0775, true);
+        }
+
+        $files = glob($migrationDir . DIRECTORY_SEPARATOR . '*.php') ?: [];
+        sort($files);
+
+        $executed = $this->executedMigrations($pdo);
+        $ran = 0;
+
+        foreach ($files as $file) {
+            $migrationName = basename($file);
+            if (isset($executed[$migrationName])) {
+                continue;
+            }
+
+            $instance = require $file;
+            if (!is_object($instance) || !method_exists($instance, 'up')) {
+                $this->write('Skipped invalid migration: ' . $migrationName);
+                continue;
+            }
+
+            try {
+                $pdo->beginTransaction();
+                $instance->up($pdo);
+                $stmt = $pdo->prepare('INSERT INTO migrations (migration) VALUES (:migration)');
+                $stmt->execute(['migration' => $migrationName]);
+                $pdo->commit();
+                $ran++;
+                $this->write('Migrated: ' . $migrationName);
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+
+                $this->write('Migration failed: ' . $migrationName);
+                $this->write($e->getMessage());
+                return 1;
+            }
+        }
+
+        if ($ran === 0) {
+            $this->write('Nothing to migrate.');
+            return 0;
+        }
+
+        $this->write('Migration completed. Ran ' . $ran . ' migration(s).');
+        return 0;
+    }
+
+    private function ensureMigrationTable(PDO $pdo): void
+    {
+        $driver = (string) $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+
+        $sql = match ($driver) {
+            'pgsql' => 'CREATE TABLE IF NOT EXISTS migrations (id BIGSERIAL PRIMARY KEY, migration VARCHAR(255) NOT NULL UNIQUE, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)',
+            default => 'CREATE TABLE IF NOT EXISTS migrations (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, migration VARCHAR(255) NOT NULL UNIQUE, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)',
+        };
+
+        $pdo->exec($sql);
+    }
+
+    /** @return array<string, true> */
+    private function executedMigrations(PDO $pdo): array
+    {
+        $stmt = $pdo->query('SELECT migration FROM migrations');
+        $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        $executed = [];
+        foreach ($rows as $migration) {
+            if (is_string($migration) && $migration !== '') {
+                $executed[$migration] = true;
+            }
+        }
+
+        return $executed;
+    }
+}
