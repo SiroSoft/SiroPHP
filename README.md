@@ -1,4 +1,4 @@
-# Siro API Framework v0.7.4
+# Siro API Framework v0.7.6
 
 Minimal, high-performance PHP micro-framework for REST APIs.
 
@@ -42,6 +42,7 @@ php siro migrate                  # Run database migrations
 php siro make:api users           # Generate API scaffold
 php siro make:controller User     # Create controller
 php siro make:migration posts     # Create migration
+php siro route:list               # List all routes (NEW in v0.7.6)
 php siro serve                    # Start development server
 php siro key:generate             # Generate JWT secret
 php siro doctor                   # Check environment
