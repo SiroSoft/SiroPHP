@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use Siro\Core\Cache;
-use Siro\Core\Database;
+use App\Models\User as UserModel;
 
 final class User
 {
@@ -15,15 +14,11 @@ final class User
             return false;
         }
 
-        $affected = Database::execute(
-            'UPDATE users SET token_version = token_version + 1 WHERE id = :id',
-            ['id' => $userId]
-        );
-
-        if ($affected > 0) {
-            Cache::flushQueryBuilderTable('users');
+        $user = UserModel::find($userId);
+        if ($user === null) {
+            return false;
         }
 
-        return $affected > 0;
+        return $user->update(['token_version' => ($user->token_version ?? 0) + 1]) > 0;
     }
 }

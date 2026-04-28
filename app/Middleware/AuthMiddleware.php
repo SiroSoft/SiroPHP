@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use App\Models\User;
 use Siro\Core\Auth\JWT;
-use Siro\Core\DB;
 use Siro\Core\Request;
 use Siro\Core\Response;
 use Throwable;
@@ -45,30 +45,28 @@ final class AuthMiddleware
                 ]);
             }
 
-            $user = DB::table('users')
-                ->select(['id', 'name', 'email', 'status', 'token_version', 'created_at'])
-                ->where('id', '=', $userId)
-                ->first();
+            $user = User::find($userId);
 
-            if ($user === null || (isset($user['status']) && (int) $user['status'] !== 1)) {
+            if ($user === null || ((int) $user->status !== 1)) {
                 return Response::error('Unauthorized', 401, [
                     'token' => ['User not found or inactive'],
                 ]);
             }
 
-            if ((int) ($user['token_version'] ?? 1) !== $tokenVersion) {
+            $userData = $user->toArray();
+            if ((int) ($userData['token_version'] ?? 1) !== $tokenVersion) {
                 return Response::error('Unauthorized', 401, [
                     'token' => ['Token has been revoked'],
                 ]);
             }
 
             $request->setUser([
-                'id' => (int) $user['id'],
-                'name' => (string) ($user['name'] ?? ''),
-                'email' => (string) ($user['email'] ?? ''),
-                'status' => (int) ($user['status'] ?? 0),
-                'token_version' => (int) ($user['token_version'] ?? 1),
-                'created_at' => (string) ($user['created_at'] ?? ''),
+                'id' => (int) $userData['id'],
+                'name' => (string) ($userData['name'] ?? ''),
+                'email' => (string) ($userData['email'] ?? ''),
+                'status' => (int) ($userData['status'] ?? 0),
+                'token_version' => (int) ($userData['token_version'] ?? 1),
+                'created_at' => (string) ($userData['created_at'] ?? ''),
                 'claims' => $claims,
             ]);
         } catch (Throwable) {
