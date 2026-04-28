@@ -1,4 +1,4 @@
-# Siro API Framework v0.7.6
+# Siro API Framework v0.7.7
 
 Minimal, high-performance PHP micro-framework for REST APIs.
 
@@ -144,6 +144,29 @@ Output includes:
 For detailed documentation and examples, visit:
 - Core Library: https://github.com/SiroSoft/siro-core
 - Main Repository: https://github.com/SiroSoft/SiroPHP
+
+## Testing (v0.7.7)
+
+Siro Core includes 142 comprehensive unit tests covering all core components.
+
+### Running Tests
+
+```bash
+cd vendor/sirosft/core
+./vendor/bin/phpunit
+```
+
+### Test Coverage
+
+- **Validator:** 27 tests - All validation rules
+- **Request:** 25 tests - Type-safe input helpers
+- **Response:** 17 tests - Response methods & status codes
+- **Router:** 18 tests - Route registration & matching
+- **Model:** 25 tests - ORM operations & relationships
+- **QueryBuilder:** 20 tests - Database query operations
+- **Resource:** 10 tests - Data transformation
+
+**Total: 142 unit tests** with PHPUnit infrastructure
 
 ## License
 
