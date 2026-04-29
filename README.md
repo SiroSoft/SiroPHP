@@ -1,4 +1,4 @@
-# Siro API Framework v0.8.6
+# Siro API Framework v0.8.7
 
 **The Fastest PHP Micro-Framework for API Development with Advanced Debugging**
 
@@ -39,7 +39,7 @@ Server starts at: **http://localhost:8080**
 
 ```bash
 curl http://localhost:8080/
-# {"message":"Welcome to Siro API","version":"0.8.6"}
+# {"message":"Welcome to Siro API","version":"0.8.7"}
 ```
 
 ### Option 2: Git Clone
@@ -183,6 +183,36 @@ curl -H "Accept-Language: vi" http://localhost:8000/
 ```bash
 php siro make:event UserCreated       # Generate event class
 ```
+
+### Storage, Validation & Performance (v0.8.7) 🚀
+
+**File Storage:**
+```php
+use Siro\Core\Storage;
+
+Storage::put('file.txt', 'content');
+$content = Storage::get('file.txt');
+Storage::delete('file.txt');
+$url = Storage::url('file.txt');
+```
+
+**Custom Validation:**
+```php
+use Siro\Core\Validator;
+
+Validator::extend('phone', function ($value, $field, $input, $param) {
+    return preg_match('/^\+?[0-9]{7,15}$/', (string) $value)
+        ? true
+        : ':field is not a valid phone number';
+});
+
+$request->validate(['phone' => 'required|phone']);
+```
+
+**Auto Gzip Compression:**
+- ✅ Automatic when client supports it
+- ✅ Reduces bandwidth by 60-80%
+- ✅ Zero configuration required
 
 **Basic Usage:**
 ```php
