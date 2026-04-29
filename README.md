@@ -1,6 +1,6 @@
-# Siro API Framework v0.8.7
+# Siro API Framework v0.8.8
 
-**The Fastest PHP Micro-Framework for API Development with Advanced Debugging**
+**The Fastest PHP Micro-Framework for API Development with Advanced Debugging & CLI Testing**
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
@@ -14,8 +14,8 @@
 **SiroPHP is designed for API developers who value:**
 
 - ⚡ **Speed** - <1ms request time, zero dependencies
-- 🔍 **Debug Fast** - Trace ID system, request replay, export capabilities
-- 🎯 **Ship Fast** - One-command auth, auto CRUD scaffolding
+- 🔍 **Debug Fast** - Trace ID system, request replay, CLI testing tool
+- 🎯 **Ship Fast** - One-command auth, auto CRUD scaffolding, `api:test` CLI
 - 🛡️ **Secure by Default** - Auto sanitization, rate limiting, CSRF protection
 - 💡 **Simple** - Read entire framework in one afternoon
 
@@ -39,7 +39,7 @@ Server starts at: **http://localhost:8080**
 
 ```bash
 curl http://localhost:8080/
-# {"message":"Welcome to Siro API","version":"0.8.7"}
+# {"message":"Welcome to Siro API","version":"0.8.8"}
 ```
 
 ### Option 2: Git Clone
@@ -99,6 +99,23 @@ php siro route:list                   # List all routes
 php siro serve                        # Start development server
 php siro key:generate                 # Generate APP_KEY
 php siro doctor                       # Check system health
+```
+
+### ⭐ API Testing (v0.8.8) - Replace Postman!
+```bash
+# Quick test endpoint
+php siro api:test GET /api/users
+
+# Test with auto-auth (login once, token saved)
+php siro api:test POST /auth/login email=admin@test.com password=123 --as=admin
+php siro api:test GET /users --as=admin              # Auto uses saved token
+php siro api:test POST /users name=John --as=admin   # Auto uses saved token
+
+# View request history
+php siro api:test --history
+
+# Custom headers & different port
+php siro api:test GET /api/data --header="X-Version: 2.0" --port=8080
 ```
 
 ### Storage & Scheduling (v0.8.3)
