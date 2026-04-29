@@ -11,6 +11,11 @@
 /storage/rate_limit/*
 /storage/*.db
 
+# Generated API documentation (kept locally only)
+/openapi.json
+/postman_collection.json
+*.csv
+
 # Archive documentation (kept locally only)
 /docs/archive/
 

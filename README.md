@@ -1,6 +1,6 @@
-# Siro API Framework v0.8.0
+# Siro API Framework v0.8.1
 
-**The Fastest PHP Micro-Framework for API Development with Advanced Debugging**
+**The Fastest PHP Micro-Framework for API Development with Advanced Debugging & Auto Documentation**
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
@@ -15,6 +15,7 @@
 
 - ⚡ **Speed** - <1ms request time, zero dependencies
 - 🔍 **Debug Fast** - Trace ID system, request replay, export capabilities
+- 📝 **Auto Docs** - Generate OpenAPI & Postman from your code
 - 🎯 **Ship Fast** - One-command auth, auto CRUD scaffolding
 - 🛡️ **Secure by Default** - Auto sanitization, rate limiting, CSRF protection
 - 💡 **Simple** - Read entire framework in one afternoon
@@ -39,7 +40,7 @@ Server starts at: **http://localhost:8080**
 
 ```bash
 curl http://localhost:8080/
-# {"message":"Welcome to Siro API","version":"0.8.0"}
+# {"message":"Welcome to Siro API","version":"0.8.1"}
 ```
 
 ### Option 2: Git Clone
@@ -101,6 +102,26 @@ php siro key:generate                 # Generate APP_KEY
 php siro doctor                       # Check system health
 ```
 
+### Auto Documentation (NEW in v0.8.1) 🌟
+```bash
+# Generate OpenAPI spec from routes + validation rules
+php siro make:openapi
+php siro make:openapi --flow=auth       # Only auth endpoints
+php siro make:openapi --tag=User        # Only User controller
+php siro make:openapi --method=POST     # Only POST requests
+php siro make:openapi --path=/api/users # Filter by path
+
+# Generate Postman collection with auto-login
+php siro make:postman
+php siro make:postman --flow=crud       # Only CRUD endpoints
+php siro make:postman --tag=User        # Only User controller
+php siro make:postman --method=GET      # Only GET requests
+
+# Output files:
+# - openapi.json (OpenAPI 3.0.3 spec)
+# - postman_collection.json (Postman v2.1.0 format)
+```
+
 ## Architecture
 
 Siro uses a **two-package architecture**:
@@ -142,6 +163,144 @@ php siro log:export --format=csv --output=traces.csv
 **Debug production issues in 30 seconds, not 30 minutes!**
 
 See core library docs: https://github.com/SiroSoft/siro-core#-advanced-debugging-system-v080
+
+## 📝 Auto Documentation (v0.8.1)
+
+### OpenAPI Specification Generator
+
+Automatically generate OpenAPI 3.0.3 specs from your routes and validation rules:
+
+```bash
+php siro make:openapi
+```
+
+**Features:**
+- ✅ **Route Extraction** - Scans all routes from `routes/api.php`
+- ✅ **Middleware Detection** - Identifies auth-protected endpoints
+- ✅ **Validation Rules Parsing** - Extracts `$request->validate()` rules
+- ✅ **Bearer JWT Security** - Adds security scheme for protected routes
+- ✅ **Smart Filtering** - Filter by tag, method, path, or flow
+- ✅ **Path Parameters** - Auto-detects `{id}` patterns
+- ✅ **Query Parameters** - Adds page/per_page for index endpoints
+- ✅ **Type Detection** - Converts validation rules to JSON Schema types
+
+**Example Output:**
+```json
+{
+  "paths": {
+    "/api/users": {
+      "post": {
+        "summary": "Store",
+        "operationId": "userStore",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string", "minLength": 3, "maxLength": 120},
+              "email": {"type": "string", "format": "email"},
+              "password": {"type": "string", "minLength": 6}
+            },
+            "required": ["name", "email", "password"]
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+**Filtering Examples:**
+```bash
+# Only authentication endpoints
+php siro make:openapi --flow=auth
+
+# Only CRUD operations (exclude auth)
+php siro make:openapi --flow=crud
+
+# Specific controller
+php siro make:openapi --tag=User
+
+# HTTP method filter
+php siro make:openapi --method=POST
+
+# Path prefix
+php siro make:openapi --path=/api/auth
+
+# Custom output file
+php siro make:openapi --output=docs/openapi.json
+```
+
+---
+
+### Postman Collection Generator
+
+Generate ready-to-use Postman collections with auto-login:
+
+```bash
+php siro make:postman
+```
+
+**Features:**
+- ✅ **Collection Variables** - `base_url` and `token` pre-configured
+- ✅ **Pre-request Script** - Auto-login to fetch bearer token
+- ✅ **Body Samples** - Smart examples from validation rules
+- ✅ **Path Parameters** - `{id}` converted to Postman `:id` format
+- ✅ **Headers** - Content-Type and Accept headers included
+- ✅ **Auth Detection** - Bearer token auth configured automatically
+- ✅ **Same Filters** - All OpenAPI filters supported
+
+**Auto-Login Script:**
+The generated collection includes a pre-request script that:
+1. Detects if token is missing
+2. Automatically calls `/api/auth/login`
+3. Extracts token from response
+4. Sets it as collection variable
+5. Skips login for auth endpoints themselves
+
+**Example Request:**
+```json
+{
+  "name": "POST /api/users",
+  "request": {
+    "method": "POST",
+    "url": {
+      "raw": "{{base_url}}/api/users"
+    },
+    "header": [
+      {"key": "Content-Type", "value": "application/json"},
+      {"key": "Accept", "value": "application/json"}
+    ],
+    "body": {
+      "mode": "raw",
+      "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"user@example.com\",\n  \"password\": \"secret123\"\n}"
+    }
+  }
+}
+```
+
+**Usage:**
+1. Import `postman_collection.json` into Postman
+2. Set `base_url` variable (default: http://localhost:8080)
+3. Run any request - token auto-fetched on first call!
+
+**Filtering Examples:**
+```bash
+# Auth flow only
+php siro make:postman --flow=auth
+
+# CRUD operations
+php siro make:postman --flow=crud
+
+# Specific controller
+php siro make:postman --tag=User
+
+# HTTP method
+php siro make:postman --method=GET
+
+# Custom output
+php siro make:postman --output=postman/dev-collection.json
+```
 
 ## Benchmark
 
@@ -237,6 +396,18 @@ For detailed documentation:
 
 ## 🎯 What's New
 
+### v0.8.1 - Auto Documentation System 🌟
+- 📝 **OpenAPI Generator** - `php siro make:openapi` generates OpenAPI 3.0.3 spec
+- 📮 **Postman Generator** - `php siro make:postman` with auto-login script
+- ✅ **Validation Parsing** - Extracts `$request->validate()` rules automatically
+- 🔐 **Security Detection** - Identifies auth middleware, adds Bearer JWT scheme
+- 🎯 **Smart Filtering** - Filter by tag, method, path, or flow (auth/crud)
+- 📊 **Type Inference** - Converts validation rules to JSON Schema types
+- 🔗 **Path Parameters** - Auto-detects `{id}` patterns in routes
+- 💡 **Body Examples** - Smart defaults from field names and rules
+
+**Generate API docs in 1 second, not 1 hour!**
+
 ### v0.8.0 - Advanced Debugging System 🌟
 - 🔍 **Trace ID per Request** - Every response includes `X-Siro-Trace-Id` header
 - 🔄 **Request Replay** - `php siro log:replay <id>` generates exact curl command
@@ -269,7 +440,7 @@ For detailed documentation:
 
 ---
 
-**Version:** 0.8.0  
+**Version:** 0.8.1  
 **Package:** sirosoft/api  
 **Type:** project  
 **Released:** April 29, 2026
