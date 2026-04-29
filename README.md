@@ -1,4 +1,4 @@
-# Siro API Framework v0.7.9
+# Siro API Framework v0.7.10
 
 Minimal, high-performance PHP micro-framework for REST APIs.
 
@@ -46,6 +46,9 @@ php siro make:seeder UserSeeder   # Create seeder (NEW in v0.7.8)
 php siro make:auth                # Generate full auth system (NEW in v0.7.9)
 php siro db:seed                  # Run seeders (NEW in v0.7.8)
 php siro route:list               # List all routes (table format)
+php siro config:cache             # Cache config for faster boot (NEW in v0.7.10)
+php siro env:check                # Validate environment config (NEW in v0.7.10)
+php siro optimize                 # Optimize for production (NEW in v0.7.10)
 php siro serve                    # Start development server
 php siro key:generate             # Generate JWT secret
 php siro doctor                   # Check environment
@@ -148,7 +151,7 @@ For detailed documentation and examples, visit:
 - Core Library: https://github.com/SiroSoft/siro-core
 - Main Repository: https://github.com/SiroSoft/SiroPHP
 
-## Testing (v0.7.9)
+## Testing (v0.7.10)
 
 Siro Core includes 142 comprehensive unit tests covering all core components.
 
@@ -170,6 +173,13 @@ cd vendor/sirosft/core
 - **Resource:** 10 tests - Data transformation
 
 **Total: 142 unit tests** with PHPUnit infrastructure
+
+### What's New in v0.7.10
+
+- ⚙️ **Config Caching** - Cache env + DB config for faster boot via `php siro config:cache`
+- 🩺 **Env Validation** - Comprehensive environment check with `php siro env:check`
+- 🚀 **Optimize Command** - One-command optimization with `php siro optimize`
+- 🔍 **Slow Query Logging** - Auto-detect queries > threshold (configurable via DB_SLOW_QUERY_THRESHOLD)
 
 ### What's New in v0.7.9
 
