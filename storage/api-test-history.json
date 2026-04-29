@@ -255,5 +255,49 @@
         "duration_ms": 5.4,
         "memory_mb": 2,
         "as": null
+    },
+    {
+        "time": "2026-04-29 23:42:41",
+        "method": "GET",
+        "path": "\/api\/users",
+        "fields": [],
+        "headers": [],
+        "status": 200,
+        "duration_ms": 46.2,
+        "memory_mb": 2,
+        "as": null
+    },
+    {
+        "time": "2026-04-29 23:42:42",
+        "method": "GET",
+        "path": "\/",
+        "fields": [],
+        "headers": [],
+        "status": 200,
+        "duration_ms": 17,
+        "memory_mb": 2,
+        "as": null
+    },
+    {
+        "time": "2026-04-29 23:50:01",
+        "method": "GET",
+        "path": "\/",
+        "fields": [],
+        "headers": [],
+        "status": 200,
+        "duration_ms": 7.6,
+        "memory_mb": 2,
+        "as": null
+    },
+    {
+        "time": "2026-04-29 23:50:02",
+        "method": "GET",
+        "path": "\/api\/users",
+        "fields": [],
+        "headers": [],
+        "status": 200,
+        "duration_ms": 9.7,
+        "memory_mb": 2,
+        "as": null
     }
 ]
