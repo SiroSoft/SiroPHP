@@ -1,4 +1,4 @@
-# Siro API Framework v0.8.5
+# Siro API Framework v0.8.6
 
 **The Fastest PHP Micro-Framework for API Development with Advanced Debugging**
 
@@ -39,7 +39,7 @@ Server starts at: **http://localhost:8080**
 
 ```bash
 curl http://localhost:8080/
-# {"message":"Welcome to Siro API","version":"0.8.5"}
+# {"message":"Welcome to Siro API","version":"0.8.6"}
 ```
 
 ### Option 2: Git Clone
@@ -177,6 +177,57 @@ curl http://localhost:8000/
 
 curl -H "Accept-Language: vi" http://localhost:8000/
 # {"message":"Chào mừng","locale":"vi"}
+```
+
+### Event System (v0.8.6) ⚡
+```bash
+php siro make:event UserCreated       # Generate event class
+```
+
+**Basic Usage:**
+```php
+use Siro\Core\Event;
+
+// Register listener
+Event::on('users.created', function ($user) {
+    Log::info('New user: ' . $user->email);
+});
+
+// Fire event
+Event::emit('users.created', $user);
+```
+
+**Model Lifecycle Events:**
+
+Models automatically fire events during CRUD operations:
+
+- **Create:** saving → creating → created → saved
+- **Update:** saving → updating → updated → saved  
+- **Delete:** deleting → deleted
+
+**Cancel Operations:**
+```php
+Event::on('users.creating', function ($user): bool {
+    if ($user->email === 'banned@example.com') {
+        return false; // Cancel creation
+    }
+    return true;
+});
+```
+
+**Event Classes:**
+```bash
+php siro make:event UserCreated
+# Creates app/Events/UserCreatedEvent.php
+```
+
+**Usage:**
+```php
+// Listen
+UserCreatedEvent::listen(fn($user) => ...);
+
+// Dispatch
+UserCreatedEvent::dispatch($user);
 ```
 
 ### Auto Documentation (v0.8.2) 
