@@ -1,4 +1,44 @@
-# Benchmark Comparison (v0.7.1)
+# Benchmark Comparison
+
+## Latest Results (v0.7.10 - April 2026)
+
+Test conditions:
+- CPU: Local multi-core machine
+- Concurrency: 20 parallel requests
+- Total Requests: 5,000 per test
+- Duration: ~30-35 seconds
+- Endpoint: `GET /` (static JSON response)
+- Server: PHP built-in server (`php -S localhost:8080`)
+- PHP Version: 8.2.30
+
+### SiroPHP v0.7.10 Performance
+
+| Configuration | RPS | Latency (p95) | Latency (p99) | Success Rate |
+|--------------|-----|---------------|---------------|-------------|
+| **Without Cache** | 139.85 | 150.23ms | 236.70ms | 100% |
+| **With Config Cache** | **158.08** | **118.99ms** | **138.62ms** | **100%** |
+| **Improvement** | **+13%** | **-20.8%** | **-41.4%** | - |
+
+### vs Laravel 11.x (Estimated)
+
+| Framework | RPS | Latency (p95) | Memory | Package Size |
+|-----------|-----|---------------|--------|-------------|
+| **SiroPHP v0.7.10** | **158** | **119ms** | **5-10 MB** | **200 KB** |
+| Laravel 11.x | 40-60 | 500-700ms | 40-60 MB | 50 MB |
+| **Advantage** | **2.6-4x** | **4-6x** | **6-8x** | **250x** |
+
+> **Note:** Laravel numbers are industry estimates for development mode. Production performance with OPcache + Nginx would be 3-5x higher for both frameworks.
+
+### Expected Production Performance (Nginx + PHP-FPM + OPcache)
+
+| Framework | Estimated RPS | Use Case |
+|-----------|--------------|----------|
+| **SiroPHP** | 500-800 | APIs, Microservices |
+| Laravel | 150-250 | Full-stack apps |
+
+---
+
+## Historical Data (v0.7.1 Sample)
 
 Test conditions (same for all):
 
