@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/**
+ * API route definitions.
+ *
+ * Defines all application routes using the Router instance.
+ * Routes are organized into groups with CORS middleware.
+ *
+ * @package App
+ */
+
 use App\Controllers\UserController;
 use App\Controllers\AuthController;
 use App\Middleware\CorsMiddleware;
@@ -13,7 +22,7 @@ $app->router->get('/', function (): array {
         'message' => 'Siro API Framework is running',
         'data' => [
             'name' => 'Siro API Framework',
-            'version' => '0.7.9',
+            'version' => '0.8.1',
             'php' => PHP_VERSION,
         ],
         'meta' => [],

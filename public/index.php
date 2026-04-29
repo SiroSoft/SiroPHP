@@ -2,6 +2,16 @@
 
 declare(strict_types=1);
 
+/**
+ * HTTP entry point.
+ *
+ * Boots the application, loads routes, and dispatches
+ * the incoming request. All requests should be rewritten
+ * to this file (e.g., via .htaccess or nginx config).
+ *
+ * @package App
+ */
+
 use Siro\Core\App;
 
 define('BASE_PATH', dirname(__DIR__));

@@ -8,6 +8,15 @@ use Siro\Core\Env;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
+/**
+ * CORS middleware.
+ *
+ * Handles CORS preflight OPTIONS requests and appends
+ * Access-Control-* headers to all responses. Supports specific
+ * origin resolution and credentials.
+ *
+ * @package App\Middleware
+ */
 final class CorsMiddleware
 {
     public function handle(Request $request, callable $next): mixed

@@ -6,6 +6,14 @@ namespace App\Models;
 
 use Siro\Core\Model;
 
+/**
+ * User model.
+ *
+ * Represents the users table with hidden password field,
+ * integer casts, and mass-assignment fillable fields.
+ *
+ * @package App\Models
+ */
 final class User extends Model
 {
     protected string $table = 'users';

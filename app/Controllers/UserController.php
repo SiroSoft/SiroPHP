@@ -9,6 +9,14 @@ use App\Resources\UserResource;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
+/**
+ * User CRUD controller.
+ *
+ * Provides standard REST operations: index, show, store,
+ * update, destroy for the User model.
+ *
+ * @package App\Controllers
+ */
 final class UserController
 {
     public function index(Request $request): Response

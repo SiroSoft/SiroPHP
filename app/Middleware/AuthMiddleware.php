@@ -10,6 +10,15 @@ use Siro\Core\Request;
 use Siro\Core\Response;
 use Throwable;
 
+/**
+ * JWT authentication middleware.
+ *
+ * Extracts Bearer token from Authorization header, decodes JWT,
+ * verifies user exists and token version matches, then sets
+ * authenticated user data on the request.
+ *
+ * @package App\Middleware
+ */
 final class AuthMiddleware
 {
     public function handle(Request $request, callable $next): Response

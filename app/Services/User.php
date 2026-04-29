@@ -6,6 +6,14 @@ namespace App\Services;
 
 use App\Models\User as UserModel;
 
+/**
+ * User service layer.
+ *
+ * Provides business logic operations on User models,
+ * such as token version incrementation for logout.
+ *
+ * @package App\Services
+ */
 final class User
 {
     public static function incrementTokenVersion(int $userId): bool

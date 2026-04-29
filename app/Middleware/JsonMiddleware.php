@@ -7,6 +7,14 @@ namespace App\Middleware;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
+/**
+ * JSON content-type validation middleware.
+ *
+ * Validates that POST/PUT/PATCH requests have Content-Type:
+ * application/json and that the body is valid JSON.
+ *
+ * @package App\Middleware
+ */
 final class JsonMiddleware
 {
     public function handle(Request $request, callable $next): mixed

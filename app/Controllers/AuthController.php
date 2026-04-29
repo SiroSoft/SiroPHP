@@ -13,6 +13,14 @@ use Siro\Core\Request;
 use Siro\Core\Response;
 use Throwable;
 
+/**
+ * Authentication controller.
+ *
+ * Handles user registration, login, token refresh, logout,
+ * email verification, forgot-password, and reset-password flows.
+ *
+ * @package App\Controllers
+ */
 final class AuthController
 {
     public function register(Request $request): Response

@@ -6,6 +6,14 @@ namespace App\Resources;
 
 use Siro\Core\Resource;
 
+/**
+ * User API resource transformer.
+ *
+ * Maps User model data to a structured API response,
+ * exposing id, name, email, and created_at fields.
+ *
+ * @package App\Resources
+ */
 final class UserResource extends Resource
 {
     /** @return array<string, mixed> */
