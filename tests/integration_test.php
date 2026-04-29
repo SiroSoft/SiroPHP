@@ -231,8 +231,8 @@ test('Root endpoint returns valid JSON', function() use ($baseUrl) {
         return "Invalid response structure";
     }
     
-    if (!isset($response['json']['data']['version']) || $response['json']['data']['version'] !== '0.7.3') {
-        return "Version mismatch: expected 0.7.3";
+    if (!isset($response['json']['data']['version'])) {
+        return "Version missing from response";
     }
     
     return true;

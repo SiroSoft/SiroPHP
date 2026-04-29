@@ -1,4 +1,4 @@
-# Siro API Framework v0.7.7
+# Siro API Framework v0.7.8
 
 Minimal, high-performance PHP micro-framework for REST APIs.
 
@@ -42,7 +42,9 @@ php siro migrate                  # Run database migrations
 php siro make:api users           # Generate API scaffold
 php siro make:controller User     # Create controller
 php siro make:migration posts     # Create migration
-php siro route:list               # List all routes (NEW in v0.7.6)
+php siro make:seeder UserSeeder   # Create seeder (NEW in v0.7.8)
+php siro db:seed                  # Run seeders (NEW in v0.7.8)
+php siro route:list               # List all routes (table format)
 php siro serve                    # Start development server
 php siro key:generate             # Generate JWT secret
 php siro doctor                   # Check environment
@@ -145,7 +147,7 @@ For detailed documentation and examples, visit:
 - Core Library: https://github.com/SiroSoft/siro-core
 - Main Repository: https://github.com/SiroSoft/SiroPHP
 
-## Testing (v0.7.7)
+## Testing (v0.7.8)
 
 Siro Core includes 142 comprehensive unit tests covering all core components.
 
@@ -167,6 +169,14 @@ cd vendor/sirosft/core
 - **Resource:** 10 tests - Data transformation
 
 **Total: 142 unit tests** with PHPUnit infrastructure
+
+### What's New in v0.7.8
+
+- 📊 **Enhanced QueryBuilder** - whereBetween, whereNull, pluck, chunk, exists, inRandomOrder, dump/dd/toSql
+- ⚡ **Model Shortcuts** - findOrFail, firstOrCreate, firstOrNew, updateOrCreate
+- 🎨 **Fluent Response** - Chainable header() and withHeaders() methods
+- 🌱 **Database Seeders** - Built-in seeder system with make:seeder and db:seed commands
+- 📋 **Table Output** - Improved CLI output for route:list and migrate:status
 
 ## License
 

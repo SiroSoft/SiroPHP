@@ -13,7 +13,7 @@ $app->router->get('/', function (): array {
         'message' => 'Siro API Framework v0.7.5 is running',
         'data' => [
             'name' => 'Siro API Framework',
-            'version' => '0.7.5',
+            'version' => '0.7.8',
             'php' => PHP_VERSION,
         ],
         'meta' => [],
