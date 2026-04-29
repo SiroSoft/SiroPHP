@@ -1,4 +1,4 @@
-# Siro API Framework v0.8.3
+# Siro API Framework v0.8.4
 
 **The Fastest PHP Micro-Framework for API Development with Advanced Debugging**
 
@@ -39,7 +39,7 @@ Server starts at: **http://localhost:8080**
 
 ```bash
 curl http://localhost:8080/
-# {"message":"Welcome to Siro API","version":"0.8.3"}
+# {"message":"Welcome to Siro API","version":"0.8.4"}
 ```
 
 ### Option 2: Git Clone
@@ -101,7 +101,7 @@ php siro key:generate                 # Generate APP_KEY
 php siro doctor                       # Check system health
 ```
 
-### Storage & Scheduling (v0.8.3) 🕒
+### Storage & Scheduling (v0.8.3)
 ```bash
 php siro storage:link                 # Create symlink for uploaded files
 php siro schedule:run                 # Run scheduled tasks (for crontab)
@@ -128,6 +128,15 @@ $schedule->command('report:weekly')->cron('0 6 * * 1');
 
 // Call class method
 $schedule->call([\App\Crons\HealthCheck::class, 'run'])->hourly();
+```
+
+### Queue & Mail (v0.8.4) 📧
+```bash
+php siro queue:work                   # Process queued jobs
+php siro queue:work --daemon          # Run worker continuously
+php siro queue:status                 # Show queue status
+php siro queue:retry <id>             # Retry failed job
+php siro queue:flush                  # Clear failed jobs
 ```
 
 ### Auto Documentation (v0.8.2) 
