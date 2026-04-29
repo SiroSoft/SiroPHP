@@ -1,4 +1,4 @@
-# Siro API Framework v0.8.0
+# Siro API Framework v0.8.2
 
 **The Fastest PHP Micro-Framework for API Development with Advanced Debugging**
 
@@ -39,7 +39,7 @@ Server starts at: **http://localhost:8080**
 
 ```bash
 curl http://localhost:8080/
-# {"message":"Welcome to Siro API","version":"0.8.0"}
+# {"message":"Welcome to Siro API","version":"0.8.2"}
 ```
 
 ### Option 2: Git Clone
@@ -76,7 +76,7 @@ php siro db:seed                      # Run all seeders
 php siro db:seed UserSeeder           # Run specific seeder
 ```
 
-### Debugging (NEW in v0.8.0) 🌟
+### Debugging (v0.8.0) 🔍
 ```bash
 php siro log:trace <trace_id>         # View trace details
 php siro log:trace --status=500       # Filter by status
@@ -101,7 +101,7 @@ php siro key:generate                 # Generate APP_KEY
 php siro doctor                       # Check system health
 ```
 
-### Auto Documentation (NEW in v0.8.1) 🌟
+### Auto Documentation (v0.8.2) 
 ```bash
 # Generate complete API documentation with Swagger UI
 php siro make:docs
@@ -172,7 +172,7 @@ php siro log:export --format=csv --output=traces.csv
 
 See core library docs: https://github.com/SiroSoft/siro-core#-advanced-debugging-system-v080
 
-## 📝 Auto Documentation (v0.8.1)
+## 📝 Auto Documentation (v0.8.2)
 
 ### One-Command Documentation Generation
 
@@ -337,7 +337,7 @@ Output includes:
 - 📦 **Resource Transformation** - Auto-mapping for API responses
 - 🔤 **Typed Input Helpers** - Type-safe request data handling
 
-### Advanced Debugging (NEW in v0.8.0) 🌟
+### Advanced Debugging (v0.8.0) 
 - 🔍 **Trace ID per Request** - Every request gets unique `X-Siro-Trace-Id`
 - 🔄 **Request Replay** - `php siro log:replay <id>` generates curl command
 - 📤 **Export Traces** - `php siro log:export --format=json|csv`
@@ -368,7 +368,21 @@ For detailed documentation:
 
 ## 🎯 What's New
 
-### v0.8.0 - Advanced Debugging System 🌟
+### v0.8.2 - Auto Documentation with Swagger UI 
+- 📝 **make:docs Command** - Generate complete API docs with Swagger UI in one command
+- 📂 **Smart Folder Structure** - docs/openapi/, docs/postman/, docs/swagger/
+-  **Live Swagger UI** - Served at http://localhost:8080/docs.html
+-  **Postman Collections** - Auto-generated with pre-request scripts
+- 🔍 **Validation Parsing** - Extracts $request->validate() rules automatically
+- 🔐 **Security Detection** - Identifies auth middleware, adds Bearer JWT scheme
+- 🎯 **Smart Filtering** - Filter by tag, method, path, or flow (auth/crud)
+- 📊 **Type Inference** - Converts validation rules to JSON Schema types
+-  **Path Parameters** - Auto-detects {id} patterns in routes
+- 💡 **Body Examples** - Smart defaults from field names and rules
+
+**Generate API docs in 1 second, not 1 hour!**
+
+### v0.8.0 - Advanced Debugging System 🔍
 - 🔍 **Trace ID per Request** - Every response includes `X-Siro-Trace-Id` header
 - 🔄 **Request Replay** - `php siro log:replay <id>` generates exact curl command
 - 📤 **Export Traces** - `php siro log:export --format=json|csv`
