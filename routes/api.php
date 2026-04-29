@@ -15,15 +15,17 @@ use App\Controllers\UserController;
 use App\Controllers\AuthController;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\JsonMiddleware;
+use Siro\Core\Lang;
 
 $app->router->get('/', function (): array {
     return [
         'success' => true,
-        'message' => 'Siro API Framework is running',
+        'message' => Lang::get('messages.welcome'),
         'data' => [
             'name' => 'Siro API Framework',
-            'version' => '0.8.1',
+            'version' => '0.8.5',
             'php' => PHP_VERSION,
+            'locale' => Lang::locale(),
         ],
         'meta' => [],
     ];

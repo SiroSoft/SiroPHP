@@ -1,4 +1,4 @@
-# Siro API Framework v0.8.4
+# Siro API Framework v0.8.5
 
 **The Fastest PHP Micro-Framework for API Development with Advanced Debugging**
 
@@ -39,7 +39,7 @@ Server starts at: **http://localhost:8080**
 
 ```bash
 curl http://localhost:8080/
-# {"message":"Welcome to Siro API","version":"0.8.4"}
+# {"message":"Welcome to Siro API","version":"0.8.5"}
 ```
 
 ### Option 2: Git Clone
@@ -137,6 +137,46 @@ php siro queue:work --daemon          # Run worker continuously
 php siro queue:status                 # Show queue status
 php siro queue:retry <id>             # Retry failed job
 php siro queue:flush                  # Clear failed jobs
+```
+
+### Multi-language (v0.8.5) 🌍
+```bash
+php siro make:lang vi                 # Create Vietnamese language pack
+php siro make:lang fr                 # Create French language pack
+```
+
+**Configuration (.env):**
+```env
+APP_LOCALE=en              # Default locale
+APP_FALLBACK_LOCALE=en     # Fallback when key is missing
+```
+
+**Usage:**
+```php
+use Siro\Core\Lang;
+
+// Get translation
+$message = Lang::get('messages.welcome');  // "Welcome" or "Chào mừng"
+
+// With parameters
+$error = Lang::get('validation.required', ['field' => 'Email']);
+
+// Pluralization
+$apples = Lang::plural('messages.apples', 5);  // "5 apples"
+```
+
+**Auto Locale Detection:**
+- `X-Locale` header (for API testing)
+- `Accept-Language` header (browser default)
+- Falls back to `APP_LOCALE` env variable
+
+**Test:**
+```bash
+curl http://localhost:8000/
+# {"message":"Welcome","locale":"en"}
+
+curl -H "Accept-Language: vi" http://localhost:8000/
+# {"message":"Chào mừng","locale":"vi"}
 ```
 
 ### Auto Documentation (v0.8.2) 
