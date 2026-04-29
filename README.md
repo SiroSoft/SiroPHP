@@ -1,4 +1,4 @@
-# Siro API Framework v0.8.2
+# Siro API Framework v0.8.3
 
 **The Fastest PHP Micro-Framework for API Development with Advanced Debugging**
 
@@ -39,7 +39,7 @@ Server starts at: **http://localhost:8080**
 
 ```bash
 curl http://localhost:8080/
-# {"message":"Welcome to Siro API","version":"0.8.2"}
+# {"message":"Welcome to Siro API","version":"0.8.3"}
 ```
 
 ### Option 2: Git Clone
@@ -99,6 +99,35 @@ php siro route:list                   # List all routes
 php siro serve                        # Start development server
 php siro key:generate                 # Generate APP_KEY
 php siro doctor                       # Check system health
+```
+
+### Storage & Scheduling (v0.8.3) 🕒
+```bash
+php siro storage:link                 # Create symlink for uploaded files
+php siro schedule:run                 # Run scheduled tasks (for crontab)
+```
+
+**Setup Crontab:**
+```bash
+# Add to crontab to run scheduler every minute
+* * * * * cd /path/to/project && php siro schedule:run
+```
+
+**Define Tasks** in `routes/schedule.php`:
+```php
+// Run command daily
+$schedule->command('db:seed UserSeeder')->daily();
+
+// Run closure hourly
+$schedule->call(function () {
+    // Clean old logs
+})->hourly();
+
+// Custom cron expression
+$schedule->command('report:weekly')->cron('0 6 * * 1');
+
+// Call class method
+$schedule->call([\App\Crons\HealthCheck::class, 'run'])->hourly();
 ```
 
 ### Auto Documentation (v0.8.2) 
