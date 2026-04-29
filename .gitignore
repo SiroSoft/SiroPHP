@@ -16,6 +16,11 @@
 /postman_collection.json
 *.csv
 
+# Documentation source (tracked)
+!/docs/openapi/
+!/docs/postman/
+!/docs/swagger/
+
 # Archive documentation (kept locally only)
 /docs/archive/
 
@@ -23,6 +28,10 @@
 /.cline/
 .vscode/
 .idea/
+
+# Generated files in public (kept locally only)
+/public/openapi.json
+/public/docs.html
 
 .DS_Store
 Thumbs.db
