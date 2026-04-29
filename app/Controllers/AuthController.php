@@ -25,8 +25,9 @@ final class AuthController
 
         $email = strtolower(trim($request->string('email')));
 
-        $existing = User::where('email', '=', $email)->first();
-        if ($existing !== null) {
+        // Check if email already exists
+        $rows = User::where('email', '=', $email)->limit(1)->get();
+        if ($rows !== []) {
             return Response::error('Validation failed', 422, [
                 'email' => ['Email has already been taken'],
             ]);
@@ -74,27 +75,21 @@ final class AuthController
 
         $email = strtolower(trim($request->string('email')));
         $rows = User::where('email', '=', $email)->limit(1)->get();
-        $user = $rows[0] ?? null;
+        $userData = $rows[0] ?? null;
 
-        if ($user === null) {
+        if ($userData === null || !isset($userData['password']) || !is_string($userData['password'])) {
             return Response::error('Invalid credentials', 401);
         }
 
-        $password = $user->password;
-        if (!is_string($password) || $password === '') {
-            return Response::error('Invalid credentials', 401);
-        }
-
-        if ((int) $user->status !== 1) {
+        if ((int) ($userData['status'] ?? 0) !== 1) {
             return Response::error('Account is inactive', 403);
         }
 
-        if (!password_verify($request->string('password'), $password)) {
+        if (!password_verify($request->string('password'), $userData['password'])) {
             return Response::error('Invalid credentials', 401);
         }
 
-        $userId = (int) $user->id;
-        $userData = $user->toArray();
+        $userId = (int) $userData['id'];
         $tokens = $this->tokenPair($userId);
 
         return Response::success([
@@ -190,7 +185,10 @@ final class AuthController
         $request->validate(['token' => 'required']);
 
         $token = $request->string('token');
-        $user = User::where('verification_token', '=', $token)->first();
+        
+        // Find user by verification token and hydrate to Model
+        $rows = User::where('verification_token', '=', $token)->limit(1)->get();
+        $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
 
         if ($user === null) {
             return Response::error('Invalid verification token', 400);
@@ -209,7 +207,10 @@ final class AuthController
         $request->validate(['email' => 'required|email']);
 
         $email = strtolower(trim($request->string('email')));
-        $user = User::where('email', '=', $email)->first();
+        
+        // Find user by email and hydrate to Model
+        $rows = User::where('email', '=', $email)->limit(1)->get();
+        $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
 
         if ($user !== null) {
             $resetToken = bin2hex(random_bytes(32));
@@ -231,7 +232,10 @@ final class AuthController
         ]);
 
         $token = $request->string('token');
-        $user = User::where('password_reset_token', '=', $token)->first();
+        
+        // Find user by reset token and hydrate to Model
+        $rows = User::where('password_reset_token', '=', $token)->limit(1)->get();
+        $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
 
         if ($user === null) {
             return Response::error('Invalid or expired reset token', 400);

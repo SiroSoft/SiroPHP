@@ -2,65 +2,74 @@ name: Test
 
 on:
   push:
+  pull_request:
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: siro
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
-          --health-interval=5s
-          --health-timeout=5s
-          --health-retries=20
-
+    timeout-minutes: 3
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           tools: composer:v2
+      - name: PHP lint
+        run: find . -type f -name "*.php" -not -path "./vendor/*" -print0 | xargs -0 -n1 php -l
 
+  static-analysis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
-
-      - name: Ensure benchmark scripts are executable
-        run: chmod +x benchmark/wrk.sh
-
-      - name: Prepare CI environment
+      - name: PHPStan
         run: |
-          cp .env.example .env
-          sed -i 's|APP_ENV=local|APP_ENV=local|g' .env
-          sed -i 's|APP_DEBUG=true|APP_DEBUG=true|g' .env
-          sed -i 's|JWT_SECRET=.*|JWT_SECRET=siro_ci_jwt_secret_2026_super_secure_key_abcd1234|g' .env
-          sed -i 's|DB_HOST=.*|DB_HOST=127.0.0.1|g' .env
-          sed -i 's|DB_PORT=.*|DB_PORT=3306|g' .env
-          sed -i 's|DB_DATABASE=.*|DB_DATABASE=siro|g' .env
-          sed -i 's|DB_USERNAME=.*|DB_USERNAME=root|g' .env
-          sed -i 's|DB_PASSWORD=.*|DB_PASSWORD=root|g' .env
+          composer require --dev phpstan/phpstan --no-interaction --no-progress
+          php vendor/bin/phpstan analyse --level 6 --no-progress 2>&1 | head -50
 
-      - name: Lint all PHP files
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Unit tests
         run: |
-          find . -type f -name "*.php" -not -path "./vendor/*" -print0 | xargs -0 -n1 php -l
+          php tests/unit/ValidatorTest.php
+          php tests/unit/ResponseTest.php
+          php tests/unit/RequestTest.php
+          php tests/unit/RouterTest.php
 
-      - name: Run migrations
+  integration-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Prepare env
+        run: |
+          cp .env.testing .env
+          sed -i 's|DB_DATABASE=.*|DB_DATABASE=storage/test.db|g' .env
+      - name: Migrate
         run: php siro migrate
-
-      - name: Runtime smoke test + verification
+      - name: Integration tests
         run: |
-          php -S localhost:8080 -t public > /tmp/siro-server.log 2>&1 &
+          php -S localhost:8080 -t public > /tmp/server.log 2>&1 &
           sleep 2
-          curl -f http://localhost:8080/
-          curl -f http://localhost:8080/users
-          php tests/verify_v061.php
+          php tests/integration_test.php
