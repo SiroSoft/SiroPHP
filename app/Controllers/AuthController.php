@@ -74,21 +74,27 @@ final class AuthController
 
         $email = strtolower(trim($request->string('email')));
         $rows = User::where('email', '=', $email)->limit(1)->get();
-        $userData = $rows[0] ?? null;
+        $user = $rows[0] ?? null;
 
-        if ($userData === null || !isset($userData['password']) || !is_string($userData['password'])) {
+        if ($user === null) {
             return Response::error('Invalid credentials', 401);
         }
 
-        if ((int) ($userData['status'] ?? 0) !== 1) {
+        $password = $user->password;
+        if (!is_string($password) || $password === '') {
+            return Response::error('Invalid credentials', 401);
+        }
+
+        if ((int) $user->status !== 1) {
             return Response::error('Account is inactive', 403);
         }
 
-        if (!password_verify($request->string('password'), $userData['password'])) {
+        if (!password_verify($request->string('password'), $password)) {
             return Response::error('Invalid credentials', 401);
         }
 
-        $userId = (int) $userData['id'];
+        $userId = (int) $user->id;
+        $userData = $user->toArray();
         $tokens = $this->tokenPair($userId);
 
         return Response::success([
@@ -98,8 +104,8 @@ final class AuthController
             'expires_in' => $tokens['ttl'],
             'user' => [
                 'id' => $userId,
-                'name' => (string) ($userData['name'] ?? ''),
-                'email' => (string) ($userData['email'] ?? ''),
+                'name' => $userData['name'] ?? '',
+                'email' => $userData['email'] ?? '',
             ],
         ], 'Login successful');
     }

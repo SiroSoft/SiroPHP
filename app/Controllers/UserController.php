@@ -44,7 +44,8 @@ final class UserController
 
         $email = strtolower(trim($request->string('email')));
 
-        $existing = User::where('email', '=', $email)->first();
+        $rows = User::where('email', '=', $email)->limit(1)->get();
+        $existing = $rows[0] ?? null;
         if ($existing !== null) {
             return Response::error('Validation failed', 422, [
                 'email' => ['Email has already been taken'],
