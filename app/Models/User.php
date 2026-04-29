@@ -21,5 +21,15 @@ final class User extends Model
     ];
 
     /** @var array<int, string> */
-    protected array $fillable = ['name', 'email', 'password', 'status', 'token_version'];
+    protected array $fillable = [
+        'name',
+        'email',
+        'password',
+        'status',
+        'token_version',
+        'email_verified_at',
+        'verification_token',
+        'password_reset_token',
+        'password_reset_expires_at',
+    ];
 }

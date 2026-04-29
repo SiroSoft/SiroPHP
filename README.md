@@ -1,4 +1,4 @@
-# Siro API Framework v0.7.8
+# Siro API Framework v0.7.9
 
 Minimal, high-performance PHP micro-framework for REST APIs.
 
@@ -43,6 +43,7 @@ php siro make:api users           # Generate API scaffold
 php siro make:controller User     # Create controller
 php siro make:migration posts     # Create migration
 php siro make:seeder UserSeeder   # Create seeder (NEW in v0.7.8)
+php siro make:auth                # Generate full auth system (NEW in v0.7.9)
 php siro db:seed                  # Run seeders (NEW in v0.7.8)
 php siro route:list               # List all routes (table format)
 php siro serve                    # Start development server
@@ -147,7 +148,7 @@ For detailed documentation and examples, visit:
 - Core Library: https://github.com/SiroSoft/siro-core
 - Main Repository: https://github.com/SiroSoft/SiroPHP
 
-## Testing (v0.7.8)
+## Testing (v0.7.9)
 
 Siro Core includes 142 comprehensive unit tests covering all core components.
 
@@ -169,6 +170,13 @@ cd vendor/sirosft/core
 - **Resource:** 10 tests - Data transformation
 
 **Total: 142 unit tests** with PHPUnit infrastructure
+
+### What's New in v0.7.9
+
+- 🔐 **Complete Auth System** - JWT refresh tokens, email verification, password reset via `php siro make:auth`
+- 🛡️ **Rate Limiting** - Per-route throttling with `->throttle(maxAttempts, decayMinutes)` method
+- 🔒 **CSRF Protection** - Built-in CSRF middleware for form/API security
+- ⚡ **Security Headers** - Automatic rate limit headers (X-RateLimit-Limit, X-RateLimit-Remaining, Retry-After)
 
 ### What's New in v0.7.8
 

@@ -10,10 +10,10 @@ use App\Middleware\JsonMiddleware;
 $app->router->get('/', function (): array {
     return [
         'success' => true,
-        'message' => 'Siro API Framework v0.7.5 is running',
+        'message' => 'Siro API Framework is running',
         'data' => [
             'name' => 'Siro API Framework',
-            'version' => '0.7.8',
+            'version' => '0.7.9',
             'php' => PHP_VERSION,
         ],
         'meta' => [],
@@ -21,18 +21,33 @@ $app->router->get('/', function (): array {
 });
 
 $app->router->group('/api', [CorsMiddleware::class], function ($router): void {
+    // Public auth routes
     $router->post('/auth/register', [AuthController::class, 'register'])
         ->middleware([JsonMiddleware::class, 'throttle:30,1']);
 
     $router->post('/auth/login', [AuthController::class, 'login'])
         ->middleware([JsonMiddleware::class, 'throttle:60,1']);
 
+    $router->post('/auth/refresh', [AuthController::class, 'refresh'])
+        ->middleware([JsonMiddleware::class, 'throttle:30,1']);
+
+    $router->post('/auth/forgot-password', [AuthController::class, 'forgotPassword'])
+        ->middleware([JsonMiddleware::class, 'throttle:10,1']);
+
+    $router->post('/auth/reset-password', [AuthController::class, 'resetPassword'])
+        ->middleware([JsonMiddleware::class, 'throttle:10,1']);
+
+    $router->post('/auth/verify-email', [AuthController::class, 'verifyEmail'])
+        ->middleware([JsonMiddleware::class, 'throttle:10,1']);
+
+    // Protected auth routes
     $router->get('/auth/me', [AuthController::class, 'me'])
         ->middleware(['auth', 'throttle:120,1']);
 
     $router->post('/auth/logout', [AuthController::class, 'logout'])
         ->middleware(['auth', 'throttle:60,1']);
 
+    // CRUD routes
     $router->get('/users', [UserController::class, 'index'])->cache(60);
     $router->get('/users/{id}', [UserController::class, 'show'])->cache(60);
 
