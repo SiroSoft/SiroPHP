@@ -5,7 +5,7 @@ declare(strict_types=1);
 return new class {
     public function up(\PDO $db): void
     {
-        $db->exec("CREATE TABLE IF NOT EXISTS categorys (
+        $db->exec("CREATE TABLE IF NOT EXISTS categories (
             id BIGINT PRIMARY KEY AUTO_INCREMENT,
             name VARCHAR(255) NOT NULL,
             
@@ -16,6 +16,6 @@ return new class {
 
     public function down(\PDO $db): void
     {
-        $db->exec("DROP TABLE IF EXISTS categorys");
+        $db->exec("DROP TABLE IF EXISTS categories");
     }
 };

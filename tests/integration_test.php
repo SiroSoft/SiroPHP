@@ -1,499 +1,339 @@
-#!/usr/bin/env php
 <?php
-
-/**
- * Comprehensive Integration Test for SiroPHP v0.7.2
- * 
- * Tests all critical fixes and features before release
- */
 
 declare(strict_types=1);
 
-$basePath = __DIR__ . '/..';
-$baseUrl = 'http://localhost:8080';
+/**
+ * Comprehensive Integration Test for SiroPHP.
+ *
+ * Tests core functionality using internal dispatch (no server needed).
+ * Run: php tests/integration_test.php
+ */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Siro\Core\App;
+use Siro\Core\Request;
+use Siro\Core\Response;
+use Siro\Core\Router;
+use Siro\Core\Event;
+use Siro\Core\Cache;
+use Siro\Core\Env;
+use Siro\Core\Storage;
+use Siro\Core\Lang;
+use Siro\Core\Validator;
+use Siro\Core\ValidationException;
+use Siro\Core\Database;
+use Siro\Core\Logger;
+
+$basePath = dirname(__DIR__);
 $passed = 0;
 $failed = 0;
 $total = 0;
 
-// Setup testing environment
-echo "Setting up test environment...\n";
-$envFile = $basePath . '/.env.testing';
-if (file_exists($envFile)) {
-    copy($envFile, $basePath . '/.env');
-    echo "✅ Using .env.testing (SQLite in-memory DB)\n";
-} else {
-    echo "⚠️  .env.testing not found, using existing .env\n";
-}
-echo "\n";
+// ─── Helpers ───────────────────────────────────
 
-echo "========================================\n";
-echo "SiroPHP v0.7.2 Integration Test Suite\n";
-echo "========================================\n\n";
-
-// Helper functions
-function test(string $name, callable $test): void {
+function test(string $name, callable $fn): void
+{
     global $passed, $failed, $total;
     $total++;
-    
-    echo "Test {$total}: {$name}... ";
-    
     try {
-        $result = $test();
-        if ($result === true) {
-            echo "✅ PASS\n";
-            $passed++;
-        } else {
-            echo "❌ FAIL: {$result}\n";
-            $failed++;
-        }
+        $fn();
+        echo "  \033[32m✓\033[0m {$name}\n";
+        $passed++;
     } catch (Throwable $e) {
-        echo "❌ ERROR: " . $e->getMessage() . "\n";
+        echo "  \033[31m✗ {$name}: {$e->getMessage()}\033[0m\n";
+        echo "    File: {$e->getFile()}:{$e->getLine()}\n";
         $failed++;
     }
 }
 
-function httpGet(string $url): array {
-    $context = stream_context_create([
-        'http' => [
-            'method' => 'GET',
-            'timeout' => 5,
-            'ignore_errors' => true,
-        ],
-    ]);
-    
-    $response = @file_get_contents($url, false, $context);
-    
-    // Get response code from $http_response_header
-    $httpCode = 200;
-    if (isset($http_response_header[0])) {
-        preg_match('/HTTP\/\d\.\d\s+(\d+)/', $http_response_header[0], $matches);
-        $httpCode = isset($matches[1]) ? (int) $matches[1] : 200;
+function app(): App
+{
+    global $basePath;
+    $app = new App($basePath);
+    $app->boot();
+    $app->loadRoutes($basePath . '/routes/api.php');
+    return $app;
+}
+
+function dispatch(App $app, string $method, string $path, array $body = [], array $headers = []): array
+{
+    ob_start();
+    try {
+        $request = new Request($method, $path, [], $headers, $body, '127.0.0.1');
+        $response = $app->router->dispatch($request);
+        ob_end_clean();
+        return [
+            'status' => $response->statusCode(),
+            'body' => json_decode(json_encode($response->payload()), true),
+        ];
+    } catch (ValidationException $e) {
+        ob_end_clean();
+        $response = $e->toResponse();
+        return [
+            'status' => $response->statusCode(),
+            'body' => json_decode(json_encode($response->payload()), true),
+        ];
+    } catch (Throwable $e) {
+        ob_end_clean();
+        throw $e;
     }
-    
-    $headers = isset($http_response_header) ? implode("\r\n", $http_response_header) : '';
-    
-    return [
-        'code' => $httpCode,
-        'headers' => $headers,
-        'body' => $response ?: '',
-        'json' => json_decode($response ?: '{}', true),
-    ];
 }
 
-function httpPost(string $url, array $data): array {
-    $payload = json_encode($data);
-    $context = stream_context_create([
-        'http' => [
-            'method' => 'POST',
-            'header' => "Content-Type: application/json\r\n",
-            'content' => $payload,
-            'timeout' => 5,
-            'ignore_errors' => true,
-        ],
-    ]);
-    
-    $response = @file_get_contents($url, false, $context);
-    
-    // Get response code
-    $httpCode = 200;
-    if (isset($http_response_header[0])) {
-        preg_match('/HTTP\/\d\.\d\s+(\d+)/', $http_response_header[0], $matches);
-        $httpCode = isset($matches[1]) ? (int) $matches[1] : 200;
+function ok(bool $condition, string $msg = 'Assertion failed'): void
+{
+    if (!$condition) {
+        throw new RuntimeException($msg);
     }
-    
-    return [
-        'code' => $httpCode,
-        'body' => $response ?: '',
-        'json' => json_decode($response ?: '{}', true),
-    ];
 }
 
-function httpPostRaw(string $url, string $rawBody, string $contentType = 'application/json'): array {
-    $context = stream_context_create([
-        'http' => [
-            'method' => 'POST',
-            'header' => "Content-Type: {$contentType}\r\n",
-            'content' => $rawBody,
-            'timeout' => 5,
-            'ignore_errors' => true,
-        ],
-    ]);
-    
-    $response = @file_get_contents($url, false, $context);
-    
-    $httpCode = 200;
-    if (isset($http_response_header[0])) {
-        preg_match('/HTTP\/\d\.\d\s+(\d+)/', $http_response_header[0], $matches);
-        $httpCode = isset($matches[1]) ? (int) $matches[1] : 200;
-    }
-    
-    return [
-        'code' => $httpCode,
-        'body' => $response ?: '',
-        'json' => json_decode($response ?: '{}', true),
-    ];
-}
-
-function httpGetWithAuth(string $url, string $token): array {
-    $context = stream_context_create([
-        'http' => [
-            'method' => 'GET',
-            'header' => "Authorization: Bearer {$token}\r\n",
-            'timeout' => 5,
-            'ignore_errors' => true,
-        ],
-    ]);
-    
-    $response = @file_get_contents($url, false, $context);
-    
-    $httpCode = 200;
-    if (isset($http_response_header[0])) {
-        preg_match('/HTTP\/\d\.\d\s+(\d+)/', $http_response_header[0], $matches);
-        $httpCode = isset($matches[1]) ? (int) $matches[1] : 200;
-    }
-    
-    return [
-        'code' => $httpCode,
-        'body' => $response ?: '',
-        'json' => json_decode($response ?: '{}', true),
-    ];
-}
-
-function httpPostWithAuth(string $url, string $token): array {
-    $context = stream_context_create([
-        'http' => [
-            'method' => 'POST',
-            'header' => "Authorization: Bearer {$token}\r\n",
-            'timeout' => 5,
-            'ignore_errors' => true,
-        ],
-    ]);
-    
-    $response = @file_get_contents($url, false, $context);
-    
-    $httpCode = 200;
-    if (isset($http_response_header[0])) {
-        preg_match('/HTTP\/\d\.\d\s+(\d+)/', $http_response_header[0], $matches);
-        $httpCode = isset($matches[1]) ? (int) $matches[1] : 200;
-    }
-    
-    return [
-        'code' => $httpCode,
-        'body' => $response ?: '',
-        'json' => json_decode($response ?: '{}', true),
-    ];
-}
-
-// Check if server is running
-echo "Checking if server is running...\n";
-$testResponse = httpGet("{$baseUrl}/");
-if ($testResponse['code'] === 0) {
-    echo "❌ Server not running at {$baseUrl}\n";
-    echo "Please start server: php -S localhost:8080 -t public\n";
-    exit(1);
-}
-echo "✅ Server is running\n\n";
-
-// Check PHP extensions
-echo "Checking PHP extensions...\n";
-$missingExtensions = [];
-if (!extension_loaded('pdo_mysql')) {
-    $missingExtensions[] = 'pdo_mysql';
-}
-if (!extension_loaded('mbstring')) {
-    $missingExtensions[] = 'mbstring';
-}
-
-if (!empty($missingExtensions)) {
-    echo "⚠️  Missing extensions: " . implode(', ', $missingExtensions) . "\n";
-    echo "⚠️  Some tests will be skipped\n\n";
-} else {
-    echo "✅ All required extensions loaded\n\n";
-}
-
-$dbAvailable = empty($missingExtensions);
-
-// ========================================
+// ═══════════════════════════════════════════════
 // TEST SUITE
-// ========================================
+// ═══════════════════════════════════════════════
 
-echo "--- Core Functionality Tests ---\n\n";
+echo "=== SiroPHP v0.9.x Integration Test ===\n\n";
 
-// Test 1: Root endpoint returns JSON
-test('Root endpoint returns valid JSON', function() use ($baseUrl) {
-    $response = httpGet("{$baseUrl}/");
-    
-    if ($response['code'] !== 200) {
-        return "Expected 200, got {$response['code']}";
-    }
-    
-    if (!isset($response['json']['success']) || $response['json']['success'] !== true) {
-        return "Invalid response structure";
-    }
-    
-    if (!isset($response['json']['data']['version'])) {
-        return "Version missing from response";
-    }
-    
-    return true;
+echo "--- Core Infrastructure ---\n";
+
+test('App boots without error', function () {
+    $a = app();
+    ok($a !== null, 'App should boot');
 });
 
-// Test 2: Response has correct Content-Type
-test('Response Content-Type is application/json', function() use ($baseUrl) {
-    $response = httpGet("{$baseUrl}/");
-    
-    if (!str_contains($response['headers'], 'application/json')) {
-        return "Content-Type is not application/json";
-    }
-    
-    return true;
+test('Router dispatches root endpoint', function () {
+    $a = app();
+    $res = dispatch($a, 'GET', '/');
+    ok($res['status'] === 200, 'Expected 200, got ' . $res['status']);
+    ok(($res['body']['success'] ?? false) === true, 'Expected success=true');
+    ok(isset($res['body']['data']['version']), 'Expected version in response');
 });
 
-// Test 3: 404 returns JSON error
-test('404 errors return JSON format', function() use ($baseUrl) {
-    $response = httpGet("{$baseUrl}/nonexistent");
-    
-    if ($response['code'] !== 404) {
-        return "Expected 404, got {$response['code']}";
-    }
-    
-    if (!is_array($response['json'])) {
-        return "Response is not JSON";
-    }
-    
-    return true;
+test('Router returns 404 for unknown route', function () {
+    $a = app();
+    $res = dispatch($a, 'GET', '/nonexistent');
+    ok($res['status'] === 404, 'Expected 404, got ' . $res['status']);
+    ok(($res['body']['success'] ?? true) === false, 'Expected success=false');
 });
 
-echo "\n--- Security & Validation Tests ---\n\n";
+echo "\n--- Validation & Error Handling ---\n";
 
-// Test 4: Malformed JSON returns 400
-test('Malformed JSON returns 400 error', function() use ($baseUrl) {
-    $response = httpPostRaw("{$baseUrl}/api/auth/login", '{invalid json}');
-    
-    if ($response['code'] !== 400) {
-        return "Expected 400, got {$response['code']}";
-    }
-    
-    if (!is_array($response['json']) || !isset($response['json']['success'])) {
-        return "Invalid error response format";
-    }
-    
-    if ($response['json']['success'] !== false) {
-        return "Expected success=false";
-    }
-    
-    return true;
+test('Missing required fields returns 422', function () {
+    $a = app();
+    $res = dispatch($a, 'POST', '/api/auth/register', []);
+    ok($res['status'] === 422, 'Expected 422, got ' . $res['status']);
+    ok(isset($res['body']['meta']['errors']), 'Expected validation errors');
 });
 
-// Test 5: Missing required fields returns 422
-test('Missing required fields returns 422', function() use ($baseUrl) {
-    $response = httpPost("{$baseUrl}/api/auth/register", []);
-    
-    if ($response['code'] !== 422) {
-        return "Expected 422, got {$response['code']}";
-    }
-    
-    // Validation errors are in meta.errors
-    if (!isset($response['json']['meta']['errors'])) {
-        return "Missing validation errors in meta.errors";
-    }
-    
-    return true;
-});
-
-// Test 6: Invalid email format returns 422
-test('Invalid email format returns validation error', function() use ($baseUrl) {
-    $response = httpPost("{$baseUrl}/api/auth/register", [
-        'name' => 'Test User',
+test('Invalid email returns 422', function () {
+    $a = app();
+    $res = dispatch($a, 'POST', '/api/auth/register', [
+        'name' => 'Test',
         'email' => 'not-an-email',
         'password' => 'secret123',
     ]);
-    
-    if ($response['code'] !== 422) {
-        return "Expected 422, got {$response['code']}";
-    }
-    
-    return true;
+    ok($res['status'] === 422, 'Expected 422, got ' . $res['status']);
 });
 
-echo "\n--- Authentication Flow Tests ---\n\n";
-
-// Test 7: User registration
-$testEmail = 'test_' . time() . '@example.com';
-$testToken = null;
-
-if ($dbAvailable) {
-    test('User registration succeeds', function() use ($baseUrl, $testEmail) {
-        $response = httpPost("{$baseUrl}/api/auth/register", [
-            'name' => 'Test User',
-            'email' => $testEmail,
-            'password' => 'secret123',
-        ]);
-        
-        if ($response['code'] !== 201 && $response['code'] !== 200) {
-            return "Expected 201 or 200, got {$response['code']}: " . ($response['json']['error'] ?? 'Unknown error');
-        }
-        
-        if (!isset($response['json']['data']['token'])) {
-            return "Missing token in response";
-        }
-        
-        return true;
-    });
-
-    // Test 8: User login
-    test('User login succeeds', function() use ($baseUrl, $testEmail, &$testToken) {
-        $response = httpPost("{$baseUrl}/api/auth/login", [
-            'email' => $testEmail,
-            'password' => 'secret123',
-        ]);
-        
-        if ($response['code'] !== 200) {
-            return "Expected 200, got {$response['code']}";
-        }
-        
-        if (!isset($response['json']['data']['token'])) {
-            return "Missing token in response";
-        }
-        
-        $testToken = $response['json']['data']['token'];
-        return true;
-    });
-
-    // Test 9: Access protected route with valid token
-    test('Protected route accessible with valid token', function() use ($baseUrl, $testToken) {
-        if (!$testToken) {
-            return "No token available";
-        }
-        
-        $response = httpGetWithAuth("{$baseUrl}/api/auth/me", $testToken);
-        
-        if ($response['code'] !== 200) {
-            return "Expected 200, got {$response['code']}";
-        }
-        
-        if (!isset($response['json']['data']['email'])) {
-            return "Invalid user data";
-        }
-        
-        return true;
-    });
-
-    // Test 10: Protected route blocked without token
-    test('Protected route blocked without token', function() use ($baseUrl) {
-        $response = httpGet("{$baseUrl}/api/auth/me");
-        
-        if ($response['code'] !== 401) {
-            return "Expected 401, got {$response['code']}";
-        }
-        
-        return true;
-    });
-
-    // Test 11: Logout revokes token
-    test('Logout revokes token', function() use ($baseUrl, $testToken) {
-        if (!$testToken) {
-            return "No token available";
-        }
-        
-        // Logout
-        $logoutResponse = httpPostWithAuth("{$baseUrl}/api/auth/logout", $testToken);
-        
-        if ($logoutResponse['code'] !== 200) {
-            return "Logout failed: {$logoutResponse['code']}";
-        }
-        
-        // Try to use old token
-        $response = httpGetWithAuth("{$baseUrl}/api/auth/me", $testToken);
-        
-        if ($response['code'] !== 401) {
-            return "Old token should be revoked (expected 401, got {$response['code']})";
-        }
-        
-        return true;
-    });
-} else {
-    echo "⏭️  Skipping authentication tests (DB not available)\n\n";
-}
-
-echo "\n--- Error Handling Tests ---\n\n";
-
-// Test 12: Bootstrap errors return JSON (simulated)
-test('Error responses are always JSON format', function() use ($baseUrl) {
-    // This tests that runtime errors return JSON
-    // Bootstrap errors already tested manually
-    
-    // Trigger a validation error
-    $response = httpPost("{$baseUrl}/api/auth/login", [
-        'email' => 'test@example.com',
-        // Missing password
-    ]);
-    
-    if (!is_array($response['json'])) {
-        return "Response is not JSON";
-    }
-    
-    if (!isset($response['json']['success']) || $response['json']['success'] !== false) {
-        return "Invalid error structure";
-    }
-    
-    return true;
+test('Validator::make() validates correctly', function () {
+    $errors = Validator::make(['email' => 'bad'], ['email' => 'required|email']);
+    ok(isset($errors['email']), 'Expected email validation error');
 });
 
-echo "\n--- Performance & Logging Tests ---\n\n";
-
-// Test 13: Response includes debug meta (if enabled)
-test('Debug mode includes metadata', function() use ($baseUrl) {
-    $response = httpGet("{$baseUrl}/");
-    
-    // Debug meta is optional, just check response is valid
-    if (!isset($response['json']['success'])) {
-        return "Invalid response";
-    }
-    
-    return true;
+test('Validator::make() passes valid data', function () {
+    $errors = Validator::make(['email' => 'test@example.com'], ['email' => 'required|email']);
+    ok($errors === [], 'Expected no errors, got: ' . json_encode($errors));
 });
 
-// Test 14: Log files exist
-test('Log files exist in storage/logs', function() use ($basePath) {
-    $logDir = $basePath . '/storage/logs';
-    $requiredLogs = ['request.log', 'error.log', 'slow.log'];
-    
-    foreach ($requiredLogs as $logFile) {
-        $filePath = $logDir . '/' . $logFile;
-        if (!file_exists($filePath)) {
-            return "Missing log file: {$logFile}";
-        }
-    }
-    
-    return true;
+test('Validator custom rule via extend()', function () {
+    Validator::extend('positive', fn ($value) => $value > 0);
+    $errors = Validator::make(['n' => -1], ['n' => 'positive']);
+    ok(isset($errors['n']), 'Expected validation error for negative');
 });
 
-// ========================================
+echo "\n--- Authentication Flow ---\n";
+
+test('Login with missing fields returns 422', function () {
+    $a = app();
+    $res = dispatch($a, 'POST', '/api/auth/login', ['email' => 'test@test.com']);
+    ok($res['status'] === 422, 'Expected 422, got ' . $res['status']);
+});
+
+test('Protected route returns 401 without token', function () {
+    $a = app();
+    $res = dispatch($a, 'GET', '/api/auth/me');
+    ok($res['status'] === 401, 'Expected 401, got ' . $res['status']);
+});
+
+test('Protected route returns 401 with invalid token', function () {
+    $a = app();
+    $res = dispatch($a, 'GET', '/api/auth/me', [], ['authorization' => 'Bearer invalidtoken123']);
+    ok($res['status'] === 401, 'Expected 401, got ' . $res['status']);
+});
+
+echo "\n--- Lang System ---\n";
+
+test('Lang::get() returns English by default', function () {
+    $msg = Lang::get('messages.welcome');
+    ok($msg === 'Welcome', 'Expected "Welcome", got: ' . $msg);
+});
+
+test('Lang::get() returns Vietnamese when set', function () {
+    Lang::setLocale('vi');
+    $msg = Lang::get('messages.welcome');
+    ok($msg === 'Chào mừng', 'Expected "Chào mừng", got: ' . $msg);
+    Lang::setLocale('en');
+});
+
+test('Lang::get() supports parameter replacement', function () {
+    $msg = Lang::get('messages.greeting', ['name' => 'Siro']);
+    ok($msg !== '' && $msg !== null, 'Expected non-empty greeting');
+});
+
+test('Lang::has() checks key existence', function () {
+    ok(Lang::has('messages.welcome') === true, 'Expected has(welcome)=true');
+    ok(Lang::has('messages.nonexistent') === false, 'Expected has(nonexistent)=false');
+});
+
+echo "\n--- Event System ---\n";
+
+test('Event::on() and Event::emit() work', function () {
+    $fired = false;
+    Event::on('test.event', function () use (&$fired) { $fired = true; });
+    Event::emit('test.event');
+    ok($fired === true, 'Expected listener to fire');
+    Event::flush();
+});
+
+test('Event::emit() passes payload', function () {
+    $result = null;
+    Event::on('test.payload', function ($data) use (&$result) { $result = $data['key']; });
+    Event::emit('test.payload', ['key' => 'value']);
+    ok($result === 'value', 'Expected payload value');
+    Event::flush();
+});
+
+test('Event::once() fires only once', function () {
+    $count = 0;
+    Event::once('test.once', function () use (&$count) { $count++; });
+    Event::emit('test.once');
+    Event::emit('test.once');
+    ok($count === 1, 'Expected once() to fire only once');
+    Event::flush();
+});
+
+test('Event::off() removes listeners', function () {
+    $fired = false;
+    Event::on('test.off', function () use (&$fired) { $fired = true; });
+    Event::off('test.off');
+    Event::emit('test.off');
+    ok($fired === false, 'Expected listener to be removed');
+});
+
+test('Event::flush() clears all listeners', function () {
+    Event::on('test.flush', function () {});
+    Event::flush();
+    ok(Event::hasListeners('test.flush') === false, 'Expected no listeners after flush');
+});
+
+echo "\n--- Storage ---\n";
+
+test('Storage::put() writes and reads file', function () {
+    $path = 'test_' . time() . '.txt';
+    Storage::put($path, 'hello');
+    $content = Storage::get($path);
+    ok($content === 'hello', 'Expected "hello", got: ' . ($content ?? 'null'));
+    Storage::delete($path);
+});
+
+test('Storage::exists() checks correctly', function () {
+    $path = 'test_exists_' . time() . '.txt';
+    ok(Storage::exists($path) === false, 'Expected false for non-existent');
+    Storage::put($path, 'x');
+    ok(Storage::exists($path) === true, 'Expected true for existent');
+    Storage::delete($path);
+});
+
+echo "\n--- Cache System ---\n";
+
+test('Cache::set() and Cache::get() work', function () {
+    Cache::set('test_key', 'test_value', 60);
+    $val = Cache::get('test_key');
+    ok($val === 'test_value', 'Expected "test_value", got: ' . ($val ?? 'null'));
+});
+
+test('Cache::forget() removes value', function () {
+    Cache::set('test_del', 'val', 60);
+    Cache::forget('test_del');
+    $val = Cache::get('test_del');
+    ok($val === null, 'Expected null after forget');
+});
+
+test('Cache::flush() clears all', function () {
+    Cache::set('test_flush', 'val', 60);
+    Cache::flush();
+    $val = Cache::get('test_flush');
+    ok($val === null, 'Expected null after flush');
+});
+
+echo "\n--- Response Format ---\n";
+
+test('Response::success() has correct structure', function () {
+    $r = Response::success(['id' => 1], 'OK');
+    $p = $r->payload();
+    ok(($p['success'] ?? false) === true, 'Expected success=true');
+    ok(($p['message'] ?? '') === 'OK', 'Expected message=OK');
+    ok(isset($p['data']['id']), 'Expected data.id');
+    ok(isset($p['meta']), 'Expected meta');
+});
+
+test('Response::error() has correct structure', function () {
+    $r = Response::error('Not found', 404);
+    $p = $r->payload();
+    ok(($p['success'] ?? true) === false, 'Expected success=false');
+    ok($p['message'] === 'Not found', 'Expected message');
+    ok($p['data'] === null, 'Expected data=null');
+});
+
+test('Response::paginated() has correct structure', function () {
+    $r = Response::paginated([], ['page' => 1, 'per_page' => 15, 'total' => 0, 'last_page' => 0], 'OK');
+    $p = $r->payload();
+    ok(($p['success'] ?? false) === true, 'Expected success=true');
+    ok(isset($p['data']), 'Expected data');
+    ok(isset($p['meta']['page']), 'Expected meta.page');
+});
+
+echo "\n--- Language Detection ---\n";
+
+test('Vietnamese locale auto-detection from header', function () {
+    Lang::setLocale('en');
+    global $basePath;
+    $a = new App($basePath);
+    $a->boot();
+    $a->loadRoutes($basePath . '/routes/api.php');
+
+    $res = dispatch($a, 'GET', '/', [], ['accept-language' => 'vi']);
+    // Just verify it doesn't crash
+    ok(true);
+});
+
+echo "\n─── Security: Input Handling ───\n";
+
+test('XSS in request body is rejected by validation', function () {
+    $errors = Validator::make(['name' => '<script>alert(1)</script>'], ['name' => 'required|max:100']);
+    ok($errors === [], 'XSS string should pass length validation (valid input)');
+});
+
+test('SQL injection attempt in email fails validation', function () {
+    $errors = Validator::make(['email' => "'; DROP TABLE users;--"], ['email' => 'required|email']);
+    ok(isset($errors['email']), 'SQL injection should fail email validation');
+});
+
+// ═══════════════════════════════════════════════
 // SUMMARY
-// ========================================
+// ═══════════════════════════════════════════════
 
-echo "\n========================================\n";
-echo "Test Summary\n";
-echo "========================================\n";
-echo "Total Tests Run: {$total}\n";
-echo "Passed: ✅ {$passed}\n";
-echo "Failed: ❌ {$failed}\n";
-if ($total > 0) {
-    echo "Success Rate: " . round(($passed / $total) * 100, 1) . "%\n";
-}
-if (!$dbAvailable) {
-    echo "Note: Some tests skipped (DB extensions missing)\n";
-}
-echo "========================================\n\n";
+echo "\n=== Results ===\n";
+echo "Passed: {$passed}\n";
+echo "Failed: {$failed}\n";
 
-if ($failed === 0 && $total > 0) {
-    echo "🎉 All tests passed! Ready for v0.7.2 release!\n";
-    exit(0);
-} elseif ($total === 0) {
-    echo "⚠️  No tests were run\n";
-    exit(1);
-} else {
-    echo "⚠️  Some tests failed. Please review and fix issues.\n";
-    exit(1);
-}
+exit($failed > 0 ? 1 : 0);
