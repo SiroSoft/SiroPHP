@@ -1,4 +1,4 @@
-# Siro API Framework v0.8.8
+# Siro API Framework v0.8.9
 
 **The Fastest PHP Micro-Framework for API Development with Advanced Debugging & CLI Testing**
 
@@ -15,7 +15,7 @@
 
 - ⚡ **Speed** - <1ms request time, zero dependencies
 - 🔍 **Debug Fast** - Trace ID system, request replay, CLI testing tool
-- 🎯 **Ship Fast** - One-command auth, auto CRUD scaffolding, `api:test` CLI
+- 🎯 **Ship Fast** - One-command CRUD scaffolding, `api:test` CLI, auto tests
 - 🛡️ **Secure by Default** - Auto sanitization, rate limiting, CSRF protection
 - 💡 **Simple** - Read entire framework in one afternoon
 
@@ -39,7 +39,7 @@ Server starts at: **http://localhost:8080**
 
 ```bash
 curl http://localhost:8080/
-# {"message":"Welcome to Siro API","version":"0.8.8"}
+# {"message":"Welcome to Siro API","version":"0.8.9"}
 ```
 
 ### Option 2: Git Clone
@@ -116,6 +116,22 @@ php siro api:test --history
 
 # Custom headers & different port
 php siro api:test GET /api/data --header="X-Version: 2.0" --port=8080
+```
+
+### 🚀 CRUD Scaffolding & Testing (v0.8.9)
+```bash
+# Generate full CRUD in 30 seconds (Model, Controller, Migration, Routes, Tests)
+php siro make:crud products
+
+# Generate integration test
+php siro make:test ProductApi
+
+# Generate unit test
+php siro make:test ProductService --unit
+
+# Response includes performance headers
+# X-Request-Id: a1b2c3d4e5f67890
+# X-Response-Time: 8.45ms
 ```
 
 ### Storage & Scheduling (v0.8.3)
