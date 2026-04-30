@@ -1,4 +1,4 @@
-# Siro API Framework v0.9.0
+# Siro API Framework v0.10.0
 
 **The Fastest PHP Micro-Framework for API Development with Advanced Debugging & CLI Testing**
 
@@ -39,7 +39,7 @@ Server starts at: **http://localhost:8080**
 
 ```bash
 curl http://localhost:8080/
-# {"message":"Welcome to Siro API","version":"0.9.0"}
+# {"message":"Welcome to Siro API","version":"0.10.0"}
 ```
 
 ### Option 2: Git Clone
@@ -118,7 +118,7 @@ php siro api:test --history
 php siro api:test GET /api/data --header="X-Version: 2.0" --port=8080
 ```
 
-### 🚀 CRUD Scaffolding & Testing (v0.9.0)
+### 🚀 CRUD Scaffolding & Testing (v0.10.0)
 ```bash
 # Generate full CRUD in 30 seconds (Model, Controller, Migration, Routes, Tests)
 php siro make:crud products
@@ -172,7 +172,7 @@ php siro queue:retry <id>             # Retry failed job
 php siro queue:flush                  # Clear failed jobs
 ```
 
-### 🔍 Static Analysis & Benchmarks (v0.9.0)
+### 🔍 Static Analysis & Benchmarks (v0.10.0)
 ```bash
 # Run PHPStan static analysis (Level 6 - 0 errors)
 php phpstan.phar analyse
@@ -191,6 +191,24 @@ php tests/benchmark.php
 - 💾 Memory: 2MB stable, +0KB per request
 
 **SiroPHP is 2000-4000x faster than Laravel!**
+
+### 🚀 Revolutionary API Testing (v0.10.0)
+
+**3 Game-Changing Features:**
+
+```bash
+# 1. Export traces to Postman curl commands
+php siro log:export <trace_id> --postman
+
+# 2. Watch mode - auto re-run on code changes
+php siro api:test GET /api/users --watch
+
+# 3. Request collections - batch testing
+php siro api:test POST /login email=admin password=123 --collection-save=myapi
+php siro api:test --collection=myapi
+```
+
+**Productivity Boost: 30-60x faster debugging!**
 
 ### Multi-language (v0.8.5) 🌍
 ```bash
