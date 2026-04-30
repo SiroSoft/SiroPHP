@@ -9,7 +9,7 @@ use Siro\Core\Response;
 
 final class TestcheckcontrollerController
 {
-    public function index(Request ): Response
+    public function index(Request $request): Response
     {
         return Response::success([], 'TestcheckcontrollerController index');
     }
