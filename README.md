@@ -66,6 +66,8 @@ php siro make:resource UserResource
 php siro make:seeder UserSeeder
 php siro make:auth                    # Generate full auth system
 php siro make:event UserCreated       # Generate event class
+php siro make:job SendWelcomeEmail    # Generate job class
+php siro make:mail WelcomeMail        # Generate mail class
 php siro make:lang vi                 # Create language pack
 ```
 
@@ -145,6 +147,15 @@ php siro make:openapi                 # OpenAPI spec only
 php siro make:postman                 # Postman collection only
 php siro make:docs --flow=auth        # Auth endpoints only
 php siro make:docs --tag=User         # User controller only
+```
+
+### Log Management
+```bash
+php siro log:cleanup --days=7         # Remove traces older than 7 days
+php siro log:cleanup --days=30 --dry-run  # Preview what would be deleted
+php siro log:trace <trace_id>         # View trace details
+php siro log:replay <trace_id>        # Generate curl command
+php siro log:export --format=json     # Export traces
 ```
 
 ### Static Analysis & Benchmarks
