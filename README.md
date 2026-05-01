@@ -62,6 +62,7 @@ php siro make:model User              # Generate model
 php siro make:api users               # Generate CRUD API
 php siro make:controller UserController
 php siro make:migration create_posts_table
+php siro make:queue-table             # Generate queue tables migration
 php siro make:resource UserResource
 php siro make:seeder UserSeeder
 php siro make:auth                    # Generate full auth system
@@ -330,6 +331,7 @@ $schedule->command('report:weekly')->cron('0 6 * * 1');
 ```php
 use Siro\Core\Validator;
 
+// Register custom validation rule
 Validator::extend('phone', function ($value, $field, $input, $param) {
     return preg_match('/^\+?[0-9]{7,15}$/', (string) $value)
         ? true
@@ -337,6 +339,21 @@ Validator::extend('phone', function ($value, $field, $input, $param) {
 });
 
 $request->validate(['phone' => 'required|phone']);
+```
+
+### File Upload Validation
+```php
+// Validate file uploads
+$request->validate([
+    'avatar' => 'required|file|max:2048',  // Max 2MB
+    'document' => 'file|min:100|max:5120', // 100KB - 5MB
+]);
+
+// Access validated file
+$file = $request->file('avatar');
+if ($file && $file->isValid()) {
+    $path = $file->store('uploads/avatars');
+}
 ```
 
 ## 🏗️ Architecture
