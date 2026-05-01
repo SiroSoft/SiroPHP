@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use PDO;
-
 return new class
 {
     public function up(PDO $pdo): void
