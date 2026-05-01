@@ -2,15 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * API route definitions.
- *
- * Defines all application routes using the Router instance.
- * Routes are organized into groups with CORS middleware.
- *
- * @package App
- */
-
 use App\Controllers\UserController;
 use App\Controllers\AuthController;
 use App\Middleware\CorsMiddleware;
@@ -23,7 +14,7 @@ $app->router->get('/', function (): array {
         'message' => Lang::get('messages.welcome'),
         'data' => [
             'name' => 'Siro API Framework',
-            'version' => '0.8.9',
+            'version' => '0.9.0',
             'php' => PHP_VERSION,
             'locale' => Lang::locale(),
         ],
@@ -70,5 +61,13 @@ $app->router->group('/api', [CorsMiddleware::class], function ($router): void {
 
     $router->delete('/users/{id}', [UserController::class, 'delete'])
         ->middleware(['auth', 'throttle:60,1']);
-});
 
+    // Product routes
+    $router->get('/products', [\App\Controllers\ProductController::class, 'index']);
+    $router->get('/products/{id}', [\App\Controllers\ProductController::class, 'show']);
+    $router->post('/products', [\App\Controllers\ProductController::class, 'store'])
+        ->middleware([JsonMiddleware::class]);
+    $router->put('/products/{id}', [\App\Controllers\ProductController::class, 'update'])
+        ->middleware([JsonMiddleware::class]);
+    $router->delete('/products/{id}', [\App\Controllers\ProductController::class, 'delete']);
+});

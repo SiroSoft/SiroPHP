@@ -413,6 +413,15 @@
                         "users"
                     ],
                     "variable": []
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"user@example.com\",\n    \"password\": \"secret123\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
                 }
             },
             "response": []
@@ -524,6 +533,15 @@
                             "description": "id"
                         }
                     ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
                 }
             },
             "response": []

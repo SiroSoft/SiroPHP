@@ -464,7 +464,50 @@
                     {
                         "bearerAuth": []
                     }
-                ]
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "string",
+                                        "description": "Name",
+                                        "minLength": 3,
+                                        "maxLength": 120
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@example.com",
+                                        "description": "Email",
+                                        "format": "email",
+                                        "maxLength": 255
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "string",
+                                        "description": "Password",
+                                        "minLength": 6,
+                                        "maxLength": 255
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "example": {
+                                    "name": "string",
+                                    "email": "user@example.com",
+                                    "password": "string"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/users/{id}": {
