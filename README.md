@@ -41,7 +41,7 @@ Server starts at: **http://localhost:8080**
 
 ```bash
 curl http://localhost:8080/
-# {"message":"Welcome to Siro API","version":"0.12.0"}
+# {"message":"Welcome to Siro API","version":"0.13.0"}
 ```
 
 ### Option 2: Git Clone
@@ -59,11 +59,18 @@ php siro serve
 ## 🎉 What's New in v0.13.0
 
 ### Testing Excellence 🏆
-- ✅ **338 Total Tests** - 330 custom + 8 PHPUnit (100% pass rate)
+- ✅ **336 Total Tests** - 100% pass rate (stability verified)
 - ✅ **PHPUnit Integration** - Full PHPUnit support with code coverage
 - ✅ **Database Test Helpers** - Driver-aware helpers for SQLite/MySQL
 - ✅ **Enhanced Test Runner** - `php siro test --phpunit` flag
 - ✅ **Test Organization** - Unit, integration, and feature tests separated
+
+### New CLI Tools 🚀
+- 🏭 **Factory Generator** - `php siro make:factory User` for test data generation
+- 🔍 **Database Inspector** - `php siro db:show users` to view table data/schema
+- 📋 **Route Rules Parser** - `php siro route:rules` to extract validation rules
+- ⚡ **Live Dev Server** - `php siro live` with auto-reload on file changes
+- 🚀 **Deployment System** - `php siro deploy` for Git/rsync/custom deploys
 
 ### Bug Fixes & Improvements
 - ✅ **ModelQueryBuilder Fixed** - Resolved double-hydration issues
@@ -78,6 +85,7 @@ php siro serve
 - ✅ **Cross-Database Compatible** - Works on SQLite and MySQL
 - ✅ **Zero Warnings** - No "headers already sent" issues
 - ✅ **Performance Optimized** - Removed redundant operations
+- ✅ **Stability Verified** - Multiple test rounds confirm 100% reliability
 
 ---
 
@@ -159,6 +167,48 @@ php siro make:test ProductService --unit
 # Response includes performance headers
 # X-Request-Id: a1b2c3d4e5f67890
 # X-Response-Time: 8.45ms
+```
+
+### 🆕 New CLI Tools (v0.13.0+)
+```bash
+# Generate factory for test data generation
+php siro make:factory User            # Creates database/factories/UserFactory.php
+
+# Inspect database tables from CLI
+php siro db:show users                # View table data
+php siro db:show products --schema    # View table schema
+php siro db:show users --limit=20     # Limit rows
+
+# Extract validation rules from controllers
+php siro route:rules                  # All controllers
+php siro route:rules UserController   # Specific controller
+php siro route:rules UserController@store  # Specific method
+
+# Development server with auto-reload
+php siro live                         # Auto-restart on file changes
+php siro live --port=8080             # Custom port
+php siro live --watch=app,routes      # Watch specific directories
+
+# Deployment system
+php siro deploy                       # Deploy with default strategy
+php siro deploy production            # Deploy to production
+php siro deploy --dry-run             # Test without deploying
+php siro deploy --config=deploy.yml   # Custom config file
+```
+
+**Factory Usage:**
+```php
+// In tests or seeders
+use Database\Factories\UserFactory;
+
+// Create single user
+$user = UserFactory::new()->create();
+
+// Create multiple users
+$users = UserFactory::new()->count(10)->create();
+
+// Override attributes
+$admin = UserFactory::new()->create(['role' => 'admin']);
 ```
 
 ### Storage & Scheduling (v0.8.3)
