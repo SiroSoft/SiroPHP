@@ -80,6 +80,14 @@ php siro serve
 - ✅ **Cache Falsy Values** - Proper handling of 0, false, empty strings
 - ✅ **Middleware Aliases** - Configurable via `Router::setMiddlewareAliases()`
 
+### Critical Security Fixes 🔒
+- ✅ **File Download Security** - Response::download/file() streams actual files with Content-Length
+- ✅ **JWT JTI Consistency** - Token pairs use matching JTIs (prevents validation failures)
+- ✅ **Mass Assignment Protection** - Secure default blocks unauthorized field updates
+- ✅ **Resource Pattern Implemented** - UserResource & ProductResource for type-safe API responses
+- ✅ **Version Updated** - All references now show v0.13.0
+- ✅ **Test Coverage Complete** - UserService_test: 4 real tests (was TODO stub)
+
 ### Quality Assurance
 - ✅ **PHPStan Level 6** - Zero errors, strict type checking
 - ✅ **Cross-Database Compatible** - Works on SQLite and MySQL
