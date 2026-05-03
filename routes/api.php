@@ -14,7 +14,7 @@ $app->router->get('/', function (): array {
         'message' => Lang::get('messages.welcome'),
         'data' => [
             'name' => 'Siro API Framework',
-            'version' => '0.9.0',
+            'version' => '0.12.0',
             'php' => PHP_VERSION,
             'locale' => Lang::locale(),
         ],

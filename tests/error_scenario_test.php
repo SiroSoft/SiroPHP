@@ -70,6 +70,13 @@ function delTrace(string $id): void
     }
 }
 
+Router::setMiddlewareAliases([
+    'auth' => \App\Middleware\AuthMiddleware::class,
+    'throttle' => \Siro\Core\Middleware\ThrottleMiddleware::class,
+    'cors' => \App\Middleware\CorsMiddleware::class,
+    'json' => \App\Middleware\JsonMiddleware::class,
+]);
+
 ob_start();
 
 $app = new App($basePath);
@@ -83,6 +90,7 @@ echo "=== Critical Error Scenario Tests ===\n\n";
 echo "--- 1. Replay Safe Mode ---\n";
 
 test('log:replay with --force works for POST', function () {
+    global $basePath;
     $cmd = new \Siro\Core\Commands\LogReplayCommand($basePath);
     $id = makeTrace('POST', '/api/payment');
     $code = $cmd->run([$id, '--force']);
@@ -91,6 +99,7 @@ test('log:replay with --force works for POST', function () {
 });
 
 test('log:replay works for GET without --force', function () {
+    global $basePath;
     $cmd = new \Siro\Core\Commands\LogReplayCommand($basePath);
     $id = makeTrace('GET', '/api/users');
     $code = $cmd->run([$id]);
@@ -99,6 +108,7 @@ test('log:replay works for GET without --force', function () {
 });
 
 test('log:replay with --force works for DELETE', function () {
+    global $basePath;
     $cmd = new \Siro\Core\Commands\LogReplayCommand($basePath);
     $id = makeTrace('DELETE', '/api/users/1');
     $code = $cmd->run([$id, '--force']);
@@ -107,6 +117,7 @@ test('log:replay with --force works for DELETE', function () {
 });
 
 test('log:replay outputs curl for POST', function () {
+    global $basePath;
     $cmd = new \Siro\Core\Commands\LogReplayCommand($basePath);
     $id = makeTrace('POST', '/api/payment');
     ob_start();
@@ -191,6 +202,7 @@ test('Trace files are bounded in size', function () {
 });
 
 test('log:cleanup --dry-run executes without error', function () {
+    global $basePath;
     $cmd = new \Siro\Core\Commands\LogCleanupCommand($basePath);
     $code = $cmd->run(['--dry-run']);
     ok($code === 0, 'Cleanup command runs');
@@ -201,12 +213,14 @@ test('log:cleanup --dry-run executes without error', function () {
 echo "\n--- 5. Error Scenarios ---\n";
 
 test('Missing trace file returns error', function () {
+    global $basePath;
     $cmd = new \Siro\Core\Commands\LogReplayCommand($basePath);
     $code = $cmd->run(['nonexistent_trace_id']);
     ok($code === 1, 'Expected error for missing trace');
 });
 
 test('Invalid trace file returns error', function () {
+    global $basePath;
     global $traceDir;
     if (!is_dir($traceDir)) {
         mkdir($traceDir, 0775, true);

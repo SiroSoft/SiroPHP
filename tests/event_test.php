@@ -28,11 +28,13 @@ define('SIRO_BASE_PATH', $basePath);
 $app = new App($basePath);
 $app->boot();
 
+require_once __DIR__ . '/db_test_helper.php';
+
 // Setup test table
 $pdo = Database::connection();
 $pdo->exec("
     CREATE TABLE IF NOT EXISTS event_test_users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id " . db_id_col() . ",
         name TEXT NOT NULL,
         email TEXT NOT NULL
     )

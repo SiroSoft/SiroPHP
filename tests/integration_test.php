@@ -50,6 +50,14 @@ function test(string $name, callable $fn): void
 function app(): App
 {
     global $basePath;
+
+    Router::setMiddlewareAliases([
+        'auth' => \App\Middleware\AuthMiddleware::class,
+        'throttle' => \Siro\Core\Middleware\ThrottleMiddleware::class,
+        'cors' => \App\Middleware\CorsMiddleware::class,
+        'json' => \App\Middleware\JsonMiddleware::class,
+    ]);
+
     $app = new App($basePath);
     $app->boot();
     $app->loadRoutes($basePath . '/routes/api.php');
@@ -307,6 +315,14 @@ echo "\n--- Language Detection ---\n";
 test('Vietnamese locale auto-detection from header', function () {
     Lang::setLocale('en');
     global $basePath;
+
+    Router::setMiddlewareAliases([
+        'auth' => \App\Middleware\AuthMiddleware::class,
+        'throttle' => \Siro\Core\Middleware\ThrottleMiddleware::class,
+        'cors' => \App\Middleware\CorsMiddleware::class,
+        'json' => \App\Middleware\JsonMiddleware::class,
+    ]);
+
     $a = new App($basePath);
     $a->boot();
     $a->loadRoutes($basePath . '/routes/api.php');

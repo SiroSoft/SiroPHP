@@ -31,23 +31,25 @@ final class CorsMiddleware
 
         if ($request->method() === 'OPTIONS') {
             $response = Response::noContent();
-            $this->appendHeaders($allowOrigin, $allowedMethods, $allowedHeaders, $allowCredentials);
+            $this->appendHeaders($response, $allowOrigin, $allowedMethods, $allowedHeaders, $allowCredentials);
             return $response;
         }
 
         $result = $next($request);
-        $this->appendHeaders($allowOrigin, $allowedMethods, $allowedHeaders, $allowCredentials);
+        if ($result instanceof Response) {
+            $this->appendHeaders($result, $allowOrigin, $allowedMethods, $allowedHeaders, $allowCredentials);
+        }
 
         return $result;
     }
 
-    private function appendHeaders(string $allowOrigin, string $allowedMethods, string $allowedHeaders, bool $allowCredentials): void
+    private function appendHeaders(Response $response, string $allowOrigin, string $allowedMethods, string $allowedHeaders, bool $allowCredentials): void
     {
-        header('Access-Control-Allow-Origin: ' . $allowOrigin);
-        header('Access-Control-Allow-Methods: ' . $allowedMethods);
-        header('Access-Control-Allow-Headers: ' . $allowedHeaders);
-        header('Access-Control-Allow-Credentials: ' . ($allowCredentials ? 'true' : 'false'));
-        header('Vary: Origin');
+        $response->header('Access-Control-Allow-Origin', $allowOrigin);
+        $response->header('Access-Control-Allow-Methods', $allowedMethods);
+        $response->header('Access-Control-Allow-Headers', $allowedHeaders);
+        $response->header('Access-Control-Allow-Credentials', $allowCredentials ? 'true' : 'false');
+        $response->header('Vary', 'Origin');
     }
 
     private function resolveOrigin(string $origin, string $allowedOrigins): string

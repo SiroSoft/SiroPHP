@@ -29,10 +29,6 @@
 .vscode/
 .idea/
 
-# Assistant-generated test files (kept locally only)
-/tests/*_test.php
-!/tests/unit/
-
 # Generated files in public (kept locally only)
 /public/openapi.json
 /public/docs.html
@@ -42,3 +38,5 @@ Thumbs.db
 
 # API test history (runtime data)
 /storage/api-test-history.json
+
+.phpunit.cache

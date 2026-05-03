@@ -77,19 +77,21 @@ function assertNull(mixed $value, string $msg = ''): void
 // ─── Setup: create tables ────────────────────────────────
 echo "--- Setup ---\n";
 
+require_once __DIR__ . '/db_test_helper.php';
+
 test('Create jobs table', function () use ($pdo): void {
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS jobs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id " . db_id_col() . ",
             job TEXT NOT NULL,
-            data TEXT NOT NULL DEFAULT '',
-            attempts INTEGER NOT NULL DEFAULT 0,
-            max_attempts INTEGER NOT NULL DEFAULT 3,
-            priority INTEGER NOT NULL DEFAULT 0,
-            timeout INTEGER NOT NULL DEFAULT 120,
-            available_at INTEGER NOT NULL DEFAULT 0,
-            locked_until INTEGER DEFAULT NULL,
-            created_at TEXT NOT NULL DEFAULT (datetime('now'))
+            data TEXT NOT NULL,
+            attempts " . db_type_int() . " NOT NULL DEFAULT 0,
+            max_attempts " . db_type_int() . " NOT NULL DEFAULT 3,
+            priority " . db_type_int() . " NOT NULL DEFAULT 0,
+            timeout " . db_type_int() . " NOT NULL DEFAULT 120,
+            available_at " . db_type_int() . " NOT NULL DEFAULT 0,
+            locked_until " . db_type_int() . " DEFAULT NULL,
+            created_at " . db_datetime_col() . "
         )
     ");
     assertTrue(true);
@@ -98,11 +100,11 @@ test('Create jobs table', function () use ($pdo): void {
 test('Create failed_jobs table', function () use ($pdo): void {
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS failed_jobs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id " . db_id_col() . ",
             job TEXT NOT NULL,
-            data TEXT NOT NULL DEFAULT '',
-            error TEXT NOT NULL DEFAULT '',
-            failed_at TEXT NOT NULL DEFAULT (datetime('now'))
+            data TEXT NOT NULL,
+            error TEXT NOT NULL,
+            failed_at " . db_datetime_col() . "
         )
     ");
     assertTrue(true);

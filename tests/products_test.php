@@ -13,8 +13,16 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Siro\Core\App;
 use Siro\Core\Request;
 use Siro\Core\Response;
+use Siro\Core\Router;
 
 $basePath = dirname(__DIR__);
+
+Router::setMiddlewareAliases([
+    'auth' => \App\Middleware\AuthMiddleware::class,
+    'throttle' => \Siro\Core\Middleware\ThrottleMiddleware::class,
+    'cors' => \App\Middleware\CorsMiddleware::class,
+    'json' => \App\Middleware\JsonMiddleware::class,
+]);
 
 $app = new App($basePath);
 $app->boot();

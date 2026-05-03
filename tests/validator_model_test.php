@@ -252,13 +252,15 @@ echo "\n--- Model: Setup ---\n";
 $app = new App($basePath);
 $app->boot();
 
+require_once __DIR__ . '/db_test_helper.php';
+
 // Create test table
 $pdo = Database::connection();
 $pdo->exec("CREATE TABLE IF NOT EXISTS model_test_users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id " . db_id_col() . ",
     name TEXT NOT NULL,
     email TEXT NOT NULL,
-    status INTEGER DEFAULT 1,
+    status " . db_type_int() . " DEFAULT 1,
     created_at TEXT DEFAULT NULL
 )");
 $pdo->exec("DELETE FROM model_test_users");

@@ -25,6 +25,14 @@ $basePath = dirname(__DIR__);
 $passed = 0;
 $failed = 0;
 
+// Register middleware aliases
+Router::setMiddlewareAliases([
+    'auth' => \App\Middleware\AuthMiddleware::class,
+    'throttle' => \Siro\Core\Middleware\ThrottleMiddleware::class,
+    'cors' => \App\Middleware\CorsMiddleware::class,
+    'json' => \App\Middleware\JsonMiddleware::class,
+]);
+
 // Boot
 $app = new App($basePath);
 $app->boot();
@@ -170,6 +178,13 @@ test('Middleware chain stops on error', function () {
 echo "\n--- Auth via real Router ---\n";
 
 test('Router with auth middleware blocks without token', function () use ($basePath) {
+    Router::setMiddlewareAliases([
+        'auth' => \App\Middleware\AuthMiddleware::class,
+        'throttle' => \Siro\Core\Middleware\ThrottleMiddleware::class,
+        'cors' => \App\Middleware\CorsMiddleware::class,
+        'json' => \App\Middleware\JsonMiddleware::class,
+    ]);
+
     $a = new App($basePath);
     $a->boot();
     $a->loadRoutes($basePath . '/routes/api.php');

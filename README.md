@@ -1,4 +1,4 @@
-# Siro API Framework v0.12.0
+# Siro API Framework v0.13.0
 
 **The Fastest PHP Micro-Framework for API Development with Advanced Debugging & CLI Testing**
 
@@ -6,6 +6,8 @@
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
 [![Packagist](https://img.shields.io/packagist/v/sirosoft/api.svg)](https://packagist.org/packages/sirosoft/api)
 [![Downloads](https://img.shields.io/packagist/dt/sirosoft/api.svg)](https://packagist.org/packages/sirosoft/api)
+[![Tests](https://img.shields.io/badge/tests-338%20passing-brightgreen.svg)](tests/)
+[![PHPStan](https://img.shields.io/badge/phpstan-level%206-brightgreen.svg)](../siro-core/phpstan.neon)
 
 ---
 
@@ -53,6 +55,31 @@ php siro key:generate
 php siro migrate
 php siro serve
 ```
+
+## 🎉 What's New in v0.13.0
+
+### Testing Excellence 🏆
+- ✅ **338 Total Tests** - 330 custom + 8 PHPUnit (100% pass rate)
+- ✅ **PHPUnit Integration** - Full PHPUnit support with code coverage
+- ✅ **Database Test Helpers** - Driver-aware helpers for SQLite/MySQL
+- ✅ **Enhanced Test Runner** - `php siro test --phpunit` flag
+- ✅ **Test Organization** - Unit, integration, and feature tests separated
+
+### Bug Fixes & Improvements
+- ✅ **ModelQueryBuilder Fixed** - Resolved double-hydration issues
+- ✅ **Model ArrayAccess** - Support both `$model->field` and `$model['field']`
+- ✅ **CORS Middleware** - Uses Response builder (no header warnings)
+- ✅ **Queue Security** - JSON deserialization (RCE vulnerability fixed)
+- ✅ **Cache Falsy Values** - Proper handling of 0, false, empty strings
+- ✅ **Middleware Aliases** - Configurable via `Router::setMiddlewareAliases()`
+
+### Quality Assurance
+- ✅ **PHPStan Level 6** - Zero errors, strict type checking
+- ✅ **Cross-Database Compatible** - Works on SQLite and MySQL
+- ✅ **Zero Warnings** - No "headers already sent" issues
+- ✅ **Performance Optimized** - Removed redundant operations
+
+---
 
 ## 🛠️ CLI Commands
 

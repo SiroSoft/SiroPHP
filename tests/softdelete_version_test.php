@@ -22,9 +22,11 @@ $failed = 0;
 $app = new App($basePath);
 $app->boot();
 
+require_once __DIR__ . '/db_test_helper.php';
+
 $pdo = Database::connection();
 $pdo->exec("CREATE TABLE IF NOT EXISTS sd_test (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id " . db_id_col() . ",
     name TEXT NOT NULL,
     deleted_at TEXT DEFAULT NULL,
     created_at TEXT DEFAULT NULL

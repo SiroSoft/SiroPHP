@@ -22,14 +22,16 @@ $app->boot();
 
 $pdo = Database::connection();
 
+require_once __DIR__ . '/db_test_helper.php';
+
 // Setup test table
 $pdo->exec("CREATE TABLE IF NOT EXISTS qb_test (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id " . db_id_col() . ",
     name TEXT NOT NULL,
     email TEXT NOT NULL,
-    age INTEGER DEFAULT 0,
+    age " . db_type_int() . " DEFAULT 0,
     score REAL DEFAULT 0.0,
-    status INTEGER DEFAULT 1,
+    status " . db_type_int() . " DEFAULT 1,
     created_at TEXT DEFAULT NULL
 )");
 $pdo->exec("DELETE FROM qb_test");

@@ -7,8 +7,6 @@ declare(strict_types=1);
  * Run: php tests/stability_test.php
  */
 
-declare(strict_types=1);
-
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Siro\Core\App;
@@ -22,6 +20,13 @@ $basePath = dirname(__DIR__);
 define('BASE_PATH', $basePath);
 $passed = 0;
 $failed = 0;
+
+Router::setMiddlewareAliases([
+    'auth' => \App\Middleware\AuthMiddleware::class,
+    'throttle' => \Siro\Core\Middleware\ThrottleMiddleware::class,
+    'cors' => \App\Middleware\CorsMiddleware::class,
+    'json' => \App\Middleware\JsonMiddleware::class,
+]);
 
 $app = new App($basePath);
 $app->boot();

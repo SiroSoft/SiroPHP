@@ -13,6 +13,7 @@ declare(strict_types=1);
  */
 
 use Siro\Core\App;
+use Siro\Core\Router;
 
 define('BASE_PATH', dirname(__DIR__));
 
@@ -20,6 +21,14 @@ require BASE_PATH . '/vendor/autoload.php';
 
 try {
     $app = new App(BASE_PATH);
+
+    Router::setMiddlewareAliases([
+        'auth' => \App\Middleware\AuthMiddleware::class,
+        'throttle' => \Siro\Core\Middleware\ThrottleMiddleware::class,
+        'cors' => \App\Middleware\CorsMiddleware::class,
+        'json' => \App\Middleware\JsonMiddleware::class,
+    ]);
+
     $app->boot();
     $app->loadRoutes(BASE_PATH . '/routes/api.php');
     $app->run();
