@@ -88,6 +88,16 @@ php siro serve
 - ✅ **Version Updated** - All references now show v0.13.0
 - ✅ **Test Coverage Complete** - UserService_test: 4 real tests (was TODO stub)
 
+### Advanced Features ⚡
+- 🔐 **RS256 JWT Support** - RSA signatures via JWT_ALGORITHM=RS256 + key env vars
+- 🚀 **Eager Loading** - Model::with('posts') eliminates N+1 query problems
+- ✅ **Extended Validation Rules** - nullable, date, url, regex:/pattern/, required_if:field,value
+- 🔗 **Route Parameter Constraints** - ->where('id', '/^\d+$/') for strict routing
+- ⏰ **Advanced Cron Expressions** - Range (1-5), step (*/15), list (1,3,5) support
+- ⏱️ **Real Queue Timeouts** - Actual timeout enforcement during job execution
+- 🎯 **Optimized Throttling** - Single middleware with Redis + file fallback
+- 📝 **Type-Safe Models** - @property PHPDoc for IDE autocomplete & PHPStan
+
 ### Quality Assurance
 - ✅ **PHPStan Level 6** - Zero errors, strict type checking
 - ✅ **Cross-Database Compatible** - Works on SQLite and MySQL
