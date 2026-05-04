@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Models\User;
+use App\Resources\UserResource;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
@@ -15,15 +16,13 @@ final class UserController
         $page = max(1, $request->queryInt('page', 1));
         $perPage = min(100, max(1, $request->queryInt('per_page', 15)));
 
-        $users = User::paginate($perPage, $page);
-        $total = User::query()->count();
+        $result = User::paginate($perPage, $page);
 
-        return Response::paginated($users, [
-            'page' => $page,
-            'per_page' => $perPage,
-            'total' => $total,
-            'last_page' => (int) ceil($total / $perPage),
-        ], 'Users retrieved');
+        return Response::paginated(
+            UserResource::collection($result['data']),
+            $result['meta'],
+            'Users retrieved',
+        );
     }
 
     public function show(Request $request): Response
@@ -35,7 +34,7 @@ final class UserController
             return Response::error('User not found', 404);
         }
 
-        return Response::success($user->toArray(), 'User retrieved');
+        return Response::success(UserResource::make($user), 'User retrieved');
     }
 
     public function store(Request $request): Response
@@ -68,7 +67,7 @@ final class UserController
             'created_at' => date('Y-m-d H:i:s'),
         ]);
 
-        return Response::created($user->toArray(), 'User created');
+        return Response::created(UserResource::make($user), 'User created');
     }
 
     public function update(Request $request): Response
@@ -113,7 +112,7 @@ final class UserController
         }
 
         $user->update($data);
-        return Response::success($user->toArray(), 'User updated');
+        return Response::success(UserResource::make($user), 'User updated');
     }
 
     public function delete(Request $request): Response

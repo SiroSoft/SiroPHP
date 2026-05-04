@@ -272,11 +272,11 @@ final class AuthController
         $user = User::find($userId);
         $tokenVersion = (int) ($user?->token_version ?? 1);
 
-        $token = JWT::encodeAccess($userId, $tokenVersion, $ttl);
-        $refreshToken = JWT::encodeRefresh($userId, $tokenVersion, $refreshTtl);
-
-        // Store refresh token
         $jti = bin2hex(random_bytes(16));
+        $token = JWT::encodeAccess($userId, $tokenVersion, $ttl);
+        $refreshToken = JWT::encodeRefresh($userId, $tokenVersion, $refreshTtl, $jti);
+
+        // Store refresh token with matching JTI
         DB::table('refresh_tokens')->insert([
             'jti' => $jti,
             'user_id' => $userId,

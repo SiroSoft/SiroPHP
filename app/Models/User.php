@@ -9,8 +9,18 @@ use Siro\Core\Model;
 /**
  * User model.
  *
- * Represents the users table with hidden password field,
- * integer casts, and mass-assignment fillable fields.
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property int $status
+ * @property int $token_version
+ * @property string|null $email_verified_at
+ * @property string|null $verification_token
+ * @property string|null $password_reset_token
+ * @property string|null $password_reset_expires_at
+ * @property string $created_at
+ * @property string|null $updated_at
  *
  * @package App\Models
  */

@@ -1,12 +1,11 @@
-# Siro API Framework v0.13.0
+# Siro API Framework v0.14.0
 
 **The Fastest PHP Micro-Framework for API Development with Advanced Debugging & CLI Testing**
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Packagist](https://img.shields.io/packagist/v/sirosoft/api.svg)](https://packagist.org/packages/sirosoft/api)
-[![Downloads](https://img.shields.io/packagist/dt/sirosoft/api.svg)](https://packagist.org/packages/sirosoft/api)
-[![Tests](https://img.shields.io/badge/tests-338%20passing-brightgreen.svg)](tests/)
+[![Packagist](https://img.shields.io/badge/packagist-v0.14.0-blue.svg)](https://packagist.org/packages/sirosoft/api)
+[![Tests](https://img.shields.io/badge/tests-174%20passing-brightgreen.svg)](tests/)
 [![PHPStan](https://img.shields.io/badge/phpstan-level%206-brightgreen.svg)](../siro-core/phpstan.neon)
 
 ---
@@ -59,10 +58,10 @@ php siro serve
 ## 🎉 What's New in v0.13.0
 
 ### Testing Excellence 🏆
-- ✅ **336 Total Tests** - 100% pass rate (stability verified)
-- ✅ **PHPUnit Integration** - Full PHPUnit support with code coverage
+- ✅ **174 Total Tests** - 100% pass rate (227 assertions)
+- ✅ **PHPUnit Standard** - Native PHPUnit with Unit/Integration/Feature suites
 - ✅ **Database Test Helpers** - Driver-aware helpers for SQLite/MySQL
-- ✅ **Enhanced Test Runner** - `php siro test --phpunit` flag
+- ✅ **One-Command Runner** - `php siro test` runs everything
 - ✅ **Test Organization** - Unit, integration, and feature tests separated
 
 ### New CLI Tools 🚀
@@ -133,10 +132,10 @@ php siro db:seed UserSeeder           # Run specific seeder
 ```bash
 php siro log:trace <trace_id>         # View trace details
 php siro log:trace --status=500       # Filter by status
-php siro log:trace --method=POST      # Filter by method
-php siro log:trace --slow             # Show slow requests
-php siro log:replay <trace_id>        # Generate curl command
-php siro log:export --format=json     # Export traces
+php siro log:replay <trace_id>        # Replay request from trace
+php siro log:export <trace_id> --postman  # Export to Postman format
+php siro log:cleanup --days=7         # Clean old trace files
+php siro log:slow --limit=10          # Show slow requests
 ```
 
 ### Performance
@@ -159,10 +158,12 @@ php siro doctor                       # Check system health
 # Quick test endpoint
 php siro api:test GET /api/users
 
-# Test with auto-auth (login once, token saved)
+# Auto-login (1 command: login → save token → run request)
+php siro api:test GET /api/auth/me --login email=admin@test.com password=secret
+
+# Test with saved token (login once, token saved)
 php siro api:test POST /auth/login email=admin@test.com password=123 --as=admin
 php siro api:test GET /users --as=admin              # Auto uses saved token
-php siro api:test POST /users name=John --as=admin   # Auto uses saved token
 
 # View request history
 php siro api:test --history
@@ -189,29 +190,36 @@ php siro make:test ProductService --unit
 
 ### 🆕 New CLI Tools (v0.13.0+)
 ```bash
+# Create new project from skeleton
+php siro new my-api                   # Create project folder + .env + JWT key
+
+# List all commands with usage syntax
+php siro list                          # 50 commands grouped by category
+php siro make:crud --help             # Detailed help for specific command
+php siro --version                     # Show version (0.13.0)
+
 # Generate factory for test data generation
 php siro make:factory User            # Creates database/factories/UserFactory.php
 
 # Inspect database tables from CLI
 php siro db:show users                # View table data
 php siro db:show products --schema    # View table schema
-php siro db:show users --limit=20     # Limit rows
 
 # Extract validation rules from controllers
 php siro route:rules                  # All controllers
-php siro route:rules UserController   # Specific controller
 php siro route:rules UserController@store  # Specific method
 
 # Development server with auto-reload
 php siro live                         # Auto-restart on file changes
 php siro live --port=8080             # Custom port
-php siro live --watch=app,routes      # Watch specific directories
+
+# Slow request analysis
+php siro log:slow                     # Show top 10 slow requests
+php siro log:slow --limit=20 --min=200
 
 # Deployment system
 php siro deploy                       # Deploy with default strategy
-php siro deploy production            # Deploy to production
 php siro deploy --dry-run             # Test without deploying
-php siro deploy --config=deploy.yml   # Custom config file
 ```
 
 **Factory Usage:**
@@ -270,7 +278,7 @@ php siro queue:flush                  # Clear failed jobs
 ### 🔍 Static Analysis & Benchmarks (v0.12.0)
 ```bash
 # Run PHPStan static analysis (Level 6 - 0 errors)
-php phpstan.phar analyse
+phpstan analyse
 
 # Run performance benchmarks
 php tests/benchmark.php
@@ -312,7 +320,7 @@ php siro api:test --collection=myapi
 ```bash
 # 1. Run all tests with one command
 php siro test
-# ═══ 316 tests, 316 passed, 0 failed in 3.89s ═══
+# ═══ 174 tests, 174 passed, 0 failed in 3.08s ═══
 
 # 2. Quick environment switching
 php siro env:switch staging
@@ -484,10 +492,11 @@ UserCreatedEvent::dispatch($user);
 
 ### Auto Documentation (v0.8.2) 
 ```bash
-# Generate complete API documentation with Swagger UI
-php siro make:docs
-php siro make:docs --flow=auth          # Only auth endpoints
-php siro make:docs --tag=User           # Only User controller
+# Generate OpenAPI spec + Swagger UI (full docs)
+php siro make:openapi --with-swagger
+php siro make:openapi --with-swagger --flow=auth   # Only auth endpoints
+php siro make:openapi --with-swagger --tag=User    # Only User controller
+php siro make:docs                                  # Alias: same as above
 
 # Generate OpenAPI spec only
 php siro make:openapi
@@ -560,7 +569,8 @@ See core library docs: https://github.com/SiroSoft/siro-core#-advanced-debugging
 Generate complete API documentation with Swagger UI in one command:
 
 ```bash
-php siro make:docs
+php siro make:openapi --with-swagger
+# or: php siro make:docs (alias)
 ```
 
 **What it does:**
@@ -628,11 +638,11 @@ All three commands support the same filters:
 
 | Filter | Example | Description |
 |--------|---------|-------------|
-| `--flow=auth` | `php siro make:docs --flow=auth` | Only authentication endpoints |
-| `--flow=crud` | `php siro make:docs --flow=crud` | Only CRUD operations |
-| `--tag=User` | `php siro make:docs --tag=User` | Specific controller |
-| `--method=POST` | `php siro make:docs --method=POST` | HTTP method filter |
-| `--path=/api` | `php siro make:docs --path=/api` | Path prefix |
+| `--flow=auth` | `php siro make:openapi --with-swagger --flow=auth` | Only authentication endpoints |
+| `--flow=crud` | `php siro make:openapi --with-swagger --flow=crud` | Only CRUD operations |
+| `--tag=User` | `php siro make:openapi --with-swagger --tag=User` | Specific controller |
+| `--method=POST` | `php siro make:openapi --with-swagger --method=POST` | HTTP method filter |
+| `--path=/api` | `php siro make:openapi --with-swagger --path=/api` | Path prefix |
 
 ---
 
@@ -642,7 +652,7 @@ All three commands support the same filters:
 # 1. Make API changes in your controllers
 
 # 2. Regenerate documentation
-php siro make:docs
+php siro make:openapi --with-swagger
 
 # 3. Test locally
 php siro serve
@@ -795,10 +805,10 @@ For detailed documentation:
 
 ---
 
-**Version:** 0.8.0  
+**Version:** 0.14.0  
 **Package:** sirosoft/api  
 **Type:** project  
-**Released:** April 29, 2026
+**Released:** May 4, 2026
 
 ---
 

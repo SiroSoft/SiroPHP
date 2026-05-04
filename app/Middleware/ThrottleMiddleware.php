@@ -27,10 +27,10 @@ final class ThrottleMiddleware
     private ?\Redis $redis = null;
     private bool $resolved = false;
 
-    public function handle(Request $request, callable $next, string $maxRequests = '60', string $minutes = '1'): mixed
+    public function handle(Request $request, callable $next, int $maxRequests = 60, int $minutes = 1): mixed
     {
-        $limit = max(1, (int) $maxRequests);
-        $windowMinutes = max(1, (int) $minutes);
+        $limit = max(1, $maxRequests);
+        $windowMinutes = max(1, $minutes);
         $ttl = $windowMinutes * 60;
 
         $redis = $this->redis();

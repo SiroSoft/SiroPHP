@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Models\Product;
+use App\Resources\ProductResource;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
@@ -55,7 +56,11 @@ final class ProductController
             ->orderBy($sort, $order)
             ->paginate($perPage, $page);
 
-        return Response::paginated($result['data'], $result['meta'], 'Products list');
+        return Response::paginated(
+            ProductResource::collection($result['data']),
+            $result['meta'],
+            'Products list',
+        );
     }
 
     public function show(Request $request): Response
@@ -70,7 +75,7 @@ final class ProductController
             return Response::error('Product not found', 404);
         }
 
-        return Response::success($item->toArray(), 'Product fetched');
+        return Response::success(ProductResource::make($item), 'Product fetched');
     }
 
     public function store(Request $request): Response
@@ -92,7 +97,7 @@ final class ProductController
         ]);
 
         $item = Product::create($data);
-        return Response::created($item->toArray(), 'Product created');
+        return Response::created(ProductResource::make($item), 'Product created');
     }
 
     public function update(Request $request): Response
@@ -125,7 +130,7 @@ final class ProductController
         }
 
         $item->update($data);
-        return Response::success($item->toArray(), 'Product updated');
+        return Response::success(ProductResource::make($item), 'Product updated');
     }
 
     public function delete(Request $request): Response

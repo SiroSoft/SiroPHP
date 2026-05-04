@@ -25,7 +25,7 @@ abstract class TestCase extends BaseTestCase
     {
         Router::setMiddlewareAliases([
             'auth' => \App\Middleware\AuthMiddleware::class,
-            'throttle' => \Siro\Core\Middleware\ThrottleMiddleware::class,
+            'throttle' => \App\Middleware\ThrottleMiddleware::class,
             'cors' => \App\Middleware\CorsMiddleware::class,
             'json' => \App\Middleware\JsonMiddleware::class,
         ]);

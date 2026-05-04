@@ -358,6 +358,384 @@
             "response": []
         },
         {
+            "name": "GET /api/products",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/products",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "products"
+                    ],
+                    "variable": []
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "POST /api/products",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/products",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "products"
+                    ],
+                    "variable": []
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"John Doe\",\n    \"description\": \"string\",\n    \"price\": 1,\n    \"stock\": 1,\n    \"category\": \"string\",\n    \"status\": \"string\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "DELETE /api/products/{id}",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/products/:$id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "products",
+                        "{id}"
+                    ],
+                    "variable": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "id"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "GET /api/products/{id}",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/products/:$id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "products",
+                        "{id}"
+                    ],
+                    "variable": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "id"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "PUT /api/products/{id}",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/products/:$id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "products",
+                        "{id}"
+                    ],
+                    "variable": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "id"
+                        }
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"John Doe\",\n    \"description\": \"string\",\n    \"price\": 1,\n    \"stock\": 1,\n    \"category\": \"string\",\n    \"status\": \"string\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "GET /api/testcmdcrud",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/testcmdcrud",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "testcmdcrud"
+                    ],
+                    "variable": []
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "POST /api/testcmdcrud",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/testcmdcrud",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "testcmdcrud"
+                    ],
+                    "variable": []
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"John Doe\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "DELETE /api/testcmdcrud/{id}",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/testcmdcrud/:$id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "testcmdcrud",
+                        "{id}"
+                    ],
+                    "variable": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "id"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "GET /api/testcmdcrud/{id}",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/testcmdcrud/:$id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "testcmdcrud",
+                        "{id}"
+                    ],
+                    "variable": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "id"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "PUT /api/testcmdcrud/{id}",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/testcmdcrud/:$id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "testcmdcrud",
+                        "{id}"
+                    ],
+                    "variable": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "id"
+                        }
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"John Doe\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": []
+        },
+        {
             "name": "GET /api/users",
             "request": {
                 "method": "GET",

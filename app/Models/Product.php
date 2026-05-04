@@ -6,6 +6,19 @@ namespace App\Models;
 
 use Siro\Core\Model;
 
+/**
+ * Product model.
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $description
+ * @property float $price
+ * @property int $stock
+ * @property string $category
+ * @property string $status
+ * @property string $created_at
+ * @property string|null $updated_at
+ */
 final class Product extends Model
 {
     protected string $table = 'products';

@@ -419,6 +419,424 @@
                 }
             }
         },
+        "/api/products": {
+            "get": {
+                "summary": "Index",
+                "operationId": "productIndex",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "tags": [
+                    "Product"
+                ]
+            },
+            "post": {
+                "summary": "Store",
+                "operationId": "productStore",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "tags": [
+                    "Product"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "string",
+                                        "description": "Name",
+                                        "minLength": 1,
+                                        "maxLength": 255
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "string",
+                                        "description": "Description",
+                                        "maxLength": 5000000
+                                    },
+                                    "price": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "description": "Price"
+                                    },
+                                    "stock": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "description": "Stock"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "string",
+                                        "description": "Category",
+                                        "maxLength": 100
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "string",
+                                        "description": "Status",
+                                        "maxLength": 20
+                                    }
+                                },
+                                "required": [
+                                    "name"
+                                ],
+                                "example": {
+                                    "name": "string",
+                                    "description": "string",
+                                    "price": 1,
+                                    "stock": 1,
+                                    "category": "string",
+                                    "status": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products/{id}": {
+            "delete": {
+                "summary": "Delete",
+                "operationId": "productDelete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "tags": [
+                    "Product"
+                ]
+            },
+            "get": {
+                "summary": "Show",
+                "operationId": "productShow",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "tags": [
+                    "Product"
+                ]
+            },
+            "put": {
+                "summary": "Update",
+                "operationId": "productUpdate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "tags": [
+                    "Product"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "string",
+                                        "description": "Name",
+                                        "minLength": 1,
+                                        "maxLength": 255
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "string",
+                                        "description": "Description",
+                                        "maxLength": 65535
+                                    },
+                                    "price": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "description": "Price"
+                                    },
+                                    "stock": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "description": "Stock"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "string",
+                                        "description": "Category",
+                                        "maxLength": 100
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "string",
+                                        "description": "Status",
+                                        "maxLength": 20
+                                    }
+                                },
+                                "example": {
+                                    "name": "string",
+                                    "description": "string",
+                                    "price": 1,
+                                    "stock": 1,
+                                    "category": "string",
+                                    "status": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/testcmdcrud": {
+            "get": {
+                "summary": "Index",
+                "operationId": "testcmdcrudIndex",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "tags": [
+                    "Testcmdcrud"
+                ]
+            },
+            "post": {
+                "summary": "Store",
+                "operationId": "testcmdcrudStore",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "tags": [
+                    "Testcmdcrud"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "string",
+                                        "description": "Name",
+                                        "minLength": 3,
+                                        "maxLength": 120
+                                    }
+                                },
+                                "required": [
+                                    "name"
+                                ],
+                                "example": {
+                                    "name": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/testcmdcrud/{id}": {
+            "delete": {
+                "summary": "Delete",
+                "operationId": "testcmdcrudDelete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "tags": [
+                    "Testcmdcrud"
+                ]
+            },
+            "get": {
+                "summary": "Show",
+                "operationId": "testcmdcrudShow",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "tags": [
+                    "Testcmdcrud"
+                ]
+            },
+            "put": {
+                "summary": "Update",
+                "operationId": "testcmdcrudUpdate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "tags": [
+                    "Testcmdcrud"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "string",
+                                        "description": "Name",
+                                        "minLength": 3,
+                                        "maxLength": 120
+                                    }
+                                },
+                                "example": {
+                                    "name": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/users": {
             "get": {
                 "summary": "Index",

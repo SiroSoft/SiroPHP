@@ -7,7 +7,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
@@ -19,13 +19,19 @@ jobs:
 
   static-analysis:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           tools: composer:v2
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
       - name: PHPStan
@@ -35,31 +41,96 @@ jobs:
 
   unit-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           tools: composer:v2
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
-      - name: Unit tests
+      - name: PHPUnit tests
         run: |
           php tests/unit/ValidatorTest.php
           php tests/unit/ResponseTest.php
           php tests/unit/RequestTest.php
           php tests/unit/RouterTest.php
 
-  integration-tests:
+  custom-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 10
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: sirophp_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           tools: composer:v2
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Prepare env
+        run: |
+          cp .env.testing .env
+          sed -i 's|DB_DATABASE=.*|DB_DATABASE=storage/test.db|g' .env
+          sed -i 's|CACHE_DRIVER=.*|CACHE_DRIVER=file|g' .env
+      - name: Migrate
+        run: php siro migrate
+      - name: Run custom test suite
+        run: |
+          php tests/router_request_test.php
+          php tests/validator_model_test.php
+          php tests/jwt_logger_cache_test.php
+          php tests/querybuilder_test.php
+          php tests/event_test.php
+          php tests/lang_test.php
+          php tests/final_core_test.php
+          php tests/remaining_test.php
+          php tests/v087_test.php
+          php tests/middleware_edge_test.php
+          php tests/softdelete_version_test.php
+          php tests/queue_mail_test.php
+          php tests/products_test.php
+      - name: UserService tests
+        run: php tests/UserService_test.php
+      - name: Error scenario tests
+        run: php tests/error_scenario_test.php
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
       - name: Prepare env
@@ -68,8 +139,29 @@ jobs:
           sed -i 's|DB_DATABASE=.*|DB_DATABASE=storage/test.db|g' .env
       - name: Migrate
         run: php siro migrate
-      - name: Integration tests
+      - name: Internal dispatch tests
+        run: php tests/integration_test.php
+
+  coverage-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Prepare env
         run: |
-          php -S localhost:8080 -t public > /tmp/server.log 2>&1 &
-          sleep 2
-          php tests/integration_test.php
+          cp .env.testing .env
+          sed -i 's|DB_DATABASE=.*|DB_DATABASE=storage/test.db|g' .env
+      - name: Coverage tests (Console, Middleware, Cache, Mail, Router)
+        run: php tests/coverage_test.php
