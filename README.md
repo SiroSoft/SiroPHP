@@ -341,6 +341,56 @@ php siro api:test GET /api/users --cors
 
 **Saves 2-3 hours per week on development tasks!** ⏱️
 
+### 🏗️ Service & Repository Pattern (v0.14.1)
+
+Full layered architecture generated with one command:
+
+```bash
+# Full CRUD with all layers (Model, Migration, Repository, Service, Controller, Resource, Routes, Test)
+php siro make:crud invoice --force
+
+# Generate individual layers
+php siro make:service Order              # Business logic
+php siro make:repository Product          # Data access
+
+# Skip layers if not needed
+php siro make:crud tag --without-service --without-repository
+```
+
+**Generated chain:**
+```
+Route → Controller → Service → Repository → Model
+         (DI)          (DI)         (DI)
+```
+
+Validation auto-detects rules by model name:
+- `product` → `name`, `price`, `sku`
+- `invoice` → `customer_id`, `total`
+- `user/customer` → `name`, `email`
+- `category/tag` → `name`, `slug`
+
+### 🧪 PHPUnit Test Generation (v0.14.1)
+
+```bash
+# Generate feature test (API integration)
+php siro make:test ProductApi
+# → tests/Feature/ProductApiTest.php (runs via vendor/bin/phpunit)
+
+# Generate unit test
+php siro make:test CartService --unit
+# → tests/Unit/CartServiceTest.php
+
+# CRUD auto-generates tests
+php siro make:crud products
+# → tests/Feature/ProductsTest.php with 4 test methods
+
+# Run tests with filters
+php siro test                            # All 174 tests
+php siro test --testsuite=Feature        # Feature suite only
+php siro test --filter=ProductsTest      # Single test class
+php siro test --stop-on-failure          # Stop at first failure
+```
+
 ### 🗄️ Production-Ready Features (v0.12.0)
 
 **Soft Deletes:**
