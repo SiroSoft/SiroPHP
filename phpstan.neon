@@ -1,0 +1,17 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 6
+    paths:
+        - app/
+        - config/
+        - database/
+        - routes/
+        - public/
+        - tests/
+    excludePaths:
+        - vendor/
+        - core/
+        - storage/
+        - tests/verify_v061.php

@@ -1,0 +1,469 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 2
+			path: app/Controllers/AuthController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>token_version" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Controllers/AuthController.php
+
+		-
+			message: '#^Binary operation "\." between ''%%'' and array\<string, mixed\> results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: app/Controllers/ProductController.php
+
+		-
+			message: '#^Call to function in_array\(\) with arguments array\<string, mixed\>, array\{''id'', ''name'', ''price'', ''stock'', ''created_at''\} and true will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Controllers/ProductController.php
+
+		-
+			message: '#^Parameter \#1 \$string of function strtolower expects string, array\<string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Controllers/ProductController.php
+
+		-
+			message: '#^Result of && is always true\.$#'
+			identifier: booleanAnd.alwaysTrue
+			count: 3
+			path: app/Controllers/ProductController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between array\<string, mixed\> and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 3
+			path: app/Controllers/ProductController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between array\<string, mixed\> and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 3
+			path: app/Controllers/ProductController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 2
+			path: app/Controllers/UserController.php
+
+		-
+			message: '#^Method App\\Jobs\\ProcessPendingNotifications\:\:handle\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Jobs/ProcessPendingNotifications.php
+
+		-
+			message: '#^Method App\\Jobs\\SendWelcomeEmail\:\:handle\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Jobs/SendWelcomeEmail.php
+
+		-
+			message: '#^Offset 1 on array\{non\-falsy\-string, non\-empty\-string\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Middleware/AuthMiddleware.php
+
+		-
+			message: '#^Method App\\Repositories\\CategoryRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/CategoryRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\CategoryRepository\:\:store\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/CategoryRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\CategoryRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/CategoryRepository.php
+
+		-
+			message: '#^Method App\\Services\\CategoryService\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/CategoryService.php
+
+		-
+			message: '#^Method App\\Services\\CategoryService\:\:getAll\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/CategoryService.php
+
+		-
+			message: '#^Method App\\Services\\CategoryService\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/CategoryService.php
+
+		-
+			message: '#^Variable \$app might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: routes/api.php
+
+		-
+			message: '#^Method App\\Tests\\TestCase\:\:assertDatabaseHas\(\) has parameter \$conditions with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Method App\\Tests\\TestCase\:\:assertDatabaseMissing\(\) has parameter \$conditions with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Method App\\Tests\\TestCase\:\:delete\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Method App\\Tests\\TestCase\:\:dispatch\(\) has parameter \$body with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Method App\\Tests\\TestCase\:\:dispatch\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Method App\\Tests\\TestCase\:\:get\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Method App\\Tests\\TestCase\:\:post\(\) has parameter \$body with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Method App\\Tests\\TestCase\:\:post\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Method App\\Tests\\TestCase\:\:put\(\) has parameter \$body with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Method App\\Tests\\TestCase\:\:put\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Method App\\Tests\\TestResponse\:\:assertJson\(\) has parameter \$expected with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Method App\\Tests\\TestResponse\:\:json\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Property App\\Tests\\TestResponse\:\:\$parsedBody type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Schedule'' and ''call'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/AdvancedCronTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Schedule'' and ''command'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/AdvancedCronTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Siro\\Core\\ScheduleTask and ''cron'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/AdvancedCronTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Siro\\Core\\ScheduleTask and ''daily'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/AdvancedCronTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Siro\\Core\\ScheduleTask and ''everyMinute'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/AdvancedCronTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Siro\\Core\\ScheduleTask and ''hourly'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/AdvancedCronTest.php
+
+		-
+			message: '#^Method App\\Tests\\Feature\\EagerTestUser\:\:posts\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/feature/EagerLoadingTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Response'' and ''download'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/FileDownloadTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Response'' and ''file'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/FileDownloadTest.php
+
+		-
+			message: '#^Access to an undefined property Siro\\Core\\Model@anonymous/tests/feature/MassAssignmentTest\.php\:31\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/feature/MassAssignmentTest.php
+
+		-
+			message: '#^Access to an undefined property Siro\\Core\\Model@anonymous/tests/feature/MassAssignmentTest\.php\:31\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/feature/MassAssignmentTest.php
+
+		-
+			message: '#^Access to an undefined property Siro\\Core\\Model@anonymous/tests/feature/MassAssignmentTest\.php\:31\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/feature/MassAssignmentTest.php
+
+		-
+			message: '#^Access to an undefined property Siro\\Core\\Model@anonymous/tests/feature/MassAssignmentTest\.php\:43\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/feature/MassAssignmentTest.php
+
+		-
+			message: '#^Access to an undefined property Siro\\Core\\Model@anonymous/tests/feature/MassAssignmentTest\.php\:53\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/feature/MassAssignmentTest.php
+
+		-
+			message: '#^Access to an undefined property Siro\\Core\\Model@anonymous/tests/feature/MassAssignmentTest\.php\:53\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/feature/MassAssignmentTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Queue'' and ''failedCount'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/QueueTimeoutTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Queue'' and ''pendingCount'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/QueueTimeoutTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Queue'' and ''work'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/QueueTimeoutTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Queue'' and ''workAll'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/QueueTimeoutTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Resource'' and ''collection'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/ResourcePatternTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Resource'' and ''make'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/ResourcePatternTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array\<int, array\<string, mixed\>\> will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/feature/ResourcePatternTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array\<string, mixed\> will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/feature/ResourcePatternTest.php
+
+		-
+			message: '#^Parameter \#1 \$data of static method Siro\\Core\\Response\:\:success\(\) expects array\<string, mixed\>\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/feature/RouteConstraintsTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Auth\\\\JWT'' and ''decode'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/Rs256JwtTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Auth\\\\JWT'' and ''encodeRefresh'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/feature/Rs256JwtTest.php
+
+		-
+			message: '#^Access to an undefined property Siro\\Core\\Model@anonymous/tests/integration/EventTest\.php\:100\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/integration/EventTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with Siro\\Core\\App will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/integration/GeneralIntegrationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/integration/QueueMailTest.php
+
+		-
+			message: '#^Method App\\Tests\\Integration\\CounterJob\:\:handle\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/integration/QueueMailTest.php
+
+		-
+			message: '#^Method App\\Tests\\Integration\\FailingJob\:\:handle\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/integration/QueueMailTest.php
+
+		-
+			message: '#^Method App\\Tests\\Integration\\NoopJob\:\:handle\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/integration/QueueMailTest.php
+
+		-
+			message: '#^Method App\\Tests\\Integration\\PriorityJob\:\:handle\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/integration/QueueMailTest.php
+
+		-
+			message: '#^Property App\\Tests\\Integration\\PriorityJob\:\:\$order type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/integration/QueueMailTest.php
+
+		-
+			message: '#^Comparison operation "\>" between 0 and 0 is always false\.$#'
+			identifier: greater.alwaysFalse
+			count: 2
+			path: tests/integration_test.php
+
+		-
+			message: '#^Function httpGet\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/integration_test.php
+
+		-
+			message: '#^Function httpGetWithAuth\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/integration_test.php
+
+		-
+			message: '#^Function httpPost\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/integration_test.php
+
+		-
+			message: '#^Function httpPost\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/integration_test.php
+
+		-
+			message: '#^Function httpPostRaw\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/integration_test.php
+
+		-
+			message: '#^Function httpPostWithAuth\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/integration_test.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: tests/integration_test.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between 0 and 0 will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 2
+			path: tests/integration_test.php
+
+		-
+			message: '#^Variable \$http_response_header in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: tests/integration_test.php
+
+		-
+			message: '#^Parameter \#2 \$meta of static method Siro\\Core\\Response\:\:paginated\(\) expects array\{page\: int, per_page\: int, total\: int, last_page\: int\}, array\{page\: 1, total\: 3\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/unit/ResponseTest.php
+
+		-
+			message: '#^Parameter \#1 \$data of static method Siro\\Core\\Response\:\:success\(\) expects array\<string, mixed\>\|null, string given\.$#'
+			identifier: argument.type
+			count: 9
+			path: tests/unit/RouterTest.php
