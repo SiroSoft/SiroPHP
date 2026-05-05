@@ -6,46 +6,30 @@ use App\Controllers\UserController;
 use App\Controllers\AuthController;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\JsonMiddleware;
-<<<<<<< HEAD
 use Siro\Core\Lang;
-=======
-use Siro\Core\Response;
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 
 $app->router->get('/', function (): array {
     return [
         'success' => true,
-<<<<<<< HEAD
         'message' => Lang::get('messages.welcome'),
         'data' => [
             'name' => 'Siro API Framework',
             'version' => '0.13.0',
             'php' => PHP_VERSION,
             'locale' => Lang::locale(),
-=======
-        'message' => 'Siro API Framework v0.7.3 is running',
-        'data' => [
-            'name' => 'Siro API Framework',
-            'version' => '0.7.3',
-            'php' => PHP_VERSION,
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
         ],
         'meta' => [],
     ];
 });
 
 $app->router->group('/api', [CorsMiddleware::class], function ($router): void {
-<<<<<<< HEAD
     // Public auth routes
-=======
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
     $router->post('/auth/register', [AuthController::class, 'register'])
         ->middleware([JsonMiddleware::class, 'throttle:30,1']);
 
     $router->post('/auth/login', [AuthController::class, 'login'])
         ->middleware([JsonMiddleware::class, 'throttle:60,1']);
 
-<<<<<<< HEAD
     $router->post('/auth/refresh', [AuthController::class, 'refresh'])
         ->middleware([JsonMiddleware::class, 'throttle:30,1']);
 
@@ -59,18 +43,13 @@ $app->router->group('/api', [CorsMiddleware::class], function ($router): void {
         ->middleware([JsonMiddleware::class, 'throttle:10,1']);
 
     // Protected auth routes
-=======
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
     $router->get('/auth/me', [AuthController::class, 'me'])
         ->middleware(['auth', 'throttle:120,1']);
 
     $router->post('/auth/logout', [AuthController::class, 'logout'])
         ->middleware(['auth', 'throttle:60,1']);
 
-<<<<<<< HEAD
     // CRUD routes
-=======
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
     $router->get('/users', [UserController::class, 'index'])->cache(60);
     $router->get('/users/{id}', [UserController::class, 'show'])->cache(60);
 
@@ -83,7 +62,6 @@ $app->router->group('/api', [CorsMiddleware::class], function ($router): void {
     $router->delete('/users/{id}', [UserController::class, 'delete'])
         ->middleware(['auth', 'throttle:60,1']);
 
-<<<<<<< HEAD
     // Product routes
     $router->get('/products', [\App\Controllers\ProductController::class, 'index']);
     $router->get('/products/{id}', [\App\Controllers\ProductController::class, 'show']);
@@ -108,35 +86,4 @@ $app->router->group('/api', [CorsMiddleware::class], function ($router): void {
     $router->put('/tag/{id}', [\App\Controllers\TagController::class, 'update'])
         ->middleware([JsonMiddleware::class]);
     $router->delete('/tag/{id}', [\App\Controllers\TagController::class, 'delete']);
-=======
-    $router->options('/users', fn (): Response => Response::noContent());
-    $router->options('/users/{id}', fn (): Response => Response::noContent());
-    $router->options('/auth/register', fn (): Response => Response::noContent());
-    $router->options('/auth/login', fn (): Response => Response::noContent());
-    $router->options('/auth/me', fn (): Response => Response::noContent());
-    $router->options('/auth/logout', fn (): Response => Response::noContent());
-});
-
-$app->router->group('', [CorsMiddleware::class], function ($router): void {
-    $router->post('/auth/register', [AuthController::class, 'register'])
-        ->middleware([JsonMiddleware::class, 'throttle:30,1']);
-    $router->post('/auth/login', [AuthController::class, 'login'])
-        ->middleware([JsonMiddleware::class, 'throttle:60,1']);
-    $router->get('/auth/me', [AuthController::class, 'me'])
-        ->middleware(['auth', 'throttle:120,1']);
-    $router->post('/auth/logout', [AuthController::class, 'logout'])
-        ->middleware(['auth', 'throttle:60,1']);
-
-    $router->get('/users', [UserController::class, 'index'])->cache(60);
-    $router->get('/users/{id}', [UserController::class, 'show'])->cache(60);
-    $router->post('/users', [UserController::class, 'store'])->middleware([JsonMiddleware::class, 'auth', 'throttle:60,1']);
-    $router->put('/users/{id}', [UserController::class, 'update'])->middleware([JsonMiddleware::class, 'auth', 'throttle:60,1']);
-    $router->delete('/users/{id}', [UserController::class, 'delete'])->middleware(['auth', 'throttle:60,1']);
-    $router->options('/users', fn (): Response => Response::noContent());
-    $router->options('/users/{id}', fn (): Response => Response::noContent());
-    $router->options('/auth/register', fn (): Response => Response::noContent());
-    $router->options('/auth/login', fn (): Response => Response::noContent());
-    $router->options('/auth/me', fn (): Response => Response::noContent());
-    $router->options('/auth/logout', fn (): Response => Response::noContent());
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 });

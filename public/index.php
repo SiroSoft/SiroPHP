@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-<<<<<<< HEAD
 /**
  * HTTP entry point.
  *
@@ -15,9 +14,6 @@ declare(strict_types=1);
 
 use Siro\Core\App;
 use Siro\Core\Router;
-=======
-use Siro\Core\App;
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 
 define('BASE_PATH', dirname(__DIR__));
 
@@ -25,7 +21,6 @@ require BASE_PATH . '/vendor/autoload.php';
 
 try {
     $app = new App(BASE_PATH);
-<<<<<<< HEAD
 
     Router::setMiddlewareAliases([
         'auth' => \App\Middleware\AuthMiddleware::class,
@@ -34,8 +29,6 @@ try {
         'json' => \App\Middleware\JsonMiddleware::class,
     ]);
 
-=======
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
     $app->boot();
     $app->loadRoutes(BASE_PATH . '/routes/api.php');
     $app->run();

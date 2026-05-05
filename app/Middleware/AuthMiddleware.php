@@ -4,18 +4,12 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-<<<<<<< HEAD
 use App\Models\User;
 use Siro\Core\Auth\JWT;
-=======
-use Siro\Core\Auth\JWT;
-use Siro\Core\DB;
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 use Siro\Core\Request;
 use Siro\Core\Response;
 use Throwable;
 
-<<<<<<< HEAD
 /**
  * JWT authentication middleware.
  *
@@ -25,8 +19,6 @@ use Throwable;
  *
  * @package App\Middleware
  */
-=======
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 final class AuthMiddleware
 {
     public function handle(Request $request, callable $next): Response
@@ -62,50 +54,28 @@ final class AuthMiddleware
                 ]);
             }
 
-<<<<<<< HEAD
             $user = User::find($userId);
 
             if ($user === null || ((int) $user->status !== 1)) {
-=======
-            $user = DB::table('users')
-                ->select(['id', 'name', 'email', 'status', 'token_version', 'created_at'])
-                ->where('id', '=', $userId)
-                ->first();
-
-            if ($user === null || (isset($user['status']) && (int) $user['status'] !== 1)) {
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
                 return Response::error('Unauthorized', 401, [
                     'token' => ['User not found or inactive'],
                 ]);
             }
 
-<<<<<<< HEAD
             $userData = $user->toArray();
             if ((int) ($userData['token_version'] ?? 1) !== $tokenVersion) {
-=======
-            if ((int) ($user['token_version'] ?? 1) !== $tokenVersion) {
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
                 return Response::error('Unauthorized', 401, [
                     'token' => ['Token has been revoked'],
                 ]);
             }
 
             $request->setUser([
-<<<<<<< HEAD
                 'id' => (int) $userData['id'],
                 'name' => (string) ($userData['name'] ?? ''),
                 'email' => (string) ($userData['email'] ?? ''),
                 'status' => (int) ($userData['status'] ?? 0),
                 'token_version' => (int) ($userData['token_version'] ?? 1),
                 'created_at' => (string) ($userData['created_at'] ?? ''),
-=======
-                'id' => (int) $user['id'],
-                'name' => (string) ($user['name'] ?? ''),
-                'email' => (string) ($user['email'] ?? ''),
-                'status' => (int) ($user['status'] ?? 0),
-                'token_version' => (int) ($user['token_version'] ?? 1),
-                'created_at' => (string) ($user['created_at'] ?? ''),
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
                 'claims' => $claims,
             ]);
         } catch (Throwable) {

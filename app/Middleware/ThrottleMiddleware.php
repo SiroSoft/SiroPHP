@@ -9,7 +9,6 @@ use Siro\Core\Request;
 use Siro\Core\Response;
 use Throwable;
 
-<<<<<<< HEAD
 /**
  * Rate limiting middleware.
  *
@@ -19,8 +18,6 @@ use Throwable;
  *
  * @package App\Middleware
  */
-=======
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 final class ThrottleMiddleware
 {
     private const FALLBACK_DISABLED = 'disabled';
@@ -30,17 +27,10 @@ final class ThrottleMiddleware
     private ?\Redis $redis = null;
     private bool $resolved = false;
 
-<<<<<<< HEAD
     public function handle(Request $request, callable $next, int $maxRequests = 60, int $minutes = 1): mixed
     {
         $limit = max(1, $maxRequests);
         $windowMinutes = max(1, $minutes);
-=======
-    public function handle(Request $request, callable $next, string $maxRequests = '60', string $minutes = '1'): mixed
-    {
-        $limit = max(1, (int) $maxRequests);
-        $windowMinutes = max(1, (int) $minutes);
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
         $ttl = $windowMinutes * 60;
 
         $redis = $this->redis();

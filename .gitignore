@@ -1,13 +1,6 @@
 /vendor/
-<<<<<<< HEAD
 /.env
 /composer.lock
-=======
-/core/vendor/
-/.env
-/composer.lock
-/core/composer.lock
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 
 /storage/cache/*
 !/storage/cache/.gitkeep
@@ -18,7 +11,6 @@
 /storage/rate_limit/*
 /storage/*.db
 
-<<<<<<< HEAD
 # Generated API documentation (kept locally only)
 /openapi.json
 /postman_collection.json
@@ -55,9 +47,5 @@ Thumbs.db
 BAO_CAO*.md
 CLEANUP*.md
 COMPLETE_*.md
-=======
-.DS_Store
-Thumbs.db
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 
 .git_disabled/
