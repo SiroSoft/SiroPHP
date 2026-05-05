@@ -1,0 +1,36 @@
+{
+  "name": "sirosoft/api",
+  "description": "Siro API Framework - Application Skeleton",
+  "type": "project",
+  "license": "MIT",
+  "keywords": ["framework", "api", "micro-framework", "php", "rest", "skeleton"],
+  "homepage": "https://github.com/SiroSoft/SiroPHP",
+  "support": {
+    "issues": "https://github.com/SiroSoft/SiroPHP/issues",
+    "source": "https://github.com/SiroSoft/SiroPHP"
+  },
+  "require": {
+    "php": ">=8.2",
+    "sirosoft/core": ">=0.14.1 <1.0.0",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "ext-mbstring": "*"
+  },
+  "scripts": {
+    "post-create-project-cmd": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+      "@php siro key:generate || true"
+    ]
+  },
+  "bin": ["siro"],
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "require-dev": {
+    "phpunit/phpunit": "^11.5"
+  }
+}

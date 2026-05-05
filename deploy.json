@@ -1,0 +1,26 @@
+{
+    "default": "staging",
+    "environments": {
+        "staging": {
+            "method": "git",
+            "remote": "origin",
+            "branch": "staging",
+            "post_deploy": [
+                "composer install --no-dev --optimize-autoloader",
+                "php siro migrate",
+                "php siro config:cache"
+            ]
+        },
+        "production": {
+            "method": "git",
+            "remote": "origin",
+            "branch": "main",
+            "post_deploy": [
+                "composer install --no-dev --optimize-autoloader",
+                "php siro migrate",
+                "php siro config:cache",
+                "php siro optimize"
+            ]
+        }
+    }
+}

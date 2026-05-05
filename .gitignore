@@ -1,0 +1,49 @@
+/vendor/
+/.env
+/composer.lock
+
+/storage/cache/*
+!/storage/cache/.gitkeep
+
+/storage/logs/*
+!/storage/logs/.gitkeep
+
+/storage/rate_limit/*
+/storage/*.db
+
+# Generated API documentation (kept locally only)
+/openapi.json
+/postman_collection.json
+*.csv
+
+# Documentation source (tracked)
+!/docs/openapi/
+!/docs/postman/
+!/docs/swagger/
+
+# Archive documentation (kept locally only)
+/docs/archive/
+
+# IDE and AI assistant folders (kept locally only)
+/.cline/
+.vscode/
+.idea/
+
+# Generated files in public (kept locally only)
+/public/openapi.json
+/public/docs.html
+
+.DS_Store
+Thumbs.db
+
+# API test history (runtime data)
+/storage/api-test-history.json
+
+.phpunit.cache
+
+# Temporary reports and audit files
+*.md.backup
+*_REPORT*.md
+BAO_CAO*.md
+CLEANUP*.md
+COMPLETE_*.md
