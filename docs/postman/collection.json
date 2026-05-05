@@ -358,6 +358,366 @@
             "response": []
         },
         {
+            "name": "GET /api/categories",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/categories",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "categories"
+                    ],
+                    "variable": []
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "POST /api/categories",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/categories",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "categories"
+                    ],
+                    "variable": []
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"John Doe\",\n    \"slug\": \"string\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "DELETE /api/categories/{id}",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/categories/:$id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "categories",
+                        "{id}"
+                    ],
+                    "variable": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "id"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "GET /api/categories/{id}",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/categories/:$id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "categories",
+                        "{id}"
+                    ],
+                    "variable": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "id"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "PUT /api/categories/{id}",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/categories/:$id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "categories",
+                        "{id}"
+                    ],
+                    "variable": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "id"
+                        }
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"John Doe\",\n    \"slug\": \"string\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "GET /api/orders",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/orders",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "orders"
+                    ],
+                    "variable": []
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "POST /api/orders",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/orders",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "orders"
+                    ],
+                    "variable": []
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "DELETE /api/orders/{id}",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/orders/:$id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "orders",
+                        "{id}"
+                    ],
+                    "variable": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "id"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "GET /api/orders/{id}",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/orders/:$id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "orders",
+                        "{id}"
+                    ],
+                    "variable": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "id"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "PUT /api/orders/{id}",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/orders/:$id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "orders",
+                        "{id}"
+                    ],
+                    "variable": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "id"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
             "name": "GET /api/products",
             "request": {
                 "method": "GET",
@@ -547,7 +907,7 @@
             "response": []
         },
         {
-            "name": "GET /api/testcmdcrud",
+            "name": "GET /api/tag",
             "request": {
                 "method": "GET",
                 "header": [
@@ -563,13 +923,13 @@
                     }
                 ],
                 "url": {
-                    "raw": "{{base_url}}/api/testcmdcrud",
+                    "raw": "{{base_url}}/api/tag",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
-                        "testcmdcrud"
+                        "tag"
                     ],
                     "variable": []
                 }
@@ -577,7 +937,7 @@
             "response": []
         },
         {
-            "name": "POST /api/testcmdcrud",
+            "name": "POST /api/tag",
             "request": {
                 "method": "POST",
                 "header": [
@@ -593,19 +953,19 @@
                     }
                 ],
                 "url": {
-                    "raw": "{{base_url}}/api/testcmdcrud",
+                    "raw": "{{base_url}}/api/tag",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
-                        "testcmdcrud"
+                        "tag"
                     ],
                     "variable": []
                 },
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"name\": \"John Doe\"\n}",
+                    "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -616,7 +976,7 @@
             "response": []
         },
         {
-            "name": "DELETE /api/testcmdcrud/{id}",
+            "name": "DELETE /api/tag/{id}",
             "request": {
                 "method": "DELETE",
                 "header": [
@@ -632,13 +992,13 @@
                     }
                 ],
                 "url": {
-                    "raw": "{{base_url}}/api/testcmdcrud/:$id",
+                    "raw": "{{base_url}}/api/tag/:$id",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
-                        "testcmdcrud",
+                        "tag",
                         "{id}"
                     ],
                     "variable": [
@@ -653,7 +1013,7 @@
             "response": []
         },
         {
-            "name": "GET /api/testcmdcrud/{id}",
+            "name": "GET /api/tag/{id}",
             "request": {
                 "method": "GET",
                 "header": [
@@ -669,13 +1029,13 @@
                     }
                 ],
                 "url": {
-                    "raw": "{{base_url}}/api/testcmdcrud/:$id",
+                    "raw": "{{base_url}}/api/tag/:$id",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
-                        "testcmdcrud",
+                        "tag",
                         "{id}"
                     ],
                     "variable": [
@@ -690,7 +1050,7 @@
             "response": []
         },
         {
-            "name": "PUT /api/testcmdcrud/{id}",
+            "name": "PUT /api/tag/{id}",
             "request": {
                 "method": "PUT",
                 "header": [
@@ -706,13 +1066,13 @@
                     }
                 ],
                 "url": {
-                    "raw": "{{base_url}}/api/testcmdcrud/:$id",
+                    "raw": "{{base_url}}/api/tag/:$id",
                     "host": [
                         "{{base_url}}"
                     ],
                     "path": [
                         "api",
-                        "testcmdcrud",
+                        "tag",
                         "{id}"
                     ],
                     "variable": [
@@ -725,7 +1085,7 @@
                 },
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"name\": \"John Doe\"\n}",
+                    "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -920,6 +1280,35 @@
                             "language": "json"
                         }
                     }
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "GET /health",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/health",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "health"
+                    ],
+                    "variable": []
                 }
             },
             "response": []
