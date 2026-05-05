@@ -1,5 +1,6 @@
 /vendor/
 /.env
+/.env.backup
 /composer.lock
 
 /storage/cache/*
