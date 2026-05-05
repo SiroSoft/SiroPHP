@@ -5,9 +5,10 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
 [![Packagist](https://img.shields.io/badge/packagist-v0.15.0-blue.svg)](https://packagist.org/packages/sirosoft/api)
-[![Tests](https://img.shields.io/badge/tests-178%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-197%20passing-brightgreen.svg)](tests/)
+[![PHPStan](https://img.shields.io/badge/phpstan-level%206-brightgreen.svg)](https://github.com/SiroSoft/siro-core)
 [![PostgreSQL](https://img.shields.io/badge/postgresql-ready-blue.svg)](https://www.postgresql.org/)
-[![Schema Builder](https://img.shields.io/badge/schema-builder-orange.svg)](https://github.com/SiroSoft/siro-core)
+[![Security](https://img.shields.io/badge/security-log%20sanitized-brightgreen)](https://github.com/SiroSoft/siro-core)
 
 ---
 
@@ -188,6 +189,14 @@ The application automatically returns `503 Service Unavailable` with `Retry-Afte
 | `RETURNING id` on INSERT | Not supported | ✅ Yes | Not supported |
 | Random ordering | `RAND()` | `RANDOM()` | `RANDOM()` |
 
+### 🔒 Production Security (v0.15.0)
+- 🔒 **Log Sanitization** — Passwords, tokens, credit cards, OTPs auto `[REDACTED]` in traces
+- 🛡️ **Replay Lock** — `--dry-run` only in production, need `--force --env=local` for write operations
+- 📝 **Audit Trail** — Every replay/dry-run/diff logged to `storage/logs/replay-audit.log`
+- 🧹 **Log Protection** — `.htaccess` auto-generated, Nginx check in `doctor`, retention & rotation
+- 🚫 **Log Injection Prevention** — Newlines escaped in all log entries
+- 🔐 **OpenAPI Production Lock** — Disabled by default in production (`SIRO_OPENAPI_ENABLED=true` to enable)
+
 ### 🏗️ Service & Repository Pattern (v0.14.1)
 - 🏗️ **Service Layer** — `php siro make:service Order` generates `app/Services/OrderService.php`
 - 🗂️ **Repository Pattern** — `php siro make:repository Product` generates `app/Repositories/ProductRepository.php`
@@ -215,67 +224,54 @@ The application automatically returns `503 Service Unavailable` with `Retry-Afte
 
 ---
 
-## 🛠️ All CLI Commands (57)
+## 🛠️ CLI (59 commands)
 
-### 📦 Code Generation
+### 🎯 Core Workflow (90% daily use)
 ```bash
-php siro make:model User                    php siro make:controller UserController
-php siro make:migration create_posts_table  php siro make:resource UserResource
-php siro make:seeder UserSeeder             php siro make:auth
-php siro make:crud products                 php siro make:test ProductApi
-php siro make:factory User                  php siro make:job SendWelcomeEmail
-php siro make:mail WelcomeMail              php siro make:event UserCreated
-php siro make:lang vi                       php siro make:service Order
-php siro make:repository Product            php siro make:openapi --with-swagger
-php siro make:postman
+php siro make:crud products           # Full CRUD in 2 seconds
+php siro serve                        # Start dev server
+php siro api:test GET /api/products   # Test any endpoint (alias: t)
+php siro why                          # Why did the last request fail?
+php siro fix                          # Watch code changes & auto-replay
+php siro replay                       # Replay any past request
+php siro traces                       # Browse recent request traces
 ```
 
-### 🗄️ Database
+### 🔧 Daily Dev Tools
 ```bash
-php siro migrate              php siro migrate:rollback --step=N
-php siro migrate:status       php siro db:seed
-php siro db:show users --schema
+php siro make:controller User    php siro make:model User
+php siro make:migration create   php siro make:test ProductApi
+php siro make:service Order      php siro make:repository Product
+php siro make:auth               php siro make:seeder UserSeeder
+php siro migrate                 php siro db:seed
+php siro test                    php siro route:list
 ```
 
-### 🐛 Debugging
+### 📦 Advanced / Infra
 ```bash
-php siro debug:last           php siro log:trace <id>
-php siro log:replay <id>      php siro log:export <id> --postman
-php siro log:cleanup --days=7 php siro log:slow --limit=10
-php siro log:top              php siro log:tail
-php siro log:stats
+php siro make:job SendEmail      php siro make:mail WelcomeMail
+php siro make:event UserCreated  php siro make:lang vi
+php siro make:factory User       php siro make:openapi --with-swagger
+php siro make:postman            php siro make:resource UserResource
+php siro queue:work              php siro queue:status
+php siro schedule:run            php siro deploy --init
+php siro optimize                php siro config:cache
+php siro down --message="Upgrading..."  php siro up
+php siro log:trace <id>          php siro log:slow --limit=10
+php siro log:replay <id> --edit  php siro log:replay <id> --diff
+php siro log:export <id> --postman
 ```
 
-### 🧪 Testing
+### ⚙️ System / Rare
 ```bash
-php siro test                 php siro test --filter=CategoryTest
-php siro api:test GET /api/users
-php siro api:test POST /api/auth/login email=admin@test.com password=secret
-php siro api:test GET /api/products --as=admin --loop=100
-```
-
-### ⏰ Queue & Schedule
-```bash
-php siro queue:work           php siro queue:work --daemon
-php siro queue:status         php siro queue:retry <id|all>
-php siro queue:flush          php siro schedule:run
-```
-
-### 🌐 Server & Deploy
-```bash
-php siro serve --port=8080    php siro live --port=9090
-php siro deploy --init        php siro storage:link
-```
-
-### ⚙️ System
-```bash
-php siro key:generate         php siro config:cache
-php siro optimize             php siro env:check
-php siro env:switch production php siro doctor
-php siro doctor --prod        php siro down --message="Upgrading..."
-php siro up                   php siro route:list
-php siro route:search user    php siro route:rules
-php siro rate:status
+php siro key:generate            php siro doctor --prod
+php siro env:check               php siro env:switch production
+php siro route:search user       php siro route:rules
+php siro rate:status             php siro db:show users --schema
+php siro migrate:status          php siro migrate:rollback --step=N
+php siro storage:link            php siro live --port=9090
+php siro log:cleanup --days=7    php siro log:tail
+php siro log:stats               php siro log:top
 ```
 
 ---
@@ -507,7 +503,7 @@ class ProductApiTest extends TestCase
 
 ## 📋 Changelog
 
-- **v0.15.0** — Schema Builder (driver-agnostic migrations), Multi-DB connections, AES-256 Encryption, HTTP Client, Maintenance mode (`php siro down/up`), Foreign Key constraints, Health endpoint (`GET /health`), Test assertion helpers, PostgreSQL production support
+- **v0.15.0** — Schema Builder (driver-agnostic migrations), Multi-DB connections, AES-256 Encryption, HTTP Client, Maintenance mode (`php siro down/up`), Foreign Key constraints, Health endpoint (`GET /health`), Test assertion helpers (`assertStatus`, `assertJson`, `assertDatabaseHas`), PostgreSQL production support, **Production Security** (log sanitization, replay lock, audit trail, log protection, log injection prevention, OpenAPI production lock), **CLI UX Overhaul** (core workflow, `php siro start` onboarding, `t` alias, layered help), Str helper, Hash facade, Collection class, FormRequest, Signed URLs, Task withoutOverlapping, Fake implementations (Queue::fake, Mail::fake, Storage::fake), Queue Dashboard, Fix command (watch + auto-replay), Trace list command, OpenAPI spec generation (dynamic, 35 endpoints, 34 schemas)
 - **v0.14.1** — Service & Repository pattern, PHPUnit test generation, `make:service`, `make:repository`, `make:crud` with full layers
 - **v0.14.0** — `debug:last`, `log:top`, `route:search`, `doctor --prod`, `api:test --loop`
 - **v0.13.0** — Factory generator, `db:show`, `route:rules`, live reload, deploy system
@@ -531,7 +527,9 @@ class ProductApiTest extends TestCase
 **Version:** 0.15.0  
 **Package:** sirosoft/api  
 **License:** MIT  
-**Tests:** 178 ✅ (231 assertions) — PHPUnit  
-**Core:** sirosoft/core v0.15.0 (136 tests)  
+**Tests:** 197 ✅ (275 assertions) — PHPUnit  
+**Core:** sirosoft/core v0.15.0 (136 tests, 184 assertions)  
+**PHPStan:** Level 6 ✅ — 0 errors  
+**CLI:** 59 commands — layered UX (core → daily → advanced → system)  
 
 Created and maintained by **SiroSoft Team**
