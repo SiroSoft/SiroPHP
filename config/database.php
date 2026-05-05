@@ -4,10 +4,21 @@ declare(strict_types=1);
 
 use Siro\Core\Env;
 
+$driver = Env::get('DB_CONNECTION', 'mysql');
+
+$defaultPorts = [
+    'mysql' => 3306,
+    'mariadb' => 3306,
+    'pgsql' => 5432,
+    'postgres' => 5432,
+    'postgresql' => 5432,
+    'sqlite' => 0,
+];
+
 return [
-    'driver' => Env::get('DB_CONNECTION', 'mysql'),
+    'driver' => $driver,
     'host' => Env::get('DB_HOST', '127.0.0.1'),
-    'port' => (int) Env::get('DB_PORT', '3306'),
+    'port' => (int) Env::get('DB_PORT', (string) ($defaultPorts[$driver] ?? 3306)),
     'database' => Env::get('DB_DATABASE', ''),
     'username' => Env::get('DB_USERNAME', ''),
     'password' => Env::get('DB_PASSWORD', ''),

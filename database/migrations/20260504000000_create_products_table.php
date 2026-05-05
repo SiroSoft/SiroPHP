@@ -6,8 +6,22 @@ return new class {
     public function up(PDO $db): void
     {
         $driver = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
-        
-        if ($driver === 'sqlite') {
+
+        if ($driver === 'pgsql') {
+            $db->exec(
+                "CREATE TABLE IF NOT EXISTS products (
+                    id BIGSERIAL PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL,
+                    description TEXT,
+                    price DECIMAL(10,2) NOT NULL DEFAULT 0,
+                    stock INT NOT NULL DEFAULT 0,
+                    category VARCHAR(100),
+                    status VARCHAR(20) NOT NULL DEFAULT 'active',
+                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                )"
+            );
+        } elseif ($driver === 'sqlite') {
             $db->exec(
                 'CREATE TABLE IF NOT EXISTS products (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
