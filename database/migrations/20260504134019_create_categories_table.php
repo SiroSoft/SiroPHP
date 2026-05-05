@@ -2,37 +2,21 @@
 
 declare(strict_types=1);
 
-return new class {
-    public function up(\PDO $db): void
-    {
-        $driver = $db->getAttribute(\PDO::ATTR_DRIVER_NAME);
+use Siro\Core\Schema;
+use Siro\Core\DB\Blueprint;
 
-        if ($driver === 'pgsql') {
-            $db->exec("CREATE TABLE IF NOT EXISTS categories (
-                id BIGSERIAL PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )");
-        } elseif ($driver === 'sqlite') {
-            $db->exec("CREATE TABLE IF NOT EXISTS categories (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-                updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-            )");
-        } else {
-            $db->exec("CREATE TABLE IF NOT EXISTS categories (
-                id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            ) ENGINE=INNODB DEFAULT CHARSET=utf8mb4");
-        }
+return new class {
+    public function up(): void
+    {
+        Schema::create('categories', function (Blueprint $t) {
+            $t->id();
+            $t->string('name');
+            $t->timestamps();
+        });
     }
 
-    public function down(\PDO $db): void
+    public function down(): void
     {
-        $db->exec("DROP TABLE IF EXISTS categories");
+        Schema::drop('categories');
     }
 };

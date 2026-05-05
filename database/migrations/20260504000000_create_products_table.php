@@ -2,58 +2,26 @@
 
 declare(strict_types=1);
 
-return new class {
-    public function up(PDO $db): void
-    {
-        $driver = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
+use Siro\Core\Schema;
+use Siro\Core\DB\Blueprint;
 
-        if ($driver === 'pgsql') {
-            $db->exec(
-                "CREATE TABLE IF NOT EXISTS products (
-                    id BIGSERIAL PRIMARY KEY,
-                    name VARCHAR(255) NOT NULL,
-                    description TEXT,
-                    price DECIMAL(10,2) NOT NULL DEFAULT 0,
-                    stock INT NOT NULL DEFAULT 0,
-                    category VARCHAR(100),
-                    status VARCHAR(20) NOT NULL DEFAULT 'active',
-                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-                )"
-            );
-        } elseif ($driver === 'sqlite') {
-            $db->exec(
-                'CREATE TABLE IF NOT EXISTS products (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name VARCHAR(255) NOT NULL,
-                    description TEXT,
-                    price DECIMAL(10,2) NOT NULL DEFAULT 0,
-                    stock INTEGER NOT NULL DEFAULT 0,
-                    category VARCHAR(100),
-                    status VARCHAR(20) NOT NULL DEFAULT "active",
-                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-                )'
-            );
-        } else {
-            $db->exec(
-                'CREATE TABLE IF NOT EXISTS products (
-                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    name VARCHAR(255) NOT NULL,
-                    description TEXT,
-                    price DECIMAL(10,2) NOT NULL DEFAULT 0,
-                    stock INT NOT NULL DEFAULT 0,
-                    category VARCHAR(100),
-                    status VARCHAR(20) NOT NULL DEFAULT "active",
-                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'
-            );
-        }
+return new class {
+    public function up(): void
+    {
+        Schema::create('products', function (Blueprint $t) {
+            $t->id();
+            $t->string('name');
+            $t->text('description')->nullable();
+            $t->decimal('price', 10, 2)->default(0);
+            $t->integer('stock')->default(0);
+            $t->string('category', 100)->nullable();
+            $t->string('status', 20)->default('active');
+            $t->timestamps();
+        });
     }
 
-    public function down(PDO $db): void
+    public function down(): void
     {
-        $db->exec('DROP TABLE IF EXISTS products');
+        Schema::drop('products');
     }
 };
