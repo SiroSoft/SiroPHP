@@ -109,6 +109,12 @@ parameters:
 			path: app/Services/CategoryService.php
 
 		-
+			message: '#^Class App\\Controllers\\OrderController not found\.$#'
+			identifier: class.notFound
+			count: 5
+			path: routes/api.php
+
+		-
 			message: '#^Variable \$app might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
