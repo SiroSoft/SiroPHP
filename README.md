@@ -1,4 +1,4 @@
-﻿# 🚀 Siro API Framework v0.14.1
+﻿# 🚀 Siro API Framework v0.15.0
 
 **The Fastest PHP Micro-Framework Application Skeleton** — Ship a production-ready API with auth in 5 minutes.
 
@@ -6,6 +6,8 @@
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
 [![Packagist](https://img.shields.io/badge/packagist-v0.14.1-blue.svg)](https://packagist.org/packages/sirosoft/api)
 [![Tests](https://img.shields.io/badge/tests-178%20passing-brightgreen.svg)](tests/)
+[![PostgreSQL](https://img.shields.io/badge/postgresql-ready-blue.svg)](https://www.postgresql.org/)
+[![Schema Builder](https://img.shields.io/badge/schema-builder-orange.svg)](https://github.com/SiroSoft/siro-core)
 [![PHPStan](https://img.shields.io/badge/phpstan-level%206-brightgreen.svg)](https://github.com/SiroSoft/siro-core)
 
 ---
@@ -69,6 +71,34 @@ php siro api:test POST /api/products            # → 401 (no auth)
 ---
 
 ## ✨ Key Features
+
+### 🏗️ Schema Builder (v0.15.0)
+- 🏗️ **Schema Builder** — `Schema::create('table', fn($t) => ...)` driver-agnostic, no if/else branches
+- 🔗 **Foreign Keys** — `$t->foreign('user_id')->references('id')->on('users')->onDelete('cascade')`
+- 🔍 **Introspection** — `hasTable()`, `hasColumn()`, `getColumnListing()`, `hasDatabase()`
+- 📡 **Multi-DB Connections** — `Database::connection('analytics')`, `DB::table('x')->connection('replica')`
+
+### 🔐 Encryption & HTTP Client (v0.15.0)
+- 🔐 **AES-256 Encryption** — `Encrypt::encrypt($data)` / `Encrypt::decrypt($payload)` with HMAC integrity
+- 🌐 **HTTP Client** — `Http::get($url)`, `Http::post($url, $data)` — pure curl, no Guzzle
+
+### 🔧 Maintenance Mode (v0.15.0)
+- 🔧 **`php siro down --message="Upgrading..."`** — 503 maintenance mode
+- 🚀 **`php siro up`** — Restore live mode
+- 🛡️ **IP Allowlist** — `--allow=ip1,ip2` for authorized access
+
+### ✅ Test Helpers (v0.15.0)
+- ✅ **HTTP Assertions** — `$this->get('/')->assertStatus(200)->assertJson(['key'=>'val'])`
+- ✅ **Database Assertions** — `$this->assertDatabaseHas('users', ['email'=>'...'])`
+- ✅ **Auth Flow Testing** — `$this->post('/auth/login', [...])` full stack testing
+
+### 💚 Health Endpoint (v0.15.0)
+- 💚 **`GET /health`** — Returns `{"status":"healthy","database":"connected",...}`
+- ✅ **Ready for Load Balancers** — Kubernetes, AWS ECS, Docker health checks
+
+### 🐘 PostgreSQL Production Support (v0.15.0)
+- 🐘 **Full PostgreSQL** — `config/database.php` auto-detects port (5432), migrations use `BIGSERIAL`
+- ✅ **Zero Changes Needed** — Write once, run on MySQL / PgSQL / SQLite
 
 ### 🏗️ Service & Repository Pattern (v0.14.1)
 - 🏗️ **Service Layer** — `php siro make:service Order` generates `app/Services/OrderService.php`
@@ -340,6 +370,23 @@ Siro uses a **two-package architecture**:
 - ✅ PDO extension (`pdo_mysql` / `pdo_pgsql` / `pdo_sqlite`)
 - ✅ JSON extension
 - ✅ Mbstring extension
+- ✅ OpenSSL extension (for Encrypter)
+- ✅ cURL extension (for HTTP Client)
+
+---
+
+## 📋 Changelog
+
+- **v0.15.0** — Schema Builder (driver-agnostic), Multi-DB connections, AES-256 Encryption, HTTP Client, Maintenance mode (`php siro down/up`), Foreign Key constraints, Health endpoint (`GET /health`), Test assertion helpers (`assertStatus`, `assertJson`, `assertDatabaseHas`), PostgreSQL production support
+- **v0.14.1** — Service & Repository pattern, PHPUnit test generation, `make:service`, `make:repository`, `make:crud` with full layers, README marketing revamp
+- **v0.14.0** — `debug:last`, `log:top`, `route:search`, `doctor --prod`, `api:test --loop`
+- **v0.13.0** — Factory generator, `db:show`, `route:rules`, live reload, deploy system
+- **v0.12.0** — `make:crud` scaffolding, `make:test`, benchmarks, `env:switch`
+- **v0.11.0** — Service & Repository, eager loading, PHP 8.4 support
+- **v0.10.0** — Rate limiter, CSRF, config caching, optimize
+- **v0.9.0** — Queue, mail, events, scheduler, multi-language
+- **v0.8.0** — Debugging system (trace ID, replay, export), Swagger UI, Postman
+- **v0.7.0** — Initial release
 
 ---
 
@@ -351,7 +398,7 @@ Siro uses a **two-package architecture**:
 
 ---
 
-**Version:** 0.14.1  
+**Version:** 0.15.0  
 **Package:** sirosoft/api  
 **License:** MIT  
 **Tests:** 178 ✅ (231 assertions)  
