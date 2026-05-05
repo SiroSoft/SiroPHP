@@ -6,6 +6,12 @@ namespace App\Resources;
 
 use Siro\Core\Resource;
 
+/**
+ * Product resource transformer.
+ *
+ * @package App\Resources
+ */
+
 final class ProductResource extends Resource
 {
     public function toArray(): array

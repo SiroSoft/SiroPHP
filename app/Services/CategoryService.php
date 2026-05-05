@@ -5,6 +5,15 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Repositories\CategoryRepository;
+
+/**
+ * Category business logic layer.
+ *
+ * Delegates data access to CategoryRepository and applies
+ * business rules if needed.
+ *
+ * @package App\Services
+ */
 use App\Models\Category;
 
 final class CategoryService

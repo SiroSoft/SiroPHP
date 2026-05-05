@@ -5,6 +5,15 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Models\User;
+
+/**
+ * User management controller.
+ *
+ * Provides full CRUD operations for users with pagination,
+ * validation, and resource transformation.
+ *
+ * @package App\Controllers
+ */
 use App\Resources\UserResource;
 use Siro\Core\Request;
 use Siro\Core\Response;

@@ -6,6 +6,16 @@ namespace App\Models;
 
 use Siro\Core\Model;
 
+/**
+ * Category model.
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $created_at
+ *
+ * @package App\Models
+ */
+
 final class Category extends Model
 {
     protected string $table = 'categories';

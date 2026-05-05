@@ -5,6 +5,15 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Services\CategoryService;
+
+/**
+ * Category management controller.
+ *
+ * Provides CRUD operations with service/repository layer
+ * and dependency injection via constructor.
+ *
+ * @package App\Controllers
+ */
 use App\Resources\CategoryResource;
 use Siro\Core\Request;
 use Siro\Core\Response;

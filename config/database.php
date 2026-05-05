@@ -4,6 +4,15 @@ declare(strict_types=1);
 
 use Siro\Core\Env;
 
+/**
+ * Database configuration.
+ *
+ * Returns an array of connection settings used by Database::configure().
+ * Driver-aware default ports: MySQL=3306, PostgreSQL=5432, SQLite=0.
+ *
+ * @return array<string, mixed>
+ */
+
 $driver = Env::get('DB_CONNECTION', 'mysql');
 
 $defaultPorts = [

@@ -6,6 +6,12 @@ namespace App\Resources;
 
 use Siro\Core\Resource;
 
+/**
+ * Category resource transformer.
+ *
+ * @package App\Resources
+ */
+
 final class CategoryResource extends Resource
 {
     public function toArray(): array

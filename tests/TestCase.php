@@ -5,6 +5,16 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
+
+/**
+ * Base test case for SiroPHP application tests.
+ *
+ * Provides HTTP test helpers (get/post/put/delete), response
+ * assertion helpers (assertOk, assertStatus, assertJson),
+ * and database assertions (assertDatabaseHas, assertDatabaseMissing).
+ *
+ * @package App\Tests
+ */
 use Siro\Core\App;
 use Siro\Core\Database;
 use Siro\Core\Request;

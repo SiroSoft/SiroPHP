@@ -5,6 +5,15 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Models\User;
+
+/**
+ * Authentication controller.
+ *
+ * Handles user registration, login, JWT refresh, logout,
+ * email verification, forgot/reset password, and profile retrieval.
+ *
+ * @package App\Controllers
+ */
 use App\Services\User as UserService;
 use Siro\Core\Auth\JWT;
 use Siro\Core\DB;

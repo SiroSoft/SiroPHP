@@ -5,6 +5,14 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use Siro\Core\Request;
+
+/**
+ * Tag management controller.
+ *
+ * Basic CRUD stubs for tag resource.
+ *
+ * @package App\Controllers
+ */
 use Siro\Core\Response;
 
 final class TagController

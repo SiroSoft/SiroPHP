@@ -5,6 +5,14 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use Siro\Core\Request;
+
+/**
+ * Home/welcome controller.
+ *
+ * Serves the root endpoint with API framework information.
+ *
+ * @package App\Controllers
+ */
 use Siro\Core\Response;
 
 final class HomeController

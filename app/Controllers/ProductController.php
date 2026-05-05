@@ -5,6 +5,15 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Models\Product;
+
+/**
+ * Product management controller.
+ *
+ * Provides CRUD operations with filtering (category, status, price range),
+ * sorting, search, and pagination.
+ *
+ * @package App\Controllers
+ */
 use App\Resources\ProductResource;
 use Siro\Core\Request;
 use Siro\Core\Response;

@@ -6,6 +6,15 @@ namespace App\Repositories;
 
 use App\Models\Category;
 
+/**
+ * Category data access layer.
+ *
+ * Provides CRUD operations on Category model with
+ * pagination support.
+ *
+ * @package App\Repositories
+ */
+
 final class CategoryRepository
 {
     public function findAll(int $page = 1, int $perPage = 20): array
