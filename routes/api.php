@@ -14,11 +14,31 @@ $app->router->get('/', function (): array {
         'message' => Lang::get('messages.welcome'),
         'data' => [
             'name' => 'Siro API Framework',
-            'version' => '0.13.0',
+            'version' => '0.14.1',
             'php' => PHP_VERSION,
             'locale' => Lang::locale(),
         ],
         'meta' => [],
+    ];
+});
+
+$app->router->get('/health', function (): array {
+    $dbOk = false;
+    try {
+        \Siro\Core\Database::connection()->query('SELECT 1');
+        $dbOk = true;
+    } catch (\Throwable) {
+    }
+    return [
+        'success' => true,
+        'message' => 'OK',
+        'data' => [
+            'status' => 'healthy',
+            'version' => '0.14.1',
+            'php' => PHP_VERSION,
+            'database' => $dbOk ? 'connected' : 'unreachable',
+            'time' => date('c'),
+        ],
     ];
 });
 

@@ -9,6 +9,15 @@
     "issues": "https://github.com/SiroSoft/SiroPHP/issues",
     "source": "https://github.com/SiroSoft/SiroPHP"
   },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../siro-core",
+      "options": {
+        "symlink": true
+      }
+    }
+  ],
   "require": {
     "php": ">=8.2",
     "sirosoft/core": ">=0.14.1 <1.0.0",

@@ -6,6 +6,7 @@ namespace App\Tests;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Siro\Core\App;
+use Siro\Core\Database;
 use Siro\Core\Request;
 use Siro\Core\Response;
 use Siro\Core\Router;
@@ -44,5 +45,183 @@ abstract class TestCase extends BaseTestCase
         } catch (ValidationException $e) {
             return $e->toResponse();
         }
+    }
+
+    protected function get(string $path, array $headers = []): TestResponse
+    {
+        $app = $this->createApp();
+        return new TestResponse($this->dispatch($app, 'GET', $path, [], $headers));
+    }
+
+    protected function post(string $path, array $body = [], array $headers = []): TestResponse
+    {
+        $app = $this->createApp();
+        return new TestResponse($this->dispatch($app, 'POST', $path, $body, $headers));
+    }
+
+    protected function put(string $path, array $body = [], array $headers = []): TestResponse
+    {
+        $app = $this->createApp();
+        return new TestResponse($this->dispatch($app, 'PUT', $path, $body, $headers));
+    }
+
+    protected function delete(string $path, array $headers = []): TestResponse
+    {
+        $app = $this->createApp();
+        return new TestResponse($this->dispatch($app, 'DELETE', $path, [], $headers));
+    }
+
+    protected function assertDatabaseHas(string $table, array $conditions, ?string $connection = null): void
+    {
+        $driver = Database::connection($connection)->getAttribute(\PDO::ATTR_DRIVER_NAME);
+
+        $wheres = [];
+        $bindings = [];
+        foreach ($conditions as $col => $val) {
+            $wheres[] = "$col = :$col";
+            $bindings[":$col"] = $val;
+        }
+        $sql = 'SELECT COUNT(*) FROM ' . ($driver === 'pgsql' ? '"' . $table . '"' : '`' . $table . '`') . ' WHERE ' . implode(' AND ', $wheres);
+        $stmt = Database::connection($connection)->prepare($sql);
+        $stmt->execute($bindings);
+        $count = (int) $stmt->fetchColumn();
+
+        $this->assertGreaterThan(
+            0,
+            $count,
+            sprintf(
+                'Failed asserting that table [%s] has row matching %s.',
+                $table,
+                json_encode($conditions, JSON_UNESCAPED_UNICODE)
+            )
+        );
+    }
+
+    protected function assertDatabaseMissing(string $table, array $conditions, ?string $connection = null): void
+    {
+        $driver = Database::connection($connection)->getAttribute(\PDO::ATTR_DRIVER_NAME);
+
+        $wheres = [];
+        $bindings = [];
+        foreach ($conditions as $col => $val) {
+            $wheres[] = "$col = :$col";
+            $bindings[":$col"] = $val;
+        }
+        $sql = 'SELECT COUNT(*) FROM ' . ($driver === 'pgsql' ? '"' . $table . '"' : '`' . $table . '`') . ' WHERE ' . implode(' AND ', $wheres);
+        $stmt = Database::connection($connection)->prepare($sql);
+        $stmt->execute($bindings);
+        $count = (int) $stmt->fetchColumn();
+
+        $this->assertEquals(
+            0,
+            $count,
+            sprintf(
+                'Failed asserting that table [%s] does not have row matching %s.',
+                $table,
+                json_encode($conditions, JSON_UNESCAPED_UNICODE)
+            )
+        );
+    }
+}
+
+final class TestResponse
+{
+    private Response $response;
+    private ?array $parsedBody = null;
+
+    public function __construct(Response $response)
+    {
+        $this->response = $response;
+    }
+
+    public function assertStatus(int $status): self
+    {
+        \PHPUnit\Framework\Assert::assertEquals($status, $this->response->statusCode(), "Expected status {$status}, got {$this->response->statusCode()}.");
+        return $this;
+    }
+
+    public function assertOk(): self
+    {
+        return $this->assertStatus(200);
+    }
+
+    public function assertCreated(): self
+    {
+        return $this->assertStatus(201);
+    }
+
+    public function assertNoContent(): self
+    {
+        return $this->assertStatus(204);
+    }
+
+    public function assertUnauthorized(): self
+    {
+        return $this->assertStatus(401);
+    }
+
+    public function assertForbidden(): self
+    {
+        return $this->assertStatus(403);
+    }
+
+    public function assertNotFound(): self
+    {
+        return $this->assertStatus(404);
+    }
+
+    public function assertValidationError(): self
+    {
+        return $this->assertStatus(422);
+    }
+
+    public function assertServerError(): self
+    {
+        return $this->assertStatus(500);
+    }
+
+    public function assertJson(array $expected): self
+    {
+        $body = $this->json();
+        foreach ($expected as $key => $value) {
+            \PHPUnit\Framework\Assert::assertArrayHasKey($key, $body, "Response missing key '{$key}'.");
+            \PHPUnit\Framework\Assert::assertEquals($value, $body[$key], "Key '{$key}' mismatch.");
+        }
+        return $this;
+    }
+
+    public function assertJsonPath(string $path, mixed $expected): self
+    {
+        $keys = explode('.', $path);
+        $value = $this->json();
+        foreach ($keys as $key) {
+            \PHPUnit\Framework\Assert::assertIsArray($value, "Path '{$path}' not found.");
+            \PHPUnit\Framework\Assert::assertArrayHasKey($key, $value, "Key '{$key}' not found in path '{$path}'.");
+            $value = $value[$key];
+        }
+        \PHPUnit\Framework\Assert::assertEquals($expected, $value, "Path '{$path}' mismatch.");
+        return $this;
+    }
+
+    public function assertHeader(string $name, string $value): self
+    {
+        \PHPUnit\Framework\Assert::assertContains("{$name}: {$value}", $this->response->getHeaders());
+        return $this;
+    }
+
+    public function json(): array
+    {
+        if ($this->parsedBody === null) {
+            ob_start();
+            $this->response->send();
+            $output = ob_get_clean();
+            $this->parsedBody = json_decode((string) $output, true) ?? [];
+        }
+        return $this->parsedBody;
+    }
+
+    public function status(): int
+    {
+        return $this->response->statusCode();
     }
 }
