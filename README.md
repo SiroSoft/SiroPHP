@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-# Siro API Framework v0.14.0
+﻿# Siro API Framework v0.14.0
 
 **The Fastest PHP Micro-Framework for API Development with Advanced Debugging & CLI Testing**
 
@@ -11,27 +10,27 @@
 
 ---
 
-## 🚀 Why SiroPHP?
+## ðŸš€ Why SiroPHP?
 
-**Built for lean teams — 1-2 devs, tight deadlines, low budget:**
+**Built for lean teams â€” 1-2 devs, tight deadlines, low budget:**
 
 | Your pain | Siro's solution |
 |-----------|----------------|
-| 📅 **Onboard in 30 minutes?** | 6 commands from zero → API with auth. Read this README and start coding. |
-| 🔄 **Client changes requirements daily?** | `php siro make:crud` scaffolds in 2 seconds. Won't break existing code. |
-| 💰 **$2/month hosting?** | Pure PHP, **zero dependencies**, ~2MB RAM per request. Runs on any shared host. |
-| 🚀 **No DevOps team?** | `php siro deploy` — push to Ubuntu VPS + Nginx + MySQL in one command. |
-| 📋 **Client asks "where's the API docs?"** | `php siro make:openapi --with-swagger` — Swagger UI in 1 second. |
-| 🔐 **Complex auth?** | Multi-role (admin/staff/customer), phone login, OTP, JWT refresh tokens built in. |
-| ⚡ **Worried about upgrades breaking code?** | Strict Semver. Migration guide per version. Zero breaking changes within same minor. |
+| ðŸ“… **Onboard in 30 minutes?** | 6 commands from zero â†’ API with auth. Read this README and start coding. |
+| ðŸ”„ **Client changes requirements daily?** | `php siro make:crud` scaffolds in 2 seconds. Won't break existing code. |
+| ðŸ’° **$2/month hosting?** | Pure PHP, **zero dependencies**, ~2MB RAM per request. Runs on any shared host. |
+| ðŸš€ **No DevOps team?** | `php siro deploy` â€” push to Ubuntu VPS + Nginx + MySQL in one command. |
+| ðŸ“‹ **Client asks "where's the API docs?"** | `php siro make:openapi --with-swagger` â€” Swagger UI in 1 second. |
+| ðŸ” **Complex auth?** | Multi-role (admin/staff/customer), phone login, OTP, JWT refresh tokens built in. |
+| âš¡ **Worried about upgrades breaking code?** | Strict Semver. Migration guide per version. Zero breaking changes within same minor. |
 
 > **"The Laravel alternative that runs on $2/month hosting, can be read in one afternoon, and ships an API in one hour."**
 
 ---
 
-## 🎯 Zero to API with Auth in 5 Minutes
+## ðŸŽ¯ Zero to API with Auth in 5 Minutes
 
-**Goal:** Build a full CRUD API with authentication — from nothing to working in 5 minutes.
+**Goal:** Build a full CRUD API with authentication â€” from nothing to working in 5 minutes.
 
 ### 1. Install
 
@@ -47,7 +46,7 @@ php siro key:generate
 php siro make:auth                          # Login, register, JWT refresh...
 php siro make:crud products                 # Full CRUD: model, migration, routes
 php siro migrate                            # Create tables
-php siro serve                              # Start server → http://localhost:8080
+php siro serve                              # Start server â†’ http://localhost:8080
 ```
 
 ### 3. Test register + login
@@ -65,7 +64,7 @@ php siro api:test POST /api/auth/login email=demo@test.com password=secret
 ```bash
 php siro api:test GET /api/products            # Public
 php siro api:test POST /api/products name=Laptop price=999 --as=admin  # Auto-auth
-php siro api:test POST /api/products            # → 401 (no auth)
+php siro api:test POST /api/products            # â†’ 401 (no auth)
 ```
 
 ### 5. Debug when something goes wrong
@@ -81,9 +80,9 @@ php siro api:test GET /api/products --loop=50   # Load test
 
 ---
 
-## 🎓 Examples by Experience Level
+## ðŸŽ“ Examples by Experience Level
 
-### I'm new — what should I build first?
+### I'm new â€” what should I build first?
 ```bash
 php siro make:crud categories --simple     # Model + Controller only (no layers)
 php siro serve                              # See it live at /api/categories
@@ -110,7 +109,7 @@ php siro log:replay a1b2c3d4 --set status=cancelled  # Replay with different dat
 
 ---
 
-## 🛠️ CLI Commands
+## ðŸ› ï¸ CLI Commands
 
 ### Code Generation
 ```bash
@@ -131,7 +130,7 @@ php siro db:seed                      # Run all seeders
 php siro db:seed UserSeeder           # Run specific seeder
 ```
 
-### Debugging 🔍
+### Debugging ðŸ”
 ```bash
 php siro debug:last                      # Show last request: headers, body, SQL
 php siro log:trace <trace_id>            # View trace details
@@ -164,7 +163,7 @@ php siro doctor                        # Check system health
 php siro doctor --prod                 # Production health check (HTTPS, CORS, env)
 ```
 
-### ⭐ API Testing (v0.8.8) - Replace Postman!
+### â­ API Testing (v0.8.8) - Replace Postman!
 ```bash
 # Quick test endpoint
 php siro api:test GET /api/users
@@ -172,7 +171,7 @@ php siro api:test GET /api/users
 # Load test (100 requests)
 php siro api:test GET /api/users --loop=100
 
-# Auto-login (1 command: login → save token → run request)
+# Auto-login (1 command: login â†’ save token â†’ run request)
 php siro api:test GET /api/auth/me --login email=admin@test.com password=secret
 
 # Test with saved token (login once, token saved)
@@ -192,7 +191,7 @@ php siro api:test --history
 php siro api:test GET /api/data --header="X-Version: 2.0" --port=8080
 ```
 
-### 🚀 CRUD Scaffolding & Testing (v0.12.0)
+### ðŸš€ CRUD Scaffolding & Testing (v0.12.0)
 ```bash
 # Generate full CRUD in 30 seconds (Model, Controller, Migration, Routes, Tests)
 php siro make:crud products
@@ -211,7 +210,7 @@ php siro make:test ProductService --unit
 # X-Response-Time: 8.45ms
 ```
 
-### 🆕 New CLI Tools (v0.13.0+)
+### ðŸ†• New CLI Tools (v0.13.0+)
 ```bash
 # Create new project from skeleton
 php siro new my-api                   # Create project folder + .env + JWT key
@@ -240,7 +239,7 @@ php siro live --port=8080             # Custom port
 php siro log:slow                     # Show top 10 slow requests
 php siro log:slow --limit=20 --min=200
 
-# Deployment system — for Ubuntu VPS + Nginx + MySQL
+# Deployment system â€” for Ubuntu VPS + Nginx + MySQL
 php siro deploy                       # Deploy with default strategy
 php siro deploy --init                # First-time setup: create user, configure Nginx
 php siro deploy --dry-run             # Test without deploying
@@ -299,7 +298,7 @@ $schedule->command('report:weekly')->cron('0 6 * * 1');
 $schedule->call([\App\Crons\HealthCheck::class, 'run'])->hourly();
 ```
 
-### Queue & Mail (v0.8.4) 📧
+### Queue & Mail (v0.8.4) ðŸ“§
 ```bash
 php siro queue:work                   # Process queued jobs
 php siro queue:work --daemon          # Run worker continuously
@@ -308,7 +307,7 @@ php siro queue:retry <id>             # Retry failed job
 php siro queue:flush                  # Clear failed jobs
 ```
 
-### 🔍 Static Analysis & Benchmarks (v0.12.0)
+### ðŸ” Static Analysis & Benchmarks (v0.12.0)
 ```bash
 # Run PHPStan static analysis (Level 6 - 0 errors)
 phpstan analyse
@@ -320,15 +319,15 @@ php tests/benchmark.php
 ```
 
 **Performance Highlights:**
-- ⚡ Cold boot: 0.87ms
-- 🚀 GET /: 522K ops/s
-- 🔥 Router matching: 893K ops/s
-- 💪 Avg throughput: 398K ops/s
-- 💾 Memory: 2MB stable, +0KB per request
+- âš¡ Cold boot: 0.87ms
+- ðŸš€ GET /: 522K ops/s
+- ðŸ”¥ Router matching: 893K ops/s
+- ðŸ’ª Avg throughput: 398K ops/s
+- ðŸ’¾ Memory: 2MB stable, +0KB per request
 
 **SiroPHP is 2000-4000x faster than Laravel!**
 
-### 🚀 Revolutionary API Testing (v0.12.0)
+### ðŸš€ Revolutionary API Testing (v0.12.0)
 
 **3 Game-Changing Features:**
 
@@ -346,18 +345,18 @@ php siro api:test --collection=myapi
 
 **Productivity Boost: 30-60x faster debugging!**
 
-### 🛠️ Complete Developer Toolkit (v0.12.0)
+### ðŸ› ï¸ Complete Developer Toolkit (v0.12.0)
 
 **5 Powerful CLI Tools:**
 
 ```bash
 # 1. Run all tests with one command
 php siro test
-# ═══ 174 tests, 174 passed, 0 failed in 3.08s ═══
+# â•â•â• 174 tests, 174 passed, 0 failed in 3.08s â•â•â•
 
 # 2. Quick environment switching
 php siro env:switch staging
-# Copied .env.staging → .env (backup saved)
+# Copied .env.staging â†’ .env (backup saved)
 
 # 3. Analyze slow requests
 php siro slow --limit=20 --min=200
@@ -372,13 +371,13 @@ php siro api:test GET /api/users --cors
 # Automated 3-step CORS testing
 ```
 
-**Saves 2-3 hours per week on development tasks!** ⏱️
+**Saves 2-3 hours per week on development tasks!** â±ï¸
 
 ---
 
-## 🚨 Error Reference — What You Actually See
+## ðŸš¨ Error Reference â€” What You Actually See
 
-A good framework shows you exactly what went wrong. Here's every error you'll encounter — and what they look like:
+A good framework shows you exactly what went wrong. Here's every error you'll encounter â€” and what they look like:
 
 ### Validation Error (422)
 ```bash
@@ -396,7 +395,7 @@ php siro api:test POST /api/products
 }
 ```
 
-### Auth Error — JWT Expired (401)
+### Auth Error â€” JWT Expired (401)
 ```bash
 php siro api:test GET /api/auth/me
 ```
@@ -409,7 +408,7 @@ php siro api:test GET /api/auth/me
 }
 ```
 
-### Auth Error — No Token (401)
+### Auth Error â€” No Token (401)
 ```json
 // 401 Unauthorized
 {
@@ -458,15 +457,15 @@ php siro api:test GET /api/auth/me
 ```bash
 php siro debug:last
 ```
-Shows everything: request headers, body, response, SQL queries — in a single command.
+Shows everything: request headers, body, response, SQL queries â€” in a single command.
 
 ---
 
-## 🔌 Escape Hatch — When You Need Raw Power
+## ðŸ”Œ Escape Hatch â€” When You Need Raw Power
 
 No framework covers every use case. Here's how to break out:
 
-### Raw SQL — Skip the Model, Use PDO Directly
+### Raw SQL â€” Skip the Model, Use PDO Directly
 ```php
 use Siro\Core\Database;
 
@@ -482,9 +481,9 @@ $pdo->exec("UPDATE accounts SET balance = balance + 100 WHERE id = 2");
 $pdo->commit();
 ```
 
-### Native PHP — Skip the Framework Entirely
+### Native PHP â€” Skip the Framework Entirely
 ```php
-// routes/api.php — any PHP library works
+// routes/api.php â€” any PHP library works
 $router->get('/report', function () {
     // Call any third-party library
     $pdf = new \FPDF();
@@ -537,7 +536,7 @@ $router->get('/export/excel', function () {
 
 ---
 
-## 🌍 Real-World Examples
+## ðŸŒ Real-World Examples
 
 ### Nested Relationships (Eager Loading)
 ```php
@@ -557,7 +556,7 @@ final class Order extends Model
     }
 }
 
-// Controller — 1 query for orders + items (no N+1)
+// Controller â€” 1 query for orders + items (no N+1)
 $orders = Order::with('items')->where('status', 'pending')->get();
 ```
 
@@ -655,18 +654,18 @@ Invoice::withTrashed()->get(); // Include deleted
 ```php
 $router->version(1, function ($r) {
     $r->get('/users', [V1\UserController::class, 'index']);
-    // → GET /api/v1/users
+    // â†’ GET /api/v1/users
 });
 
 $router->version(2, function ($r) {
     $r->get('/users', [V2\UserController::class, 'index']);
-    // → GET /api/v2/users
+    // â†’ GET /api/v2/users
 });
 ```
 
 ---
 
-## 🏪 Real SME Example — Grocery Store Sales Management
+## ðŸª Real SME Example â€” Grocery Store Sales Management
 
 **Scenario:** A grocery store needs an app to manage orders, products, customers, and staff.
 
@@ -699,7 +698,7 @@ GET/POST    /api/order-items, /api/order-items/{id}  # Order items CRUD
 ### 3. Real business logic
 
 ```php
-// OrderService.php — auto-generated, you just add the logic
+// OrderService.php â€” auto-generated, you just add the logic
 final class OrderService
 {
     public function create(array $data): mixed
@@ -739,24 +738,24 @@ final class OrderService
 
 ```bash
 php siro make:openapi --with-swagger
-# → public/docs.html — send this link to your client
+# â†’ public/docs.html â€” send this link to your client
 ```
 
 ### 5. Deploy to $2/month VPS
 
 ```bash
 php siro deploy
-# → zero-dependency PHP, runs on Nginx + MySQL, ~2MB RAM per request
+# â†’ zero-dependency PHP, runs on Nginx + MySQL, ~2MB RAM per request
 ```
 
 ---
 
-## 🔐 Real-World Auth Patterns for SME
+## ðŸ” Real-World Auth Patterns for SME
 
 ### Multi-Role (admin/staff/customer)
 
 ```php
-// Controller — check role directly in the method
+// Controller â€” check role directly in the method
 public function store(Request $request): Response
 {
     // Only admin can create products
@@ -781,7 +780,7 @@ public function listMyOrders(Request $request): Response
 ### Phone Number Login (instead of Email)
 
 ```php
-// AuthController — override the default
+// AuthController â€” override the default
 public function login(Request $request): Response
 {
     $data = $request->validate([
@@ -816,7 +815,7 @@ $router->post('/auth/send-otp', function (Request $request) {
     return Response::success(null, 'OTP sent');
 });
 
-// 2. Verify OTP → login
+// 2. Verify OTP â†’ login
 $router->post('/auth/verify-otp', function (Request $request) {
     $data = $request->validate([
         'phone' => 'required|regex:/^[0-9]{10,11}$/',
@@ -843,33 +842,33 @@ $router->post('/auth/verify-otp', function (Request $request) {
 
 ---
 
-## ⬆️ Upgrade & Migration Guide
+## â¬†ï¸ Upgrade & Migration Guide
 
-**Commitment:** Siro follows **Semver** — breaking changes only happen in major releases (v1.0, v2.0...).
+**Commitment:** Siro follows **Semver** â€” breaking changes only happen in major releases (v1.0, v2.0...).
 
-### v0.14.x → v0.15.x (same minor)
+### v0.14.x â†’ v0.15.x (same minor)
 ```bash
 composer update sirosoft/core
 ```
-✅ **No breaking changes.** Your code keeps working. Only new features added.
+âœ… **No breaking changes.** Your code keeps working. Only new features added.
 
-### v0.13.x → v0.14.x (same major)
+### v0.13.x â†’ v0.14.x (same major)
 Run `php siro doctor` to check for any incompatibilities.
 
 ```bash
 composer update sirosoft/core
 php siro doctor           # Check system health
-php siro test             # Run tests — if they pass, you're good
+php siro test             # Run tests â€” if they pass, you're good
 ```
 
 ### When does code break?
 
 | Your action | Breaking? |
 |-------------|-----------|
-| `composer update` within same minor (0.14.x) | ❌ No |
-| Update from 0.13 → 0.14 | ⚠️ Possibly (check changelog) |
-| Update from 0.x → 1.0 | ⚠️ Migration script needed |
-| Using `DB::raw()` instead of Model | ❌ No (PDO is always stable) |
+| `composer update` within same minor (0.14.x) | âŒ No |
+| Update from 0.13 â†’ 0.14 | âš ï¸ Possibly (check changelog) |
+| Update from 0.x â†’ 1.0 | âš ï¸ Migration script needed |
+| Using `DB::raw()` instead of Model | âŒ No (PDO is always stable) |
 
 ### Rollback if something breaks
 ```bash
@@ -885,7 +884,7 @@ composer require sirosoft/core:0.13.0
 
 ---
 
-### 🏗️ Service & Repository Pattern (v0.14.1)
+### ðŸ—ï¸ Service & Repository Pattern (v0.14.1)
 
 Full layered architecture generated with one command:
 
@@ -918,14 +917,14 @@ php siro make:crud category --seed
 
 **Generated chain (full mode):**
 ```
-Route → Controller → Service → Repository → Model
+Route â†’ Controller â†’ Service â†’ Repository â†’ Model
          (DI)          (DI)         (DI)
 ```
 
 **Guided experience after generation:**
 ```
   ======================================================
-  Full CRUD — Invoice created successfully!
+  Full CRUD â€” Invoice created successfully!
   ======================================================
 
   Next steps:
@@ -945,25 +944,25 @@ Route → Controller → Service → Repository → Model
 ```
 
 Validation auto-detects rules by model name:
-- `product` → `name`, `price`, `sku`
-- `invoice` → `customer_id`, `total`
-- `user/customer` → `name`, `email`
-- `category/tag` → `name`, `slug`
+- `product` â†’ `name`, `price`, `sku`
+- `invoice` â†’ `customer_id`, `total`
+- `user/customer` â†’ `name`, `email`
+- `category/tag` â†’ `name`, `slug`
 
-### 🧪 PHPUnit Test Generation (v0.14.1)
+### ðŸ§ª PHPUnit Test Generation (v0.14.1)
 
 ```bash
 # Generate feature test (API integration)
 php siro make:test ProductApi
-# → tests/Feature/ProductApiTest.php (runs via vendor/bin/phpunit)
+# â†’ tests/Feature/ProductApiTest.php (runs via vendor/bin/phpunit)
 
 # Generate unit test
 php siro make:test CartService --unit
-# → tests/Unit/CartServiceTest.php
+# â†’ tests/Unit/CartServiceTest.php
 
 # CRUD auto-generates tests
 php siro make:crud products
-# → tests/Feature/ProductsTest.php with 4 test methods
+# â†’ tests/Feature/ProductsTest.php with 4 test methods
 
 # Run tests with filters
 php siro test                            # All 174 tests
@@ -972,7 +971,7 @@ php siro test --filter=ProductsTest      # Single test class
 php siro test --stop-on-failure          # Stop at first failure
 ```
 
-### 🗄️ Production-Ready Features (v0.12.0)
+### ðŸ—„ï¸ Production-Ready Features (v0.12.0)
 
 **Soft Deletes:**
 ```php
@@ -988,10 +987,10 @@ $post->forceDelete(); // Permanent delete
 **API Versioning:**
 ```php
 $router->version(1, fn($r) => $r->get('/users', [V1\UserCtrl::class, 'index']));
-// → GET /api/v1/users
+// â†’ GET /api/v1/users
 
 $router->version(2, fn($r) => $r->get('/users', [V2\UserCtrl::class, 'index']));
-// → GET /api/v2/users
+// â†’ GET /api/v2/users
 ```
 
 **Rate Limit Dashboard:**
@@ -1000,7 +999,7 @@ php siro rate:status
 # Shows active/expired rate limits with color-coded status
 ```
 
-### Multi-language (v0.8.5) 🌍
+### Multi-language (v0.8.5) ðŸŒ
 ```bash
 php siro make:lang vi                 # Create Vietnamese language pack
 php siro make:lang fr                 # Create French language pack
@@ -1017,7 +1016,7 @@ APP_FALLBACK_LOCALE=en     # Fallback when key is missing
 use Siro\Core\Lang;
 
 // Get translation
-$message = Lang::get('messages.welcome');  // "Welcome" or "Chào mừng"
+$message = Lang::get('messages.welcome');  // "Welcome" or "ChÃ o má»«ng"
 
 // With parameters
 $error = Lang::get('validation.required', ['field' => 'Email']);
@@ -1037,15 +1036,15 @@ curl http://localhost:8000/
 # {"message":"Welcome","locale":"en"}
 
 curl -H "Accept-Language: vi" http://localhost:8000/
-# {"message":"Chào mừng","locale":"vi"}
+# {"message":"ChÃ o má»«ng","locale":"vi"}
 ```
 
-### Event System (v0.8.6) ⚡
+### Event System (v0.8.6) âš¡
 ```bash
 php siro make:event UserCreated       # Generate event class
 ```
 
-### Storage, Validation & Performance (v0.8.7) 🚀
+### Storage, Validation & Performance (v0.8.7) ðŸš€
 
 **File Storage:**
 ```php
@@ -1071,9 +1070,9 @@ $request->validate(['phone' => 'required|phone']);
 ```
 
 **Auto Gzip Compression:**
-- ✅ Automatic when client supports it
-- ✅ Reduces bandwidth by 60-80%
-- ✅ Zero configuration required
+- âœ… Automatic when client supports it
+- âœ… Reduces bandwidth by 60-80%
+- âœ… Zero configuration required
 
 **Basic Usage:**
 ```php
@@ -1092,9 +1091,9 @@ Event::emit('users.created', $user);
 
 Models automatically fire events during CRUD operations:
 
-- **Create:** saving → creating → created → saved
-- **Update:** saving → updating → updated → saved  
-- **Delete:** deleting → deleted
+- **Create:** saving â†’ creating â†’ created â†’ saved
+- **Update:** saving â†’ updating â†’ updated â†’ saved  
+- **Delete:** deleting â†’ deleted
 
 **Cancel Operations:**
 ```php
@@ -1140,11 +1139,11 @@ php siro make:postman --flow=auth       # Auth flow only
 php siro make:postman --tag=User        # User endpoints only
 
 # Output structure:
-# docs/openapi/openapi.json      ← OpenAPI 3.0.3 spec
-# docs/postman/collection.json   ← Postman v2.1.0 collection
-# docs/swagger/index.html        ← Swagger UI source
-# public/openapi.json            ← Served at /openapi.json
-# public/docs.html               ← Served at /docs.html
+# docs/openapi/openapi.json      â† OpenAPI 3.0.3 spec
+# docs/postman/collection.json   â† Postman v2.1.0 collection
+# docs/swagger/index.html        â† Swagger UI source
+# public/openapi.json            â† Served at /openapi.json
+# public/docs.html               â† Served at /docs.html
 ```
 
 **Access Documentation:**
@@ -1168,7 +1167,7 @@ This architecture allows you to:
 - Build custom applications on top of `siro/api`
 - Create your own packages that depend on `siro/core`
 
-## 🔍 Advanced Debugging (v0.8.0)
+## ðŸ” Advanced Debugging (v0.8.0)
 
 Every request includes a unique trace ID for easy debugging:
 
@@ -1193,7 +1192,7 @@ php siro log:export --format=csv --output=traces.csv
 
 See core library docs: https://github.com/SiroSoft/siro-core#-advanced-debugging-system-v080
 
-## 📝 Auto Documentation (v0.8.2)
+## ðŸ“ Auto Documentation (v0.8.2)
 
 ### One-Command Documentation Generation
 
@@ -1205,21 +1204,21 @@ php siro make:openapi --with-swagger
 ```
 
 **What it does:**
-1. ✅ Generates OpenAPI 3.0.3 spec from your routes
-2. ✅ Creates Swagger UI HTML page
-3. ✅ Copies files to public/ for serving
-4. ✅ Supports all filters (--flow, --tag, --method, --path)
+1. âœ… Generates OpenAPI 3.0.3 spec from your routes
+2. âœ… Creates Swagger UI HTML page
+3. âœ… Copies files to public/ for serving
+4. âœ… Supports all filters (--flow, --tag, --method, --path)
 
 **Output Structure:**
 ```
 docs/
-├── openapi/openapi.json      ← Source spec (tracked in git)
-├── postman/collection.json   ← Postman collection (tracked)
-└── swagger/index.html        ← Swagger UI source (tracked)
+â”œâ”€â”€ openapi/openapi.json      â† Source spec (tracked in git)
+â”œâ”€â”€ postman/collection.json   â† Postman collection (tracked)
+â””â”€â”€ swagger/index.html        â† Swagger UI source (tracked)
 
 public/
-├── openapi.json              ← Served at /openapi.json
-└── docs.html                 ← Served at /docs.html
+â”œâ”€â”€ openapi.json              â† Served at /openapi.json
+â””â”€â”€ docs.html                 â† Served at /docs.html
 ```
 
 **Access Your Docs:**
@@ -1244,7 +1243,7 @@ php siro make:openapi --path=/api     # Path prefix filter
 - Detects auth middleware automatically
 - Adds Bearer JWT security scheme
 - Generates JSON Schema from validation rules
-- Smart type inference (email→string, integer→int)
+- Smart type inference (emailâ†’string, integerâ†’int)
 
 #### **Postman Generator**
 ```bash
@@ -1294,59 +1293,6 @@ git add docs/
 git commit -m "Update API documentation"
 
 # 5. Deploy (docs are in git, public/ generated on build)
-=======
-# Siro API Framework v0.7.4
-
-Minimal, high-performance PHP micro-framework for REST APIs.
-
-## Why Siro?
-
-- Faster than full-stack frameworks for API-only workloads
-- Minimal bootstrap overhead and lightweight request pipeline
-- Focused on REST API development (no unnecessary layers)
-
-## Quick Start (Git Clone)
-
-```bash
-git clone https://github.com/SiroSoft/SiroPHP.git my-app
-cd my-app
-composer install
-cp .env.example .env
-php siro key:generate
-php siro migrate
-php -S localhost:8080 -t public
-```
-
-### Setup permissions (if needed)
-
-```bash
-chmod +x benchmark/wrk.sh
-```
-
-## Install (Composer create-project)
-
-Once published to Packagist:
-
-```bash
-composer create-project siro/api my-app
-cd my-app
-php siro migrate
-php siro serve
-```
-
-## CLI usage
-
-```bash
-php siro migrate
-php siro make:api users
-php siro serve
-```
-
-## API example
-
-```bash
-curl http://localhost:8080/users
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 ```
 
 ## Benchmark
@@ -1400,33 +1346,32 @@ Output includes:
 - Latency
 - Error rate
 
-<<<<<<< HEAD
-## ✨ Key Features
+## âœ¨ Key Features
 
 ### Core Components
-- ⚡ **Fast Router** - Lightweight routing with middleware support
-- 🗄️ **Database QueryBuilder** - PDO-based with automatic caching
-- 🎯 **Model Layer** - ORM-like with relationships, scopes, soft deletes
-- 🔐 **JWT Authentication** - Built-in token generation with refresh tokens
-- ✅ **Smart Validation** - Automatic 422 responses with extended rules
-- 💾 **Cache System** - File and Redis drivers
-- 📦 **Resource Transformation** - Auto-mapping for API responses
-- 🔤 **Typed Input Helpers** - Type-safe request data handling
+- âš¡ **Fast Router** - Lightweight routing with middleware support
+- ðŸ—„ï¸ **Database QueryBuilder** - PDO-based with automatic caching
+- ðŸŽ¯ **Model Layer** - ORM-like with relationships, scopes, soft deletes
+- ðŸ” **JWT Authentication** - Built-in token generation with refresh tokens
+- âœ… **Smart Validation** - Automatic 422 responses with extended rules
+- ðŸ’¾ **Cache System** - File and Redis drivers
+- ðŸ“¦ **Resource Transformation** - Auto-mapping for API responses
+- ðŸ”¤ **Typed Input Helpers** - Type-safe request data handling
 
 ### Advanced Debugging (v0.8.0) 
-- 🔍 **Trace ID per Request** - Every request gets unique `X-Siro-Trace-Id`
-- 🔄 **Request Replay** - `php siro log:replay <id>` generates curl command
-- 📤 **Export Traces** - `php siro log:export --format=json|csv`
-- 🔎 **Smart Filtering** - Filter by status, method, slow requests
-- 📊 **SQL Query Logging** - Capture all queries with bindings and timing
-- 🔒 **Credential Sanitization** - Passwords/tokens auto [REDACTED]
+- ðŸ” **Trace ID per Request** - Every request gets unique `X-Siro-Trace-Id`
+- ðŸ”„ **Request Replay** - `php siro log:replay <id>` generates curl command
+- ðŸ“¤ **Export Traces** - `php siro log:export --format=json|csv`
+- ðŸ”Ž **Smart Filtering** - Filter by status, method, slow requests
+- ðŸ“Š **SQL Query Logging** - Capture all queries with bindings and timing
+- ðŸ”’ **Credential Sanitization** - Passwords/tokens auto [REDACTED]
 
 ### Security & Performance
-- 🛡️ **Rate Limiting** - Per-route throttling with configurable limits
-- 🔐 **CSRF Protection** - Built-in middleware for form protection
-- ⚙️ **Config Caching** - Cache environment for faster boot
-- 📈 **Slow Query Detection** - Auto-log queries exceeding threshold
-- ✅ **Environment Validation** - Pre-deployment checks
+- ðŸ›¡ï¸ **Rate Limiting** - Per-route throttling with configurable limits
+- ðŸ” **CSRF Protection** - Built-in middleware for form protection
+- âš™ï¸ **Config Caching** - Cache environment for faster boot
+- ðŸ“ˆ **Slow Query Detection** - Auto-log queries exceeding threshold
+- âœ… **Environment Validation** - Pre-deployment checks
 
 ## Requirements
 
@@ -1435,26 +1380,26 @@ Output includes:
 - JSON extension
 - Mbstring extension
 
-## 📚 Documentation
+## ðŸ“š Documentation
 
 For detailed documentation:
 - **Core Library:** https://github.com/SiroSoft/siro-core
 - **Application Skeleton:** https://github.com/SiroSoft/SiroPHP
 - **Issues:** https://github.com/SiroSoft/SiroPHP/issues
 
-## 📋 Changelog
+## ðŸ“‹ Changelog
 
 Full changelog available at: [CHANGELOG.md](CHANGELOG.md)
 
 **Highlights:**
-- **v0.14.x** — `debug:last`, `log:top`, `route:search`, `doctor --prod`, `api:test --loop`, `--simple` flag, guided CRUD experience, `open:postman`
-- **v0.13.x** — Factory generator, db:show, route:rules, live reload, deploy system, PHPStan Level 6, 174 tests
-- **v0.12.x** — `make:crud` scaffolding, `make:test`, benchmarks, watch mode, collections, webhook listener, env:switch
-- **v0.11.x** — Service & Repository pattern, smart validation, eager loading, PHP 8.4 support
-- **v0.10.x** — Rate limiter dashboard, CSRF, config caching, optimize command
-- **v0.9.x** — Queue system, mail, events, scheduler, multi-language
-- **v0.8.x** — Debugging system (trace ID, replay, export), auto documentation with Swagger UI, Postman generator
-- **v0.7.x** — Initial release: router, models, JWT auth, validation, migrations, seeders
+- **v0.14.x** â€” `debug:last`, `log:top`, `route:search`, `doctor --prod`, `api:test --loop`, `--simple` flag, guided CRUD experience, `open:postman`
+- **v0.13.x** â€” Factory generator, db:show, route:rules, live reload, deploy system, PHPStan Level 6, 174 tests
+- **v0.12.x** â€” `make:crud` scaffolding, `make:test`, benchmarks, watch mode, collections, webhook listener, env:switch
+- **v0.11.x** â€” Service & Repository pattern, smart validation, eager loading, PHP 8.4 support
+- **v0.10.x** â€” Rate limiter dashboard, CSRF, config caching, optimize command
+- **v0.9.x** â€” Queue system, mail, events, scheduler, multi-language
+- **v0.8.x** â€” Debugging system (trace ID, replay, export), auto documentation with Swagger UI, Postman generator
+- **v0.7.x** â€” Initial release: router, models, JWT auth, validation, migrations, seeders
 
 ---
 
@@ -1465,7 +1410,7 @@ Full changelog available at: [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
-## 👥 Credits
+## ðŸ‘¥ Credits
 
 Created and maintained by **SiroSoft Team**
 
@@ -1473,44 +1418,4 @@ Special thanks to all contributors who help make SiroPHP better.
 
 ---
 
-**Happy coding! 🚀**
-=======
-## Performance
-
-> Note: The numbers below are sample results from a controlled local environment. Run the benchmarks yourself to validate on your hardware.
-
-See full benchmark notes: [`benchmark/compare.md`](benchmark/compare.md)
-
-| Framework | RPS  | Latency (p95) | Notes |
-| --------- | ---- | ------------- | ----- |
-| Siro      | 8200 | 3.8ms         | Route cache + minimal middleware stack |
-| Laravel   | 2300 | 17.5ms        | Full framework bootstrap cost |
-| Node      | 5400 | 8.9ms         | Express baseline |
-
-Under equivalent test shape, Siro is faster than Laravel in this benchmark profile.
-
-## CI
-
-GitHub Actions workflow: `.github/workflows/test.yml`
-
-On every push it runs:
-
-1. `composer install`
-2. `php -l` for all PHP files
-3. `php siro migrate`
-4. start built-in PHP server + runtime smoke checks:
-   - `curl -f http://localhost:8080/`
-   - `curl -f http://localhost:8080/users`
-5. `php tests/verify_v061.php` (PASS/FAIL verification suite)
-
-## Packaging
-
-- **siro/core** (library): `core/`
-- **siro/api** (project): `app/`, `routes/`, `config/`, `public/`
-
-Project package requires:
-
-```json
-"siro/core": "^0.7"
-```
->>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
+**Happy coding! ðŸš€**
