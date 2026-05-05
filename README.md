@@ -4,11 +4,10 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Packagist](https://img.shields.io/badge/packagist-v0.14.1-blue.svg)](https://packagist.org/packages/sirosoft/api)
+[![Packagist](https://img.shields.io/badge/packagist-v0.15.0-blue.svg)](https://packagist.org/packages/sirosoft/api)
 [![Tests](https://img.shields.io/badge/tests-178%20passing-brightgreen.svg)](tests/)
 [![PostgreSQL](https://img.shields.io/badge/postgresql-ready-blue.svg)](https://www.postgresql.org/)
 [![Schema Builder](https://img.shields.io/badge/schema-builder-orange.svg)](https://github.com/SiroSoft/siro-core)
-[![PHPStan](https://img.shields.io/badge/phpstan-level%206-brightgreen.svg)](https://github.com/SiroSoft/siro-core)
 
 ---
 
@@ -21,8 +20,9 @@
 | 💰 **$2/month hosting?** | Pure PHP, **zero dependencies**, ~2MB RAM per request. Runs on any shared host. |
 | 🚀 **No DevOps team?** | `php siro deploy` — push to Ubuntu VPS + Nginx + MySQL in one command. |
 | 📋 **Client asks "where's the API docs?"** | `php siro make:openapi --with-swagger` — Swagger UI in 1 second. |
-| 🔐 **Complex auth?** | Multi-role, JWT access + refresh tokens, OTP, phone login built-in. |
-| ⚡ **Worried about upgrades breaking code?** | Strict Semver. Zero breaking changes within same minor. |
+| 🔐 **Complex auth?** | JWT access + refresh tokens, email verification, forgot/reset password, token versioning. |
+| 🐘 **Which database?** | MySQL / PostgreSQL / SQLite — one codebase, all three, zero changes. |
+| 🔧 **Server down for deploy?** | `php siro down` — 503 maintenance mode with IP allowlist. `php siro up` — back live. |
 
 > **"The Laravel alternative that runs on $2/month hosting, can be read in one afternoon, and ships an API in one hour."**
 
@@ -41,17 +41,17 @@ php siro key:generate
 ### 2️⃣ Generate auth system + first CRUD
 
 ```bash
-php siro make:auth                          # Login, register, JWT refresh...
-php siro make:crud products                 # Full CRUD: model, migration, routes
-php siro migrate                            # Create tables
-php siro serve                              # Start server → http://localhost:8080
+php siro make:auth                          # Login, register, JWT refresh + forgot/reset password
+php siro make:crud products                 # Full CRUD: model, migration, controller, routes, tests
+php siro migrate                            # Create tables (MySQL/PgSQL/SQLite auto-detected)
+php siro serve                              # Start dev server → http://localhost:8080
 ```
 
 ### 3️⃣ Test register + login
 
 ```bash
 php siro api:test POST /api/auth/register name="Demo" email=demo@test.com password=secret
-# {"success":true,"message":"Register successful","data":{"token":"eyJ..."}}
+# {"success":true,"message":"Register successful","data":{"token":"eyJ...","refresh_token":"eyJ..."}}
 
 php siro api:test POST /api/auth/login email=demo@test.com password=secret
 # {"success":true,"message":"Login successful","data":{"token":"eyJ..."}}
@@ -60,81 +60,158 @@ php siro api:test POST /api/auth/login email=demo@test.com password=secret
 ### 4️⃣ Test protected CRUD
 
 ```bash
-php siro api:test GET /api/products            # Public
-php siro api:test POST /api/products name=Laptop price=999 --as=admin  # Auto-auth
-php siro api:test POST /api/products            # → 401 (no auth)
+php siro api:test GET /api/products            # Public list
+php siro api:test POST /api/products name=Laptop price=999 --as=admin  # With JWT auth
+php siro api:test POST /api/products            # → 401 (no auth required for write)
 ```
 
-> **That's it.** You now have: registration, login, JWT auth, CRUD API, database, tests, and debugging.  
-> Total commands: **6** • Total time: **< 5 minutes**.
+### 5️⃣ Debug when something goes wrong
+
+```bash
+php siro debug:last                             # Show last request: headers, body, SQL queries
+php siro log:replay a1b2c3d4 --force            # Replay any past request (modifiable)
+php siro api:test GET /api/products --loop=100  # Load test
+```
+
+### 6️⃣ Health check (for load balancers)
+
+```bash
+curl http://localhost:8080/health
+# {"success":true,"message":"OK","data":{"status":"healthy","database":"connected","version":"0.15.0"}}
+```
+
+> **That's it.** You now have: registration, login, JWT auth, CRUD API, database, tests, debugging, and health check.  
+> Total commands: **7** • Total time: **< 5 minutes**
 
 ---
 
 ## ✨ Key Features
 
 ### 🏗️ Schema Builder (v0.15.0)
-- 🏗️ **Schema Builder** — `Schema::create('table', fn($t) => ...)` driver-agnostic, no if/else branches
-- 🔗 **Foreign Keys** — `$t->foreign('user_id')->references('id')->on('users')->onDelete('cascade')`
-- 🔍 **Introspection** — `hasTable()`, `hasColumn()`, `getColumnListing()`, `hasDatabase()`
-- 📡 **Multi-DB Connections** — `Database::connection('analytics')`, `DB::table('x')->connection('replica')`
+Write migration ONCE, run on ANY database — no if/else branches:
 
-### 🔐 Encryption & HTTP Client (v0.15.0)
-- 🔐 **AES-256 Encryption** — `Encrypt::encrypt($data)` / `Encrypt::decrypt($payload)` with HMAC integrity
-- 🌐 **HTTP Client** — `Http::get($url)`, `Http::post($url, $data)` — pure curl, no Guzzle
+```php
+use Siro\Core\Schema;
+use Siro\Core\DB\Blueprint;
+
+Schema::create('orders', function (Blueprint $t) {
+    $t->id();
+    $t->string('customer_name');
+    $t->decimal('total', 10, 2)->default(0);
+    $t->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+    $t->timestamps();
+    $t->softDeletes();
+});
+```
+
+This single migration works on **MySQL** (AUTO_INCREMENT, InnoDB), **PostgreSQL** (BIGSERIAL, no UNSIGNED), and **SQLite** (INTEGER AUTOINCREMENT, TEXT dates) — automatically.
+
+**Available methods:** `id()`, `string()`, `text()`, `integer()`, `smallint()`, `bigint()`, `decimal()`, `float()`, `boolean()`, `date()`, `datetime()`, `timestamp()`, `json()`, `timestamps()`, `softDeletes()`, `rememberToken()`, `unique()`, `index()`, `foreign()`, `default()`, `nullable()`, `useCurrent()`
+
+**Schema Introspection:** `Schema::hasTable('users')`, `hasColumn('users', 'email')`, `getColumnListing('users')`, `hasDatabase('my_app')`
+
+### 🔗 Multi-Database Connections (v0.15.0)
+Connect to multiple databases from one application:
+
+```php
+// Default connection (from config/database.php)
+$users = DB::table('users')->get();
+
+// Named connection for analytics/replica
+$analytics = DB::table('events')->connection('analytics')->get();
+
+// Raw PDO access
+$pdo = Database::connection('analytics');
+$pdo->query('SELECT COUNT(*) FROM page_views');
+
+// List all connections
+$names = Database::connections(); // ['default', 'analytics']
+```
+
+### 🔐 Encryption (v0.15.0)
+AES-256-CBC encryption with HMAC integrity:
+
+```php
+use Siro\Core\Encrypter;
+
+$encrypted = Encrypter::encrypt($creditCardNumber);
+// Store $encrypted in database
+
+$decrypted = Encrypter::decrypt($encrypted);
+// "4111-1111-1111-1111"
+```
+
+Uses `APP_KEY` or `JWT_SECRET` from `.env` automatically. Tampered data throws `RuntimeException`.
+
+### 🌐 HTTP Client (v0.15.0)
+Call external APIs with zero dependencies:
+
+```php
+use Siro\Core\Http;
+
+// GET request
+$response = Http::get('https://api.github.com/users/octocat');
+$data = $response->json();  // ['login' => 'octocat', ...]
+
+// POST with JSON body
+$response = Http::post('https://api.example.com/orders', [
+    'product' => 'Laptop',
+    'quantity' => 2,
+]);
+
+echo $response->status();   // 201
+echo $response->body();     // Raw response string
+echo $response->ok() ? 'Success' : 'Failed';
+echo $response->header('content-type');
+```
 
 ### 🔧 Maintenance Mode (v0.15.0)
-- 🔧 **`php siro down --message="Upgrading..."`** — 503 maintenance mode
-- 🚀 **`php siro up`** — Restore live mode
-- 🛡️ **IP Allowlist** — `--allow=ip1,ip2` for authorized access
+Enable/disable maintenance mode without touching the server:
 
-### ✅ Test Helpers (v0.15.0)
-- ✅ **HTTP Assertions** — `$this->get('/')->assertStatus(200)->assertJson(['key'=>'val'])`
-- ✅ **Database Assertions** — `$this->assertDatabaseHas('users', ['email'=>'...'])`
-- ✅ **Auth Flow Testing** — `$this->post('/auth/login', [...])` full stack testing
+```bash
+php siro down --message="Upgrading database..."    # Returns 503 to all requests
+php siro down --allow=192.168.1.100               # Allow specific IP through
+php siro up                                        # Restore live mode
+```
 
-### 💚 Health Endpoint (v0.15.0)
-- 💚 **`GET /health`** — Returns `{"status":"healthy","database":"connected",...}`
-- ✅ **Ready for Load Balancers** — Kubernetes, AWS ECS, Docker health checks
+The application automatically returns `503 Service Unavailable` with `Retry-After` header.
 
 ### 🐘 PostgreSQL Production Support (v0.15.0)
-- 🐘 **Full PostgreSQL** — `config/database.php` auto-detects port (5432), migrations use `BIGSERIAL`
-- ✅ **Zero Changes Needed** — Write once, run on MySQL / PgSQL / SQLite
+
+| Feature | MySQL | PostgreSQL | SQLite |
+|---------|-------|------------|--------|
+| Auto-detect port | 3306 | 5432 | 0 |
+| Primary key | `AUTO_INCREMENT` | `BIGSERIAL` | `AUTOINCREMENT` |
+| Identifier quoting | `` `backtick` `` | `"double quote"` | `` `backtick` `` |
+| Boolean | `TINYINT(1)` | `BOOLEAN` | `TINYINT(1)` |
+| Index/Unique | Inline in CREATE | `CREATE INDEX` separate | `CREATE INDEX` separate |
+| `RETURNING id` on INSERT | Not supported | ✅ Yes | Not supported |
+| Random ordering | `RAND()` | `RANDOM()` | `RANDOM()` |
 
 ### 🏗️ Service & Repository Pattern (v0.14.1)
 - 🏗️ **Service Layer** — `php siro make:service Order` generates `app/Services/OrderService.php`
 - 🗂️ **Repository Pattern** — `php siro make:repository Product` generates `app/Repositories/ProductRepository.php`
 - 🚀 **Full CRUD** — `php siro make:crud invoice` generates Model + Migration + Repository + Service + Controller + Resource + Routes + Test
-- 🧠 **Smart Validation** — Auto-detects validation rules based on model name (product → price, sku; order → total; user → email)
-- 🔄 **DI Auto-Resolution** — Router auto-resolves constructor dependencies via Reflection (Controller → Service → Repository → Model)
+- 🔄 **DI Auto-Resolution** — Router auto-resolves constructor dependencies via Reflection
 
 ### 🧪 PHPUnit Test Generation (v0.14.1)
-- ✅ **`make:test ProductApi`** generates `tests/Feature/ProductApiTest.php` (PHPUnit class)
-- ✅ **`make:test CartService --unit`** generates `tests/Unit/CartServiceTest.php`
+- ✅ **`make:test ProductApi`** generates `tests/Feature/ProductApiTest.php`
 - ✅ **`make:crud`** generates `tests/Feature/CategoryTest.php` with 4 test methods
-- ✅ **`php siro test --filter=CategoryTest`** run single test class
-- ✅ **`php siro test --testsuite=Feature`** run feature suite only
-
-### 🛠️ New CLI Tools (v0.13.0+)
-- 🏭 **Factory Generator** — `php siro make:factory User` for test data
-- 🔍 **Database Inspector** — `php siro db:show users` to view table data & schema
-- 📋 **Route Rules Parser** — `php siro route:rules` to extract validation rules
-- ⚡ **Live Dev Server** — `php siro live` with auto-reload on changes
-- 🚀 **Deployment System** — `php siro deploy` for Git/rsync/custom deploys
+- ✅ **Fluent Test Helpers (v0.15.0)** — `$this->get('/')->assertStatus(200)->assertJson(['key'=>'val'])`
+- ✅ **Database Assertions** — `$this->assertDatabaseHas('users', ['email'=>'test@test.com'])`
 
 ### 🔍 Advanced Debugging (v0.8.0)
-- 🔍 **Trace ID per Request** — Every request gets unique `X-Siro-Trace-Id`
+- 🔍 **Trace ID per Request** — Every response includes `X-Siro-Trace-Id` header
 - 📋 **Request/Response Capture** — Full context including bodies (sanitized)
-- 🔄 **Request Replay** — `php siro log:replay <id>` generates curl command
-- 📤 **Export Traces** — `php siro log:export --format=json|csv`
-- 🔎 **Smart Filtering** — Filter by status, method, slow requests
-- 📊 **SQL Query Logging** — Capture all queries with bindings and timing
+- 🔄 **Request Replay** — `php siro log:replay <id>` replays any past request
+- 📤 **Export Traces** — `php siro log:export --format=json|csv|postman`
+- 📊 **SQL Query Logging** — All queries captured with bindings and timing
 
-### 🛡️ Security & Performance
-- 🛡️ **Rate Limiting** — Per-route throttling with configurable limits (Redis + file fallback)
-- 🔐 **CSRF Protection** — Built-in middleware for form protection
-- ⚙️ **Config Caching** — Cache environment for faster boot
-- 📈 **Slow Query Detection** — Auto-log queries exceeding threshold
-- ✅ **Environment Validation** — Pre-deployment checks via `php siro doctor --prod`
+### 🛡️ Security
+- 🛡️ **Rate Limiting** — Per-route throttling with Redis + file fallback
+- 🔐 **CSRF Protection** — Built-in middleware
+- ✅ **Mass Assignment Protection** — Secure default blocks unauthorized field updates
+- 🔒 **Credential Sanitization** — Passwords/tokens auto `[REDACTED]` in logs
 
 ---
 
@@ -142,89 +219,62 @@ php siro api:test POST /api/products            # → 401 (no auth)
 
 ### 📦 Code Generation
 ```bash
-php siro make:model User
-php siro make:controller UserController
-php siro make:migration create_posts_table
-php siro make:resource UserResource
-php siro make:seeder UserSeeder
-php siro make:auth
-php siro make:crud products
-php siro make:test ProductApi
-php siro make:factory User
-php siro make:job SendWelcomeEmail
-php siro make:mail WelcomeMail
-php siro make:event UserCreated
-php siro make:lang vi
-php siro make:service Order
-php siro make:repository Product
-php siro make:openapi --with-swagger
+php siro make:model User                    php siro make:controller UserController
+php siro make:migration create_posts_table  php siro make:resource UserResource
+php siro make:seeder UserSeeder             php siro make:auth
+php siro make:crud products                 php siro make:test ProductApi
+php siro make:factory User                  php siro make:job SendWelcomeEmail
+php siro make:mail WelcomeMail              php siro make:event UserCreated
+php siro make:lang vi                       php siro make:service Order
+php siro make:repository Product            php siro make:openapi --with-swagger
 php siro make:postman
 ```
 
 ### 🗄️ Database
 ```bash
-php siro migrate
-php siro migrate:rollback --step=N
-php siro migrate:status
-php siro db:seed
+php siro migrate              php siro migrate:rollback --step=N
+php siro migrate:status       php siro db:seed
 php siro db:show users --schema
 ```
 
 ### 🐛 Debugging
 ```bash
-php siro debug:last
-php siro log:trace <trace_id>
-php siro log:trace --status=500
-php siro log:replay <trace_id>
-php siro log:export <trace_id> --postman
-php siro log:cleanup --days=7
-php siro log:slow --limit=10
-php siro log:top
-php siro log:tail
+php siro debug:last           php siro log:trace <id>
+php siro log:replay <id>      php siro log:export <id> --postman
+php siro log:cleanup --days=7 php siro log:slow --limit=10
+php siro log:top              php siro log:tail
 php siro log:stats
 ```
 
 ### 🧪 Testing
 ```bash
-php siro test
-php siro test --filter=CategoryTest
-php siro test --testsuite=Feature
+php siro test                 php siro test --filter=CategoryTest
 php siro api:test GET /api/users
 php siro api:test POST /api/auth/login email=admin@test.com password=secret
-php siro api:test GET /api/products --as=admin
-php siro api:test GET /api/products --loop=100
+php siro api:test GET /api/products --as=admin --loop=100
 ```
 
 ### ⏰ Queue & Schedule
 ```bash
-php siro queue:work
-php siro queue:work --daemon
-php siro queue:status
-php siro queue:retry <id|all>
-php siro queue:flush
-php siro schedule:run
+php siro queue:work           php siro queue:work --daemon
+php siro queue:status         php siro queue:retry <id|all>
+php siro queue:flush          php siro schedule:run
 ```
 
 ### 🌐 Server & Deploy
 ```bash
-php siro serve --port=8080
-php siro live --port=9090
-php siro deploy --init
-php siro storage:link
+php siro serve --port=8080    php siro live --port=9090
+php siro deploy --init        php siro storage:link
 ```
 
 ### ⚙️ System
 ```bash
-php siro key:generate
-php siro config:cache
-php siro optimize
-php siro env:check
-php siro env:switch production
-php siro doctor
-php siro doctor --prod
-php siro route:list
-php siro route:search user
-php siro route:rules
+php siro key:generate         php siro config:cache
+php siro optimize             php siro env:check
+php siro env:switch production php siro doctor
+php siro doctor --prod        php siro down --message="Upgrading..."
+php siro up                   php siro route:list
+php siro route:search user    php siro route:rules
 php siro rate:status
 ```
 
@@ -241,9 +291,9 @@ Run `php siro route:list` to see all registered routes.
 | `POST` | `/api/auth/register` | 👤 Register new user |
 | `POST` | `/api/auth/login` | 🔑 Login, returns JWT + refresh token |
 | `POST` | `/api/auth/refresh` | 🔄 Refresh access token |
-| `POST` | `/api/auth/logout` | 🚪 Logout, revoke tokens |
+| `POST` | `/api/auth/logout` | 🚪 Logout, revoke all tokens |
 | `POST` | `/api/auth/verify-email` | ✅ Verify email address |
-| `POST` | `/api/auth/forgot-password` | 🔐 Request password reset |
+| `POST` | `/api/auth/forgot-password` | 🔐 Request password reset link |
 | `POST` | `/api/auth/reset-password` | 🔑 Reset password with token |
 | `GET` | `/api/auth/me` | 👁️ Get authenticated user profile |
 
@@ -259,6 +309,12 @@ Run `php siro route:list` to see all registered routes.
 | `GET` | `/api/products` | 📋 List products |
 | `GET` | `/api/categories` | 📋 List categories |
 
+### 💚 Health
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/health` | 💚 Health check (DB status, version, time) |
+
 ---
 
 ## 📁 Project Structure
@@ -266,9 +322,9 @@ Run `php siro route:list` to see all registered routes.
 ```
 my-app/
 ├── app/
-│   ├── Controllers/       # HTTP controllers
-│   ├── Middleware/         # Auth, CORS, JSON, Throttle
-│   ├── Models/            # User, Product, Category
+│   ├── Controllers/       # HTTP controllers (Auth, User, Product, Category)
+│   ├── Middleware/         # Auth (JWT), CORS, JSON, Throttle middleware
+│   ├── Models/            # User, Product, Category (extends Siro\Core\Model)
 │   ├── Services/          # Business logic layer
 │   ├── Repositories/      # Data access layer
 │   ├── Resources/         # API response transformers
@@ -279,7 +335,7 @@ my-app/
 ├── config/
 │   └── database.php       # Database configuration
 ├── database/
-│   ├── migrations/        # Database migrations
+│   ├── migrations/        # Database migrations (Schema Builder)
 │   ├── seeds/             # Database seeders
 │   └── factories/         # Model factories
 ├── routes/
@@ -288,11 +344,11 @@ my-app/
 ├── public/
 │   └── index.php          # HTTP entry point
 ├── tests/
-│   ├── unit/              # Unit tests (5)
-│   ├── integration/       # Integration tests (7)
-│   └── feature/           # Feature tests (11)
+│   ├── unit/              # 5 unit tests
+│   ├── integration/       # 7 integration tests
+│   └── feature/           # 11 feature tests
 └── storage/
-    ├── logs/              # Application logs
+    ├── logs/              # Application logs (daily rotation, 30 days retention)
     ├── cache/             # Cache files
     └── app/               # Uploaded files
 ```
@@ -301,12 +357,14 @@ my-app/
 
 ## 📡 Response Format
 
+All API responses follow a consistent JSON structure.
+
 ### ✅ Success (200)
 ```json
 {
   "success": true,
   "message": "Users retrieved",
-  "data": [...],
+  "data": [{"id": 1, "name": "John", "email": "john@test.com"}],
   "meta": {
     "current_page": 1,
     "per_page": 15,
@@ -316,45 +374,108 @@ my-app/
 }
 ```
 
-### ❌ Error (4xx/5xx)
+### ❌ Error (422)
 ```json
 {
   "success": false,
   "message": "Validation failed",
   "errors": {
-    "email": ["The email field is required."]
+    "email": ["The email field is required."],
+    "password": ["The password field must be at least 6 characters."]
   }
 }
 ```
 
 ### 📋 Error Reference
 
-| Status | Condition | Response |
-|--------|-----------|----------|
-| `401` | Missing/invalid token | `"Unauthorized"` |
-| `403` | Inactive account | `"Account is inactive"` |
-| `404` | Resource not found | `"{Resource} not found"` |
-| `422` | Validation failure | Field-level error messages |
-| `429` | Rate limit exceeded | `"Too Many Requests"` |
-| `500` | Server error | `"Internal Server Error"` |
+| Status | When | Body |
+|--------|------|------|
+| `401` | Missing/invalid/expired token | `{"message": "Unauthorized", "errors": {"token": ["Invalid or expired token"]}}` |
+| `403` | Inactive/disabled account | `{"message": "Account is inactive"}` |
+| `404` | Resource not found | `{"message": "User not found"}` |
+| `422` | Validation failure | `{"message": "Validation failed", "errors": {"field": ["error"]}}` |
+| `429` | Rate limit exceeded | `{"message": "Too Many Requests", "errors": {"throttle": ["Rate limit exceeded."]}}` |
+| `500` | Server error (debug) | `{"message": "Internal Server Error", "trace": "...", "file": "...", "line": 42}` |
+| `503` | Maintenance mode | `{"message": "Upgrading database...", "data": null}` (+ `Retry-After` header) |
+
+---
+
+## 🧪 Testing
+
+### Unit Tests (178 tests, 231 assertions)
+
+Run the full test suite:
+```bash
+php vendor/bin/phpunit                          # All 178 tests
+php vendor/bin/phpunit --testsuite=Unit          # 26 unit tests
+php vendor/bin/phpunit --testsuite=Integration   # 42 integration tests
+php vendor/bin/phpunit --testsuite=Feature       # 110 feature tests
+```
+
+### HTTP Test Helpers (v0.15.0)
+
+```php
+class ProductApiTest extends TestCase
+{
+    public function test_list_products(): void
+    {
+        $this->get('/api/products')
+            ->assertOk()
+            ->assertJson(['success' => true]);
+    }
+
+    public function test_create_product_requires_auth(): void
+    {
+        $this->post('/api/products', ['name' => 'Laptop'])
+            ->assertUnauthorized();
+    }
+
+    public function test_database_state(): void
+    {
+        $this->post('/api/auth/register', [
+            'name' => 'John',
+            'email' => 'john@test.com',
+            'password' => 'secret123',
+        ])->assertCreated();
+
+        $this->assertDatabaseHas('users', ['email' => 'john@test.com']);
+    }
+}
+```
+
+### Available Assertions
+- `assertStatus(int)` — Assert HTTP status code
+- `assertOk()` — Assert 200
+- `assertCreated()` — Assert 201
+- `assertUnauthorized()` — Assert 401
+- `assertNotFound()` — Assert 404
+- `assertValidationError()` — Assert 422
+- `assertJson(array)` — Assert keys in JSON response
+- `assertJsonPath('key.nested', $value)` — Assert nested JSON path
+- `assertHeader(name, value)` — Assert response header
+
+### Database Assertions (v0.15.0)
+- `assertDatabaseHas('users', ['email' => '...'])` — Assert row exists
+- `assertDatabaseMissing('users', ['email' => '...'])` — Assert row doesn't exist
 
 ---
 
 ## 🏗️ Architecture
 
-Siro uses a **two-package architecture**:
-
 ```
-┌─────────────────────────────────────┐
-│  sirosoft/api (SiroPHP)             │
-│  Application Skeleton               │
-│  ┌───────────────────────────────┐  │
-│  │  sirosoft/core (siro-core)    │  │
-│  │  Framework Engine             │  │
-│  │  Router • DB • JWT • Cache    │  │
-│  │  ORM • CLI • Validation       │  │
-│  └───────────────────────────────┘  │
-└─────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│              sirosoft/api (SiroPHP)               │
+│              Application Skeleton                 │
+│  ┌────────────────────────────────────────────┐  │
+│  │         sirosoft/core (siro-core)          │  │
+│  │         Framework Engine (136 tests)        │  │
+│  │                                            │  │
+│  │  Router • Middleware • Database • Cache     │  │
+│  │  JWT Auth • Validation • Queue • Mail     │  │
+│  │  Schema Builder • ORM • CLI (57 cmds)      │  │
+│  │  Encrypter • Http Client • Logger          │  │
+│  └────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────┘
 ```
 
 | Package | Type | Install |
@@ -373,12 +494,21 @@ Siro uses a **two-package architecture**:
 - ✅ OpenSSL extension (for Encrypter)
 - ✅ cURL extension (for HTTP Client)
 
+## 📋 Supported Databases
+
+| Database | Driver | Status |
+|----------|--------|--------|
+| MySQL 5.7+ | `mysql` | ✅ Production ready |
+| MariaDB 10.2+ | `mysql` | ✅ Production ready |
+| PostgreSQL 12+ | `pgsql` | ✅ Production ready (v0.15.0) |
+| SQLite 3.x | `sqlite` | ✅ Development/Testing |
+
 ---
 
 ## 📋 Changelog
 
-- **v0.15.0** — Schema Builder (driver-agnostic), Multi-DB connections, AES-256 Encryption, HTTP Client, Maintenance mode (`php siro down/up`), Foreign Key constraints, Health endpoint (`GET /health`), Test assertion helpers (`assertStatus`, `assertJson`, `assertDatabaseHas`), PostgreSQL production support
-- **v0.14.1** — Service & Repository pattern, PHPUnit test generation, `make:service`, `make:repository`, `make:crud` with full layers, README marketing revamp
+- **v0.15.0** — Schema Builder (driver-agnostic migrations), Multi-DB connections, AES-256 Encryption, HTTP Client, Maintenance mode (`php siro down/up`), Foreign Key constraints, Health endpoint (`GET /health`), Test assertion helpers, PostgreSQL production support
+- **v0.14.1** — Service & Repository pattern, PHPUnit test generation, `make:service`, `make:repository`, `make:crud` with full layers
 - **v0.14.0** — `debug:last`, `log:top`, `route:search`, `doctor --prod`, `api:test --loop`
 - **v0.13.0** — Factory generator, `db:show`, `route:rules`, live reload, deploy system
 - **v0.12.0** — `make:crud` scaffolding, `make:test`, benchmarks, `env:switch`
@@ -401,6 +531,7 @@ Siro uses a **two-package architecture**:
 **Version:** 0.15.0  
 **Package:** sirosoft/api  
 **License:** MIT  
-**Tests:** 178 ✅ (231 assertions)  
+**Tests:** 178 ✅ (231 assertions) — PHPUnit  
+**Core:** sirosoft/core v0.15.0 (136 tests)  
 
 Created and maintained by **SiroSoft Team**
