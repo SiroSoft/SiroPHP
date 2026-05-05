@@ -8,6 +8,7 @@ use Siro\Core\Env;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
+<<<<<<< HEAD
 /**
  * CORS middleware.
  *
@@ -17,6 +18,8 @@ use Siro\Core\Response;
  *
  * @package App\Middleware
  */
+=======
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 final class CorsMiddleware
 {
     public function handle(Request $request, callable $next): mixed
@@ -31,18 +34,27 @@ final class CorsMiddleware
 
         if ($request->method() === 'OPTIONS') {
             $response = Response::noContent();
+<<<<<<< HEAD
             $this->appendHeaders($response, $allowOrigin, $allowedMethods, $allowedHeaders, $allowCredentials);
+=======
+            $this->appendHeaders($allowOrigin, $allowedMethods, $allowedHeaders, $allowCredentials);
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
             return $response;
         }
 
         $result = $next($request);
+<<<<<<< HEAD
         if ($result instanceof Response) {
             $this->appendHeaders($result, $allowOrigin, $allowedMethods, $allowedHeaders, $allowCredentials);
         }
+=======
+        $this->appendHeaders($allowOrigin, $allowedMethods, $allowedHeaders, $allowCredentials);
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 
         return $result;
     }
 
+<<<<<<< HEAD
     private function appendHeaders(Response $response, string $allowOrigin, string $allowedMethods, string $allowedHeaders, bool $allowCredentials): void
     {
         $response->header('Access-Control-Allow-Origin', $allowOrigin);
@@ -50,6 +62,15 @@ final class CorsMiddleware
         $response->header('Access-Control-Allow-Headers', $allowedHeaders);
         $response->header('Access-Control-Allow-Credentials', $allowCredentials ? 'true' : 'false');
         $response->header('Vary', 'Origin');
+=======
+    private function appendHeaders(string $allowOrigin, string $allowedMethods, string $allowedHeaders, bool $allowCredentials): void
+    {
+        header('Access-Control-Allow-Origin: ' . $allowOrigin);
+        header('Access-Control-Allow-Methods: ' . $allowedMethods);
+        header('Access-Control-Allow-Headers: ' . $allowedHeaders);
+        header('Access-Control-Allow-Credentials: ' . ($allowCredentials ? 'true' : 'false'));
+        header('Vary: Origin');
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
     }
 
     private function resolveOrigin(string $origin, string $allowedOrigins): string

@@ -7,6 +7,7 @@ namespace App\Middleware;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
+<<<<<<< HEAD
 /**
  * JSON content-type validation middleware.
  *
@@ -15,6 +16,8 @@ use Siro\Core\Response;
  *
  * @package App\Middleware
  */
+=======
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 final class JsonMiddleware
 {
     public function handle(Request $request, callable $next): mixed

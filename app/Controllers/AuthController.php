@@ -4,43 +4,80 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+<<<<<<< HEAD
 use App\Models\User;
 use App\Services\User as UserService;
+=======
+use App\Services\User;
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 use Siro\Core\Auth\JWT;
 use Siro\Core\DB;
 use Siro\Core\Env;
 use Siro\Core\Request;
 use Siro\Core\Response;
+<<<<<<< HEAD
+=======
+use Siro\Core\Validator;
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
 use Throwable;
 
 final class AuthController
 {
     public function register(Request $request): Response
     {
+<<<<<<< HEAD
         $request->validate([
+=======
+        $data = $request->body();
+        $errors = Validator::make($data, [
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
             'name' => 'required|min:3|max:120',
             'email' => 'required|email|max:255',
             'password' => 'required|min:6|max:255',
         ]);
 
+<<<<<<< HEAD
         $email = strtolower(trim($request->string('email')));
 
         // Check if email already exists
         $rows = User::where('email', '=', $email)->limit(1)->get();
         if ($rows !== []) {
+=======
+        if ($errors !== []) {
+            return Response::error('Validation failed', 422, $errors);
+        }
+
+        $email = strtolower(trim((string) $request->input('email')));
+
+        $existing = DB::table('users')
+            ->select(['id'])
+            ->where('email', '=', $email)
+            ->first();
+
+        if ($existing !== null) {
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
             return Response::error('Validation failed', 422, [
                 'email' => ['Email has already been taken'],
             ]);
         }
 
+<<<<<<< HEAD
         $passwordHash = password_hash($request->string('password'), PASSWORD_DEFAULT);
+=======
+        $passwordHash = password_hash((string) $request->input('password'), PASSWORD_DEFAULT);
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
         if ($passwordHash === false) {
             return Response::error('Unable to create account', 500);
         }
 
         try {
+<<<<<<< HEAD
             $user = User::create([
                 'name' => $request->string('name'),
+=======
+            $userId = (int) DB::table('users')->insert([
+                'name' => (string) $request->input('name'),
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
                 'email' => $email,
                 'password' => $passwordHash,
                 'status' => 1,
@@ -50,6 +87,7 @@ final class AuthController
             return Response::error('Unable to create account', 500);
         }
 
+<<<<<<< HEAD
         $userId = (int) $user->id;
         $tokens = $this->tokenPair($userId);
 
@@ -61,6 +99,17 @@ final class AuthController
             'user' => [
                 'id' => $userId,
                 'name' => $request->string('name'),
+=======
+        $tokenData = $this->issueToken($userId);
+
+        return Response::created([
+            'token' => $tokenData['token'],
+            'token_type' => 'Bearer',
+            'expires_in' => $tokenData['ttl'],
+            'user' => [
+                'id' => $userId,
+                'name' => (string) $request->input('name'),
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
                 'email' => $email,
             ],
         ], 'Register successful');
@@ -68,11 +117,17 @@ final class AuthController
 
     public function login(Request $request): Response
     {
+<<<<<<< HEAD
         $request->validate([
+=======
+        $data = $request->body();
+        $errors = Validator::make($data, [
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
             'email' => 'required|email|max:255',
             'password' => 'required|min:6|max:255',
         ]);
 
+<<<<<<< HEAD
         $email = strtolower(trim($request->string('email')));
         $rows = User::where('email', '=', $email)->limit(1)->get();
         $userData = $rows[0] ?? null;
@@ -101,10 +156,46 @@ final class AuthController
                 'id' => $userId,
                 'name' => (string) ($userData['name'] ?? ''),
                 'email' => (string) ($userData['email'] ?? ''),
+=======
+        if ($errors !== []) {
+            return Response::error('Validation failed', 422, $errors);
+        }
+
+        $email = strtolower(trim((string) $request->input('email')));
+        $user = DB::table('users')
+            ->select(['id', 'name', 'email', 'password', 'status'])
+            ->where('email', '=', $email)
+            ->first();
+
+        if ($user === null || !isset($user['password']) || !is_string($user['password'])) {
+            return Response::error('Invalid credentials', 401);
+        }
+
+        if ((int) ($user['status'] ?? 0) !== 1) {
+            return Response::error('Account is inactive', 403);
+        }
+
+        $ok = password_verify((string) $request->input('password'), $user['password']);
+        if (!$ok) {
+            return Response::error('Invalid credentials', 401);
+        }
+
+        $tokenData = $this->issueToken((int) $user['id']);
+
+        return Response::success([
+            'token' => $tokenData['token'],
+            'token_type' => 'Bearer',
+            'expires_in' => $tokenData['ttl'],
+            'user' => [
+                'id' => (int) $user['id'],
+                'name' => (string) ($user['name'] ?? ''),
+                'email' => (string) ($user['email'] ?? ''),
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
             ],
         ], 'Login successful');
     }
 
+<<<<<<< HEAD
     public function refresh(Request $request): Response
     {
         $request->validate(['refresh_token' => 'required']);
@@ -153,6 +244,8 @@ final class AuthController
         ], 'Token refreshed');
     }
 
+=======
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
     public function me(Request $request): Response
     {
         $user = $request->user();
@@ -173,13 +266,19 @@ final class AuthController
             return Response::error('Unauthorized', 401);
         }
 
+<<<<<<< HEAD
         if (!UserService::incrementTokenVersion($userId)) {
+=======
+        $revoked = User::incrementTokenVersion($userId);
+        if (!$revoked) {
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
             return Response::error('Unable to revoke token', 500);
         }
 
         return Response::success(null, 'Logout successful. Token revoked.');
     }
 
+<<<<<<< HEAD
     public function verifyEmail(Request $request): Response
     {
         $request->validate(['token' => 'required']);
@@ -292,3 +391,26 @@ final class AuthController
         ];
     }
 }
+=======
+    /** @return array{token:string,ttl:int} */
+    private function issueToken(int $userId): array
+    {
+        $ttl = max(60, (int) Env::get('JWT_TTL', '3600'));
+        $now = time();
+        $versionRow = DB::table('users')
+            ->select(['token_version'])
+            ->where('id', '=', $userId)
+            ->first();
+        $tokenVersion = (int) ($versionRow['token_version'] ?? 1);
+
+        $token = JWT::encode([
+            'sub' => $userId,
+            'ver' => $tokenVersion > 0 ? $tokenVersion : 1,
+            'iat' => $now,
+            'exp' => $now + $ttl,
+        ]);
+
+        return ['token' => $token, 'ttl' => $ttl];
+    }
+}
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0

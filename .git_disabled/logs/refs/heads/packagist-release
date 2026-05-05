@@ -1,0 +1,6 @@
+0000000000000000000000000000000000000000 6869b98480a3897ddf17ae968422a43c371737f0 Tran Thien Nhan <nhan_tt@vietvang.net> 1777297671 +0700	branch: Created from HEAD
+6869b98480a3897ddf17ae968422a43c371737f0 165410c9232eb3e7b5a4838553e73237bfad9b5c Tran Thien Nhan <nhan_tt@vietvang.net> 1777297830 +0700	commit: refactor: convert to single package for Packagist
+165410c9232eb3e7b5a4838553e73237bfad9b5c 456e7a5579f32003e6f0d2554adb74e8c53c8239 Tran Thien Nhan <nhan_tt@vietvang.net> 1777297899 +0700	commit: docs: add Packagist submission guide for v0.7.4
+456e7a5579f32003e6f0d2554adb74e8c53c8239 e8ac1ade39fc27912c2cfd64cc12baee97a78ba6 Tran Thien Nhan <nhan_tt@vietvang.net> 1777298328 +0700	commit: docs: add two-package setup guide for Packagist
+e8ac1ade39fc27912c2cfd64cc12baee97a78ba6 f606514226e8b3a6d024d847f1fb9c65507c605a Tran Thien Nhan <nhan_tt@vietvang.net> 1777298535 +0700	commit: docs: add quick setup guide and prepared files for siro-core
+f606514226e8b3a6d024d847f1fb9c65507c605a 5d31a160b6668d02ef6e30f9159056144c6e5b07 Tran Thien Nhan <nhan_tt@vietvang.net> 1777299806 +0700	commit: release: v0.7.4 - Migrate to 2-package architecture (siro/core + siro/api)

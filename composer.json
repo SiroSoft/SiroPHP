@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "sirosoft/api",
   "description": "Siro API Framework - Application Skeleton",
   "type": "project",
@@ -16,6 +17,34 @@
     "ext-json": "*",
     "ext-mbstring": "*"
   },
+=======
+  "name": "siro/api",
+  "description": "Siro API Framework - Starter Project Template",
+  "type": "project",
+  "license": "MIT",
+  "keywords": ["framework", "api", "starter", "template"],
+  "homepage": "https://github.com/SiroSoft/siro-api",
+  "support": {
+    "issues": "https://github.com/SiroSoft/siro-api/issues",
+    "source": "https://github.com/SiroSoft/siro-api"
+  },
+  "require": {
+    "php": ">=8.2",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "siro/core": "^0.7"
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "./core",
+      "options": {
+        "symlink": false
+      }
+    }
+  ],
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
   "scripts": {
     "post-create-project-cmd": [
       "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
@@ -29,8 +58,13 @@
     }
   },
   "minimum-stability": "stable",
+<<<<<<< HEAD
   "prefer-stable": true,
   "require-dev": {
     "phpunit/phpunit": "^11.5"
   }
 }
+=======
+  "prefer-stable": true
+}
+>>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
