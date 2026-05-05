@@ -59,3 +59,5 @@ COMPLETE_*.md
 .DS_Store
 Thumbs.db
 >>>>>>> 6869b98480a3897ddf17ae968422a43c371737f0
+
+.git_disabled/
