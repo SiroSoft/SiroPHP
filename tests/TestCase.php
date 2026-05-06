@@ -20,16 +20,100 @@ use Siro\Core\Database;
 use Siro\Core\Request;
 use Siro\Core\Response;
 use Siro\Core\Router;
+use Siro\Core\Schema;
 use Siro\Core\ValidationException;
 
 abstract class TestCase extends BaseTestCase
 {
     protected string $basePath;
+    private static bool $tablesCreated = false;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->basePath = dirname(__DIR__);
+
+        // Clean rate limit files so tests don't interfere with each other
+        $rateDir = $this->basePath . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'rate_limit';
+        if (is_dir($rateDir)) {
+            foreach (glob($rateDir . DIRECTORY_SEPARATOR . '*.json') as $f) {
+                @unlink($f);
+            }
+        }
+
+        // Rollback previous test's transaction, start fresh one
+        static::resetTransaction();
+    }
+
+    protected function tearDown(): void
+    {
+        static::rollbackTransaction();
+        parent::tearDown();
+    }
+
+    private static function resetTransaction(): void
+    {
+        try {
+            $pdo = \Siro\Core\Database::connection();
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+                $pdo->beginTransaction();
+            }
+        } catch (\Throwable) {
+        }
+    }
+
+    private static function rollbackTransaction(): void
+    {
+        try {
+            $pdo = \Siro\Core\Database::connection();
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+        } catch (\Throwable) {
+        }
+    }
+
+    protected static function ensureTablesCreated(): void
+    {
+        if (self::$tablesCreated) {
+            return;
+        }
+        self::$tablesCreated = true;
+
+        // Delete existing test database to start clean
+        $dbPath = dirname(__DIR__) . '/storage/test.db';
+        if (file_exists($dbPath)) {
+            @unlink($dbPath);
+        }
+
+        $migrationsDir = dirname(__DIR__) . '/database/migrations';
+        if (!is_dir($migrationsDir)) {
+            return;
+        }
+        $files = glob($migrationsDir . '/*.php');
+        if (!$files) {
+            return;
+        }
+        sort($files);
+        foreach ($files as $file) {
+            $migration = require $file;
+            if (is_object($migration) && method_exists($migration, 'up')) {
+                try {
+                    $migration->up();
+                } catch (\Throwable) {
+                }
+            }
+        }
+
+        // Start transaction for test isolation
+        try {
+            $pdo = \Siro\Core\Database::connection();
+            if (!$pdo->inTransaction()) {
+                $pdo->beginTransaction();
+            }
+        } catch (\Throwable) {
+        }
     }
 
     protected function createApp(): App
@@ -44,12 +128,23 @@ abstract class TestCase extends BaseTestCase
         $app = new App($this->basePath);
         $app->boot();
         $app->loadRoutes($this->basePath . '/routes/api.php');
+
+        // Run migrations after boot so Database is configured
+        self::ensureTablesCreated();
+
         return $app;
     }
 
     protected function dispatch(App $app, string $method, string $path, array $body = [], array $headers = []): Response
     {
-        $request = new Request($method, $path, [], $headers, $body, '127.0.0.1');
+        // Extract query string from path
+        $queryParams = [];
+        $pathParts = explode('?', $path, 2);
+        $cleanPath = $pathParts[0];
+        if (isset($pathParts[1])) {
+            parse_str($pathParts[1], $queryParams);
+        }
+        $request = new Request($method, $cleanPath, $queryParams, $headers, $body, '127.0.0.1');
         try {
             return $app->router->dispatch($request);
         } catch (ValidationException $e) {

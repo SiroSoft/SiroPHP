@@ -29,7 +29,7 @@ final class AuthController
         $request->validate([
             'name' => 'required|min:3|max:120',
             'email' => 'required|email|max:255',
-            'password' => 'required|min:6|max:255',
+            'password' => 'required|min:6|max:255|confirmed',
         ]);
 
         $email = strtolower(trim($request->string('email')));
@@ -63,15 +63,13 @@ final class AuthController
         $tokens = $this->tokenPair($userId);
 
         return Response::created([
-            'token' => $tokens['token'],
-            'refresh_token' => $tokens['refresh_token'],
+            'id' => $userId,
+            'name' => $request->string('name'),
+            'email' => $email,
+            'access_token' => $tokens['token'],
             'token_type' => 'Bearer',
             'expires_in' => $tokens['ttl'],
-            'user' => [
-                'id' => $userId,
-                'name' => $request->string('name'),
-                'email' => $email,
-            ],
+            'refresh_token' => $tokens['refresh_token'],
         ], 'Register successful');
     }
 
@@ -102,15 +100,13 @@ final class AuthController
         $tokens = $this->tokenPair($userId);
 
         return Response::success([
-            'token' => $tokens['token'],
-            'refresh_token' => $tokens['refresh_token'],
+            'id' => $userId,
+            'name' => (string) ($userData['name'] ?? ''),
+            'email' => (string) ($userData['email'] ?? ''),
+            'access_token' => $tokens['token'],
             'token_type' => 'Bearer',
             'expires_in' => $tokens['ttl'],
-            'user' => [
-                'id' => $userId,
-                'name' => (string) ($userData['name'] ?? ''),
-                'email' => (string) ($userData['email'] ?? ''),
-            ],
+            'refresh_token' => $tokens['refresh_token'],
         ], 'Login successful');
     }
 

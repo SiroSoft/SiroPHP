@@ -54,6 +54,7 @@ final class TestHelperTest extends TestCase
             'name' => 'Helper Test User',
             'email' => 'helper-' . uniqid() . '@test.com',
             'password' => 'secret123',
+            'password_confirmation' => 'secret123',
         ]);
         $response->assertCreated();
     }
@@ -71,6 +72,7 @@ final class TestHelperTest extends TestCase
             'name' => 'DB Has Test',
             'email' => $email,
             'password' => 'secret123',
+            'password_confirmation' => 'secret123',
         ])->assertCreated();
 
         $this->assertDatabaseHas('users', ['email' => $email]);
@@ -88,6 +90,7 @@ final class TestHelperTest extends TestCase
             'name' => 'Flow Test',
             'email' => $email,
             'password' => 'secret123',
+            'password_confirmation' => 'secret123',
         ])->assertCreated();
 
         $this->assertDatabaseHas('users', ['email' => $email]);
@@ -109,17 +112,26 @@ final class TestHelperTest extends TestCase
         $response->assertOk();
         $response->assertJson(['success' => true]);
 
+        // Register and login a new user for auth
+        $email = 'crud-' . uniqid() . '@test.com';
+        $this->post('/api/auth/register', [
+            'name' => 'Crud Test',
+            'email' => $email,
+            'password' => 'secret123',
+            'password_confirmation' => 'secret123',
+        ])->assertCreated();
+
         $login = $this->post('/api/auth/login', [
-            'email' => 'admin@example.com',
-            'password' => 'password',
+            'email' => $email,
+            'password' => 'secret123',
         ]);
         $login->assertOk();
-        $token = $login->json()['data']['token'] ?? '';
+        $token = $login->json()['data']['access_token'] ?? '';
 
         $created = $this->post('/api/products', [
             'name' => 'Helper Product',
             'price' => 29.99,
-        ], ["Authorization: Bearer {$token}"]);
+        ], ['Authorization' => 'Bearer ' . $token]);
         $created->assertCreated();
         $created->assertJsonPath('data.name', 'Helper Product');
     }

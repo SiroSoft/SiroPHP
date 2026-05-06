@@ -41,8 +41,7 @@ final class CategoryController
 
     public function store(Request $request): Response
     {
-        $item = $this->service->create($request->validate(['name' => 'required|min:2|max:100',
-            'slug' => 'required|min:2|max:100']));
+        $item = $this->service->create($request->validate(['name' => 'required|min:2|max:100']));
         return Response::created(CategoryResource::make($item), 'Category created');
     }
 
@@ -50,8 +49,7 @@ final class CategoryController
     {
         $id = (int) $request->param('id');
         if ($id <= 0) return Response::error('Invalid id', 422);
-        $item = $this->service->update($id, $request->validate(['name' => 'required|min:2|max:100',
-            'slug' => 'required|min:2|max:100']));
+        $item = $this->service->update($id, $request->validate(['name' => 'required|min:2|max:100']));
         if ($item === null) return Response::error('Category not found', 404);
         return Response::success(CategoryResource::make($item), 'Category updated');
     }
@@ -61,7 +59,7 @@ final class CategoryController
         $id = (int) $request->param('id');
         if ($id <= 0) return Response::error('Invalid id', 422);
         return $this->service->delete($id)
-            ? Response::success(null, 'Category deleted')
+            ? Response::noContent()
             : Response::error('Category not found', 404);
     }
 }

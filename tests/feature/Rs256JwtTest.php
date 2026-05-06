@@ -10,6 +10,12 @@ use Siro\Core\Env;
 
 final class Rs256JwtTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        putenv('JWT_ALGORITHM');
+        parent::tearDown();
+    }
+
     public function testJwtAlgorithmEnvCanBeSet(): void { putenv("JWT_ALGORITHM=RS256"); $this->assertSame('RS256', Env::get('JWT_ALGORITHM', 'HS256')); }
     public function testJwtClassHasEncodeRefreshMethod(): void { $this->assertTrue(method_exists(JWT::class, 'encodeRefresh')); }
     public function testJwtClassHasDecodeMethod(): void { $this->assertTrue(method_exists(JWT::class, 'decode')); }

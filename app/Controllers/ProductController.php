@@ -92,7 +92,7 @@ final class ProductController
         $validated = $request->validate([
             'name' => 'required|min:1|max:255',
             'description' => 'max:5000000',
-            'price' => 'numeric',
+            'price' => 'numeric|min:0',
             'stock' => 'integer',
             'category' => 'max:100',
             'status' => 'max:20',
@@ -155,6 +155,6 @@ final class ProductController
         }
 
         $item->delete();
-        return Response::success(null, 'Product deleted');
+        return Response::noContent();
     }
 }

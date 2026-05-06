@@ -1,6 +1,43 @@
 # Changelog
 
-## v0.15.0 (2026-05-06)
+## v0.15.1 (2026-05-06) — Security & Stability Release
+
+### 🛡️ Security Hardening
+- **JWT protection** — Algorithm confusion prevention, null token rejection
+- **XSS prevention** — Output escaping via `htmlspecialchars()` on all resources
+- **SQL injection** — Confirmed prepared statements throughout, array type rejection
+- **Null byte injection** — Stripped from URL parameters
+- **Type confusion** — Arrays rejected for string validation rules
+- **Whitespace-only bypass** — Trim before `min`/`max`/`required` checks
+- **Path traversal** — Normalized path blocks `../` access
+- **Alg=none attack** — Unsupported algorithm rejection
+
+### 🔧 Bug Fixes (27 issues)
+- Password confirmation validation (`|confirmed` rule)
+- DELETE operations return HTTP 204 instead of 200
+- Registration/login response flat structure (`access_token`)
+- Categories no longer require non-existent `slug` field
+- Header key case-insensitivity (`Authorization` vs `authorization`)
+- Validation errors at root level for consistent API responses
+- `select()` now supports variadic arguments (`->select('id','name')`)
+- Added `insertGetId()` and `selectRaw()` to QueryBuilder
+- Added `onlyTrashed()` alias for Laravel compatibility
+- Login email auto-trimmed via `Request::string()`
+- `app.log` auto-created on boot
+- Rate limit files cleaned between tests
+
+### 🧪 Testing & Quality
+- **642 tests — 100% pass** (509 official + 133 edge/dark/real-user)
+- **Transaction isolation** — Each test auto-rolls back database changes
+- **33 real-user flow scenarios** — Registration → login → CRUD → pagination → rate limiting
+- **52 edge cases** — Unicode, emoji, extreme values, HTTP methods
+- **40 dark-side attacks** — JWT tampering, SQL injection, XSS, path traversal, type confusion
+- **Auto table creation** — Migrations run automatically in test setup
+
+### 📋 Audit
+- Full security audit documented in `SECURITY_AUDIT.md`
+- 37 attack vectors tested across 8 categories
+- Zero exploitable vulnerabilities found
 
 ### 🚀 New Features
 

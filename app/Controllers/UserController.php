@@ -134,6 +134,6 @@ final class UserController
         }
 
         $user->delete();
-        return Response::success(null, 'User deleted');
+        return Response::noContent();
     }
 }
