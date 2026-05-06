@@ -8,7 +8,15 @@ use App\Middleware\CorsMiddleware;
 use App\Middleware\JsonMiddleware;
 use Siro\Core\Lang;
 
-$app->router->get('/', function (): array {
+$app->router->get('/', function (Siro\Core\Request $req): mixed {
+    // Serve HTML homepage for browser requests
+    $accept = $req->header('accept', '');
+    if (str_contains($accept, 'text/html')) {
+        $file = __DIR__ . '/../public/index.html';
+        if (file_exists($file)) {
+            return Siro\Core\Response::raw(file_get_contents($file), 'text/html; charset=utf-8');
+        }
+    }
     return [
         'success' => true,
         'message' => Lang::get('messages.welcome'),
