@@ -27,8 +27,12 @@
 
 # IDE and AI assistant folders (kept locally only)
 /.cline/
+.cline/
 .vscode/
 .idea/
+
+# CI/CD configs (kept locally only)
+.gitpod.yml
 
 # Generated files in public (kept locally only)
 /public/openapi.json
@@ -48,5 +52,23 @@ Thumbs.db
 BAO_CAO*.md
 CLEANUP*.md
 COMPLETE_*.md
+
+# Dev/test files (kept locally only)
+test_devflow.php
+test_e2e.php
+test_http.php
+check_db.php
+cleanup_repo.php
+benchmark/
+
+# Generated docs (tracked by source, not build output)
+/docs/openapi.json
+/docs/openapi/openapi.json
+/docs/postman/collection.json
+/docs/v0.*.md
+openapi-auth.json
+openapi_test.json
+/public/postman_collection.json
+/public/openapi.json
 
 .git_disabled/
