@@ -1,0 +1,15 @@
+vendor/
+.git/
+.gitignore
+.env
+.env.backup
+.env.testing
+.phpunit.cache/
+tests/
+benchmark/
+storage/logs/
+storage/cache/
+storage/rate_limit/
+storage/traces/
+*.md
+composer.lock

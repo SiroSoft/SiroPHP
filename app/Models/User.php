@@ -43,6 +43,7 @@ final class User extends Model
         'name',
         'email',
         'password',
+        'role',
         'status',
         'token_version',
         'email_verified_at',

@@ -18,9 +18,9 @@
       }
     }
   ],
-  "require": {
-    "php": ">=8.2",
-    "sirosoft/core": ">=0.14.1 <1.0.0",
+    "require": {
+        "php": ">=8.2",
+        "sirosoft/core": ">=0.16.0 <1.0.0",
     "ext-pdo": "*",
     "ext-json": "*",
     "ext-mbstring": "*"

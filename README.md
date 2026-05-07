@@ -1,6 +1,6 @@
-﻿# 🚀 Siro API Framework v0.15.0
+﻿# 🚀 Siro API Framework v0.16.0
 
-**The Fastest PHP Micro-Framework Application Skeleton** — Ship a production-ready API with auth in 5 minutes.
+**The Fastest PHP Micro-Framework Application Skeleton** — Ship a production-ready API with auth in 5 minutes. Built-in DI Container, Config Repository, RBAC support.
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
@@ -26,6 +26,26 @@
 | 🔧 **Server down for deploy?** | `php siro down` — 503 maintenance mode with IP allowlist. `php siro up` — back live. |
 
 > **"The Laravel alternative that runs on $2/month hosting, can be read in one afternoon, and ships an API in one hour."**
+
+---
+
+## 🧩 New in v0.16.0
+
+### DI Container (`Siro\Core\Container`)
+- **Bind interfaces**: `$container->bind(AuthInterface::class, AuthService::class)`
+- **Singleton**: `$container->singleton(Cache::class, RedisCache::class)`
+- **Auto-resolution**: Constructor dependencies resolved via reflection
+- Router tự động dùng Container để resolve controller dependencies
+
+### Config Repository (`Siro\Core\Config`)
+- Load tất cả `config/*.php` files tự động
+- **Dot-notation**: `Config::get('database.host', 'default')`
+- **Hỗ trợ cache**: `php siro config:cache`
+
+### RBAC — Role-Based Access Control
+- `AuthMiddleware::handle($request, $next, ...$roles)` — check role ngay trong middleware
+- Dùng: `->middleware(['auth:admin'])` — chỉ admin mới access được
+- `make:crud --with-rbac` — sinh routes có auth:admin cho mutations
 
 ---
 
@@ -503,6 +523,7 @@ class ProductApiTest extends TestCase
 
 ## 📋 Changelog
 
+- **v0.16.0** — DI Container (`Siro\Core\Container`) with autowiring, singleton, interface binding. Config Repository (`Siro\Core\Config`) with dot-notation, caching. 4 middleware moved to core (Auth, Throttle, Cors, Json). RBAC: `auth:admin` role checks in middleware, `make:crud --with-rbac`. New tests: 26 (Container, Config, Middleware). Fixed OrderController, migration for orders table. PHPStan level 6 — 0 errors. **197 tests → 223 tests**
 - **v0.15.0** — Schema Builder (driver-agnostic migrations), Multi-DB connections, AES-256 Encryption, HTTP Client, Maintenance mode (`php siro down/up`), Foreign Key constraints, Health endpoint (`GET /health`), Test assertion helpers (`assertStatus`, `assertJson`, `assertDatabaseHas`), PostgreSQL production support, **Production Security** (log sanitization, replay lock, audit trail, log protection, log injection prevention, OpenAPI production lock), **CLI UX Overhaul** (core workflow, `php siro start` onboarding, `t` alias, layered help), Str helper, Hash facade, Collection class, FormRequest, Signed URLs, Task withoutOverlapping, Fake implementations (Queue::fake, Mail::fake, Storage::fake), Queue Dashboard, Fix command (watch + auto-replay), Trace list command, OpenAPI spec generation (dynamic, 35 endpoints, 34 schemas)
 - **v0.14.1** — Service & Repository pattern, PHPUnit test generation, `make:service`, `make:repository`, `make:crud` with full layers
 - **v0.14.0** — `debug:last`, `log:top`, `route:search`, `doctor --prod`, `api:test --loop`
@@ -524,11 +545,11 @@ class ProductApiTest extends TestCase
 
 ---
 
-**Version:** 0.15.0  
+**Version:** 0.16.0  
 **Package:** sirosoft/api  
 **License:** MIT  
-**Tests:** 197 ✅ (275 assertions) — PHPUnit  
-**Core:** sirosoft/core v0.15.0 (136 tests, 184 assertions)  
+**Tests:** 197 ✅ (276 assertions) — PHPUnit  
+**Core:** sirosoft/core v0.16.0 (162 tests, 223 assertions)  
 **PHPStan:** Level 6 ✅ — 0 errors  
 **CLI:** 59 commands — layered UX (core → daily → advanced → system)  
 

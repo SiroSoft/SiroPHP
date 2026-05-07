@@ -1,0 +1,18 @@
+FROM php:8.2-cli-alpine
+
+RUN apk add --no-cache \
+    nginx \
+    supervisor \
+    bash \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql pdo_sqlite mbstring json
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /app
+
+COPY docker/nginx.conf /etc/nginx/http.d/default.conf
+COPY docker/supervisord.dev.conf /etc/supervisor/conf.d/supervisord.conf
+
+EXPOSE 8080
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

@@ -21,7 +21,7 @@ use Throwable;
  */
 final class AuthMiddleware
 {
-    public function handle(Request $request, callable $next): Response
+    public function handle(Request $request, callable $next, string ...$roles): mixed
     {
         $header = (string) $request->header('authorization', '');
         if (!preg_match('/^Bearer\s+(.+)$/i', $header, $matches)) {
@@ -69,15 +69,33 @@ final class AuthMiddleware
                 ]);
             }
 
+            $role = (string) ($userData['role'] ?? 'user');
+
             $request->setUser([
-                'id' => (int) $userData['id'],
+                'id' => (int) ($userData['id'] ?? 0),
                 'name' => (string) ($userData['name'] ?? ''),
                 'email' => (string) ($userData['email'] ?? ''),
+                'role' => $role,
                 'status' => (int) ($userData['status'] ?? 0),
                 'token_version' => (int) ($userData['token_version'] ?? 1),
                 'created_at' => (string) ($userData['created_at'] ?? ''),
                 'claims' => $claims,
             ]);
+
+            if ($roles !== []) {
+                $hasRole = false;
+                foreach ($roles as $requiredRole) {
+                    if (strtolower($role) === strtolower(trim($requiredRole))) {
+                        $hasRole = true;
+                        break;
+                    }
+                }
+                if (!$hasRole) {
+                    return Response::error('Forbidden', 403, [
+                        'role' => ['Insufficient permissions. Required: ' . implode(', ', $roles)],
+                    ]);
+                }
+            }
         } catch (Throwable) {
             return Response::error('Unauthorized', 401, [
                 'token' => ['Invalid or expired token'],
