@@ -13,48 +13,6 @@ parameters:
 			path: app/Controllers/AuthController.php
 
 		-
-			message: '#^Binary operation "\." between ''%%'' and array\<string, mixed\> results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: app/Controllers/ProductController.php
-
-		-
-			message: '#^Call to function in_array\(\) with arguments array\<string, mixed\>, array\{''id'', ''name'', ''price'', ''stock'', ''created_at''\} and true will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 1
-			path: app/Controllers/ProductController.php
-
-		-
-			message: '#^Parameter \#1 \$string of function strtolower expects string, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/ProductController.php
-
-		-
-			message: '#^Result of && is always true\.$#'
-			identifier: booleanAnd.alwaysTrue
-			count: 3
-			path: app/Controllers/ProductController.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between array\<string, mixed\> and '''' will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 3
-			path: app/Controllers/ProductController.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between array\<string, mixed\> and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 3
-			path: app/Controllers/ProductController.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 2
-			path: app/Controllers/UserController.php
-
-		-
 			message: '#^Method App\\Jobs\\ProcessPendingNotifications\:\:handle\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -91,6 +49,114 @@ parameters:
 			path: app/Repositories/CategoryRepository.php
 
 		-
+			message: '#^Method App\\Repositories\\OrderRepository\:\:findAll\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/OrderRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\OrderRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/OrderRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\OrderRepository\:\:store\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/OrderRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\OrderRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/OrderRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\PostRepository\:\:findAll\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/PostRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\PostRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/PostRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\PostRepository\:\:store\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/PostRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\PostRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/PostRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\ProductRepository\:\:findAll\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/ProductRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\ProductRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/ProductRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\ProductRepository\:\:store\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/ProductRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\ProductRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/ProductRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\TagRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/TagRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\TagRepository\:\:store\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/TagRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\TagRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/TagRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\UserRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/UserRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\UserRepository\:\:store\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/UserRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\UserRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Repositories/UserRepository.php
+
+		-
 			message: '#^Method App\\Services\\CategoryService\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -109,9 +175,171 @@ parameters:
 			path: app/Services/CategoryService.php
 
 		-
-			message: '#^Class App\\Controllers\\OrderController not found\.$#'
-			identifier: class.notFound
-			count: 5
+			message: '#^Method App\\Services\\OrderService\:\:create\(\) has parameter \$validated with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/OrderService.php
+
+		-
+			message: '#^Method App\\Services\\OrderService\:\:getAll\(\) has parameter \$queryParams with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/OrderService.php
+
+		-
+			message: '#^Method App\\Services\\OrderService\:\:getAll\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/OrderService.php
+
+		-
+			message: '#^Method App\\Services\\OrderService\:\:update\(\) has parameter \$validated with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/OrderService.php
+
+		-
+			message: '#^Method App\\Services\\PostService\:\:create\(\) has parameter \$validated with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PostService.php
+
+		-
+			message: '#^Method App\\Services\\PostService\:\:getAll\(\) has parameter \$queryParams with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PostService.php
+
+		-
+			message: '#^Method App\\Services\\PostService\:\:getAll\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PostService.php
+
+		-
+			message: '#^Method App\\Services\\PostService\:\:update\(\) has parameter \$validated with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PostService.php
+
+		-
+			message: '#^Method App\\Services\\PostService\:\:update\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PostService.php
+
+		-
+			message: '#^Method App\\Services\\ProductService\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ProductService.php
+
+		-
+			message: '#^Method App\\Services\\ProductService\:\:getAll\(\) has parameter \$queryParams with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ProductService.php
+
+		-
+			message: '#^Method App\\Services\\ProductService\:\:getAll\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ProductService.php
+
+		-
+			message: '#^Method App\\Services\\ProductService\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ProductService.php
+
+		-
+			message: '#^Method App\\Services\\TagService\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/TagService.php
+
+		-
+			message: '#^Method App\\Services\\TagService\:\:getAll\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/TagService.php
+
+		-
+			message: '#^Method App\\Services\\TagService\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/TagService.php
+
+		-
+			message: '#^Method App\\Services\\UserService\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/UserService.php
+
+		-
+			message: '#^Method App\\Services\\UserService\:\:create\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/UserService.php
+
+		-
+			message: '#^Method App\\Services\\UserService\:\:getAll\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/UserService.php
+
+		-
+			message: '#^Method App\\Services\\UserService\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/UserService.php
+
+		-
+			message: '#^Method App\\Services\\UserService\:\:update\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/UserService.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 2
+			path: app/Services/UserService.php
+
+		-
+			message: '#^Call to an undefined method Siro\\Core\\DB\\Blueprint\:\:dropColumn\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: database/migrations/20260508000000_add_role_to_users_table.php
+
+		-
+			message: '#^Call to an undefined method Siro\\Core\\UploadedFile\:\:mime\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: routes/api.php
+
+		-
+			message: '#^Call to an undefined method Siro\\Core\\UploadedFile\:\:originalName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: routes/api.php
+
+		-
+			message: '#^Call to an undefined method Siro\\Core\\UploadedFile\:\:size\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: routes/api.php
+
+		-
+			message: '#^Call to an undefined static method Siro\\Core\\Lang\:\:count\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: routes/api.php
+
+		-
+			message: '#^Parameter \#1 \$locale of static method Siro\\Core\\Lang\:\:setLocale\(\) expects string, array\<string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
 			path: routes/api.php
 
 		-
@@ -119,6 +347,12 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: routes/api.php
+
+		-
+			message: '#^Variable \$schedule might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: routes/schedule.php
 
 		-
 			message: '#^Method App\\Tests\\TestCase\:\:assertDatabaseHas\(\) has parameter \$conditions with no value type specified in iterable type array\.$#'
@@ -195,6 +429,18 @@ parameters:
 		-
 			message: '#^Property App\\Tests\\TestResponse\:\:\$parsedBody type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Unsafe call to private method App\\Tests\\TestCase\:\:resetTransaction\(\) through static\:\:\.$#'
+			identifier: staticClassAccess.privateMethod
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Unsafe call to private method App\\Tests\\TestCase\:\:rollbackTransaction\(\) through static\:\:\.$#'
+			identifier: staticClassAccess.privateMethod
 			count: 1
 			path: tests/TestCase.php
 
@@ -313,6 +559,12 @@ parameters:
 			path: tests/feature/QueueTimeoutTest.php
 
 		-
+			message: '#^Method App\\Tests\\Feature\\RealUserApiE2eTest\:\:getResponseBody\(\) has parameter \$response with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: tests/feature/RealUserApiE2eTest.php
+
+		-
 			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Resource'' and ''collection'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -401,66 +653,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: tests/integration/QueueMailTest.php
-
-		-
-			message: '#^Comparison operation "\>" between 0 and 0 is always false\.$#'
-			identifier: greater.alwaysFalse
-			count: 2
-			path: tests/integration_test.php
-
-		-
-			message: '#^Function httpGet\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/integration_test.php
-
-		-
-			message: '#^Function httpGetWithAuth\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/integration_test.php
-
-		-
-			message: '#^Function httpPost\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/integration_test.php
-
-		-
-			message: '#^Function httpPost\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/integration_test.php
-
-		-
-			message: '#^Function httpPostRaw\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/integration_test.php
-
-		-
-			message: '#^Function httpPostWithAuth\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/integration_test.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: tests/integration_test.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between 0 and 0 will always evaluate to true\.$#'
-			identifier: identical.alwaysTrue
-			count: 2
-			path: tests/integration_test.php
-
-		-
-			message: '#^Variable \$http_response_header in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: tests/integration_test.php
 
 		-
 			message: '#^Parameter \#2 \$meta of static method Siro\\Core\\Response\:\:paginated\(\) expects array\{page\: int, per_page\: int, total\: int, last_page\: int\}, array\{page\: 1, total\: 3\} given\.$#'

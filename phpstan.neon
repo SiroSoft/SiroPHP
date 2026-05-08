@@ -12,6 +12,4 @@ parameters:
         - tests/
     excludePaths:
         - vendor/
-        - core/
         - storage/
-        - tests/verify_v061.php
