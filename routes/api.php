@@ -2,19 +2,27 @@
 
 declare(strict_types=1);
 
-use App\Controllers\UserController;
 use App\Controllers\AuthController;
+use App\Controllers\CategoryController;
+use App\Controllers\OrderController;
+use App\Controllers\PostController;
+use App\Controllers\ProductController;
+use App\Controllers\TagController;
+use App\Controllers\UserController;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\JsonMiddleware;
 use Siro\Core\Lang;
+use Siro\Core\Request;
+use Siro\Core\Response;
+use Siro\Core\Storage;
 
-$app->router->get('/', function (Siro\Core\Request $req): mixed {
+$app->router->get('/', function (Request $req): mixed {
     // Serve HTML homepage for browser requests
     $accept = $req->header('accept', '');
     if (str_contains($accept, 'text/html')) {
         $file = __DIR__ . '/../public/index.html';
         if (file_exists($file)) {
-            return Siro\Core\Response::raw(file_get_contents($file), 'text/html; charset=utf-8');
+            return Response::raw(file_get_contents($file), 'text/html; charset=utf-8');
         }
     }
     return [
@@ -22,7 +30,7 @@ $app->router->get('/', function (Siro\Core\Request $req): mixed {
         'message' => Lang::get('messages.welcome'),
         'data' => [
             'name' => 'Siro API Framework',
-            'version' => '0.15.1',
+            'version' => '0.16.0',
             'php' => PHP_VERSION,
             'locale' => Lang::locale(),
         ],
@@ -42,7 +50,7 @@ $app->router->get('/health', function (): array {
         'message' => 'OK',
         'data' => [
             'status' => 'healthy',
-            'version' => '0.15.1',
+            'version' => '0.16.0',
             'php' => PHP_VERSION,
             'database' => $dbOk ? 'connected' : 'unreachable',
             'time' => date('c'),
@@ -132,27 +140,27 @@ $app->router->group('/api', [CorsMiddleware::class], function ($router): void {
     $router->delete('/posts/{id}', [\App\Controllers\PostController::class, 'delete']);
 
     // Upload & Lang demo routes
-    $router->post('/upload/avatar', function (\Siro\Core\Request $req): \Siro\Core\Response {
+    $router->post('/upload/avatar', function (Request $req): Response {
         $file = $req->file('avatar');
         if ($file === null || !$file->isValid()) {
-            return \Siro\Core\Response::error('No file uploaded', 422);
+            return Response::error('No file uploaded', 422);
         }
         $path = $file->store('avatars');
-        return \Siro\Core\Response::success([
+        return Response::success([
             'path' => $path,
-            'url' => \Siro\Core\Storage::url($path),
+            'url' => Storage::url($path),
             'original_name' => $file->originalName(),
             'size' => $file->size(),
             'mime' => $file->mime(),
         ], 'Avatar uploaded');
     })->middleware([JsonMiddleware::class]);
 
-    $router->get('/profile', function (\Siro\Core\Request $req): array {
+    $router->get('/profile', function (Request $req): array {
         $locale = $req->query('locale', 'en');
-        \Siro\Core\Lang::setLocale($locale);
+        Lang::setLocale($locale);
 
         $name = $req->query('name', 'Guest');
-        $greeting = \Siro\Core\Lang::get('messages.greeting', ['name' => $name]);
+        $greeting = Lang::get('messages.greeting', ['name' => $name]);
 
         return [
             'success' => true,
@@ -161,7 +169,7 @@ $app->router->group('/api', [CorsMiddleware::class], function ($router): void {
                 'name' => $name,
                 'locale' => $locale,
                 'greeting' => $greeting,
-                'messages_count' => \Siro\Core\Lang::count('validation'),
+                'messages_count' => Lang::count('validation'),
                 'available_locales' => ['en', 'vi'],
             ],
         ];

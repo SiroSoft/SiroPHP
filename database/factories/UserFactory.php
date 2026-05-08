@@ -40,7 +40,15 @@ final class UserFactory
     /** @return array<string, mixed> */
     public function definition(): array
     {
-        return [];
+        $suffix = bin2hex(random_bytes(4));
+        return [
+            'name' => 'User_' . $suffix,
+            'email' => 'user_' . $suffix . '@example.com',
+            'password' => password_hash('password', PASSWORD_DEFAULT),
+            'status' => 1,
+            'token_version' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+        ];
     }
 
     /** @return User|array<int, User> */

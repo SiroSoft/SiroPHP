@@ -5,6 +5,13 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Models\User;
+use App\Services\User as UserService;
+use Siro\Core\Auth\JWT;
+use Siro\Core\DB;
+use Siro\Core\Env;
+use Siro\Core\Request;
+use Siro\Core\Response;
+use Throwable;
 
 /**
  * Authentication controller.
@@ -14,13 +21,6 @@ use App\Models\User;
  *
  * @package App\Controllers
  */
-use App\Services\User as UserService;
-use Siro\Core\Auth\JWT;
-use Siro\Core\DB;
-use Siro\Core\Env;
-use Siro\Core\Request;
-use Siro\Core\Response;
-use Throwable;
 
 final class AuthController
 {

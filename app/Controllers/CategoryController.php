@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Resources\CategoryResource;
 use App\Services\CategoryService;
+use Siro\Core\Request;
+use Siro\Core\Response;
 
 /**
  * Category management controller.
@@ -14,9 +17,6 @@ use App\Services\CategoryService;
  *
  * @package App\Controllers
  */
-use App\Resources\CategoryResource;
-use Siro\Core\Request;
-use Siro\Core\Response;
 
 final class CategoryController
 {

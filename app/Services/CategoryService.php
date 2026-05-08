@@ -11,11 +11,7 @@ use App\Repositories\CategoryRepository;
  *
  * Delegates data access to CategoryRepository and applies
  * business rules if needed.
- *
- * @package App\Services
  */
-use App\Models\Category;
-
 final class CategoryService
 {
     public function __construct(private readonly CategoryRepository $repo)
