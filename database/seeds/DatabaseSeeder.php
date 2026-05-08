@@ -12,7 +12,7 @@ final class DatabaseSeeder
 {
     /** @var array<int, string> Seeder class names in run order */
     public array $calls = [
-        // UserSeeder::class,
+        UserSeeder::class,
     ];
 
     public function run(): void

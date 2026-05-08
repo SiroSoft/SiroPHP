@@ -21,7 +21,7 @@ final class HomeController
     {
         return Response::success([
             'name' => 'Siro API Framework',
-            'version' => '1.0.0',
+            'version' => '0.16.0',
             'php' => PHP_VERSION,
             'environment' => $_ENV['APP_ENV'] ?? 'production',
             'features' => [

@@ -23,8 +23,16 @@ final class ProcessPendingNotifications
         );
 
         foreach ($notifications as $notification) {
-            // Process each notification
-            // Mail::to($notification['email'])->subject(...)->html(...)->queue();
+            $email = $notification['email'] ?? '';
+            $subject = $notification['subject'] ?? 'Notification';
+            $body = $notification['body'] ?? 'You have a new notification.';
+
+            if ($email !== '') {
+                \Siro\Core\Mail::to($email)
+                    ->subject($subject)
+                    ->html('<p>' . htmlspecialchars($body) . '</p>')
+                    ->queue();
+            }
         }
     }
 }

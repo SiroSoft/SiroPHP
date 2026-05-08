@@ -16,7 +16,9 @@ final class OrderResource extends Resource
             'customer_email' => $this->data['customer_email'] ?? '',
             'total' => (float) ($this->data['total'] ?? 0),
             'status' => $this->data['status'] ?? 'pending',
-            'items' => $this->data['items'] ?? '[]',
+            'items' => is_string($this->data['items'] ?? null)
+                ? json_decode($this->data['items'], true) ?? []
+                : ($this->data['items'] ?? []),
             'created_at' => $this->data['created_at'] ?? '',
             'updated_at' => $this->data['updated_at'] ?? '',
         ];

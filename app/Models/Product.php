@@ -11,21 +11,6 @@ use Siro\Core\Model;
  *
  * @property int $id
  * @property string $name
- * @property string|null $description
- * @property float $price
- * @property int $stock
- * @property string|null $category
- * @property string $status
- * @property string $created_at
- *
- * @package App\Models
- */
-
-/**
- * Product model.
- *
- * @property int $id
- * @property string $name
  * @property string $description
  * @property float $price
  * @property int $stock
