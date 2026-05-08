@@ -21,6 +21,7 @@ final class UserController
     {
     }
 
+    /** List users with pagination. */
     public function index(Request $request): Response
     {
         $page = max(1, $request->queryInt('page', 1));
@@ -35,6 +36,7 @@ final class UserController
         );
     }
 
+    /** Get a single user by ID. Password field is excluded from response. */
     public function show(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -47,6 +49,7 @@ final class UserController
         return Response::success(UserResource::make($user), 'User retrieved');
     }
 
+    /** Create a new user. Email uniqueness is enforced. */
     public function store(Request $request): Response
     {
         $request->validate([
@@ -69,6 +72,7 @@ final class UserController
         return Response::created(UserResource::make($userData), 'User created');
     }
 
+    /** Update user fields. Only provided fields are updated. */
     public function update(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -101,6 +105,7 @@ final class UserController
         return Response::success(UserResource::make($userData), 'User updated');
     }
 
+    /** Delete a user. */
     public function delete(Request $request): Response
     {
         $id = (int) $request->param('id');

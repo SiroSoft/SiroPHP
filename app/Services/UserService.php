@@ -18,16 +18,23 @@ final class UserService
     {
     }
 
+    /** Get paginated list of all users. */
     public function getAll(int $page = 1, int $perPage = 15): array
     {
         return $this->repo->findAll($page, $perPage);
     }
 
+    /** Find a user by ID or null if not found. */
     public function getById(int $id): mixed
     {
         return $this->repo->findById($id);
     }
 
+    /**
+     * Create a new user.
+     *
+     * @throws \RuntimeException if email already exists
+     */
     public function create(array $data): array
     {
         $email = strtolower(trim($data['email']));
@@ -53,6 +60,11 @@ final class UserService
         return $user ? $user->toArray() : [];
     }
 
+    /**
+     * Update a user. Only provided fields are updated.
+     *
+     * @throws \RuntimeException if email already exists or no fields provided
+     */
     public function update(int $id, array $data): ?array
     {
         $user = $this->repo->findById($id);
@@ -91,6 +103,7 @@ final class UserService
         return $updated ? $updated->toArray() : null;
     }
 
+    /** Delete a user. Returns true if deleted, false if not found. */
     public function delete(int $id): bool
     {
         return $this->repo->destroy($id);

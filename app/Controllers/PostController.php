@@ -19,6 +19,7 @@ final class PostController
     {
     }
 
+    /** List posts with optional locale filter and pagination. */
     public function index(Request $request): Response
     {
         $result = $this->service->getAll(
@@ -30,6 +31,7 @@ final class PostController
         return Response::paginated($result['data'], $result['meta'], 'Posts list');
     }
 
+    /** Get a single post by ID. */
     public function show(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -42,6 +44,7 @@ final class PostController
         return Response::success($post->toArray(), 'Post detail');
     }
 
+    /** Create a new post with optional image upload. */
     public function store(Request $request): Response
     {
         $validated = $request->validate([
@@ -57,6 +60,7 @@ final class PostController
         return Response::created($post->toArray(), 'Post created');
     }
 
+    /** Update post fields. */
     public function update(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -76,6 +80,7 @@ final class PostController
         return Response::success($post, 'Post updated');
     }
 
+    /** Delete a post and its associated image file. */
     public function delete(Request $request): Response
     {
         $id = (int) $request->param('id');

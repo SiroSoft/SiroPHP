@@ -17,6 +17,7 @@ final class OrderService
     {
     }
 
+    /** Get paginated orders with optional status filter. */
     public function getAll(array $queryParams = [], int $page = 1, int $perPage = 20): array
     {
         $filters = [];
@@ -27,11 +28,13 @@ final class OrderService
         return $this->repo->findAll($filters, $page, $perPage);
     }
 
+    /** Find an order by ID or null if not found. */
     public function getById(int $id): mixed
     {
         return $this->repo->findById($id);
     }
 
+    /** Create a new order. Items array is JSON-encoded for storage. */
     public function create(array $validated): mixed
     {
         $data = $validated;
@@ -43,6 +46,7 @@ final class OrderService
         return $this->repo->store($data);
     }
 
+    /** Update an order. Returns null if not found. */
     public function update(int $id, array $validated): mixed
     {
         $order = $this->repo->findById($id);
@@ -56,6 +60,7 @@ final class OrderService
         return $this->repo->update($id, $data);
     }
 
+    /** Delete an order. Returns true if deleted, false if not found. */
     public function delete(int $id): bool
     {
         return $this->repo->destroy($id);

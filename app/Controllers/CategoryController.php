@@ -14,22 +14,21 @@ use Siro\Core\Response;
  *
  * Provides CRUD operations with service/repository layer
  * and dependency injection via constructor.
- *
- * @package App\Controllers
  */
-
 final class CategoryController
 {
     public function __construct(private readonly CategoryService $service)
     {
     }
 
+    /** List categories with pagination. */
     public function index(Request $request): Response
     {
         $result = $this->service->getAll($request->queryInt('page', 1), $request->queryInt('per_page', 20));
         return Response::paginated(CategoryResource::collection($result['data']), $result['meta'], 'Category list');
     }
 
+    /** Get a single category by ID. */
     public function show(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -39,12 +38,14 @@ final class CategoryController
         return Response::success(CategoryResource::make($item), 'Category detail');
     }
 
+    /** Create a new category. */
     public function store(Request $request): Response
     {
         $item = $this->service->create($request->validate(['name' => 'required|min:2|max:100']));
         return Response::created(CategoryResource::make($item), 'Category created');
     }
 
+    /** Update an existing category. */
     public function update(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -54,6 +55,7 @@ final class CategoryController
         return Response::success(CategoryResource::make($item), 'Category updated');
     }
 
+    /** Delete a category. */
     public function delete(Request $request): Response
     {
         $id = (int) $request->param('id');

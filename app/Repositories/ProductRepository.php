@@ -14,6 +14,7 @@ use App\Models\Product;
  */
 final class ProductRepository
 {
+    /** Get paginated products with optional filters. */
     public function findAll(array $filters = [], int $page = 1, int $perPage = 20): array
     {
         $query = Product::query();
@@ -44,16 +45,19 @@ final class ProductRepository
         )->paginate($perPage, $page);
     }
 
+    /** Find a product by ID or null if not found. */
     public function findById(int $id): mixed
     {
         return Product::find($id);
     }
 
+    /** Create a new product record. */
     public function store(array $data): mixed
     {
         return Product::create($data + ['created_at' => date('Y-m-d H:i:s')]);
     }
 
+    /** Update a product. Returns null if not found. */
     public function update(int $id, array $data): mixed
     {
         $item = Product::find($id);
@@ -62,6 +66,7 @@ final class ProductRepository
         return $item;
     }
 
+    /** Delete a product. Returns true if deleted, false if not found. */
     public function destroy(int $id): bool
     {
         $item = Product::find($id);

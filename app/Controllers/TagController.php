@@ -20,12 +20,14 @@ final class TagController
     {
     }
 
+    /** List tags with pagination. */
     public function index(Request $request): Response
     {
         $result = $this->service->getAll($request->queryInt('page', 1), $request->queryInt('per_page', 20));
         return Response::paginated(TagResource::collection($result['data']), $result['meta'], 'Tag list');
     }
 
+    /** Get a single tag by ID. */
     public function show(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -35,12 +37,14 @@ final class TagController
         return Response::success(TagResource::make($item), 'Tag detail');
     }
 
+    /** Create a new tag. */
     public function store(Request $request): Response
     {
         $item = $this->service->create($request->validate(['name' => 'required|min:1|max:100']));
         return Response::created(TagResource::make($item), 'Tag created');
     }
 
+    /** Update an existing tag. */
     public function update(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -50,6 +54,7 @@ final class TagController
         return Response::success(TagResource::make($item), 'Tag updated');
     }
 
+    /** Delete a tag. */
     public function delete(Request $request): Response
     {
         $id = (int) $request->param('id');

@@ -21,6 +21,7 @@ final class OrderController
     {
     }
 
+    /** List orders with optional status filter and pagination. */
     public function index(Request $request): Response
     {
         $page = $request->queryInt('page', 1);
@@ -34,6 +35,7 @@ final class OrderController
         );
     }
 
+    /** Get a single order by ID. */
     public function show(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -45,6 +47,7 @@ final class OrderController
         return Response::success(OrderResource::make($order), 'Order detail');
     }
 
+    /** Create a new order with items. Items are JSON-encoded for storage. */
     public function store(Request $request): Response
     {
         $validated = $request->validate([
@@ -61,6 +64,7 @@ final class OrderController
         return Response::created(OrderResource::make($order), 'Order created');
     }
 
+    /** Update order fields. Does not allow changing items via update. */
     public function update(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -79,6 +83,7 @@ final class OrderController
         return Response::success(OrderResource::make($order), 'Order updated');
     }
 
+    /** Delete an order. */
     public function delete(Request $request): Response
     {
         $id = (int) $request->param('id');

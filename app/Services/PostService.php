@@ -19,6 +19,7 @@ final class PostService
     {
     }
 
+    /** Get paginated posts with optional locale filter. */
     public function getAll(array $queryParams = [], int $page = 1, int $perPage = 20): array
     {
         $filters = [];
@@ -29,11 +30,13 @@ final class PostService
         return $this->repo->findAll($filters, $page, $perPage);
     }
 
+    /** Find a post by ID or null if not found. */
     public function getById(int $id): mixed
     {
         return $this->repo->findById($id);
     }
 
+    /** Create a new post with optional image upload. */
     public function create(array $validated, mixed $uploadedFile = null): mixed
     {
         $data = [
@@ -50,6 +53,7 @@ final class PostService
         return $this->repo->store($data);
     }
 
+    /** Update a post. Returns null if not found. */
     public function update(int $id, array $validated): ?array
     {
         $post = $this->repo->findById($id);
@@ -61,6 +65,7 @@ final class PostService
         return $updated ? $updated->toArray() : null;
     }
 
+    /** Delete a post and its associated image. Returns true if deleted. */
     public function delete(int $id): bool
     {
         $post = $this->repo->findById($id);
@@ -74,6 +79,7 @@ final class PostService
         return $this->repo->destroy($id);
     }
 
+    /** Get localized "not found" message. */
     public function notFoundMessage(): string
     {
         return Lang::get('messages.not_found', ['resource' => 'Post']);

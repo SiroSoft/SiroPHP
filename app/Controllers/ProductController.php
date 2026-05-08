@@ -21,6 +21,7 @@ final class ProductController
     {
     }
 
+    /** List products with optional filters (category, status, price, search, sort). */
     public function index(Request $request): Response
     {
         $perPage = min($request->queryInt('per_page', 20), 100);
@@ -35,6 +36,7 @@ final class ProductController
         );
     }
 
+    /** Get a single product by ID. */
     public function show(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -50,6 +52,7 @@ final class ProductController
         return Response::success(ProductResource::make($item), 'Product fetched');
     }
 
+    /** Create a new product. */
     public function store(Request $request): Response
     {
         $validated = $request->validate([
@@ -65,6 +68,7 @@ final class ProductController
         return Response::created(ProductResource::make($item), 'Product created');
     }
 
+    /** Update a product. Only provided fields are updated. */
     public function update(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -89,6 +93,7 @@ final class ProductController
         return Response::success(ProductResource::make($item), 'Product updated');
     }
 
+    /** Delete a product. */
     public function delete(Request $request): Response
     {
         $id = (int) $request->param('id');
