@@ -41,5 +41,10 @@
   "prefer-stable": true,
   "require-dev": {
     "phpunit/phpunit": "^11.5"
+  },
+  "suggest": {
+    "ext-redis": "Required for Redis cache, session, and rate limiter drivers",
+    "ext-openssl": "Required for Encrypter (AES-256 encryption)",
+    "ext-curl": "Required for HTTP Client (Http::get/post/...)"
   }
 }
