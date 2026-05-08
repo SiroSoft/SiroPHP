@@ -6,6 +6,11 @@ namespace App\Services;
 
 use App\Repositories\TagRepository;
 
+/**
+ * Tag business logic layer.
+ *
+ * Delegates CRUD operations to TagRepository.
+ */
 final class TagService
 {
     public function __construct(private readonly TagRepository $repo)

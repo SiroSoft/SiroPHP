@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+/**
+ * App-level custom validation service.
+ *
+ * Provides static validate() method with required, string, max, and email rules.
+ * Used as a demo for custom validation outside the framework's Validator.
+ */
 final class Validator
 {
     /**

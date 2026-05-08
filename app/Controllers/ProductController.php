@@ -9,6 +9,12 @@ use App\Resources\ProductResource;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
+/**
+ * Product CRUD controller with advanced filtering.
+ *
+ * Provides category, status, price range, search filtering
+ * with configurable sorting and pagination.
+ */
 final class ProductController
 {
     public function __construct(private readonly ProductService $service)

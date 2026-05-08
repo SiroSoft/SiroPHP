@@ -9,6 +9,11 @@ use App\Resources\TagResource;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
+/**
+ * Tag CRUD controller.
+ *
+ * Basic tag management with service/repository layer.
+ */
 final class TagController
 {
     public function __construct(private readonly TagService $service)

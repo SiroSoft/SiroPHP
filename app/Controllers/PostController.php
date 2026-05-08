@@ -8,6 +8,11 @@ use App\Services\PostService;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
+/**
+ * Post CRUD controller with file upload and multi-language support.
+ *
+ * Demonstrates file upload via PostService and i18n error messages.
+ */
 final class PostController
 {
     public function __construct(private readonly PostService $service)

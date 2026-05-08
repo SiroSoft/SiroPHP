@@ -6,6 +6,11 @@ namespace App\Repositories;
 
 use App\Models\User;
 
+/**
+ * User data access layer.
+ *
+ * Provides CRUD operations with email lookup support.
+ */
 final class UserRepository
 {
     public function findAll(int $page = 1, int $perPage = 15): array

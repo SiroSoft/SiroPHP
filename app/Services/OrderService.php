@@ -6,6 +6,11 @@ namespace App\Services;
 
 use App\Repositories\OrderRepository;
 
+/**
+ * Order business logic layer.
+ *
+ * Handles items JSON encoding/decoding between API and storage.
+ */
 final class OrderService
 {
     public function __construct(private readonly OrderRepository $repo)

@@ -6,6 +6,12 @@ namespace App\Services;
 
 use App\Repositories\UserRepository;
 
+/**
+ * User business logic layer (admin).
+ *
+ * Handles email uniqueness validation, password hashing,
+ * and partial field updates.
+ */
 final class UserService
 {
     public function __construct(private readonly UserRepository $repo)

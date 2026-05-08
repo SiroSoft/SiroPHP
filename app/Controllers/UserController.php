@@ -9,6 +9,12 @@ use App\Resources\UserResource;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
+/**
+ * User management controller (admin).
+ *
+ * Requires authentication. Provides full CRUD with
+ * email uniqueness validation and password hashing via UserService.
+ */
 final class UserController
 {
     public function __construct(private readonly UserService $service)

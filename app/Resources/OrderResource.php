@@ -6,6 +6,11 @@ namespace App\Resources;
 
 use Siro\Core\Resource;
 
+/**
+ * Order API resource transformer.
+ *
+ * Converts order data for API responses, decoding items from JSON.
+ */
 final class OrderResource extends Resource
 {
     public function toArray(): array

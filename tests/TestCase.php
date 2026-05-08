@@ -5,6 +5,13 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use Siro\Core\App;
+use Siro\Core\Database;
+use Siro\Core\Request;
+use Siro\Core\Response;
+use Siro\Core\Router;
+use Siro\Core\Schema;
+use Siro\Core\ValidationException;
 
 /**
  * Base test case for SiroPHP application tests.
@@ -15,13 +22,6 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
  *
  * @package App\Tests
  */
-use Siro\Core\App;
-use Siro\Core\Database;
-use Siro\Core\Request;
-use Siro\Core\Response;
-use Siro\Core\Router;
-use Siro\Core\Schema;
-use Siro\Core\ValidationException;
 
 abstract class TestCase extends BaseTestCase
 {

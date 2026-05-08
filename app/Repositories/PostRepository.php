@@ -6,6 +6,11 @@ namespace App\Repositories;
 
 use App\Models\Post;
 
+/**
+ * Post data access layer.
+ *
+ * Provides CRUD operations with optional locale filtering.
+ */
 final class PostRepository
 {
     public function findAll(array $filters = [], int $page = 1, int $perPage = 20): array

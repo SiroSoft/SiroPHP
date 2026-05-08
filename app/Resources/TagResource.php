@@ -6,6 +6,9 @@ namespace App\Resources;
 
 use Siro\Core\Resource;
 
+/**
+ * Tag API resource transformer.
+ */
 final class TagResource extends Resource
 {
     public function toArray(): array

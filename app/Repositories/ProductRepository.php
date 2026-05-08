@@ -6,6 +6,12 @@ namespace App\Repositories;
 
 use App\Models\Product;
 
+/**
+ * Product data access layer.
+ *
+ * Provides CRUD operations with category/status/price/
+ * search filtering and sortable pagination.
+ */
 final class ProductRepository
 {
     public function findAll(array $filters = [], int $page = 1, int $perPage = 20): array

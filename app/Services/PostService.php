@@ -8,6 +8,11 @@ use App\Repositories\PostRepository;
 use Siro\Core\Lang;
 use Siro\Core\Storage;
 
+/**
+ * Post business logic layer.
+ *
+ * Handles file upload (image), locale filtering, and storage cleanup on delete.
+ */
 final class PostService
 {
     public function __construct(private readonly PostRepository $repo)

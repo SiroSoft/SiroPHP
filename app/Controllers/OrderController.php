@@ -9,6 +9,12 @@ use App\Services\OrderService;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
+/**
+ * Order CRUD controller.
+ *
+ * Handles order lifecycle: create with items JSON encoding,
+ * list with status filter, update, delete.
+ */
 final class OrderController
 {
     public function __construct(private readonly OrderService $service)

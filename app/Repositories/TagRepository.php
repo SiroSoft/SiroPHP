@@ -6,6 +6,11 @@ namespace App\Repositories;
 
 use App\Models\Tag;
 
+/**
+ * Tag data access layer.
+ *
+ * Provides CRUD operations with pagination.
+ */
 final class TagRepository
 {
     public function findAll(int $page = 1, int $perPage = 20): array

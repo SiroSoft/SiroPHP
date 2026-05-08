@@ -6,6 +6,11 @@ namespace App\Resources;
 
 use Siro\Core\Resource;
 
+/**
+ * User API resource transformer.
+ *
+ * Excludes sensitive fields like password from API responses.
+ */
 final class UserResource extends Resource
 {
     /** @return array<string, mixed> */

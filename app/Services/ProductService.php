@@ -6,6 +6,12 @@ namespace App\Services;
 
 use App\Repositories\ProductRepository;
 
+/**
+ * Product business logic layer.
+ *
+ * Provides category/status/price/search filtering with
+ * configurable sorting and pagination.
+ */
 final class ProductService
 {
     private const ALLOWED_SORTS = ['id', 'name', 'price', 'stock', 'created_at'];

@@ -6,6 +6,11 @@ namespace App\Repositories;
 
 use App\Models\Order;
 
+/**
+ * Order data access layer.
+ *
+ * Provides CRUD operations with optional status filtering.
+ */
 final class OrderRepository
 {
     public function findAll(array $filters = [], int $page = 1, int $perPage = 20): array
