@@ -46,8 +46,10 @@ final class OrderController
             'customer_email' => 'required|email',
             'total' => 'required|numeric|min:0',
             'status' => 'required|in:pending,completed,cancelled',
-            'items' => 'required|min:1',
         ]);
+
+        $items = $request->input('items');
+        $validated['items'] = is_array($items) ? $items : (is_string($items) ? $items : '[]');
 
         $order = $this->service->create($validated);
         return Response::created(OrderResource::make($order), 'Order created');
