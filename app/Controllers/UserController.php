@@ -4,28 +4,23 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Models\User;
-
-/**
- * User management controller.
- *
- * Provides full CRUD operations for users with pagination,
- * validation, and resource transformation.
- *
- * @package App\Controllers
- */
+use App\Services\UserService;
 use App\Resources\UserResource;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
 final class UserController
 {
+    public function __construct(private readonly UserService $service)
+    {
+    }
+
     public function index(Request $request): Response
     {
         $page = max(1, $request->queryInt('page', 1));
         $perPage = min(100, max(1, $request->queryInt('per_page', 15)));
 
-        $result = User::paginate($perPage, $page);
+        $result = $this->service->getAll($page, $perPage);
 
         return Response::paginated(
             UserResource::collection($result['data']),
@@ -37,7 +32,7 @@ final class UserController
     public function show(Request $request): Response
     {
         $id = (int) $request->param('id');
-        $user = User::find($id);
+        $user = $this->service->getById($id);
 
         if ($user === null) {
             return Response::error('User not found', 404);
@@ -54,39 +49,23 @@ final class UserController
             'password' => 'required|min:6|max:255',
         ]);
 
-        $email = strtolower(trim($request->string('email')));
-        $exists = User::where('email', '=', $email)->limit(1)->get();
-
-        if ($exists !== []) {
-            return Response::error('Validation failed', 422, [
-                'email' => ['Email has already been taken'],
-            ]);
-        }
-
-        $passwordHash = password_hash($request->string('password'), PASSWORD_DEFAULT);
-        if ($passwordHash === false) {
+        try {
+            $userData = $this->service->create($request->all());
+        } catch (\RuntimeException $e) {
+            if ($e->getMessage() === 'Email has already been taken') {
+                return Response::error('Validation failed', 422, [
+                    'email' => ['Email has already been taken'],
+                ]);
+            }
             return Response::error('Unable to create user', 500);
         }
 
-        $user = User::create([
-            'name' => $request->string('name'),
-            'email' => $email,
-            'password' => $passwordHash,
-            'status' => 1,
-            'created_at' => date('Y-m-d H:i:s'),
-        ]);
-
-        return Response::created(UserResource::make($user), 'User created');
+        return Response::created(UserResource::make($userData), 'User created');
     }
 
     public function update(Request $request): Response
     {
         $id = (int) $request->param('id');
-        $user = User::find($id);
-
-        if ($user === null) {
-            return Response::error('User not found', 404);
-        }
 
         $rules = [
             'name' => 'min:3|max:120',
@@ -95,45 +74,33 @@ final class UserController
         ];
         $request->validate($rules);
 
-        $data = [];
-
-        $name = $request->input('name');
-        if ($name !== null) {
-            $data['name'] = $name;
-        }
-
-        $email = $request->input('email');
-        if ($email !== null) {
-            $data['email'] = strtolower(trim((string) $email));
-        }
-
-        $password = $request->input('password');
-        if ($password !== null) {
-            $passwordHash = password_hash((string) $password, PASSWORD_DEFAULT);
-            if ($passwordHash === false) {
-                return Response::error('Unable to update user', 500);
+        try {
+            $userData = $this->service->update($id, $request->all());
+        } catch (\RuntimeException $e) {
+            if ($e->getMessage() === 'No fields to update') {
+                return Response::error('No fields to update', 400);
             }
-            $data['password'] = $passwordHash;
+            if ($e->getMessage() === 'Email has already been taken') {
+                return Response::error('Validation failed', 422, [
+                    'email' => ['Email has already been taken'],
+                ]);
+            }
+            return Response::error('Unable to update user', 500);
         }
 
-        if ($data === []) {
-            return Response::error('No fields to update', 400);
+        if ($userData === null) {
+            return Response::error('User not found', 404);
         }
 
-        $user->update($data);
-        return Response::success(UserResource::make($user), 'User updated');
+        return Response::success(UserResource::make($userData), 'User updated');
     }
 
     public function delete(Request $request): Response
     {
         $id = (int) $request->param('id');
-        $user = User::find($id);
 
-        if ($user === null) {
-            return Response::error('User not found', 404);
-        }
-
-        $user->delete();
-        return Response::noContent();
+        return $this->service->delete($id)
+            ? Response::noContent()
+            : Response::error('User not found', 404);
     }
 }

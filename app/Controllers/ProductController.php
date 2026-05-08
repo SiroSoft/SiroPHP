@@ -4,66 +4,23 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Models\Product;
-
-/**
- * Product management controller.
- *
- * Provides CRUD operations with filtering (category, status, price range),
- * sorting, search, and pagination.
- *
- * @package App\Controllers
- */
+use App\Services\ProductService;
 use App\Resources\ProductResource;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
 final class ProductController
 {
+    public function __construct(private readonly ProductService $service)
+    {
+    }
+
     public function index(Request $request): Response
     {
         $perPage = min($request->queryInt('per_page', 20), 100);
         $page = max($request->queryInt('page', 1), 1);
 
-        $query = Product::query();
-
-        if ($category = $request->query('category')) {
-            $query->where('category', '=', $category);
-        }
-
-        if ($status = $request->query('status')) {
-            $query->where('status', '=', $status);
-        }
-
-        $priceMin = $request->query('price_min');
-        if ($priceMin !== null && $priceMin !== '') {
-            $query->where('price', '>=', (float) $priceMin);
-        }
-
-        $priceMax = $request->query('price_max');
-        if ($priceMax !== null && $priceMax !== '') {
-            $query->where('price', '<=', (float) $priceMax);
-        }
-
-        $search = $request->query('search');
-        if ($search !== null && $search !== '') {
-            $query->where('name', 'LIKE', '%' . $search . '%');
-        }
-
-        $sort = $request->query('sort', 'id');
-        $allowedSorts = ['id', 'name', 'price', 'stock', 'created_at'];
-        if (!in_array($sort, $allowedSorts, true)) {
-            $sort = 'id';
-        }
-
-        $order = strtolower($request->query('order', 'desc'));
-        if (!in_array($order, ['asc', 'desc'], true)) {
-            $order = 'desc';
-        }
-
-        $result = $query
-            ->orderBy($sort, $order)
-            ->paginate($perPage, $page);
+        $result = $this->service->getAll($request->all(), $page, $perPage);
 
         return Response::paginated(
             ProductResource::collection($result['data']),
@@ -79,7 +36,7 @@ final class ProductController
             return Response::error('Invalid id', 422);
         }
 
-        $item = Product::find($id);
+        $item = $this->service->getById($id);
         if ($item === null) {
             return Response::error('Product not found', 404);
         }
@@ -98,14 +55,7 @@ final class ProductController
             'status' => 'max:20',
         ]);
 
-        $data = array_merge($validated, [
-            'price' => (float) ($validated['price'] ?? 0),
-            'stock' => (int) ($validated['stock'] ?? 0),
-            'status' => $validated['status'] ?? 'active',
-            'created_at' => date('Y-m-d H:i:s'),
-        ]);
-
-        $item = Product::create($data);
+        $item = $this->service->create($validated);
         return Response::created(ProductResource::make($item), 'Product created');
     }
 
@@ -114,11 +64,6 @@ final class ProductController
         $id = (int) $request->param('id');
         if ($id <= 0) {
             return Response::error('Invalid id', 422);
-        }
-
-        $item = Product::find($id);
-        if ($item === null) {
-            return Response::error('Product not found', 404);
         }
 
         $validated = $request->validate([
@@ -130,15 +75,11 @@ final class ProductController
             'status' => 'max:20',
         ]);
 
-        $data = $validated;
-        if (isset($data['price'])) {
-            $data['price'] = (float) $data['price'];
-        }
-        if (isset($data['stock'])) {
-            $data['stock'] = (int) $data['stock'];
+        $item = $this->service->update($id, $validated);
+        if ($item === null) {
+            return Response::error('Product not found', 404);
         }
 
-        $item->update($data);
         return Response::success(ProductResource::make($item), 'Product updated');
     }
 
@@ -149,12 +90,8 @@ final class ProductController
             return Response::error('Invalid id', 422);
         }
 
-        $item = Product::find($id);
-        if ($item === null) {
-            return Response::error('Product not found', 404);
-        }
-
-        $item->delete();
-        return Response::noContent();
+        return $this->service->delete($id)
+            ? Response::noContent()
+            : Response::error('Product not found', 404);
     }
 }
