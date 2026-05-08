@@ -20,7 +20,7 @@
   ],
     "require": {
         "php": ">=8.2",
-        "sirosoft/core": ">=0.16.0 <1.0.0",
+        "sirosoft/core": ">=0.16.2 <1.0.0",
     "ext-pdo": "*",
     "ext-json": "*",
     "ext-mbstring": "*"
