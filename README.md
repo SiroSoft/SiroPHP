@@ -543,7 +543,7 @@ class ProductApiTest extends TestCase
 
 ## 📋 Changelog
 
-- **v0.20.0** — Version sync with siro-core, security test suite, advanced benchmarking CLI
+- **v0.21.0** — Security fixes, PHPStan Level max, middleware contracts, controller base class, +59 tests
 - **v0.15.0** — Schema Builder (driver-agnostic migrations), Multi-DB connections, AES-256 Encryption, HTTP Client, Maintenance mode (`php siro down/up`), Foreign Key constraints, Health endpoint (`GET /health`), Test assertion helpers (`assertStatus`, `assertJson`, `assertDatabaseHas`), PostgreSQL production support, **Production Security** (log sanitization, replay lock, audit trail, log protection, log injection prevention, OpenAPI production lock), **CLI UX Overhaul** (core workflow, `php siro start` onboarding, `t` alias, layered help), Str helper, Hash facade, Collection class, FormRequest, Signed URLs, Task withoutOverlapping, Fake implementations (Queue::fake, Mail::fake, Storage::fake), Queue Dashboard, Fix command (watch + auto-replay), Trace list command, OpenAPI spec generation (dynamic, 35 endpoints, 34 schemas)
 - **v0.14.1** — Service & Repository pattern, PHPUnit test generation, `make:service`, `make:repository`, `make:crud` with full layers
 - **v0.14.0** — `debug:last`, `log:top`, `route:search`, `doctor --prod`, `api:test --loop`
@@ -569,7 +569,7 @@ class ProductApiTest extends TestCase
 **Package:** sirosoft/api  
 **License:** MIT  
 **Tests:** 57 ✅ (67 assertions) — PHPUnit  
-**Core:** sirosoft/core v0.20.0 (660+ tests)  
+**Core:** sirosoft/core v0.21.0 (863 tests, PHPStan Level max)  
 **PHPStan:** Level 6 ✅ — 0 errors  
 **CLI:** 51 commands — layered UX (core → daily → advanced → system)  
 **Security:** SecurityTest suite (30+ tests) + BenchmarkCommand  

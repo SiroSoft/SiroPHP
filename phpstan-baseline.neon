@@ -625,7 +625,7 @@ parameters:
 			path: tests/feature/ThrottlingMiddlewareTest.php
 
 		-
-			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array will always evaluate to true\.$#'
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array\<string, string\> will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
 			count: 2
 			path: tests/integration/EventCacheTest.php

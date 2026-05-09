@@ -21,10 +21,17 @@
 - Deleted dead code: HomeController.php (unused), SendWelcomeEmailJob.php (duplicate)
 - Translation files are now bundled (storage/lang/en, storage/lang/vi)
 
+### 🔧 Improvements
+- MiddlewareInterface implemented in all skeleton middleware (Auth, Cors, Json, Throttle, SecurityHeaders)
+- CategoryController now extends `Siro\Core\Controller` base class
+- PHPStan raised to Level 7 (skeleton: 0 errors, baseline 142)
+- Docker: non-root user, HEALTHCHECK, supervisor config
+- Route coverage: Tags, Orders, Posts CRUD tests added
+
 ### 📊 Testing
-- 404 tests, 539 assertions — all passing
-- Added bootstrap BASE_PATH constant for Lang auto-init
-- Fixed GeneralIntegrationTest and AuthApiTest expectations
+- 414 tests, 549 assertions — all passing
+- Tags/Orders/Posts endpoint tests: index, show, store validation (10 tests)
+- Categories full CRUD coverage maintained
 
 ## v0.20.0 (2026-05-09) — Production-Ready Release
 
