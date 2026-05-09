@@ -6,6 +6,7 @@ namespace App\Middleware;
 
 use App\Models\User;
 use Siro\Core\Auth\JWT;
+use Siro\Core\Middleware\MiddlewareInterface;
 use Siro\Core\Request;
 use Siro\Core\Response;
 use Throwable;
@@ -13,13 +14,8 @@ use Throwable;
 /**
  * JWT authentication middleware.
  *
- * Extracts Bearer token from Authorization header, decodes JWT,
- * verifies user exists and token version matches, then sets
- * authenticated user data on the request.
- *
- * @package App\Middleware
  */
-final class AuthMiddleware
+final class AuthMiddleware implements MiddlewareInterface
 {
     public function handle(Request $request, callable $next, string ...$roles): mixed
     {

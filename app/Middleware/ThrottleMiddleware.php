@@ -5,20 +5,11 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use Siro\Core\Env;
+use Siro\Core\Middleware\MiddlewareInterface;
 use Siro\Core\Request;
 use Siro\Core\Response;
-use Throwable;
 
-/**
- * Rate limiting middleware.
- *
- * Limits requests per IP+route using Redis Lua scripting
- * (primary) or file-based fallback. Configurable via route
- * definition: throttle:60,1 = 60 requests per minute.
- *
- * @package App\Middleware
- */
-final class ThrottleMiddleware
+final class ThrottleMiddleware implements MiddlewareInterface
 {
     private const FALLBACK_DISABLED = 'disabled';
     private const FALLBACK_FAIL_CLOSED = 'fail_closed';

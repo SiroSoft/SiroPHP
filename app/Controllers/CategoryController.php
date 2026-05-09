@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 use App\Resources\CategoryResource;
 use App\Services\CategoryService;
+use Siro\Core\Controller;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
@@ -15,7 +16,7 @@ use Siro\Core\Response;
  * Provides CRUD operations with service/repository layer
  * and dependency injection via constructor.
  */
-final class CategoryController
+final class CategoryController extends Controller
 {
     public function __construct(private readonly CategoryService $service)
     {
@@ -25,43 +26,43 @@ final class CategoryController
     public function index(Request $request): Response
     {
         $result = $this->service->getAll($request->queryInt('page', 1), $request->queryInt('per_page', 20));
-        return Response::paginated(CategoryResource::collection($result['data']), $result['meta'], 'Category list');
+        return $this->paginated(CategoryResource::collection($result['data']), $result['meta'], 'Category list');
     }
 
     /** Get a single category by ID. */
     public function show(Request $request): Response
     {
         $id = (int) $request->param('id');
-        if ($id <= 0) return Response::error('Invalid id', 422);
+        if ($id <= 0) return $this->error('Invalid id', 422);
         $item = $this->service->getById($id);
-        if ($item === null) return Response::error('Category not found', 404);
-        return Response::success(CategoryResource::make($item), 'Category detail');
+        if ($item === null) return $this->error('Category not found', 404);
+        return $this->success(CategoryResource::make($item), 'Category detail');
     }
 
     /** Create a new category. */
     public function store(Request $request): Response
     {
-        $item = $this->service->create($request->validate(['name' => 'required|min:2|max:100']));
-        return Response::created(CategoryResource::make($item), 'Category created');
+        $item = $this->service->create($this->validate(['name' => 'required|min:2|max:100']));
+        return $this->created(CategoryResource::make($item), 'Category created');
     }
 
     /** Update an existing category. */
     public function update(Request $request): Response
     {
         $id = (int) $request->param('id');
-        if ($id <= 0) return Response::error('Invalid id', 422);
-        $item = $this->service->update($id, $request->validate(['name' => 'min:2|max:100']));
-        if ($item === null) return Response::error('Category not found', 404);
-        return Response::success(CategoryResource::make($item), 'Category updated');
+        if ($id <= 0) return $this->error('Invalid id', 422);
+        $item = $this->service->update($id, $this->validate(['name' => 'min:2|max:100']));
+        if ($item === null) return $this->error('Category not found', 404);
+        return $this->success(CategoryResource::make($item), 'Category updated');
     }
 
     /** Delete a category. */
     public function delete(Request $request): Response
     {
         $id = (int) $request->param('id');
-        if ($id <= 0) return Response::error('Invalid id', 422);
+        if ($id <= 0) return $this->error('Invalid id', 422);
         return $this->service->delete($id)
             ? Response::noContent()
-            : Response::error('Category not found', 404);
+            : $this->error('Category not found', 404);
     }
 }

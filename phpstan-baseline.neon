@@ -31,6 +31,12 @@ parameters:
 			path: app/Middleware/AuthMiddleware.php
 
 		-
+			message: '#^Caught class App\\Middleware\\Throwable not found\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Middleware/ThrottleMiddleware.php
+
+		-
 			message: '#^Method App\\Repositories\\CategoryRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -319,6 +325,12 @@ parameters:
 			path: routes/api.php
 
 		-
+			message: '#^Parameter \#1 \$content of static method Siro\\Core\\Response\:\:raw\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: routes/api.php
+
+		-
 			message: '#^Parameter \#1 \$value of function count expects array\|Countable, string given\.$#'
 			identifier: argument.type
 			count: 1
@@ -335,6 +347,12 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: routes/schedule.php
+
+		-
+			message: '#^Argument of an invalid type list\<string\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: tests/TestCase.php
 
 		-
 			message: '#^Method App\\Tests\\TestCase\:\:assertDatabaseHas\(\) has parameter \$conditions with no value type specified in iterable type array\.$#'
@@ -405,6 +423,12 @@ parameters:
 		-
 			message: '#^Method App\\Tests\\TestResponse\:\:json\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
+			count: 1
+			path: tests/TestCase.php
+
+		-
+			message: '#^Parameter \#3 \$query of class Siro\\Core\\Request constructor expects array\<string, mixed\>, array\<int\|string, array\<mixed\>\|string\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: tests/TestCase.php
 
@@ -547,6 +571,12 @@ parameters:
 			path: tests/feature/RealUserApiE2eTest.php
 
 		-
+			message: '#^Method App\\Tests\\Feature\\RealUserApiE2eTest\:\:getResponseBody\(\) should return string but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: tests/feature/RealUserApiE2eTest.php
+
+		-
 			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Resource'' and ''collection'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -589,6 +619,12 @@ parameters:
 			path: tests/feature/Rs256JwtTest.php
 
 		-
+			message: '#^Parameter \#2 \$haystack of method PHPUnit\\Framework\\Assert\:\:assertStringContainsString\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/feature/ThrottlingMiddlewareTest.php
+
+		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
 			count: 2
@@ -617,6 +653,12 @@ parameters:
 			identifier: method.alreadyNarrowedType
 			count: 1
 			path: tests/integration/LangTest.php
+
+		-
+			message: '#^Parameter \#2 \$haystack of method PHPUnit\\Framework\\Assert\:\:assertStringContainsString\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/integration/MiddlewareTest.php
 
 		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true will always evaluate to true\.$#'

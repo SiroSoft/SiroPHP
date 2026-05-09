@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use Siro\Core\Middleware\MiddlewareInterface;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
@@ -18,7 +19,7 @@ use Siro\Core\Response;
  * - Man-in-the-middle attacks (Strict-Transport-Security)
  * - Content Security Policy violations (CSP)
  */
-final class SecurityHeadersMiddleware
+final class SecurityHeadersMiddleware implements MiddlewareInterface
 {
     /**
      * Handle the request and add security headers
