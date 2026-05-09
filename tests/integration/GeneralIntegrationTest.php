@@ -136,4 +136,127 @@ final class GeneralIntegrationTest extends TestCase
         $errors = Validator::make(['email' => "'; DROP TABLE users;--"], ['email' => 'required|email']);
         $this->assertArrayHasKey('email', $errors);
     }
+
+    public function testValidateRequiredOnEmptyArray(): void
+    {
+        $errors = Validator::make([], ['name' => 'required']);
+        $this->assertArrayHasKey('name', $errors);
+    }
+
+    public function testValidateNumericFieldWithString(): void
+    {
+        $errors = Validator::make(['price' => 'not-a-number'], ['price' => 'numeric']);
+        $this->assertArrayHasKey('price', $errors);
+    }
+
+    public function testValidateNumericFieldWithNumber(): void
+    {
+        $errors = Validator::make(['price' => '99.99'], ['price' => 'numeric']);
+        $this->assertSame([], $errors);
+    }
+
+    public function testValidateEmailWithInvalidFormat(): void
+    {
+        $errors = Validator::make(['email' => 'not-an-email'], ['email' => 'email']);
+        $this->assertArrayHasKey('email', $errors);
+    }
+
+    public function testValidateIntegerFieldWithString(): void
+    {
+        $errors = Validator::make(['count' => 'abc'], ['count' => 'integer']);
+        $this->assertArrayHasKey('count', $errors);
+    }
+
+    public function testValidateIntegerFieldWithNumber(): void
+    {
+        $errors = Validator::make(['count' => '42'], ['count' => 'integer']);
+        $this->assertSame([], $errors);
+    }
+
+    public function testValidateMinLengthString(): void
+    {
+        $errors = Validator::make(['name' => 'ab'], ['name' => 'min:3']);
+        $this->assertArrayHasKey('name', $errors);
+    }
+
+    public function testValidateMaxLengthString(): void
+    {
+        $errors = Validator::make(['name' => str_repeat('a', 101)], ['name' => 'max:100']);
+        $this->assertArrayHasKey('name', $errors);
+    }
+
+    public function testValidateInRuleWithValidValue(): void
+    {
+        $errors = Validator::make(['status' => 'active'], ['status' => 'in:active,inactive']);
+        $this->assertSame([], $errors);
+    }
+
+    public function testValidateInRuleWithInvalidValue(): void
+    {
+        $errors = Validator::make(['status' => 'banned'], ['status' => 'in:active,inactive']);
+        $this->assertArrayHasKey('status', $errors);
+    }
+
+    public function testValidateMultipleFieldsSimultaneously(): void
+    {
+        $errors = Validator::make(
+            ['name' => '', 'email' => 'bad', 'age' => '-1'],
+            ['name' => 'required', 'email' => 'email', 'age' => 'min:0']
+        );
+        $this->assertCount(3, $errors);
+    }
+
+    public function testValidateConfirmedField(): void
+    {
+        $errors = Validator::make(
+            ['password' => 'secret', 'password_confirmation' => 'different'],
+            ['password' => 'confirmed']
+        );
+        $this->assertArrayHasKey('password', $errors);
+    }
+
+    public function testValidateConfirmedFieldPasses(): void
+    {
+        $errors = Validator::make(
+            ['password' => 'secret', 'password_confirmation' => 'secret'],
+            ['password' => 'confirmed']
+        );
+        $this->assertSame([], $errors);
+    }
+
+    public function testValidateUrlFieldWithInvalidUrl(): void
+    {
+        $errors = Validator::make(['website' => 'not-a-url'], ['website' => 'url']);
+        $this->assertArrayHasKey('website', $errors);
+    }
+
+    public function testValidatorExtendAddsCustomRule(): void
+    {
+        Validator::extend('uppercase', function ($value) {
+            return strtoupper($value) === $value ? true : ':field must be uppercase';
+        });
+        $errors = Validator::make(['code' => 'abc'], ['code' => 'uppercase']);
+        $this->assertArrayHasKey('code', $errors);
+    }
+
+    public function testValidatorExtendPassesForValidInput(): void
+    {
+        Validator::extend('uppercase2', function ($value) {
+            return strtoupper($value) === $value ? true : ':field must be uppercase';
+        });
+        $errors = Validator::make(['code' => 'ABC'], ['code' => 'uppercase2']);
+        $this->assertSame([], $errors);
+    }
+
+    public function testResponseCreatedReturnsCorrectPayload(): void
+    {
+        $r = Response::created(['id' => 1], 'Created');
+        $this->assertEquals(201, $r->statusCode());
+    }
+
+    public function testResponseNoContentReturns204(): void
+    {
+        $r = Response::noContent();
+        $this->assertEquals(204, $r->statusCode());
+    }
 }

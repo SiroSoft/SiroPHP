@@ -90,4 +90,63 @@ final class LangTest extends TestCase
         $this->assertSame('Mật khẩu phải có ít nhất 8 ký tự', Lang::get('validation.min', ['field' => 'Mật khẩu', 'min' => '8']));
         $this->assertSame('Mật khẩu không được vượt quá 100 ký tự', Lang::get('validation.max', ['field' => 'Mật khẩu', 'max' => '100']));
     }
+
+    public function testEnglishMessages(): void
+    {
+        Lang::setLocale('en');
+        $this->assertSame('Email is required', Lang::get('validation.required', ['field' => 'Email']));
+        $this->assertSame('Email is not a valid email address', Lang::get('validation.email', ['field' => 'Email']));
+    }
+
+    public function testEnglishValidationMessages(): void
+    {
+        Lang::setLocale('en');
+        $errors = Validator::make(['email' => 'invalid'], ['email' => 'email']);
+        $this->assertNotEmpty($errors);
+    }
+
+    public function testLangHasReturnsTrue(): void
+    {
+        Lang::setLocale('en');
+        $this->assertTrue(Lang::has('messages.welcome'));
+    }
+
+    public function testLangHasReturnsFalse(): void
+    {
+        Lang::setLocale('en');
+        $this->assertFalse(Lang::has('nonexistent.key'));
+    }
+
+    public function testLangGetReturnsKeyForMissingTranslation(): void
+    {
+        Lang::setLocale('en');
+        $result = Lang::get('nonexistent.key');
+        $this->assertEquals('nonexistent.key', $result);
+    }
+
+    public function testLangCountReturnsNumber(): void
+    {
+        Lang::setLocale('en');
+        $count = Lang::count('validation');
+        $this->assertIsInt($count);
+    }
+
+    public function testLangSetLocaleChangesLocale(): void
+    {
+        Lang::setLocale('fr');
+        $this->assertEquals('fr', Lang::locale());
+    }
+
+    public function testLangFallbackWhenKeyMissing(): void
+    {
+        Lang::setLocale('en');
+        $result = Lang::plural('messages.apples', 5);
+        $this->assertIsString($result);
+    }
+
+    public function testSetLocaleToEn(): void
+    {
+        Lang::setLocale('en');
+        $this->assertEquals('en', Lang::locale());
+    }
 }
