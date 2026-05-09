@@ -8,17 +8,19 @@ final class UserSeeder
 {
     public function run(): void
     {
-        $password = password_hash('password', PASSWORD_DEFAULT);
+        $adminEmail = (string) (\Siro\Core\Env::get('ADMIN_EMAIL', 'admin@example.com'));
+        $adminPassword = (string) (\Siro\Core\Env::get('ADMIN_PASSWORD', 'password'));
+        $password = password_hash($adminPassword, PASSWORD_DEFAULT);
 
         DB::table('users')->insert([
             'name' => 'Admin',
-            'email' => 'admin@example.com',
+            'email' => $adminEmail,
             'password' => $password,
             'status' => 1,
             'token_version' => 1,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
 
-        echo "  Created admin user: admin@example.com / password\n";
+        echo "  Created admin user: {$adminEmail} / (configured password)\n";
     }
 }

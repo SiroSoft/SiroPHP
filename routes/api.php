@@ -20,17 +20,17 @@ $app->router->get('/', function (Request $req): mixed {
     // Serve HTML homepage for browser requests
     $accept = $req->header('accept', '');
     $userAgent = $req->header('user-agent', '');
-    
+
     // Check if request is from a browser (not API client/curl)
     $isBrowser = str_contains($accept, 'text/html') && !str_contains($accept, 'application/json');
-    
+
     if ($isBrowser) {
         $file = __DIR__ . '/../public/index.html';
         if (file_exists($file)) {
             return Response::raw(file_get_contents($file), 'text/html; charset=utf-8');
         }
     }
-    
+
     // Default: Return JSON API response
     return [
         'success' => true,
@@ -156,18 +156,19 @@ $app->router->group('/api', [CorsMiddleware::class], function ($router): void {
         return Response::success([
             'path' => $path,
             'url' => Storage::url($path),
-            'original_name' => $file->originalName(),
-            'size' => $file->size(),
-            'mime' => $file->mime(),
+            'original_name' => $file->getClientOriginalName(),
+            'size' => $file->getSize(),
+            'mime' => $file->getMimeType(),
         ], 'Avatar uploaded');
     })->middleware([JsonMiddleware::class]);
 
     $router->get('/profile', function (Request $req): array {
-        $locale = $req->query('locale', 'en');
+        $locale = (string) $req->query('locale', 'en');
         Lang::setLocale($locale);
 
         $name = $req->query('name', 'Guest');
         $greeting = Lang::get('messages.greeting', ['name' => $name]);
+        $messagesCount = Lang::has('validation') ? count(Lang::get('validation')) : 0;
 
         return [
             'success' => true,
@@ -176,7 +177,7 @@ $app->router->group('/api', [CorsMiddleware::class], function ($router): void {
                 'name' => $name,
                 'locale' => $locale,
                 'greeting' => $greeting,
-                'messages_count' => Lang::count('validation'),
+                'messages_count' => $messagesCount,
                 'available_locales' => ['en', 'vi'],
             ],
         ];

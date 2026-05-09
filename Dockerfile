@@ -14,9 +14,11 @@ RUN composer install --no-dev --no-interaction --no-progress --optimize-autoload
 
 COPY . .
 
-RUN php siro key:generate && \
-    php siro config:cache && \
+RUN php siro config:cache && \
     php siro optimize
+
+# Generate JWT secret at runtime (not build time), so each container gets a unique key
+# This is handled via CMD/entrypoint below
 
 FROM base AS production
 
@@ -25,4 +27,4 @@ COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 
 EXPOSE 8080
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD php siro key:generate && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

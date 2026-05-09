@@ -63,6 +63,14 @@ try {
     ]);
 
     $app->boot();
+
+    // Apply log sanitization config from .env
+    \Siro\Core\Logger::setSanitizeConfig([
+        'headers' => array_map('trim', explode(',', (string) \Siro\Core\Env::get('LOG_SANITIZE_HEADERS', 'authorization,cookie,x-api-key,session-id'))),
+        'body' => array_map('trim', explode(',', (string) \Siro\Core\Env::get('LOG_SANITIZE_BODY', 'password,token,otp,secret,credit_card,card_number,cvv,pin,ssn'))),
+        'query' => array_map('trim', explode(',', (string) \Siro\Core\Env::get('LOG_SANITIZE_QUERY', 'token,key,secret,api_key,code'))),
+    ]);
+
     $app->loadRoutes(BASE_PATH . '/routes/api.php');
     $app->run();
 } catch (Throwable $e) {

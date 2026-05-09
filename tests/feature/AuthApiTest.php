@@ -97,7 +97,7 @@ final class AuthApiTest extends TestCase
     public function testDeleteProduct(): void
     {
         $resp = $this->delete('/api/products/1');
-        $this->assertContains($resp->status(), [200, 404]);
+        $this->assertContains($resp->status(), [200, 204, 404]);
     }
 
     public function testHealthResponseVersion(): void

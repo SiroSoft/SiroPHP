@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.20.0 (2026-05-09) — Production-Ready Release
+
+### 🚀 New Features
+- **HTML Homepage** - Beautiful landing page at root path for browser users
+- **Content Negotiation** - Automatic HTML/JSON response based on client type
+- **Apache Support** - .htaccess configuration for proper routing
+- **Security Enhancements** - SecurityTest suite integration from siro-core
+
+### 🔧 Improvements
+- Version synchronization to v0.20.0 across all files
+- Updated README with homepage access instructions
+- Enhanced API routes with proper version references
+- Improved HomeController with strict_types declaration
+
+### 📊 Testing
+- Integrated SecurityTest suite (30+ tests)
+- BenchmarkCommand available via siro-core dependency
+- Maintained 57 application tests
+
+### 🐛 Bug Fixes
+- Fixed missing `declare(strict_types=1)` in controllers
+- Fixed API response version numbers
+- Fixed Lang::count() deprecation with safer alternative
+- Fixed UploadedFile method calls to use standard Symfony methods
+
 ## v0.16.7 (2026-05-09) — API Reliability & Performance Release
 
 ### 🔗 Model Relations

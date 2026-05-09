@@ -49,7 +49,7 @@ final class TagController
     {
         $id = (int) $request->param('id');
         if ($id <= 0) return Response::error('Invalid id', 422);
-        $item = $this->service->update($id, $request->validate(['name' => 'required|min:1|max:100']));
+        $item = $this->service->update($id, $request->validate(['name' => 'min:1|max:100']));
         if ($item === null) return Response::error('Tag not found', 404);
         return Response::success(TagResource::make($item), 'Tag updated');
     }
