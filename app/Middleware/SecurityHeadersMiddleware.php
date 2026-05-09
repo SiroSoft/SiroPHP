@@ -68,10 +68,6 @@ final class SecurityHeadersMiddleware
             );
         }
 
-        // Remove server identification headers
-        $response->removeHeader('X-Powered-By');
-        $response->removeHeader('Server');
-
         return $response;
     }
 
