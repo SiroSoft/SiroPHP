@@ -108,6 +108,22 @@ curl http://localhost:8080/health
 > **That's it.** You now have: registration, login, JWT auth, CRUD API, database, tests, debugging, and health check.  
 > Total commands: **7** • Total time: **< 5 minutes**
 
+### 🌐 Accessing the HTML Homepage
+
+After starting the server with `php siro serve`, open your browser:
+
+```
+http://localhost:8080/
+```
+
+You'll see a beautiful landing page with:
+- Quick start guide
+- API documentation links
+- Framework features overview
+- Copy-paste ready code examples
+
+**Note:** The root path (`/`) serves HTML for browsers and JSON for API clients automatically.
+
 ---
 
 ## ✨ Key Features

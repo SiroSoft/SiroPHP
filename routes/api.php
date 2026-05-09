@@ -19,12 +19,19 @@ use Siro\Core\Storage;
 $app->router->get('/', function (Request $req): mixed {
     // Serve HTML homepage for browser requests
     $accept = $req->header('accept', '');
-    if (str_contains($accept, 'text/html')) {
+    $userAgent = $req->header('user-agent', '');
+    
+    // Check if request is from a browser (not API client/curl)
+    $isBrowser = str_contains($accept, 'text/html') && !str_contains($accept, 'application/json');
+    
+    if ($isBrowser) {
         $file = __DIR__ . '/../public/index.html';
         if (file_exists($file)) {
             return Response::raw(file_get_contents($file), 'text/html; charset=utf-8');
         }
     }
+    
+    // Default: Return JSON API response
     return [
         'success' => true,
         'message' => Lang::get('messages.welcome'),
