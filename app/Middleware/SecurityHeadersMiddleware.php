@@ -58,7 +58,7 @@ final class SecurityHeadersMiddleware implements MiddlewareInterface
              . "frame-ancestors 'none'; "
              . "base-uri 'self'; "
              . "form-action 'self'";
-        
+
         $response->header('Content-Security-Policy', $csp);
 
         // HTTP Strict Transport Security (only if HTTPS)

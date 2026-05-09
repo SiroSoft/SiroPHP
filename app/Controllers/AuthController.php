@@ -190,7 +190,7 @@ final class AuthController
         $request->validate(['token' => 'required']);
 
         $token = $request->string('token');
-        
+
         // Find user by verification token and hydrate to Model
         $rows = User::where('verification_token', '=', $token)->limit(1)->get();
         $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
@@ -212,7 +212,7 @@ final class AuthController
         $request->validate(['email' => 'required|email']);
 
         $email = strtolower(trim($request->string('email')));
-        
+
         // Find user by email and hydrate to Model
         $rows = User::where('email', '=', $email)->limit(1)->get();
         $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
@@ -237,7 +237,7 @@ final class AuthController
         ]);
 
         $token = $request->string('token');
-        
+
         // Find user by reset token and hydrate to Model
         $rows = User::where('password_reset_token', '=', $token)->limit(1)->get();
         $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
