@@ -1,10 +1,10 @@
-﻿# 🚀 Siro API Framework v0.16.6
+﻿# 🚀 Siro API Framework v0.16.7
 
 **The Fastest PHP Micro-Framework Application Skeleton** — Ship a production-ready API with auth in 5 minutes. Built-in DI Container, Config Repository, RBAC support.
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Packagist](https://img.shields.io/badge/packagist-v0.16.6-blue.svg)](https://packagist.org/packages/sirosoft/api)
+[![Packagist](https://img.shields.io/badge/packagist-v0.16.7-blue.svg)](https://packagist.org/packages/sirosoft/api)
 [![Tests](https://img.shields.io/badge/tests-215%20passing-brightgreen.svg)](tests/)
 [![PHPStan](https://img.shields.io/badge/phpstan-level%206-brightgreen.svg)](https://github.com/SiroSoft/siro-core)
 [![PostgreSQL](https://img.shields.io/badge/postgresql-ready-blue.svg)](https://www.postgresql.org/)
@@ -29,23 +29,27 @@
 
 ---
 
-## 🧩 New in v0.16.0
+## 🧩 New in v0.16.7
 
-### DI Container (`Siro\Core\Container`)
-- **Bind interfaces**: `$container->bind(AuthInterface::class, AuthService::class)`
-- **Singleton**: `$container->singleton(Cache::class, RedisCache::class)`
-- **Auto-resolution**: Constructor dependencies resolved via reflection
-- Router tự động dùng Container để resolve controller dependencies
+### 🔗 Model Relations
+- **HasOne** — One-to-one relationships via `Model::hasOne()`
+- **BelongsToMany** — Many-to-many with attach/detach/sync/has/toggle
 
-### Config Repository (`Siro\Core\Config`)
-- Load tất cả `config/*.php` files tự động
-- **Dot-notation**: `Config::get('database.host', 'default')`
-- **Hỗ trợ cache**: `php siro config:cache`
+### 📁 File Upload Helpers
+- `UploadedFile::isImage()`, `isPdf()`, `hash()`, `maxSize()`
+- `Request::validateFile()` for chainable validation
+- `Response::downloadFromStorage()` for secure downloads
+- `Storage` helpers: `localPath()`, `putFile()`, `copy()`, `size()`, `lastModified()`
 
-### RBAC — Role-Based Access Control
-- `AuthMiddleware::handle($request, $next, ...$roles)` — check role ngay trong middleware
-- Dùng: `->middleware(['auth:admin'])` — chỉ admin mới access được
-- `make:crud --with-rbac` — sinh routes có auth:admin cho mutations
+### 🔒 API Reliability
+- **Idempotency Keys** — Prevent duplicate operations (payments, orders)
+  - Use `Idempotency-Key` header, CLI: `make:idempotency-table`
+- **API Key Auth** — Simple auth for external devs with scopes (read/write/admin)
+  - CLI: `make:apikey`, Middleware: `apikey`
+
+### ⚡ Performance
+- **Batch Operations** — `updateWhereIn()`, `deleteWhereIn()`, `insertMany()`
+- **Cursor Pagination** — Stable under concurrent inserts (no skipped/duplicate rows)
 
 ---
 

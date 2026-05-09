@@ -1,5 +1,37 @@
 # Changelog
 
+## v0.16.7 (2026-05-09) — API Reliability & Performance Release
+
+### 🔗 Model Relations
+- **HasOne relation** — `Model::hasOne()` for one-to-one relationships
+- **BelongsToMany relation** — `Model::belongsToMany()` with attach/detach/sync/has/toggle methods for many-to-many
+
+### 📁 File Upload Helpers
+- **UploadedFile validation** — `isImage()`, `isPdf()`, `hash()`, `maxSize()`
+- **Request::validateFile()** — Chainable file validation
+- **Response::downloadFromStorage()** — Secure file downloads
+- **Storage helpers** — `localPath()`, `putFile()`, `copy()`, `size()`, `lastModified()`
+
+### 🔒 API Reliability
+- **Idempotency Keys** — Prevent duplicate requests with `Idempotency-Key` header
+  - TTL-based response caching
+  - CLI: `make:idempotency-table`
+- **API Key Auth** — Simple authentication for external developers
+  - Scopes: read/write/admin
+  - CLI: `make:apikey`
+  - Middleware for route protection
+
+### ⚡ Performance
+- **Batch Operations** — `QueryBuilder::updateWhereIn()`, `deleteWhereIn()`, `insertMany()`
+- **Cursor Pagination** — `QueryBuilder::cursorPaginate()` — stable under concurrent inserts
+
+### 🧪 Testing & Quality
+- **siro-core**: 657 tests, 1977 assertions, 33 skipped
+- **SiroPHP**: 215 tests, 336 assertions, all pass
+- **PHPStan Level 6**: Both pass (zero errors)
+
+---
+
 ## v0.15.1 (2026-05-06) — Security & Stability Release
 
 ### 🛡️ Security Hardening
