@@ -1,5 +1,31 @@
 # Changelog
 
+## v0.21.0 (2026-05-10) — Security & Quality Release
+
+### 🐛 Bug Fixes
+- **CRITICAL**: Rotated exposed JWT_SECRET in .env — old key was committed to repo
+- **FIXED**: UploadedFile method calls in routes — `originalName()` → `getClientOriginalName()`, `size()` → `getSize()`, `mime()` → `getMimeType()`
+- **FIXED**: Lang::count() removed — replaced with `count(Lang::get())` in routes
+- **FIXED**: Dockerfile — `key:generate` moved from build-time to runtime CMD
+- **FIXED**: CategoryController/TagController update rules — removed `required` (PATCH semantics)
+- **FIXED**: Hardcoded admin credentials in UserSeeder — now reads from env
+- **FIXED**: Missing `declare(strict_types=1)` in AuthController, CategoryController, HomeController
+- **FIXED**: Env cache excluded JWT_SECRET — added fallback loading from .env
+- **FIXED**: Log sanitization — enabled LOG_SANITIZE_* in .env.example and loading in index.php
+- **FIXED**: phpunit.xml — failOnRisky/warning now true
+
+### 🔧 Improvements
+- CORS_ALLOWED_ORIGINS restricted to localhost in .env
+- APP_DEBUG=false by default
+- Added translation files (en + vi) for validation and messages
+- Deleted dead code: HomeController.php (unused), SendWelcomeEmailJob.php (duplicate)
+- Translation files are now bundled (storage/lang/en, storage/lang/vi)
+
+### 📊 Testing
+- 404 tests, 539 assertions — all passing
+- Added bootstrap BASE_PATH constant for Lang auto-init
+- Fixed GeneralIntegrationTest and AuthApiTest expectations
+
 ## v0.20.0 (2026-05-09) — Production-Ready Release
 
 ### 🚀 New Features
