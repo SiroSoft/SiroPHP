@@ -3,6 +3,7 @@
 !.gitkeep
 !app/
 !cache/
+!framework/
 !lang/
 !logs/
 !public/
