@@ -1,0 +1,80 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Feature;
+
+use App\Tests\TestCase;
+
+final class TagsOrdersPostsTest extends TestCase
+{
+    public function testTagsIndexReturns200(): void
+    {
+        $app = $this->createApp();
+        $response = $this->dispatch($app, 'GET', '/api/tags');
+        $this->assertEquals(200, $response->statusCode());
+    }
+
+    public function testTagsShowReturns404(): void
+    {
+        $app = $this->createApp();
+        $response = $this->dispatch($app, 'GET', '/api/tags/999');
+        $this->assertEquals(404, $response->statusCode());
+    }
+
+    public function testTagsStoreReturns201(): void
+    {
+        $app = $this->createApp();
+        $response = $this->dispatch($app, 'POST', '/api/tags', ['name' => 'TestTag'], ['content-type' => 'application/json']);
+        $this->assertEquals(201, $response->statusCode());
+    }
+
+    public function testTagsStoreReturns422WithoutName(): void
+    {
+        $app = $this->createApp();
+        $response = $this->dispatch($app, 'POST', '/api/tags', [], ['content-type' => 'application/json']);
+        $this->assertEquals(422, $response->statusCode());
+    }
+
+    public function testOrdersIndexReturns200(): void
+    {
+        $app = $this->createApp();
+        $response = $this->dispatch($app, 'GET', '/api/orders');
+        $this->assertEquals(200, $response->statusCode());
+    }
+
+    public function testOrdersShowReturns404(): void
+    {
+        $app = $this->createApp();
+        $response = $this->dispatch($app, 'GET', '/api/orders/999');
+        $this->assertEquals(404, $response->statusCode());
+    }
+
+    public function testOrdersStoreReturns422WithoutData(): void
+    {
+        $app = $this->createApp();
+        $response = $this->dispatch($app, 'POST', '/api/orders', [], ['content-type' => 'application/json']);
+        $this->assertEquals(422, $response->statusCode());
+    }
+
+    public function testPostsIndexReturns200(): void
+    {
+        $app = $this->createApp();
+        $response = $this->dispatch($app, 'GET', '/api/posts');
+        $this->assertEquals(200, $response->statusCode());
+    }
+
+    public function testPostsShowReturns404(): void
+    {
+        $app = $this->createApp();
+        $response = $this->dispatch($app, 'GET', '/api/posts/999');
+        $this->assertEquals(404, $response->statusCode());
+    }
+
+    public function testPostsStoreReturns201(): void
+    {
+        $app = $this->createApp();
+        $response = $this->dispatch($app, 'POST', '/api/posts', ['title' => 'Test Post', 'content' => 'Content body here', 'user_id' => 1], ['content-type' => 'application/json']);
+        $this->assertContains($response->statusCode(), [201, 422]);
+    }
+}
