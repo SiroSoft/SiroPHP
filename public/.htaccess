@@ -5,6 +5,17 @@
 
     RewriteEngine On
 
+    # Deny access to .env and other sensitive files
+    <FilesMatch "^\.env$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+
+    <FilesMatch "\.(git|svn|hg)$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

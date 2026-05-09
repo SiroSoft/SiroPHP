@@ -11,6 +11,7 @@ use App\Controllers\TagController;
 use App\Controllers\UserController;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\JsonMiddleware;
+use App\Middleware\SecurityHeadersMiddleware;
 use Siro\Core\Lang;
 use Siro\Core\Request;
 use Siro\Core\Response;
@@ -65,7 +66,7 @@ $app->router->get('/health', function (): array {
     ];
 });
 
-$app->router->group('/api', [CorsMiddleware::class], function ($router): void {
+$app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::class], function ($router): void {
     // Public auth routes
     $router->post('/auth/register', [AuthController::class, 'register'])
         ->middleware([JsonMiddleware::class, 'throttle:30,1']);
