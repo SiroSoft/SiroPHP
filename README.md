@@ -1,10 +1,10 @@
-﻿# 🚀 Siro API Framework v0.20.0
+﻿# 🚀 Siro API Framework v0.21.0
 
 **The Fastest PHP Micro-Framework Application Skeleton** — Ship a production-ready API with auth in 5 minutes. Built-in DI Container, Config Repository, RBAC support.
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Packagist](https://img.shields.io/badge/packagist-v0.20.0-blue.svg)](https://packagist.org/packages/sirosoft/api)
+[![Packagist](https://img.shields.io/badge/packagist-v0.21.0-blue.svg)](https://packagist.org/packages/sirosoft/api)
 [![Tests](https://img.shields.io/badge/tests-215%20passing-brightgreen.svg)](tests/)
 [![PHPStan](https://img.shields.io/badge/phpstan-level%206-brightgreen.svg)](https://github.com/SiroSoft/siro-core)
 [![PostgreSQL](https://img.shields.io/badge/postgresql-ready-blue.svg)](https://www.postgresql.org/)
@@ -29,7 +29,7 @@
 
 ---
 
-## 🧩 New in v0.20.0
+## 🧩 New in v0.21.0
 
 ### 🔗 Model Relations
 - **HasOne** — One-to-one relationships via `Model::hasOne()`
@@ -565,7 +565,7 @@ class ProductApiTest extends TestCase
 
 ---
 
-**Version:** 0.20.0  
+**Version:** 0.21.0  
 **Package:** sirosoft/api  
 **License:** MIT  
 **Tests:** 57 ✅ (67 assertions) — PHPUnit  

@@ -1,30 +1,36 @@
-# Migration Guide: v0.16.x → v0.20.0
+# Migration Guide: v0.20.x → v0.21.0
 
 ## Overview
 
-This guide helps you upgrade from SiroPHP v0.16.x to v0.20.0. The upgrade is **backward compatible** with no breaking changes, but includes important improvements and new features.
+This guide helps you upgrade from SiroPHP v0.20.x (or v0.16.x) to v0.21.0. The upgrade is **backward compatible** with no breaking changes, but includes critical bug fixes and server deployment optimizations.
 
 ---
 
-## 🚀 What's New in v0.20.0
+## 🚀 What's New in v0.21.0
 
-### Major Additions
+### Critical Bug Fixes
 
-1. **BenchmarkCommand** - Performance benchmarking CLI tool
-   ```bash
-   php siro benchmark --iterations=1000 --json
-   ```
+1. **Fixed `php://input` double-read** - JSON body was always empty due to Request.php + JsonMiddleware reading stream twice
+2. **Fixed JWT_SECRET env cache exclusion** - Cached env now properly loads JWT_SECRET from .env file
+3. **Fixed QueryBuilder cursor pagination** - Positional bindings converted to named bindings for multi-db support
+4. **Fixed QueryBuilder static driverName** - Now uses per-connection driver detection
+5. **Fixed CorsMiddleware** - Respects CORS_ALLOWED_ORIGINS env variable
+6. **Fixed Response::download()** - Prevented newline injection in Content-Disposition filename
+7. **Fixed Validator min/max rules** - Proper type checking for integers, strings, and floats
 
-2. **EnvCacheCommand** - Environment variable caching for production
-   ```bash
-   php siro env:cache
-   ```
+### Security Improvements
 
-3. **SecurityTest Suite** - 30+ security tests included in siro-core
+- **JWT_SECRET rotated** - Old exposed key replaced with new secure key
+- **Hardcoded credentials removed** - UserSeeder now reads from environment variables
+- **Log sanitization enabled** - LOG_SANITIZE_* settings active in production
+- **CORS restricted** - CORS_ALLOWED_ORIGINS limited to localhost by default
 
-4. **HTML Homepage** - Beautiful landing page at root path for browsers
-   - Automatic content negotiation (HTML for browsers, JSON for API clients)
-   - Apache .htaccess support included
+### Server Deployment Optimizations
+
+- **Dockerfile fixed** - key:generate moved from build-time to runtime
+- **APP_DEBUG=false** by default for security
+- **Translation files bundled** - storage/lang/en and storage/lang/vi included
+- **Dead code removed** - Unused controllers and duplicate jobs deleted
 
 ### Improvements
 
