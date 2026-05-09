@@ -117,9 +117,9 @@ final class ComponentExistenceTest extends TestCase
         $this->assertTrue(class_exists(\App\Models\Tag::class));
     }
 
-    public function testHomeControllerExists(): void
+    public function testHomeControllerRemoved(): void
     {
-        $this->assertTrue(class_exists(\App\Controllers\HomeController::class));
+        $this->assertFalse(class_exists(\App\Controllers\HomeController::class));
     }
 
     public function testScheduleClassExists(): void
