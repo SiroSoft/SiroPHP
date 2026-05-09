@@ -1,24 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Binary operation "\+" between mixed and 1 results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: app/Controllers/AuthController.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 4
-			path: app/Controllers/AuthController.php
-
-		-
-			message: '#^Cannot cast mixed to string\.$#'
-			identifier: cast.string
-			count: 4
-			path: app/Controllers/AuthController.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 2
@@ -31,214 +13,10 @@ parameters:
 			path: app/Controllers/AuthController.php
 
 		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 3
-			path: app/Controllers/CategoryController.php
-
-		-
-			message: '#^Parameter \#1 \$item of static method Siro\\Core\\Resource\:\:make\(\) expects array\<string, mixed\>\|Siro\\Core\\Model, mixed given\.$#'
-			identifier: argument.type
-			count: 3
-			path: app/Controllers/CategoryController.php
-
-		-
-			message: '#^Parameter \#1 \$items of static method Siro\\Core\\Resource\:\:collection\(\) expects array\<int, array\<string, mixed\>\|Siro\\Core\\Model\>, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/CategoryController.php
-
-		-
-			message: '#^Parameter \#2 \$meta of method Siro\\Core\\Controller\:\:paginated\(\) expects array\<string, mixed\>, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/CategoryController.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 3
-			path: app/Controllers/OrderController.php
-
-		-
-			message: '#^Parameter \#1 \$item of static method Siro\\Core\\Resource\:\:make\(\) expects array\<string, mixed\>\|Siro\\Core\\Model, mixed given\.$#'
-			identifier: argument.type
-			count: 3
-			path: app/Controllers/OrderController.php
-
-		-
-			message: '#^Parameter \#1 \$items of static method Siro\\Core\\Resource\:\:collection\(\) expects array\<int, array\<string, mixed\>\|Siro\\Core\\Model\>, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/OrderController.php
-
-		-
-			message: '#^Parameter \#2 \$meta of static method Siro\\Core\\Response\:\:paginated\(\) expects array\{page\: int, per_page\: int, total\: int, last_page\: int\}, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/OrderController.php
-
-		-
-			message: '#^Cannot call method toArray\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: app/Controllers/PostController.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 3
-			path: app/Controllers/PostController.php
-
-		-
-			message: '#^Parameter \#1 \$data of static method Siro\\Core\\Response\:\:paginated\(\) expects array\<int, mixed\>, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/PostController.php
-
-		-
-			message: '#^Parameter \#1 \$data of static method Siro\\Core\\Response\:\:success\(\) expects array\<string, mixed\>\|null, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/PostController.php
-
-		-
-			message: '#^Parameter \#1 \$data of static method Siro\\Core\\Response\:\:success\(\) expects array\<string, mixed\>\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/PostController.php
-
-		-
-			message: '#^Parameter \#2 \$meta of static method Siro\\Core\\Response\:\:paginated\(\) expects array\{page\: int, per_page\: int, total\: int, last_page\: int\}, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/PostController.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 3
-			path: app/Controllers/ProductController.php
-
-		-
-			message: '#^Parameter \#1 \$item of static method Siro\\Core\\Resource\:\:make\(\) expects array\<string, mixed\>\|Siro\\Core\\Model, mixed given\.$#'
-			identifier: argument.type
-			count: 3
-			path: app/Controllers/ProductController.php
-
-		-
-			message: '#^Parameter \#1 \$items of static method Siro\\Core\\Resource\:\:collection\(\) expects array\<int, array\<string, mixed\>\|Siro\\Core\\Model\>, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/ProductController.php
-
-		-
-			message: '#^Parameter \#2 \$meta of static method Siro\\Core\\Response\:\:paginated\(\) expects array\{page\: int, per_page\: int, total\: int, last_page\: int\}, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/ProductController.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 3
-			path: app/Controllers/TagController.php
-
-		-
-			message: '#^Parameter \#1 \$item of static method Siro\\Core\\Resource\:\:make\(\) expects array\<string, mixed\>\|Siro\\Core\\Model, mixed given\.$#'
-			identifier: argument.type
-			count: 3
-			path: app/Controllers/TagController.php
-
-		-
-			message: '#^Parameter \#1 \$items of static method Siro\\Core\\Resource\:\:collection\(\) expects array\<int, array\<string, mixed\>\|Siro\\Core\\Model\>, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/TagController.php
-
-		-
-			message: '#^Parameter \#2 \$meta of static method Siro\\Core\\Response\:\:paginated\(\) expects array\{page\: int, per_page\: int, total\: int, last_page\: int\}, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/TagController.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 3
-			path: app/Controllers/UserController.php
-
-		-
-			message: '#^Parameter \#1 \$item of static method Siro\\Core\\Resource\:\:make\(\) expects array\<string, mixed\>\|Siro\\Core\\Model, array given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Controllers/UserController.php
-
-		-
-			message: '#^Parameter \#1 \$item of static method Siro\\Core\\Resource\:\:make\(\) expects array\<string, mixed\>\|Siro\\Core\\Model, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/UserController.php
-
-		-
-			message: '#^Parameter \#1 \$items of static method Siro\\Core\\Resource\:\:collection\(\) expects array\<int, array\<string, mixed\>\|Siro\\Core\\Model\>, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/UserController.php
-
-		-
-			message: '#^Parameter \#2 \$meta of static method Siro\\Core\\Response\:\:paginated\(\) expects array\{page\: int, per_page\: int, total\: int, last_page\: int\}, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/UserController.php
-
-		-
-			message: '#^Cannot access offset ''body'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: app/Jobs/ProcessPendingNotifications.php
-
-		-
-			message: '#^Cannot access offset ''email'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: app/Jobs/ProcessPendingNotifications.php
-
-		-
-			message: '#^Cannot access offset ''subject'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: app/Jobs/ProcessPendingNotifications.php
-
-		-
 			message: '#^Method App\\Jobs\\ProcessPendingNotifications\:\:handle\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Jobs/ProcessPendingNotifications.php
-
-		-
-			message: '#^Parameter \#1 \$address of static method Siro\\Core\\Mail\:\:to\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Jobs/ProcessPendingNotifications.php
-
-		-
-			message: '#^Parameter \#1 \$string of function htmlspecialchars expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Jobs/ProcessPendingNotifications.php
-
-		-
-			message: '#^Parameter \#1 \$subject of method Siro\\Core\\Mail\:\:subject\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Jobs/ProcessPendingNotifications.php
-
-		-
-			message: '#^Cannot cast mixed to string\.$#'
-			identifier: cast.string
-			count: 2
-			path: app/Jobs/SendWelcomeEmail.php
 
 		-
 			message: '#^Method App\\Jobs\\SendWelcomeEmail\:\:handle\(\) has parameter \$data with no value type specified in iterable type array\.$#'
@@ -247,70 +25,10 @@ parameters:
 			path: app/Jobs/SendWelcomeEmail.php
 
 		-
-			message: '#^Part \$name \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 1
-			path: app/Mails/WelcomeMail.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 6
-			path: app/Middleware/AuthMiddleware.php
-
-		-
-			message: '#^Cannot cast mixed to string\.$#'
-			identifier: cast.string
-			count: 4
-			path: app/Middleware/AuthMiddleware.php
-
-		-
 			message: '#^Offset 1 on array\{non\-falsy\-string, non\-empty\-string\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Middleware/AuthMiddleware.php
-
-		-
-			message: '#^Parameter \#1 \$string of function strtolower expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Middleware/JsonMiddleware.php
-
-		-
-			message: '#^Cannot call method header\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 7
-			path: app/Middleware/SecurityHeadersMiddleware.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 1
-			path: app/Middleware/SecurityHeadersMiddleware.php
-
-		-
-			message: '#^Method App\\Middleware\\SecurityHeadersMiddleware\:\:handle\(\) should return Siro\\Core\\Response but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Middleware/SecurityHeadersMiddleware.php
-
-		-
-			message: '#^Cannot access offset 0 on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: app/Middleware/ThrottleMiddleware.php
-
-		-
-			message: '#^Cannot access offset 1 on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: app/Middleware/ThrottleMiddleware.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 4
-			path: app/Middleware/ThrottleMiddleware.php
 
 		-
 			message: '#^Caught class App\\Middleware\\Throwable not found\.$#'
@@ -333,18 +51,6 @@ parameters:
 		-
 			message: '#^Method App\\Repositories\\CategoryRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/CategoryRepository.php
-
-		-
-			message: '#^Parameter \#1 \$attributes of method Siro\\Core\\Model\:\:update\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Repositories/CategoryRepository.php
-
-		-
-			message: '#^Parameter \#1 \$attributes of static method Siro\\Core\\Model\:\:create\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Repositories/CategoryRepository.php
 
@@ -373,18 +79,6 @@ parameters:
 			path: app/Repositories/OrderRepository.php
 
 		-
-			message: '#^Parameter \#1 \$attributes of method Siro\\Core\\Model\:\:update\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Repositories/OrderRepository.php
-
-		-
-			message: '#^Parameter \#1 \$attributes of static method Siro\\Core\\Model\:\:create\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Repositories/OrderRepository.php
-
-		-
 			message: '#^Method App\\Repositories\\PostRepository\:\:findAll\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -407,30 +101,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Repositories/PostRepository.php
-
-		-
-			message: '#^Parameter \#1 \$attributes of method Siro\\Core\\Model\:\:update\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Repositories/PostRepository.php
-
-		-
-			message: '#^Parameter \#1 \$attributes of static method Siro\\Core\\Model\:\:create\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Repositories/PostRepository.php
-
-		-
-			message: '#^Binary operation "\." between ''%%'' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: app/Repositories/ProductRepository.php
-
-		-
-			message: '#^Cannot cast mixed to float\.$#'
-			identifier: cast.double
-			count: 2
-			path: app/Repositories/ProductRepository.php
 
 		-
 			message: '#^Method App\\Repositories\\ProductRepository\:\:findAll\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
@@ -457,30 +127,6 @@ parameters:
 			path: app/Repositories/ProductRepository.php
 
 		-
-			message: '#^Parameter \#1 \$attributes of method Siro\\Core\\Model\:\:update\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Repositories/ProductRepository.php
-
-		-
-			message: '#^Parameter \#1 \$attributes of static method Siro\\Core\\Model\:\:create\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Repositories/ProductRepository.php
-
-		-
-			message: '#^Parameter \#1 \$column of method Siro\\Core\\DB\\QueryBuilder\:\:orderBy\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Repositories/ProductRepository.php
-
-		-
-			message: '#^Parameter \#2 \$direction of method Siro\\Core\\DB\\QueryBuilder\:\:orderBy\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Repositories/ProductRepository.php
-
-		-
 			message: '#^Method App\\Repositories\\TagRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -495,18 +141,6 @@ parameters:
 		-
 			message: '#^Method App\\Repositories\\TagRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/TagRepository.php
-
-		-
-			message: '#^Parameter \#1 \$attributes of method Siro\\Core\\Model\:\:update\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Repositories/TagRepository.php
-
-		-
-			message: '#^Parameter \#1 \$attributes of static method Siro\\Core\\Model\:\:create\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Repositories/TagRepository.php
 
@@ -527,36 +161,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Repositories/UserRepository.php
-
-		-
-			message: '#^Parameter \#1 \$attributes of method Siro\\Core\\Model\:\:update\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Repositories/UserRepository.php
-
-		-
-			message: '#^Parameter \#1 \$attributes of static method Siro\\Core\\Model\:\:create\(\) expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Repositories/UserRepository.php
-
-		-
-			message: '#^Cannot cast mixed to float\.$#'
-			identifier: cast.double
-			count: 1
-			path: app/Resources/OrderResource.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 1
-			path: app/Resources/OrderResource.php
-
-		-
-			message: '#^Cannot cast mixed to string\.$#'
-			identifier: cast.string
-			count: 5
-			path: app/Resources/OrderResource.php
 
 		-
 			message: '#^Method App\\Services\\CategoryService\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
@@ -601,24 +205,6 @@ parameters:
 			path: app/Services/OrderService.php
 
 		-
-			message: '#^Cannot access offset ''image'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: app/Services/PostService.php
-
-		-
-			message: '#^Cannot call method store\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Services/PostService.php
-
-		-
-			message: '#^Cannot call method toArray\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: app/Services/PostService.php
-
-		-
 			message: '#^Method App\\Services\\PostService\:\:create\(\) has parameter \$validated with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -649,30 +235,6 @@ parameters:
 			path: app/Services/PostService.php
 
 		-
-			message: '#^Method App\\Services\\PostService\:\:update\(\) should return array\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/PostService.php
-
-		-
-			message: '#^Parameter \#1 \$path of static method Siro\\Core\\Storage\:\:delete\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/PostService.php
-
-		-
-			message: '#^Cannot cast mixed to float\.$#'
-			identifier: cast.double
-			count: 2
-			path: app/Services/ProductService.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 2
-			path: app/Services/ProductService.php
-
-		-
 			message: '#^Method App\\Services\\ProductService\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -697,12 +259,6 @@ parameters:
 			path: app/Services/ProductService.php
 
 		-
-			message: '#^Parameter \#1 \$string of function strtolower expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Services/ProductService.php
-
-		-
 			message: '#^Method App\\Services\\TagService\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -721,24 +277,6 @@ parameters:
 			path: app/Services/TagService.php
 
 		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: app/Services/UserService.php
-
-		-
-			message: '#^Cannot call method toArray\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: app/Services/UserService.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 1
-			path: app/Services/UserService.php
-
-		-
 			message: '#^Method App\\Services\\UserService\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -747,12 +285,6 @@ parameters:
 		-
 			message: '#^Method App\\Services\\UserService\:\:create\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/UserService.php
-
-		-
-			message: '#^Method App\\Services\\UserService\:\:create\(\) should return array but returns mixed\.$#'
-			identifier: return.type
 			count: 1
 			path: app/Services/UserService.php
 
@@ -775,88 +307,16 @@ parameters:
 			path: app/Services/UserService.php
 
 		-
-			message: '#^Method App\\Services\\UserService\:\:update\(\) should return array\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Services/UserService.php
-
-		-
-			message: '#^Parameter \#1 \$password of function password_hash expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Services/UserService.php
-
-		-
-			message: '#^Parameter \#1 \$string of function trim expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 2
-			path: app/Services/UserService.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 2
 			path: app/Services/UserService.php
 
 		-
-			message: '#^Parameter \#2 \$string of function explode expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 3
-			path: config/cors.php
-
-		-
 			message: '#^Call to an undefined method Siro\\Core\\DB\\Blueprint\:\:dropColumn\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: database/migrations/20260508000000_add_role_to_users_table.php
-
-		-
-			message: '#^Cannot access property \$router on mixed\.$#'
-			identifier: property.nonObject
-			count: 3
-			path: routes/api.php
-
-		-
-			message: '#^Cannot call method cache\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: routes/api.php
-
-		-
-			message: '#^Cannot call method delete\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 6
-			path: routes/api.php
-
-		-
-			message: '#^Cannot call method get\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 16
-			path: routes/api.php
-
-		-
-			message: '#^Cannot call method group\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: routes/api.php
-
-		-
-			message: '#^Cannot call method middleware\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 22
-			path: routes/api.php
-
-		-
-			message: '#^Cannot call method post\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 14
-			path: routes/api.php
-
-		-
-			message: '#^Cannot call method put\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 6
-			path: routes/api.php
 
 		-
 			message: '#^Cannot cast array\<string, mixed\> to string\.$#'
@@ -866,18 +326,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$content of static method Siro\\Core\\Response\:\:raw\(\) expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: routes/api.php
-
-		-
-			message: '#^Parameter \#1 \$haystack of function str_contains expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: routes/api.php
-
-		-
-			message: '#^Parameter \#1 \$locale of static method Siro\\Core\\Lang\:\:setLocale\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: routes/api.php
@@ -893,36 +341,6 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: routes/api.php
-
-		-
-			message: '#^Cannot call method call\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: routes/schedule.php
-
-		-
-			message: '#^Cannot call method command\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: routes/schedule.php
-
-		-
-			message: '#^Cannot call method daily\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: routes/schedule.php
-
-		-
-			message: '#^Cannot call method everyMinute\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: routes/schedule.php
-
-		-
-			message: '#^Cannot call method hourly\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: routes/schedule.php
 
 		-
 			message: '#^Variable \$schedule might not be defined\.$#'
@@ -1015,24 +433,6 @@ parameters:
 			path: tests/TestCase.php
 
 		-
-			message: '#^Parameter \#4 \$headers of class Siro\\Core\\Request constructor expects array\<string, string\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: tests/TestCase.php
-
-		-
-			message: '#^Parameter \#5 \$jsonBody of class Siro\\Core\\Request constructor expects array\<string, mixed\>, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: tests/TestCase.php
-
-		-
-			message: '#^Property App\\Tests\\TestResponse\:\:\$parsedBody \(array\|null\) does not accept mixed\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: tests/TestCase.php
-
-		-
 			message: '#^Property App\\Tests\\TestResponse\:\:\$parsedBody type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1087,12 +487,6 @@ parameters:
 			path: tests/feature/AdvancedCronTest.php
 
 		-
-			message: '#^Cannot access offset ''version'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/feature/AuthApiTest.php
-
-		-
 			message: '#^Method App\\Tests\\Feature\\EagerTestUser\:\:posts\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -1109,36 +503,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: tests/feature/FileDownloadTest.php
-
-		-
-			message: '#^Cannot access offset ''database'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/feature/HealthTest.php
-
-		-
-			message: '#^Cannot access offset ''php'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/feature/HealthTest.php
-
-		-
-			message: '#^Cannot access offset ''status'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/feature/HealthTest.php
-
-		-
-			message: '#^Cannot access offset ''time'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/feature/HealthTest.php
-
-		-
-			message: '#^Cannot access offset ''version'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/feature/HealthTest.php
 
 		-
 			message: '#^Access to an undefined property Siro\\Core\\Model@anonymous/tests/feature/MassAssignmentTest\.php\:31\:\:\$email\.$#'
@@ -1171,14 +535,8 @@ parameters:
 			path: tests/feature/MassAssignmentTest.php
 
 		-
-			message: '#^Cannot access property \$name on Siro\\Core\\Model@anonymous/tests/feature/MassAssignmentTest\.php\:53\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: tests/feature/MassAssignmentTest.php
-
-		-
-			message: '#^Parameter \#1 \$id of static method Siro\\Core\\Model\:\:find\(\) expects int\|string, mixed given\.$#'
-			identifier: argument.type
+			message: '#^Access to an undefined property Siro\\Core\\Model@anonymous/tests/feature/MassAssignmentTest\.php\:53\:\:\$name\.$#'
+			identifier: property.notFound
 			count: 1
 			path: tests/feature/MassAssignmentTest.php
 
@@ -1207,54 +565,6 @@ parameters:
 			path: tests/feature/QueueTimeoutTest.php
 
 		-
-			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: tests/feature/RealUserApiE2eTest.php
-
-		-
-			message: '#^Cannot access offset ''data'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 8
-			path: tests/feature/RealUserApiE2eTest.php
-
-		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 5
-			path: tests/feature/RealUserApiE2eTest.php
-
-		-
-			message: '#^Cannot access offset ''items'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/feature/RealUserApiE2eTest.php
-
-		-
-			message: '#^Cannot access offset ''meta'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: tests/feature/RealUserApiE2eTest.php
-
-		-
-			message: '#^Cannot access offset ''success'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/feature/RealUserApiE2eTest.php
-
-		-
-			message: '#^Cannot access offset ''token'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/feature/RealUserApiE2eTest.php
-
-		-
-			message: '#^Cannot call method send\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: tests/feature/RealUserApiE2eTest.php
-
-		-
 			message: '#^Method App\\Tests\\Feature\\RealUserApiE2eTest\:\:getResponseBody\(\) has parameter \$response with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -1264,30 +574,6 @@ parameters:
 			message: '#^Method App\\Tests\\Feature\\RealUserApiE2eTest\:\:getResponseBody\(\) should return string but returns string\|false\.$#'
 			identifier: return.type
 			count: 1
-			path: tests/feature/RealUserApiE2eTest.php
-
-		-
-			message: '#^Parameter \#1 \$array of function array_keys expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: tests/feature/RealUserApiE2eTest.php
-
-		-
-			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) expects array\<mixed\>\|ArrayAccess\<\(int\|string\), mixed\>, mixed given\.$#'
-			identifier: argument.type
-			count: 4
-			path: tests/feature/RealUserApiE2eTest.php
-
-		-
-			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayNotHasKey\(\) expects array\<mixed\>\|ArrayAccess\<\(int\|string\), mixed\>, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: tests/feature/RealUserApiE2eTest.php
-
-		-
-			message: '#^Part \$id \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 13
 			path: tests/feature/RealUserApiE2eTest.php
 
 		-
@@ -1315,30 +601,6 @@ parameters:
 			path: tests/feature/ResourcePatternTest.php
 
 		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/feature/RouteConstraintsTest.php
-
-		-
-			message: '#^Cannot access offset ''name'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/feature/RouteConstraintsTest.php
-
-		-
-			message: '#^Cannot call method get\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: tests/feature/RouteConstraintsTest.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 1
-			path: tests/feature/RouteConstraintsTest.php
-
-		-
 			message: '#^Parameter \#1 \$data of static method Siro\\Core\\Response\:\:success\(\) expects array\<string, mixed\>\|null, string given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1357,52 +619,10 @@ parameters:
 			path: tests/feature/Rs256JwtTest.php
 
 		-
-			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: tests/feature/TestHelperTest.php
-
-		-
-			message: '#^Cannot access offset ''access_token'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/feature/TestHelperTest.php
-
-		-
 			message: '#^Parameter \#2 \$haystack of method PHPUnit\\Framework\\Assert\:\:assertStringContainsString\(\) expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: tests/feature/ThrottlingMiddlewareTest.php
-
-		-
-			message: '#^Cannot access offset ''database'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/integration/ApiResponseFormatTest.php
-
-		-
-			message: '#^Cannot access offset ''version'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/integration/ApiResponseFormatTest.php
-
-		-
-			message: '#^Cannot access offset ''age'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/integration/DatabaseTest.php
-
-		-
-			message: '#^Cannot access offset ''name'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/integration/DatabaseTest.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 1
-			path: tests/integration/DatabaseTest.php
 
 		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array\<string, string\> will always evaluate to true\.$#'
@@ -1417,27 +637,9 @@ parameters:
 			path: tests/integration/EventTest.php
 
 		-
-			message: '#^Cannot access offset ''key'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/integration/EventTest.php
-
-		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with Siro\\Core\\App will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
 			count: 1
-			path: tests/integration/GeneralIntegrationTest.php
-
-		-
-			message: '#^Parameter \#1 \$string of function strtoupper expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 2
-			path: tests/integration/GeneralIntegrationTest.php
-
-		-
-			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) expects array\<mixed\>\|ArrayAccess\<\(int\|string\), mixed\>, mixed given\.$#'
-			identifier: argument.type
-			count: 2
 			path: tests/integration/GeneralIntegrationTest.php
 
 		-
@@ -1453,12 +655,6 @@ parameters:
 			path: tests/integration/LangTest.php
 
 		-
-			message: '#^Cannot call method statusCode\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: tests/integration/MiddlewareTest.php
-
-		-
 			message: '#^Parameter \#2 \$haystack of method PHPUnit\\Framework\\Assert\:\:assertStringContainsString\(\) expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1468,12 +664,6 @@ parameters:
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
 			count: 1
-			path: tests/integration/QueueMailTest.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 2
 			path: tests/integration/QueueMailTest.php
 
 		-
@@ -1501,18 +691,6 @@ parameters:
 			path: tests/integration/QueueMailTest.php
 
 		-
-			message: '#^Offset ''attempts'' might not exist on array\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: tests/integration/QueueMailTest.php
-
-		-
-			message: '#^Offset ''id'' might not exist on array\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: tests/integration/QueueMailTest.php
-
-		-
 			message: '#^Property App\\Tests\\Integration\\PriorityJob\:\:\$order type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1529,18 +707,6 @@ parameters:
 			identifier: method.alreadyNarrowedType
 			count: 1
 			path: tests/integration/ValidationEdgeTest.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 1
-			path: tests/integration/ValidationEdgeTest.php
-
-		-
-			message: '#^Cannot call method statusCode\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: tests/unit/AuthMiddlewareTest.php
 
 		-
 			message: '#^Call to function method_exists\(\) with ''App\\\\Middleware\\\\AuthMiddleware'' and ''handle'' will always evaluate to true\.$#'
@@ -1567,46 +733,10 @@ parameters:
 			path: tests/unit/ComponentExistenceTest.php
 
 		-
-			message: '#^Cannot access offset ''total'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/unit/ResponseTest.php
-
-		-
 			message: '#^Parameter \#2 \$meta of static method Siro\\Core\\Response\:\:paginated\(\) expects array\{page\: int, per_page\: int, total\: int, last_page\: int\}, array\{page\: 1, total\: 3\} given\.$#'
 			identifier: argument.type
 			count: 1
 			path: tests/unit/ResponseTest.php
-
-		-
-			message: '#^Cannot access offset ''commentId'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/unit/RouterTest.php
-
-		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/unit/RouterTest.php
-
-		-
-			message: '#^Cannot access offset ''postId'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/unit/RouterTest.php
-
-		-
-			message: '#^Cannot call method get\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: tests/unit/RouterTest.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 3
-			path: tests/unit/RouterTest.php
 
 		-
 			message: '#^Parameter \#1 \$data of static method Siro\\Core\\Response\:\:success\(\) expects array\<string, mixed\>\|null, string given\.$#'
