@@ -35,6 +35,7 @@ final class PostController
     public function show(Request $request): Response
     {
         $id = (int) $request->param('id');
+        if ($id <= 0) return Response::error('Invalid id', 422);
         $post = $this->service->getById($id);
 
         if ($post === null) {

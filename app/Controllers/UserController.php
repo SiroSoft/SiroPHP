@@ -40,6 +40,7 @@ final class UserController
     public function show(Request $request): Response
     {
         $id = (int) $request->param('id');
+        if ($id <= 0) return Response::error('Invalid id', 422);
         $user = $this->service->getById($id);
 
         if ($user === null) {
