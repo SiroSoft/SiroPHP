@@ -8,8 +8,8 @@
 
 ### 📁 File Upload Helpers
 - **UploadedFile validation** — `isImage()`, `isPdf()`, `hash()`, `maxSize()`
-- **Request::validateFile()** — Chainable file validation
-- **Response::downloadFromStorage()** — Secure file downloads
+- **Request::validateFile()` — Chainable file validation
+- **Response::downloadFromStorage()` — Secure file downloads
 - **Storage helpers** — `localPath()`, `putFile()`, `copy()`, `size()`, `lastModified()`
 
 ### 🔒 API Reliability
@@ -21,9 +21,14 @@
   - CLI: `make:apikey`
   - Middleware for route protection
 
-### ⚡ Performance
+### ⚡ Performance Optimizations
 - **Batch Operations** — `QueryBuilder::updateWhereIn()`, `deleteWhereIn()`, `insertMany()`
 - **Cursor Pagination** — `QueryBuilder::cursorPaginate()` — stable under concurrent inserts
+- **Lazy DB Connection** — DB connects only on first query, not at boot (~35-40% faster)
+- **Config Caching** — Config files cached, auto-reload on file change
+- **Route Caching** — Routes pre-compiled and cached (`php siro optimize`)
+- **Opcache Preloading** — `preload.php` for 10-20% startup improvement
+- **New CLI** — `config:clear` to clear all caches
 
 ### 🧪 Testing & Quality
 - **siro-core**: 657 tests, 1977 assertions, 33 skipped
