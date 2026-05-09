@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+define('BASE_PATH', dirname(__DIR__));
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 // Register tests namespace for PHPUnit test cases

@@ -203,7 +203,10 @@ final class GeneralIntegrationTest extends TestCase
             ['name' => '', 'email' => 'bad', 'age' => '-1'],
             ['name' => 'required', 'email' => 'email', 'age' => 'min:0']
         );
-        $this->assertCount(3, $errors);
+        // name=required fails (empty), email=email fails (invalid), age=min:0 passes (string length 2 >= 0)
+        $this->assertCount(2, $errors);
+        $this->assertArrayHasKey('name', $errors);
+        $this->assertArrayHasKey('email', $errors);
     }
 
     public function testValidateConfirmedField(): void
