@@ -24,12 +24,9 @@
     <source>
         <include>
             <directory suffix=".php">app</directory>
-            <directory suffix=".php">../siro-core</directory>
         </include>
         <exclude>
-            <directory suffix=".php">../siro-core/tests</directory>
-            <directory suffix=".php">../siro-core/vendor</directory>
-            <directory suffix=".php">../siro-core/Commands</directory>
+            <directory>vendor</directory>
         </exclude>
     </source>
 

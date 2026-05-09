@@ -1,10 +1,10 @@
-﻿# 🚀 Siro API Framework v0.9.0
+﻿# 🚀 Siro API Framework v0.20.0
 
 **The Fastest PHP Micro-Framework Application Skeleton** — Ship a production-ready API with auth in 5 minutes. Built-in DI Container, Config Repository, RBAC support.
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Packagist](https://img.shields.io/badge/packagist-v0.9.0-blue.svg)](https://packagist.org/packages/sirosoft/api)
+[![Packagist](https://img.shields.io/badge/packagist-v0.20.0-blue.svg)](https://packagist.org/packages/sirosoft/api)
 [![Tests](https://img.shields.io/badge/tests-215%20passing-brightgreen.svg)](tests/)
 [![PHPStan](https://img.shields.io/badge/phpstan-level%206-brightgreen.svg)](https://github.com/SiroSoft/siro-core)
 [![PostgreSQL](https://img.shields.io/badge/postgresql-ready-blue.svg)](https://www.postgresql.org/)
@@ -29,7 +29,7 @@
 
 ---
 
-## 🧩 New in v0.16.7
+## 🧩 New in v0.20.0
 
 ### 🔗 Model Relations
 - **HasOne** — One-to-one relationships via `Model::hasOne()`
@@ -543,7 +543,7 @@ class ProductApiTest extends TestCase
 
 ## 📋 Changelog
 
-- **v0.16.0** — DI Container (`Siro\Core\Container`) with autowiring, singleton, interface binding. Config Repository (`Siro\Core\Config`) with dot-notation, caching. 4 middleware moved to core (Auth, Throttle, Cors, Json). RBAC: `auth:admin` role checks in middleware, `make:crud --with-rbac`. New tests: 26 (Container, Config, Middleware). Fixed OrderController, migration for orders table. PHPStan level 6 — 0 errors. **197 tests → 223 tests**
+- **v0.20.0** — Version sync with siro-core, security test suite, advanced benchmarking CLI
 - **v0.15.0** — Schema Builder (driver-agnostic migrations), Multi-DB connections, AES-256 Encryption, HTTP Client, Maintenance mode (`php siro down/up`), Foreign Key constraints, Health endpoint (`GET /health`), Test assertion helpers (`assertStatus`, `assertJson`, `assertDatabaseHas`), PostgreSQL production support, **Production Security** (log sanitization, replay lock, audit trail, log protection, log injection prevention, OpenAPI production lock), **CLI UX Overhaul** (core workflow, `php siro start` onboarding, `t` alias, layered help), Str helper, Hash facade, Collection class, FormRequest, Signed URLs, Task withoutOverlapping, Fake implementations (Queue::fake, Mail::fake, Storage::fake), Queue Dashboard, Fix command (watch + auto-replay), Trace list command, OpenAPI spec generation (dynamic, 35 endpoints, 34 schemas)
 - **v0.14.1** — Service & Repository pattern, PHPUnit test generation, `make:service`, `make:repository`, `make:crud` with full layers
 - **v0.14.0** — `debug:last`, `log:top`, `route:search`, `doctor --prod`, `api:test --loop`
@@ -565,12 +565,13 @@ class ProductApiTest extends TestCase
 
 ---
 
-**Version:** 0.16.6  
+**Version:** 0.20.0  
 **Package:** sirosoft/api  
 **License:** MIT  
-**Tests:** 215 ✅ (336 assertions) — PHPUnit  
-**Core:** sirosoft/core v0.16.2 (243 tests, 359 assertions)  
+**Tests:** 57 ✅ (67 assertions) — PHPUnit  
+**Core:** sirosoft/core v0.20.0 (660+ tests)  
 **PHPStan:** Level 6 ✅ — 0 errors  
-**CLI:** 59 commands — layered UX (core → daily → advanced → system)  
+**CLI:** 51 commands — layered UX (core → daily → advanced → system)  
+**Security:** SecurityTest suite (30+ tests) + BenchmarkCommand  
 
 Created and maintained by **SiroSoft Team**
