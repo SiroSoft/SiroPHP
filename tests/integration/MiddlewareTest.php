@@ -58,10 +58,9 @@ final class MiddlewareTest extends TestCase
         $this->assertFileExists($this->basePath . '/app/Middleware/CorsMiddleware.php');
     }
 
-    public function testThrottleRateLimitDirectoryExists(): void
+    public function testThrottleMiddlewareClassExists(): void
     {
-        $rateLimitDir = $this->basePath . '/storage/rate_limit';
-        $this->assertDirectoryExists($rateLimitDir);
+        $this->assertFileExists($this->basePath . '/app/Middleware/ThrottleMiddleware.php');
     }
 
     public function testCorsConfiguredInEnv(): void
