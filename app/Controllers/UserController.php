@@ -47,7 +47,7 @@ final class UserController extends Controller
 
     public function store(Request $request): Response
     {
-        $request->validate([
+        $this->validate([
             'name' => 'required|min:3|max:120',
             'email' => 'required|email|max:255',
             'password' => 'required|min:6|max:255',
@@ -75,7 +75,7 @@ final class UserController extends Controller
             'email' => 'email|max:255',
             'password' => 'min:6|max:255',
         ];
-        $request->validate($rules);
+        $this->validate($rules);
 
         try {
             $userData = $this->service->update($id, $request->all());

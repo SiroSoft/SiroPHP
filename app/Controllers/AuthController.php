@@ -18,7 +18,7 @@ final class AuthController extends Controller
 {
     public function register(Request $request): Response
     {
-        $request->validate([
+        $this->validate([
             'name' => 'required|min:3|max:120',
             'email' => 'required|email|max:255',
             'password' => 'required|min:8|max:255|confirmed',
@@ -66,7 +66,7 @@ final class AuthController extends Controller
 
     public function login(Request $request): Response
     {
-        $request->validate([
+        $this->validate([
             'email' => 'required|email|max:255',
             'password' => 'required|min:6|max:255',
         ]);
@@ -103,7 +103,7 @@ final class AuthController extends Controller
 
     public function refresh(Request $request): Response
     {
-        $request->validate(['refresh_token' => 'required']);
+        $this->validate(['refresh_token' => 'required']);
 
         $refreshToken = $request->string('refresh_token');
 
@@ -177,7 +177,7 @@ final class AuthController extends Controller
 
     public function verifyEmail(Request $request): Response
     {
-        $request->validate(['token' => 'required']);
+        $this->validate(['token' => 'required']);
 
         $token = $request->string('token');
 
@@ -198,7 +198,7 @@ final class AuthController extends Controller
 
     public function forgotPassword(Request $request): Response
     {
-        $request->validate(['email' => 'required|email']);
+        $this->validate(['email' => 'required|email']);
 
         $email = strtolower(trim($request->string('email')));
 
@@ -218,7 +218,7 @@ final class AuthController extends Controller
 
     public function resetPassword(Request $request): Response
     {
-        $request->validate([
+        $this->validate([
             'token' => 'required',
             'password' => 'required|min:6|max:255',
         ]);

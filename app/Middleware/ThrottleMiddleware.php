@@ -185,8 +185,6 @@ final class ThrottleMiddleware implements MiddlewareInterface
                 'throttle' => ['Rate limiter fallback processing failed'],
             ]);
         }
-
-        return $next($request);
     }
 
     private function redis(): ?\Redis
