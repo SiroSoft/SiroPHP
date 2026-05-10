@@ -1,18 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Call to method insert\(\) on an unknown class Siro\\Core\\QueryBuilder\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Controllers/AuthController.php
-
-		-
-			message: '#^Call to method where\(\) on an unknown class Siro\\Core\\QueryBuilder\.$#'
-			identifier: class.notFound
-			count: 2
-			path: app/Controllers/AuthController.php
-
-		-
 			message: '#^Parameter \#2 \$meta of method Siro\\Core\\Controller\:\:paginated\(\) expects array\{page\: int, per_page\: int, total\: int, last_page\: int\}, array\<string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -41,9 +29,3 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Controllers/TagController.php
-
-		-
-			message: '#^Call to method insert\(\) on an unknown class Siro\\Core\\QueryBuilder\.$#'
-			identifier: class.notFound
-			count: 1
-			path: database/seeds/UserSeeder.php
