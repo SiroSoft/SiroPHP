@@ -52,7 +52,7 @@ final class AuthController extends Controller
 
         return $this->created([
             'id' => $userId,
-            'name' => $request->string('name'),
+            'name' => htmlspecialchars($request->string('name'), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
             'email' => $email,
             'access_token' => $tokens['token'],
             'token_type' => 'Bearer',

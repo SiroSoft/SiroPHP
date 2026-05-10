@@ -127,6 +127,8 @@ abstract class TestCase extends BaseTestCase
 
         $app = new App($this->basePath);
         $app->boot();
+        $_ENV['THROTTLE_FALLBACK'] = 'disabled';
+        putenv('THROTTLE_FALLBACK=disabled');
         $app->loadRoutes($this->basePath . '/routes/api.php');
 
         // Run migrations after boot so Database is configured

@@ -49,7 +49,7 @@ final class ProductController extends Controller
     {
         $validated = $this->validate([
             'name' => 'required|min:1|max:255',
-            'description' => 'max:5000000',
+            'description' => 'max:65535',
             'price' => 'numeric|min:0',
             'stock' => 'integer',
             'category' => 'max:100',

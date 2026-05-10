@@ -50,6 +50,11 @@ final class OrderController extends Controller
         ]);
 
         $items = $request->input('items');
+        if ($items !== null && !is_array($items)) {
+            return $this->error('Validation failed', 422, [
+                'items' => ['Items must be an array'],
+            ]);
+        }
         $validated['items'] = is_array($items) ? $items : '[]';
 
         $order = $this->service->create($validated);

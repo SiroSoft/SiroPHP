@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Resources\PostResource;
 use App\Services\PostService;
 use Siro\Core\Controller;
 use Siro\Core\Request;
@@ -23,7 +24,11 @@ final class PostController extends Controller
             (int) $request->query('per_page', 20)
         );
 
-        return $this->paginated($result['data'], $result['meta'], 'Posts list');
+        return $this->paginated(
+            PostResource::collection($result['data']),
+            $result['meta'],
+            'Posts list'
+        );
     }
 
     public function show(Request $request): Response
@@ -36,7 +41,7 @@ final class PostController extends Controller
             return $this->error($this->service->notFoundMessage(), 404);
         }
 
-        return $this->success($post->toArray(), 'Post detail');
+        return $this->success(PostResource::make($post->toArray()), 'Post detail');
     }
 
     public function store(Request $request): Response
@@ -51,7 +56,7 @@ final class PostController extends Controller
         $file = $request->file('image');
         $post = $this->service->create($validated, $file);
 
-        return $this->created($post->toArray(), 'Post created');
+        return $this->created(PostResource::make($post->toArray()), 'Post created');
     }
 
     public function update(Request $request): Response
@@ -70,7 +75,7 @@ final class PostController extends Controller
             return $this->error('Post not found', 404);
         }
 
-        return $this->success($post, 'Post updated');
+        return $this->success(PostResource::make($post), 'Post updated');
     }
 
     public function delete(Request $request): Response

@@ -26,16 +26,15 @@ final class SendWelcomeEmail
             return;
         }
 
-        $html = <<<HTML
-<!DOCTYPE html>
+        $safeName = htmlspecialchars($name, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $html = '<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"></head>
 <body style="font-family: sans-serif; padding: 20px;">
-    <h1>Welcome, {htmlspecialchars($name, ENT_QUOTES | ENT_HTML5, 'UTF-8')}!</h1>
-    <p>Thank you for registering. We're excited to have you on board.</p>
+    <h1>Welcome, ' . $safeName . '!</h1>
+    <p>Thank you for registering. We\'re excited to have you on board.</p>
 </body>
-</html>
-HTML;
+</html>';
 
         Mail::to($email)
             ->subject('Welcome to our platform!')
