@@ -4,36 +4,43 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Exceptions\DuplicateEmailException;
+use App\Exceptions\NoFieldsToUpdateException;
+use App\Models\User;
 use App\Repositories\UserRepository;
 
-/**
- * User business logic layer (admin).
- *
- * Handles email uniqueness validation, password hashing,
- * and partial field updates.
- */
 final class UserService
 {
     public function __construct(private readonly UserRepository $repo)
     {
     }
 
-    /** Get paginated list of all users. */
-    public function getAll(int $page = 1, int $perPage = 15): array
+    public static function incrementTokenVersion(int $userId): bool
     {
-        return $this->repo->findAll($page, $perPage);
+        if ($userId <= 0) {
+            return false;
+        }
+
+        $user = User::find($userId);
+        if ($user === null) {
+            return false;
+        }
+
+        return $user->update(['token_version' => ($user->token_version ?? 0) + 1]) > 0;
     }
 
-    /** Find a user by ID or null if not found. */
+    public function getAll(int $page = 1, int $perPage = 15): array
+    {
+        return $this->repo->findAll([], $page, $perPage);
+    }
+
     public function getById(int $id): mixed
     {
         return $this->repo->findById($id);
     }
 
     /**
-     * Create a new user.
-     *
-     * @throws \RuntimeException if email already exists
+     * @throws DuplicateEmailException
      */
     public function create(array $data): array
     {
@@ -41,7 +48,7 @@ final class UserService
 
         $existing = $this->repo->findByEmail($email);
         if ($existing !== null) {
-            throw new \RuntimeException('Email has already been taken');
+            throw new DuplicateEmailException($email);
         }
 
         $passwordHash = password_hash($data['password'], \PASSWORD_DEFAULT);
@@ -61,9 +68,8 @@ final class UserService
     }
 
     /**
-     * Update a user. Only provided fields are updated.
-     *
-     * @throws \RuntimeException if email already exists or no fields provided
+     * @throws DuplicateEmailException
+     * @throws NoFieldsToUpdateException
      */
     public function update(int $id, array $data): ?array
     {
@@ -80,7 +86,7 @@ final class UserService
             $email = strtolower(trim($data['email']));
             $existing = $this->repo->findByEmail($email);
             if ($existing !== null && (int) $existing->toArray()['id'] !== $id) {
-                throw new \RuntimeException('Email has already been taken');
+                throw new DuplicateEmailException($email);
             }
             $updateData['email'] = $email;
         }
@@ -94,7 +100,7 @@ final class UserService
         }
 
         if ($updateData === []) {
-            throw new \RuntimeException('No fields to update');
+            throw new NoFieldsToUpdateException();
         }
 
         $this->repo->update($id, $updateData);
@@ -103,7 +109,6 @@ final class UserService
         return $updated ? $updated->toArray() : null;
     }
 
-    /** Delete a user. Returns true if deleted, false if not found. */
     public function delete(int $id): bool
     {
         return $this->repo->destroy($id);

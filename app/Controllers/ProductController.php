@@ -4,24 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Services\ProductService;
 use App\Resources\ProductResource;
+use App\Services\ProductService;
+use Siro\Core\Controller;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
-/**
- * Product CRUD controller with advanced filtering.
- *
- * Provides category, status, price range, search filtering
- * with configurable sorting and pagination.
- */
-final class ProductController
+final class ProductController extends Controller
 {
     public function __construct(private readonly ProductService $service)
     {
     }
 
-    /** List products with optional filters (category, status, price, search, sort). */
     public function index(Request $request): Response
     {
         $perPage = min($request->queryInt('per_page', 20), 100);
@@ -29,33 +23,31 @@ final class ProductController
 
         $result = $this->service->getAll($request->all(), $page, $perPage);
 
-        return Response::paginated(
+        return $this->paginated(
             ProductResource::collection($result['data']),
             $result['meta'],
             'Products list',
         );
     }
 
-    /** Get a single product by ID. */
     public function show(Request $request): Response
     {
         $id = (int) $request->param('id');
         if ($id <= 0) {
-            return Response::error('Invalid id', 422);
+            return $this->error('Invalid id', 422);
         }
 
         $item = $this->service->getById($id);
         if ($item === null) {
-            return Response::error('Product not found', 404);
+            return $this->error('Product not found', 404);
         }
 
-        return Response::success(ProductResource::make($item), 'Product fetched');
+        return $this->success(ProductResource::make($item), 'Product fetched');
     }
 
-    /** Create a new product. */
     public function store(Request $request): Response
     {
-        $validated = $request->validate([
+        $validated = $this->validate([
             'name' => 'required|min:1|max:255',
             'description' => 'max:5000000',
             'price' => 'numeric|min:0',
@@ -65,18 +57,17 @@ final class ProductController
         ]);
 
         $item = $this->service->create($validated);
-        return Response::created(ProductResource::make($item), 'Product created');
+        return $this->created(ProductResource::make($item), 'Product created');
     }
 
-    /** Update a product. Only provided fields are updated. */
     public function update(Request $request): Response
     {
         $id = (int) $request->param('id');
         if ($id <= 0) {
-            return Response::error('Invalid id', 422);
+            return $this->error('Invalid id', 422);
         }
 
-        $validated = $request->validate([
+        $validated = $this->validate([
             'name' => 'min:1|max:255',
             'description' => 'max:65535',
             'price' => 'numeric',
@@ -87,22 +78,21 @@ final class ProductController
 
         $item = $this->service->update($id, $validated);
         if ($item === null) {
-            return Response::error('Product not found', 404);
+            return $this->error('Product not found', 404);
         }
 
-        return Response::success(ProductResource::make($item), 'Product updated');
+        return $this->success(ProductResource::make($item), 'Product updated');
     }
 
-    /** Delete a product. */
     public function delete(Request $request): Response
     {
         $id = (int) $request->param('id');
         if ($id <= 0) {
-            return Response::error('Invalid id', 422);
+            return $this->error('Invalid id', 422);
         }
 
         return $this->service->delete($id)
-            ? Response::noContent()
-            : Response::error('Product not found', 404);
+            ? $this->noContent()
+            : $this->error('Product not found', 404);
     }
 }

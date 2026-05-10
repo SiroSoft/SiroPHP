@@ -5,24 +5,16 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Models\User;
-use App\Services\User as UserService;
+use App\Services\UserService;
 use Siro\Core\Auth\JWT;
+use Siro\Core\Controller;
 use Siro\Core\DB;
 use Siro\Core\Env;
 use Siro\Core\Request;
 use Siro\Core\Response;
 use Throwable;
 
-/**
- * Authentication controller.
- *
- * Handles user registration, login, JWT refresh, logout,
- * email verification, forgot/reset password, and profile retrieval.
- *
- * @package App\Controllers
- */
-
-final class AuthController
+final class AuthController extends Controller
 {
     public function register(Request $request): Response
     {
@@ -34,17 +26,16 @@ final class AuthController
 
         $email = strtolower(trim($request->string('email')));
 
-        // Check if email already exists
         $rows = User::where('email', '=', $email)->limit(1)->get();
         if ($rows !== []) {
-            return Response::error('Validation failed', 422, [
+            return $this->error('Validation failed', 422, [
                 'email' => ['Email has already been taken'],
             ]);
         }
 
         $passwordHash = password_hash($request->string('password'), PASSWORD_DEFAULT);
         if ($passwordHash === false) {
-            return Response::error('Unable to create account', 500);
+            return $this->error('Unable to create account', 500);
         }
 
         try {
@@ -56,13 +47,13 @@ final class AuthController
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
         } catch (Throwable) {
-            return Response::error('Unable to create account', 500);
+            return $this->error('Unable to create account', 500);
         }
 
         $userId = (int) $user->id;
         $tokens = $this->tokenPair($userId);
 
-        return Response::created([
+        return $this->created([
             'id' => $userId,
             'name' => $request->string('name'),
             'email' => $email,
@@ -85,21 +76,21 @@ final class AuthController
         $userData = $rows[0] ?? null;
 
         if ($userData === null || !isset($userData['password']) || !is_string($userData['password'])) {
-            return Response::error('Invalid credentials', 401);
+            return $this->error('Invalid credentials', 401);
         }
 
         if ((int) ($userData['status'] ?? 0) !== 1) {
-            return Response::error('Account is inactive', 403);
+            return $this->error('Account is inactive', 403);
         }
 
         if (!password_verify($request->string('password'), $userData['password'])) {
-            return Response::error('Invalid credentials', 401);
+            return $this->error('Invalid credentials', 401);
         }
 
         $userId = (int) $userData['id'];
         $tokens = $this->tokenPair($userId);
 
-        return Response::success([
+        return $this->success([
             'id' => $userId,
             'name' => (string) ($userData['name'] ?? ''),
             'email' => (string) ($userData['email'] ?? ''),
@@ -119,38 +110,36 @@ final class AuthController
         try {
             $claims = JWT::decode($refreshToken);
         } catch (Throwable) {
-            return Response::error('Invalid or expired refresh token', 401);
+            return $this->error('Invalid or expired refresh token', 401);
         }
 
         if (($claims['type'] ?? '') !== JWT::TYPE_REFRESH) {
-            return Response::error('Invalid token type', 401);
+            return $this->error('Invalid token type', 401);
         }
 
         $userId = (int) ($claims['sub'] ?? 0);
         $jti = (string) ($claims['jti'] ?? '');
 
         if ($userId <= 0 || $jti === '') {
-            return Response::error('Invalid token', 401);
+            return $this->error('Invalid token', 401);
         }
 
-        // Check refresh token was not revoked
         $stored = DB::table('refresh_tokens')
             ->where('jti', '=', $jti)
             ->where('revoked', '=', 0)
             ->first();
 
         if ($stored === null) {
-            return Response::error('Refresh token revoked', 401);
+            return $this->error('Refresh token revoked', 401);
         }
 
-        // Revoke old refresh token (rotation)
         DB::table('refresh_tokens')
             ->where('jti', '=', $jti)
             ->update(['revoked' => 1]);
 
         $tokens = $this->tokenPair($userId);
 
-        return Response::success([
+        return $this->success([
             'token' => $tokens['token'],
             'refresh_token' => $tokens['refresh_token'],
             'token_type' => 'Bearer',
@@ -162,11 +151,12 @@ final class AuthController
     {
         $user = $request->user();
         if ($user === null) {
-            return Response::error('Unauthorized', 401);
+            return $this->error('Unauthorized', 401);
         }
 
-        unset($user['claims']);
-        return Response::success($user, 'Authenticated user');
+        $safeUser = $user;
+        unset($safeUser['claims']);
+        return $this->success($safeUser, 'Authenticated user');
     }
 
     public function logout(Request $request): Response
@@ -175,14 +165,14 @@ final class AuthController
         $userId = (int) ($user['id'] ?? 0);
 
         if ($userId <= 0) {
-            return Response::error('Unauthorized', 401);
+            return $this->error('Unauthorized', 401);
         }
 
         if (!UserService::incrementTokenVersion($userId)) {
-            return Response::error('Unable to revoke token', 500);
+            return $this->error('Unable to revoke token', 500);
         }
 
-        return Response::success(null, 'Logout successful. Token revoked.');
+        return $this->success(null, 'Logout successful. Token revoked.');
     }
 
     public function verifyEmail(Request $request): Response
@@ -191,12 +181,11 @@ final class AuthController
 
         $token = $request->string('token');
 
-        // Find user by verification token and hydrate to Model
         $rows = User::where('verification_token', '=', $token)->limit(1)->get();
         $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
 
         if ($user === null) {
-            return Response::error('Invalid verification token', 400);
+            return $this->error('Invalid verification token', 400);
         }
 
         $user->update([
@@ -204,7 +193,7 @@ final class AuthController
             'verification_token' => null,
         ]);
 
-        return Response::success(null, 'Email verified successfully');
+        return $this->success(null, 'Email verified successfully');
     }
 
     public function forgotPassword(Request $request): Response
@@ -213,7 +202,6 @@ final class AuthController
 
         $email = strtolower(trim($request->string('email')));
 
-        // Find user by email and hydrate to Model
         $rows = User::where('email', '=', $email)->limit(1)->get();
         $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
 
@@ -225,8 +213,7 @@ final class AuthController
             ]);
         }
 
-        // Always return success to prevent email enumeration
-        return Response::success(null, 'If the email exists, a reset link has been sent.');
+        return $this->success(null, 'If the email exists, a reset link has been sent.');
     }
 
     public function resetPassword(Request $request): Response
@@ -238,24 +225,23 @@ final class AuthController
 
         $token = $request->string('token');
 
-        // Find user by reset token and hydrate to Model
         $rows = User::where('password_reset_token', '=', $token)->limit(1)->get();
         $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
 
         if ($user === null) {
-            return Response::error('Invalid or expired reset token', 400);
+            return $this->error('Invalid or expired reset token', 400);
         }
 
         $userData = $user->toArray();
         $expiresAt = (string) ($userData['password_reset_expires_at'] ?? '');
 
         if ($expiresAt !== '' && strtotime($expiresAt) < time()) {
-            return Response::error('Reset token has expired', 400);
+            return $this->error('Reset token has expired', 400);
         }
 
         $passwordHash = password_hash($request->string('password'), PASSWORD_DEFAULT);
         if ($passwordHash === false) {
-            return Response::error('Unable to reset password', 500);
+            return $this->error('Unable to reset password', 500);
         }
 
         $user->update([
@@ -265,10 +251,9 @@ final class AuthController
             'token_version' => ($userData['token_version'] ?? 1) + 1,
         ]);
 
-        return Response::success(null, 'Password reset successfully');
+        return $this->success(null, 'Password reset successfully');
     }
 
-    /** @return array{token:string,refresh_token:string,ttl:int} */
     private function tokenPair(int $userId): array
     {
         $ttl = max(60, (int) Env::get('JWT_TTL', '3600'));
@@ -281,7 +266,6 @@ final class AuthController
         $token = JWT::encodeAccess($userId, $tokenVersion, $ttl);
         $refreshToken = JWT::encodeRefresh($userId, $tokenVersion, $refreshTtl, $jti);
 
-        // Store refresh token with matching JTI
         DB::table('refresh_tokens')->insert([
             'jti' => $jti,
             'user_id' => $userId,

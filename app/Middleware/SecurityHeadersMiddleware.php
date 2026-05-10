@@ -28,7 +28,7 @@ final class SecurityHeadersMiddleware implements MiddlewareInterface
      * @param callable $next The next middleware/handler
      * @return Response The response with security headers
      */
-    public function handle(Request $request, callable $next): Response
+    public function handle(Request $request, callable $next): mixed
     {
         $response = $next($request);
 

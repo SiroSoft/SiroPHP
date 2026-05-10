@@ -15,7 +15,6 @@ return new class {
             $t->string('password');
             $t->smallint('status')->default(1);
             $t->integer('token_version')->default(1);
-            $t->decimal('amount', 12, 2)->default(0);
             $t->timestamps();
         });
     }

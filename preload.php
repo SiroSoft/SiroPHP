@@ -56,14 +56,13 @@ $files = [
     $corePath . '/Middleware/IdempotencyMiddleware.php',
 
     $corePath . '/Str.php',
-    $corePath . '/Arr.php',
+    $corePath . '/Collection.php',
     $corePath . '/Hash.php',
     $corePath . '/Encrypter.php',
     $corePath . '/Container.php',
     $corePath . '/Lang.php',
     $corePath . '/Session.php',
     $corePath . '/Queue.php',
-    $corePath . '/RateLimiter.php',
     $corePath . '/UploadedFile.php',
     $corePath . '/ValidationException.php',
 

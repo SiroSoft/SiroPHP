@@ -10,26 +10,18 @@ use Siro\Core\Controller;
 use Siro\Core\Request;
 use Siro\Core\Response;
 
-/**
- * Category management controller.
- *
- * Provides CRUD operations with service/repository layer
- * and dependency injection via constructor.
- */
 final class CategoryController extends Controller
 {
     public function __construct(private readonly CategoryService $service)
     {
     }
 
-    /** List categories with pagination. */
     public function index(Request $request): Response
     {
-        $result = $this->service->getAll($request->queryInt('page', 1), $request->queryInt('per_page', 20));
+        $result = $this->service->getAll(page: $request->queryInt('page', 1), perPage: $request->queryInt('per_page', 20));
         return $this->paginated(CategoryResource::collection($result['data']), $result['meta'], 'Category list');
     }
 
-    /** Get a single category by ID. */
     public function show(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -39,14 +31,12 @@ final class CategoryController extends Controller
         return $this->success(CategoryResource::make($item), 'Category detail');
     }
 
-    /** Create a new category. */
     public function store(Request $request): Response
     {
         $item = $this->service->create($this->validate(['name' => 'required|min:2|max:100']));
         return $this->created(CategoryResource::make($item), 'Category created');
     }
 
-    /** Update an existing category. */
     public function update(Request $request): Response
     {
         $id = (int) $request->param('id');
@@ -56,13 +46,12 @@ final class CategoryController extends Controller
         return $this->success(CategoryResource::make($item), 'Category updated');
     }
 
-    /** Delete a category. */
     public function delete(Request $request): Response
     {
         $id = (int) $request->param('id');
         if ($id <= 0) return $this->error('Invalid id', 422);
         return $this->service->delete($id)
-            ? Response::noContent()
+            ? $this->noContent()
             : $this->error('Category not found', 404);
     }
 }

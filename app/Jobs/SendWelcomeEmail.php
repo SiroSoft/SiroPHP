@@ -30,7 +30,7 @@ final class SendWelcomeEmail
 <html>
 <head><meta charset="utf-8"></head>
 <body style="font-family: sans-serif; padding: 20px;">
-    <h1>Welcome, {$name}!</h1>
+    <h1>Welcome, {htmlspecialchars($name, ENT_QUOTES | ENT_HTML5, 'UTF-8')}!</h1>
     <p>Thank you for registering. We're excited to have you on board.</p>
 </body>
 </html>

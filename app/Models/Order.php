@@ -22,6 +22,8 @@ final class Order extends Model
 {
     protected string $table = 'orders';
 
+    protected array $hidden = [];
+
     protected array $casts = [
         'id' => 'int',
         'total' => 'float',
