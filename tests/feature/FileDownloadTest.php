@@ -24,7 +24,7 @@ final class FileDownloadTest extends TestCase
         parent::tearDown();
     }
 
-    public function testResponseHasDownloadMethod(): void { $this->assertTrue(method_exists(Response::class, 'download')); }
-    public function testResponseHasFileMethod(): void { $this->assertTrue(method_exists(Response::class, 'file')); }
+    public function testResponseHasDownloadMethod(): void { $this->assertTrue(method_exists(Response::class, 'download')); } // @phpstan-ignore function.alreadyNarrowedType
+    public function testResponseHasFileMethod(): void { $this->assertTrue(method_exists(Response::class, 'file')); } // @phpstan-ignore function.alreadyNarrowedType
     public function testFileExists(): void { $this->assertFileExists($this->tempFile); $this->assertSame('test content', file_get_contents($this->tempFile)); }
 }

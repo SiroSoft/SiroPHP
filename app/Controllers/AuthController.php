@@ -34,9 +34,6 @@ final class AuthController extends Controller
         }
 
         $passwordHash = password_hash($request->string('password'), PASSWORD_DEFAULT);
-        if ($passwordHash === false) {
-            return $this->error('Unable to create account', 500);
-        }
 
         try {
             $user = User::create([
@@ -182,7 +179,7 @@ final class AuthController extends Controller
         $token = $request->string('token');
 
         $rows = User::where('verification_token', '=', $token)->limit(1)->get();
-        $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
+        $user = $rows[0] ?? null;
 
         if ($user === null) {
             return $this->error('Invalid verification token', 400);
@@ -203,7 +200,7 @@ final class AuthController extends Controller
         $email = strtolower(trim($request->string('email')));
 
         $rows = User::where('email', '=', $email)->limit(1)->get();
-        $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
+        $user = $rows[0] ?? null;
 
         if ($user !== null) {
             $resetToken = bin2hex(random_bytes(32));
@@ -226,7 +223,7 @@ final class AuthController extends Controller
         $token = $request->string('token');
 
         $rows = User::where('password_reset_token', '=', $token)->limit(1)->get();
-        $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
+        $user = $rows[0] ?? null;
 
         if ($user === null) {
             return $this->error('Invalid or expired reset token', 400);
@@ -240,9 +237,6 @@ final class AuthController extends Controller
         }
 
         $passwordHash = password_hash($request->string('password'), PASSWORD_DEFAULT);
-        if ($passwordHash === false) {
-            return $this->error('Unable to reset password', 500);
-        }
 
         $user->update([
             'password' => $passwordHash,
@@ -261,7 +255,7 @@ final class AuthController extends Controller
         $refreshTtl = max(3600, (int) Env::get('JWT_REFRESH_TTL', '604800'));
 
         $user = User::find($userId);
-        $tokenVersion = (int) ($user?->token_version ?? 1);
+        $tokenVersion = (int) ($user->token_version ?? 1);
 
         $jti = bin2hex(random_bytes(16));
         $token = JWT::encodeAccess($userId, $tokenVersion, $ttl);

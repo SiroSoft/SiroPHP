@@ -155,14 +155,14 @@ final class ValidationEdgeTest extends TestCase
 
     public function testSiroDebugStaticMethodsExist(): void
     {
-        $this->assertTrue(method_exists(Response::class, 'enableDebug'));
+        $this->assertTrue(method_exists(Response::class, 'enableDebug')); // @phpstan-ignore function.alreadyNarrowedType
         $this->assertTrue(method_exists(Response::class, 'setDebugMeta'));
     }
 
     public function testValidatorMakeReturnsArray(): void
     {
         $result = Validator::make(['test' => 'val'], ['test' => 'required']);
-        $this->assertIsArray($result);
+        $this->assertIsArray($result); // @phpstan-ignore method.alreadyNarrowedType
     }
 
     public function testValidatorExtendWorks(): void

@@ -266,10 +266,10 @@ final class RealUserApiE2eTest extends TestCase
 
     // ========== HELPERS ==========
 
-    private function getResponseBody($response): string
+    private function getResponseBody(\Siro\Core\Response $response): string
     {
         ob_start();
         $response->send();
-        return ob_get_clean();
+        return ob_get_clean() ?: '';
     }
 }

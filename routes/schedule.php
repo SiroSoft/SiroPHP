@@ -12,6 +12,7 @@ declare(strict_types=1);
  * @package App
  */
 
+/** @var \Siro\Core\Schedule $schedule */
 $schedule->command('queue:work')->everyMinute();
 
 $schedule->call(function () {

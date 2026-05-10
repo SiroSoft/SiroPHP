@@ -67,6 +67,6 @@ final class MiddlewareTest extends TestCase
     public function testCorsConfiguredInEnv(): void
     {
         $env = file_get_contents($this->basePath . '/.env');
-        $this->assertStringContainsString('CORS_ALLOWED_ORIGINS', $env);
+        $this->assertStringContainsString('CORS_ALLOWED_ORIGINS', $env ?: '');
     }
 }

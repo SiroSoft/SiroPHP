@@ -34,22 +34,22 @@ final class ComponentExistenceTest extends TestCase
 
     public function testAuthMiddlewareHasHandle(): void
     {
-        $this->assertTrue(method_exists(AuthMiddleware::class, 'handle'));
+        $this->assertTrue(method_exists(AuthMiddleware::class, 'handle')); // @phpstan-ignore function.alreadyNarrowedType
     }
 
     public function testThrottleMiddlewareHasHandle(): void
     {
-        $this->assertTrue(method_exists(ThrottleMiddleware::class, 'handle'));
+        $this->assertTrue(method_exists(ThrottleMiddleware::class, 'handle')); // @phpstan-ignore function.alreadyNarrowedType
     }
 
     public function testCorsMiddlewareHasHandle(): void
     {
-        $this->assertTrue(method_exists(CorsMiddleware::class, 'handle'));
+        $this->assertTrue(method_exists(CorsMiddleware::class, 'handle')); // @phpstan-ignore function.alreadyNarrowedType
     }
 
     public function testJsonMiddlewareHasHandle(): void
     {
-        $this->assertTrue(method_exists(JsonMiddleware::class, 'handle'));
+        $this->assertTrue(method_exists(JsonMiddleware::class, 'handle')); // @phpstan-ignore function.alreadyNarrowedType
     }
 
     public function testAuthControllerExists(): void

@@ -20,7 +20,10 @@ final class ProductService
     {
     }
 
-    /** Get paginated products with optional filters and sorting. */
+    /** Get paginated products with optional filters and sorting.
+     * @param array<string, mixed> $queryParams
+     * @return array<string, mixed>
+     */
     public function getAll(array $queryParams = [], int $page = 1, int $perPage = 20): array
     {
         $sort = $queryParams['sort'] ?? 'id';
@@ -52,7 +55,9 @@ final class ProductService
         return $this->repo->findById($id);
     }
 
-    /** Create a new product with defaults for missing fields. */
+    /** Create a new product with defaults for missing fields.
+     * @param array<string, mixed> $data
+     */
     public function create(array $data): mixed
     {
         $data['price'] = (float) ($data['price'] ?? 0);
@@ -62,7 +67,9 @@ final class ProductService
         return $this->repo->store($data);
     }
 
-    /** Update a product. Returns null if not found. */
+    /** Update a product. Returns null if not found.
+     * @param array<string, mixed> $data
+     */
     public function update(int $id, array $data): mixed
     {
         if (isset($data['price'])) {

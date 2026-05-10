@@ -17,6 +17,7 @@ use Siro\Core\Request;
 use Siro\Core\Response;
 use Siro\Core\Storage;
 
+/** @var \Siro\Core\App $app */
 $app->router->get('/', function (Request $req): mixed {
     // Serve HTML homepage for browser requests
     $accept = $req->header('accept', '');
@@ -28,7 +29,8 @@ $app->router->get('/', function (Request $req): mixed {
     if ($isBrowser) {
         $file = __DIR__ . '/../public/index.html';
         if (file_exists($file)) {
-            return Response::raw(file_get_contents($file), 'text/html; charset=utf-8');
+            $html = file_get_contents($file);
+            return Response::raw($html !== false ? $html : '', 'text/html; charset=utf-8');
         }
     }
 
@@ -164,12 +166,12 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     })->middleware([JsonMiddleware::class]);
 
     $router->get('/profile', function (Request $req): array {
-        $locale = (string) $req->query('locale', 'en');
+        $locale = $req->queryString('locale', 'en');
         Lang::setLocale($locale);
 
         $name = $req->query('name', 'Guest');
         $greeting = Lang::get('messages.greeting', ['name' => $name]);
-        $messagesCount = Lang::has('validation') ? count(Lang::get('validation')) : 0;
+        $messagesCount = Lang::has('validation') ? count((array) Lang::get('validation')) : 0;
 
         return [
             'success' => true,

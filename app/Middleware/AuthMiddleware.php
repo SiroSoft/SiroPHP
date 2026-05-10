@@ -26,7 +26,7 @@ final class AuthMiddleware implements MiddlewareInterface
             ]);
         }
 
-        $token = trim((string) ($matches[1] ?? ''));
+        $token = trim($matches[1]);
         if ($token === '') {
             return Response::error('Unauthorized', 401, [
                 'token' => ['Missing bearer token'],

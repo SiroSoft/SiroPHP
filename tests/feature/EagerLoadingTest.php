@@ -20,9 +20,9 @@ final class EagerLoadingTest extends TestCase
         $db->execute('CREATE TABLE test_eager_users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL)');
         $db->execute('CREATE TABLE test_eager_posts (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, title TEXT NOT NULL, body TEXT)');
         for ($i = 1; $i <= 5; $i++) {
-            $db->execute('INSERT INTO test_eager_users (name, email) VALUES (?, ?)', ["User {$i}", "user{$i}@test.com"]);
+            $db->execute('INSERT INTO test_eager_users (name, email) VALUES (:name, :email)', ['name' => "User {$i}", 'email' => "user{$i}@test.com"]);
             for ($j = 1; $j <= 3; $j++) {
-                $db->execute('INSERT INTO test_eager_posts (user_id, title, body) VALUES (?, ?, ?)', [$i, "Post {$j}", "Content {$j}"]);
+                $db->execute('INSERT INTO test_eager_posts (user_id, title, body) VALUES (:uid, :title, :body)', ['uid' => $i, 'title' => "Post {$j}", 'body' => "Content {$j}"]);
             }
         }
     }
@@ -74,6 +74,7 @@ class EagerTestUser extends Model
 {
     protected string $table = 'test_eager_users';
     protected array $fillable = ['name', 'email'];
+    /** @return \Siro\Core\DB\Relations\HasMany */
     public function posts() { return $this->hasMany(EagerTestPost::class, 'user_id'); }
 }
 

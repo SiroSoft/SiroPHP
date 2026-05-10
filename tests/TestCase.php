@@ -36,22 +36,22 @@ abstract class TestCase extends BaseTestCase
         // Clean rate limit files so tests don't interfere with each other
         $rateDir = $this->basePath . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'rate_limit';
         if (is_dir($rateDir)) {
-            foreach (glob($rateDir . DIRECTORY_SEPARATOR . '*.json') as $f) {
+            foreach (glob($rateDir . DIRECTORY_SEPARATOR . '*.json') ?: [] as $f) {
                 @unlink($f);
             }
         }
 
         // Rollback previous test's transaction, start fresh one
-        static::resetTransaction();
+        self::resetTransaction();
     }
 
     protected function tearDown(): void
     {
-        static::rollbackTransaction();
+        self::rollbackTransaction();
         parent::tearDown();
     }
 
-    private static function resetTransaction(): void
+    protected static function resetTransaction(): void
     {
         try {
             $pdo = \Siro\Core\Database::connection();
@@ -63,7 +63,7 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
-    private static function rollbackTransaction(): void
+    protected static function rollbackTransaction(): void
     {
         try {
             $pdo = \Siro\Core\Database::connection();
@@ -91,8 +91,8 @@ abstract class TestCase extends BaseTestCase
         if (!is_dir($migrationsDir)) {
             return;
         }
-        $files = glob($migrationsDir . '/*.php');
-        if (!$files) {
+        $files = glob($migrationsDir . '/*.php') ?: [];
+        if ($files === []) {
             return;
         }
         sort($files);
@@ -135,6 +135,10 @@ abstract class TestCase extends BaseTestCase
         return $app;
     }
 
+    /**
+     * @param array<string, mixed> $body
+     * @param array<string, string> $headers
+     */
     protected function dispatch(App $app, string $method, string $path, array $body = [], array $headers = []): Response
     {
         // Extract query string from path
@@ -144,6 +148,7 @@ abstract class TestCase extends BaseTestCase
         if (isset($pathParts[1])) {
             parse_str($pathParts[1], $queryParams);
         }
+        /** @var array<string, string> $headers */
         $request = new Request($method, $cleanPath, $queryParams, $headers, $body, '127.0.0.1');
         try {
             return $app->router->dispatch($request);
@@ -152,30 +157,41 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
+    /** @param array<string, string> $headers */
     protected function get(string $path, array $headers = []): TestResponse
     {
         $app = $this->createApp();
         return new TestResponse($this->dispatch($app, 'GET', $path, [], $headers));
     }
 
+    /**
+     * @param array<string, mixed> $body
+     * @param array<string, string> $headers
+     */
     protected function post(string $path, array $body = [], array $headers = []): TestResponse
     {
         $app = $this->createApp();
         return new TestResponse($this->dispatch($app, 'POST', $path, $body, $headers));
     }
 
+    /**
+     * @param array<string, mixed> $body
+     * @param array<string, string> $headers
+     */
     protected function put(string $path, array $body = [], array $headers = []): TestResponse
     {
         $app = $this->createApp();
         return new TestResponse($this->dispatch($app, 'PUT', $path, $body, $headers));
     }
 
+    /** @param array<string, string> $headers */
     protected function delete(string $path, array $headers = []): TestResponse
     {
         $app = $this->createApp();
         return new TestResponse($this->dispatch($app, 'DELETE', $path, [], $headers));
     }
 
+    /** @param array<string, mixed> $conditions */
     protected function assertDatabaseHas(string $table, array $conditions, ?string $connection = null): void
     {
         $driver = Database::connection($connection)->getAttribute(\PDO::ATTR_DRIVER_NAME);
@@ -202,6 +218,7 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
+    /** @param array<string, mixed> $conditions */
     protected function assertDatabaseMissing(string $table, array $conditions, ?string $connection = null): void
     {
         $driver = Database::connection($connection)->getAttribute(\PDO::ATTR_DRIVER_NAME);
@@ -232,6 +249,7 @@ abstract class TestCase extends BaseTestCase
 final class TestResponse
 {
     private Response $response;
+    /** @var array<string, mixed>|null */
     private ?array $parsedBody = null;
 
     public function __construct(Response $response)
@@ -285,6 +303,7 @@ final class TestResponse
         return $this->assertStatus(500);
     }
 
+    /** @param array<string, mixed> $expected */
     public function assertJson(array $expected): self
     {
         $body = $this->json();
@@ -314,6 +333,7 @@ final class TestResponse
         return $this;
     }
 
+    /** @return array<string, mixed> */
     public function json(): array
     {
         if ($this->parsedBody === null) {

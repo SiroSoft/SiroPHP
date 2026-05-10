@@ -26,7 +26,7 @@ final class GeneralIntegrationTest extends TestCase
 
     public function testAppBootsWithoutError(): void
     {
-        $this->assertNotNull($this->app);
+        $this->assertNotNull($this->app); // @phpstan-ignore method.alreadyNarrowedType
     }
 
     public function testRouterDispatchesRootEndpoint(): void

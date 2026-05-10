@@ -103,7 +103,7 @@ final class EventTest extends TestCase
         };
 
         $user = $model->create(['name' => 'John', 'email' => 'john@test.com']);
-        $this->assertNotNull($user->id);
+        $this->assertNotNull($user->id); // @phpstan-ignore property.notFound
         $this->assertSame(['saving', 'creating', 'created', 'saved'], $events);
     }
 

@@ -33,7 +33,7 @@ final class ResponseTest extends TestCase
 
     public function testPaginatedReturnsCorrectStructure(): void
     {
-        $r = Response::paginated([1, 2, 3], ['page' => 1, 'total' => 3]);
+        $r = Response::paginated([1, 2, 3], ['page' => 1, 'per_page' => 15, 'total' => 3, 'last_page' => 1]);
         $p = $r->payload();
         $this->assertTrue($p['success']);
         $this->assertSame([1, 2, 3], $p['data']);

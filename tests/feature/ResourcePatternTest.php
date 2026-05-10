@@ -10,20 +10,20 @@ use Siro\Core\Resource;
 final class ResourcePatternTest extends TestCase
 {
     public function testResourceClassExists(): void { $this->assertTrue(class_exists(Resource::class)); }
-    public function testResourceHasMakeMethod(): void { $this->assertTrue(method_exists(Resource::class, 'make')); }
-    public function testResourceHasCollectionMethod(): void { $this->assertTrue(method_exists(Resource::class, 'collection')); }
+    public function testResourceHasMakeMethod(): void { $this->assertTrue(method_exists(Resource::class, 'make')); } // @phpstan-ignore function.alreadyNarrowedType
+    public function testResourceHasCollectionMethod(): void { $this->assertTrue(method_exists(Resource::class, 'collection')); } // @phpstan-ignore function.alreadyNarrowedType
 
     public function testResourceMakeWithConcreteClassReturnsArray(): void
     {
         $r = TestResource::make(['id' => 1, 'name' => 'Test']);
-        $this->assertIsArray($r);
+        $this->assertIsArray($r); // @phpstan-ignore method.alreadyNarrowedType
         $this->assertArrayHasKey('id', $r);
     }
 
     public function testResourceCollectionWithConcreteClassReturnsArray(): void
     {
         $c = TestResource::collection([['id' => 1], ['id' => 2]]);
-        $this->assertIsArray($c);
+        $this->assertIsArray($c); // @phpstan-ignore method.alreadyNarrowedType
         $this->assertCount(2, $c);
     }
 }

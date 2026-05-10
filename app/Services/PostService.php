@@ -19,7 +19,10 @@ final class PostService
     {
     }
 
-    /** Get paginated posts with optional locale filter. */
+    /** Get paginated posts with optional locale filter.
+     * @param array<string, mixed> $queryParams
+     * @return array<string, mixed>
+     */
     public function getAll(array $queryParams = [], int $page = 1, int $perPage = 20): array
     {
         $filters = [];
@@ -36,7 +39,9 @@ final class PostService
         return $this->repo->findById($id);
     }
 
-    /** Create a new post with optional image upload. */
+    /** Create a new post with optional image upload.
+     * @param array<string, mixed> $validated
+     */
     public function create(array $validated, mixed $uploadedFile = null): mixed
     {
         $data = [
@@ -53,7 +58,10 @@ final class PostService
         return $this->repo->store($data);
     }
 
-    /** Update a post. Returns null if not found. */
+    /** Update a post. Returns null if not found.
+     * @param array<string, mixed> $validated
+     * @return array<string, mixed>|null
+     */
     public function update(int $id, array $validated): ?array
     {
         $post = $this->repo->findById($id);

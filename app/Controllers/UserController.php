@@ -47,20 +47,18 @@ final class UserController extends Controller
 
     public function store(Request $request): Response
     {
-        $this->validate([
+        $data = $this->validate([
             'name' => 'required|min:3|max:120',
             'email' => 'required|email|max:255',
             'password' => 'required|min:6|max:255',
         ]);
 
         try {
-            $userData = $this->service->create($request->all());
+            $userData = $this->service->create($data);
         } catch (DuplicateEmailException) {
             return $this->error('Validation failed', 422, [
                 'email' => ['Email has already been taken'],
             ]);
-        } catch (\RuntimeException) {
-            return $this->error('Unable to create user', 500);
         }
 
         return $this->created(UserResource::make($userData), 'User created');
@@ -70,23 +68,20 @@ final class UserController extends Controller
     {
         $id = (int) $request->param('id');
 
-        $rules = [
+        $data = $this->validate([
             'name' => 'min:3|max:120',
             'email' => 'email|max:255',
             'password' => 'min:6|max:255',
-        ];
-        $this->validate($rules);
+        ]);
 
         try {
-            $userData = $this->service->update($id, $request->all());
+            $userData = $this->service->update($id, $data);
         } catch (DuplicateEmailException) {
             return $this->error('Validation failed', 422, [
                 'email' => ['Email has already been taken'],
             ]);
         } catch (NoFieldsToUpdateException) {
             return $this->error('No fields to update', 400);
-        } catch (\RuntimeException) {
-            return $this->error('Unable to update user', 500);
         }
 
         if ($userData === null) {

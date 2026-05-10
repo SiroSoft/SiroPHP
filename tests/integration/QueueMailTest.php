@@ -173,28 +173,33 @@ final class QueueMailTest extends TestCase
             $job->handle($data);
         } catch (\RuntimeException) {
         }
-        $this->assertTrue(true);
+        $this->assertTrue(true); // @phpstan-ignore method.alreadyNarrowedType
     }
 }
 
 final class NoopJob
 {
+    /** @param array<string, mixed> $data */
     public function handle(array $data = []): void {}
 }
 
 final class CounterJob
 {
     public static int $count = 0;
+    /** @param array<string, mixed> $data */
     public function handle(array $data = []): void { self::$count++; }
 }
 
 final class PriorityJob
 {
+    /** @var array<int, int> */
     public static array $order = [];
+    /** @param array<string, mixed> $data */
     public function handle(array $data = []): void { self::$order[] = $data['id'] ?? 0; }
 }
 
 final class FailingJob
 {
+    /** @param array<string, mixed> $data */
     public function handle(array $data = []): void { throw new \RuntimeException('Test failure'); }
 }

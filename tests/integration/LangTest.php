@@ -128,7 +128,7 @@ final class LangTest extends TestCase
     {
         Lang::setLocale('en');
         $count = Lang::count('validation');
-        $this->assertIsInt($count);
+        $this->assertIsInt($count); // @phpstan-ignore method.alreadyNarrowedType
     }
 
     public function testLangSetLocaleChangesLocale(): void
@@ -141,7 +141,7 @@ final class LangTest extends TestCase
     {
         Lang::setLocale('en');
         $result = Lang::plural('messages.apples', 5);
-        $this->assertIsString($result);
+        $this->assertIsString($result); // @phpstan-ignore method.alreadyNarrowedType
     }
 
     public function testSetLocaleToEn(): void

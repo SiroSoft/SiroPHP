@@ -43,7 +43,7 @@ final class SiroUnitTest extends TestCase
 
     public function testResponsePaginated(): void
     {
-        $r = Response::paginated([], ['page' => 1], 'OK');
+        $r = Response::paginated([], ['page' => 1, 'per_page' => 15, 'total' => 0, 'last_page' => 0], 'OK');
         $this->assertEquals(200, $r->statusCode());
     }
 

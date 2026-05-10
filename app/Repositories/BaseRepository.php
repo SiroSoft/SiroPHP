@@ -17,6 +17,10 @@ abstract class BaseRepository
 
     abstract protected function createModel(): Model;
 
+    /**
+     * @param array<string, mixed> $filters
+     * @return array<string, mixed>
+     */
     public function findAll(array $filters = [], int $page = 1, int $perPage = 20): array
     {
         $query = $this->model->query()->orderBy('id', 'DESC');
@@ -28,11 +32,13 @@ abstract class BaseRepository
         return $this->model->find($id);
     }
 
+    /** @param array<string, mixed> $data */
     public function store(array $data): mixed
     {
         return $this->model->create($data + ['created_at' => date('Y-m-d H:i:s')]);
     }
 
+    /** @param array<string, mixed> $data */
     public function update(int $id, array $data): mixed
     {
         $item = $this->model->find($id);

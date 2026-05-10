@@ -115,14 +115,14 @@ final class EventCacheTest extends TestCase
     public function testCacheRequestStatusIsArray(): void
     {
         $status = Cache::requestStatus();
-        $this->assertIsArray($status);
+        $this->assertIsArray($status); // @phpstan-ignore method.alreadyNarrowedType
     }
 
     public function testCacheResetRequestState(): void
     {
         Cache::set('test_reset', 'val');
         Cache::resetRequestState();
-        $this->assertIsArray(Cache::requestStatus());
+        $this->assertIsArray(Cache::requestStatus()); // @phpstan-ignore method.alreadyNarrowedType
     }
 
     public function testCacheSetWithZeroTtl(): void

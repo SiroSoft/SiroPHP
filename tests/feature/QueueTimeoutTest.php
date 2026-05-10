@@ -9,8 +9,8 @@ use Siro\Core\Queue;
 
 final class QueueTimeoutTest extends TestCase
 {
-    public function testQueueWorkMethodExists(): void { $this->assertTrue(method_exists(Queue::class, 'work')); }
-    public function testQueueWorkAllMethodExists(): void { $this->assertTrue(method_exists(Queue::class, 'workAll')); }
-    public function testQueuePendingCountMethodExists(): void { $this->assertTrue(method_exists(Queue::class, 'pendingCount')); }
-    public function testQueueFailedCountMethodExists(): void { $this->assertTrue(method_exists(Queue::class, 'failedCount')); }
+    public function testQueueWorkMethodExists(): void { $this->assertTrue(method_exists(Queue::class, 'work')); } // @phpstan-ignore function.alreadyNarrowedType
+    public function testQueueWorkAllMethodExists(): void { $this->assertTrue(method_exists(Queue::class, 'workAll')); } // @phpstan-ignore function.alreadyNarrowedType
+    public function testQueuePendingCountMethodExists(): void { $this->assertTrue(method_exists(Queue::class, 'pendingCount')); } // @phpstan-ignore function.alreadyNarrowedType
+    public function testQueueFailedCountMethodExists(): void { $this->assertTrue(method_exists(Queue::class, 'failedCount')); } // @phpstan-ignore function.alreadyNarrowedType
 }

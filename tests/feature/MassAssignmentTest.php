@@ -33,9 +33,9 @@ final class MassAssignmentTest extends TestCase
             protected array $fillable = ['name', 'email'];
         };
         $user = $model->create(['name' => 'John', 'email' => 'john@test.com', 'is_admin' => 1, 'role' => 'admin']);
-        $this->assertNotNull($user->id);
-        $this->assertSame('John', $user->name);
-        $this->assertSame('john@test.com', $user->email);
+        $this->assertNotNull($user->id); // @phpstan-ignore property.notFound
+        $this->assertSame('John', $user->name); // @phpstan-ignore property.notFound
+        $this->assertSame('john@test.com', $user->email); // @phpstan-ignore property.notFound
     }
 
     public function testCreateWithOnlyFillableFields(): void
@@ -45,7 +45,7 @@ final class MassAssignmentTest extends TestCase
             protected array $fillable = ['name', 'email'];
         };
         $user = $model->create(['name' => 'Bob', 'email' => 'bob@test.com']);
-        $this->assertNotNull($user->id);
+        $this->assertNotNull($user->id); // @phpstan-ignore property.notFound
     }
 
     public function testUpdateRespectsFillable(): void
@@ -57,7 +57,7 @@ final class MassAssignmentTest extends TestCase
         $user = $model->create(['name' => 'Alice', 'email' => 'alice@test.com']);
         $user->fill(['name' => 'Alice Updated', 'is_admin' => 1]);
         $user->save();
-        $fresh = $model::find($user->id);
-        $this->assertSame('Alice Updated', $fresh->name);
+        $fresh = $model::find($user->id); // @phpstan-ignore property.notFound
+        $this->assertSame('Alice Updated', $fresh->name); // @phpstan-ignore property.notFound
     }
 }

@@ -29,6 +29,7 @@ final class UserService
         return $user->update(['token_version' => ($user->token_version ?? 0) + 1]) > 0;
     }
 
+    /** @return array<string, mixed> */
     public function getAll(int $page = 1, int $perPage = 15): array
     {
         return $this->repo->findAll([], $page, $perPage);
@@ -40,6 +41,8 @@ final class UserService
     }
 
     /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
      * @throws DuplicateEmailException
      */
     public function create(array $data): array
@@ -52,9 +55,6 @@ final class UserService
         }
 
         $passwordHash = password_hash($data['password'], \PASSWORD_DEFAULT);
-        if ($passwordHash === false) {
-            throw new \RuntimeException('Unable to hash password');
-        }
 
         $userData = [
             'name' => $data['name'],
@@ -68,6 +68,8 @@ final class UserService
     }
 
     /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>|null
      * @throws DuplicateEmailException
      * @throws NoFieldsToUpdateException
      */
@@ -93,9 +95,6 @@ final class UserService
 
         if (isset($data['password'])) {
             $passwordHash = password_hash($data['password'], \PASSWORD_DEFAULT);
-            if ($passwordHash === false) {
-                throw new \RuntimeException('Unable to hash password');
-            }
             $updateData['password'] = $passwordHash;
         }
 

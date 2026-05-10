@@ -36,8 +36,8 @@ final class DatabaseTest extends TestCase
     {
         $db = new Database();
         $result = $db->execute(
-            'INSERT INTO test_integration_users (name, email, age) VALUES (?, ?, ?)',
-            ['John Doe', 'john@test.com', 30]
+            'INSERT INTO test_integration_users (name, email, age) VALUES (:name, :email, :age)',
+            ['name' => 'John Doe', 'email' => 'john@test.com', 'age' => 30]
         );
         $this->assertGreaterThan(0, $result);
     }
@@ -45,8 +45,8 @@ final class DatabaseTest extends TestCase
     public function testSelectRecords(): void
     {
         $db = new Database();
-        $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (?, ?, ?)', ['John Doe', 'john@test.com', 30]);
-        $users = $db->select('SELECT * FROM test_integration_users WHERE email = ?', ['john@test.com']);
+        $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (:name, :email, :age)', ['name' => 'John Doe', 'email' => 'john@test.com', 'age' => 30]);
+        $users = $db->select('SELECT * FROM test_integration_users WHERE email = :email', ['email' => 'john@test.com']);
         $this->assertCount(1, $users);
         $this->assertSame('John Doe', $users[0]['name']);
     }
@@ -54,18 +54,18 @@ final class DatabaseTest extends TestCase
     public function testUpdateRecord(): void
     {
         $db = new Database();
-        $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (?, ?, ?)', ['John Doe', 'john@test.com', 30]);
-        $db->execute('UPDATE test_integration_users SET age = ? WHERE email = ?', [31, 'john@test.com']);
-        $users = $db->select('SELECT * FROM test_integration_users WHERE email = ?', ['john@test.com']);
+        $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (:name, :email, :age)', ['name' => 'John Doe', 'email' => 'john@test.com', 'age' => 30]);
+        $db->execute('UPDATE test_integration_users SET age = :age WHERE email = :email', ['age' => 31, 'email' => 'john@test.com']);
+        $users = $db->select('SELECT * FROM test_integration_users WHERE email = :email', ['email' => 'john@test.com']);
         $this->assertEquals(31, (int)$users[0]['age']);
     }
 
     public function testDeleteRecord(): void
     {
         $db = new Database();
-        $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (?, ?, ?)', ['John Doe', 'john@test.com', 30]);
-        $db->execute('DELETE FROM test_integration_users WHERE email = ?', ['john@test.com']);
-        $users = $db->select('SELECT * FROM test_integration_users WHERE email = ?', ['john@test.com']);
+        $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (:name, :email, :age)', ['name' => 'John Doe', 'email' => 'john@test.com', 'age' => 30]);
+        $db->execute('DELETE FROM test_integration_users WHERE email = :email', ['email' => 'john@test.com']);
+        $users = $db->select('SELECT * FROM test_integration_users WHERE email = :email', ['email' => 'john@test.com']);
         $this->assertCount(0, $users);
     }
 
@@ -73,11 +73,11 @@ final class DatabaseTest extends TestCase
     {
         $db = new Database();
         $result = Database::transaction(function () use ($db) {
-            $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (?, ?, ?)', ['Transaction User', 'transaction@test.com', 25]);
+            $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (:name, :email, :age)', ['name' => 'Transaction User', 'email' => 'transaction@test.com', 'age' => 25]);
             return true;
         });
         $this->assertTrue($result);
-        $users = $db->select('SELECT * FROM test_integration_users WHERE email = ?', ['transaction@test.com']);
+        $users = $db->select('SELECT * FROM test_integration_users WHERE email = :email', ['email' => 'transaction@test.com']);
         $this->assertCount(1, $users);
     }
 
@@ -86,11 +86,11 @@ final class DatabaseTest extends TestCase
         $db = new Database();
         try {
             Database::transaction(function () use ($db) {
-                $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (?, ?, ?)', ['Rollback User', 'rollback@test.com', 25]);
+                $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (:name, :email, :age)', ['name' => 'Rollback User', 'email' => 'rollback@test.com', 'age' => 25]);
                 throw new \RuntimeException('Intentional error for rollback test');
             });
         } catch (\RuntimeException) {
-            $users = $db->select('SELECT * FROM test_integration_users WHERE email = ?', ['rollback@test.com']);
+            $users = $db->select('SELECT * FROM test_integration_users WHERE email = :email', ['email' => 'rollback@test.com']);
             $this->assertCount(0, $users);
         }
     }
@@ -98,16 +98,16 @@ final class DatabaseTest extends TestCase
     public function testHandleNullValues(): void
     {
         $db = new Database();
-        $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (?, ?, ?)', ['No Age User', 'noage@test.com', null]);
-        $users = $db->select('SELECT * FROM test_integration_users WHERE email = ?', ['noage@test.com']);
+        $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (:name, :email, :age)', ['name' => 'No Age User', 'email' => 'noage@test.com', 'age' => null]);
+        $users = $db->select('SELECT * FROM test_integration_users WHERE email = :email', ['email' => 'noage@test.com']);
         $this->assertCount(1, $users);
     }
 
     public function testHandleSpecialCharacters(): void
     {
         $db = new Database();
-        $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (?, ?, ?)', ["O'Brien", "obrien@test.com", 30]);
-        $users = $db->select('SELECT * FROM test_integration_users WHERE name = ?', ["O'Brien"]);
+        $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (:name, :email, :age)', ['name' => "O'Brien", 'email' => 'obrien@test.com', 'age' => 30]);
+        $users = $db->select('SELECT * FROM test_integration_users WHERE name = :name', ['name' => "O'Brien"]);
         $this->assertCount(1, $users);
     }
 }

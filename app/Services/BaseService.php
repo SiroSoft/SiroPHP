@@ -21,7 +21,9 @@ abstract class BaseService
      */
     public function getAll(array $filters = [], int $page = 1, int $perPage = 20): array
     {
-        return $this->repo->findAll($filters, $page, $perPage);
+        /** @var array{data: array<int, mixed>, meta: array<string, mixed>} */
+        $result = $this->repo->findAll($filters, $page, $perPage);
+        return $result;
     }
 
     public function getById(int $id): mixed
@@ -29,11 +31,13 @@ abstract class BaseService
         return $this->repo->findById($id);
     }
 
+    /** @param array<string, mixed> $data */
     public function create(array $data): mixed
     {
         return $this->repo->store($data);
     }
 
+    /** @param array<string, mixed> $data */
     public function update(int $id, array $data): mixed
     {
         return $this->repo->update($id, $data);

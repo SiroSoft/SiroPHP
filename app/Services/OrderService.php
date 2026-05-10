@@ -17,7 +17,10 @@ final class OrderService
     {
     }
 
-    /** Get paginated orders with optional status filter. */
+    /** Get paginated orders with optional status filter.
+     * @param array<string, mixed> $queryParams
+     * @return array<string, mixed>
+     */
     public function getAll(array $queryParams = [], int $page = 1, int $perPage = 20): array
     {
         $filters = [];
@@ -34,7 +37,9 @@ final class OrderService
         return $this->repo->findById($id);
     }
 
-    /** Create a new order. Items array is JSON-encoded for storage. */
+    /** Create a new order. Items array is JSON-encoded for storage.
+     * @param array<string, mixed> $validated
+     */
     public function create(array $validated): mixed
     {
         $data = $validated;
@@ -46,7 +51,9 @@ final class OrderService
         return $this->repo->store($data);
     }
 
-    /** Update an order. Returns null if not found. */
+    /** Update an order. Returns null if not found.
+     * @param array<string, mixed> $validated
+     */
     public function update(int $id, array $validated): mixed
     {
         $order = $this->repo->findById($id);
