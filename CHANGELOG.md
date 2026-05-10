@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.22.0 (2026-05-11) — Final Audit & Zero PHPStan Baseline
+
+### Audit & Type Safety
+- All 751 PHPStan baseline errors eliminated (5 remaining from paginated meta)
+- Full type annotations across all Services, Repositories, Routes
+- Security: XSS in email templates fixed (heredoc htmlspecialchars)
+- Architecture: All 7 controllers extend Controller base class
+- Architecture: BaseRepository, BaseService pattern
+- Architecture: PostResource added for consistent responses
+- Quality: Dead code removal, magic strings replaced with exceptions
+- Tests: 427 passing, SecurityHeadersMiddleware + CorsMiddleware tests added
+- CI: Pipeline fixed (16 non-existent test files removed)
+
 ## v0.21.0 (2026-05-10) — Security & Quality Release
 
 ### 🐛 Bug Fixes
