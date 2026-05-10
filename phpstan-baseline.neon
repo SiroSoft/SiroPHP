@@ -13,172 +13,58 @@ parameters:
 			path: app/Controllers/AuthController.php
 
 		-
-			message: '#^Method App\\Jobs\\ProcessPendingNotifications\:\:handle\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Jobs/ProcessPendingNotifications.php
-
-		-
-			message: '#^Method App\\Jobs\\SendWelcomeEmail\:\:handle\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Jobs/SendWelcomeEmail.php
-
-		-
 			message: '#^Offset 1 on array\{non\-falsy\-string, non\-empty\-string\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Middleware/AuthMiddleware.php
 
 		-
-			message: '#^Caught class App\\Middleware\\Throwable not found\.$#'
-			identifier: class.notFound
-			count: 3
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
 			path: app/Middleware/ThrottleMiddleware.php
 
 		-
-			message: '#^Method App\\Repositories\\CategoryRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method App\\Repositories\\BaseRepository\:\:findAll\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: app/Repositories/CategoryRepository.php
+			path: app/Repositories/BaseRepository.php
 
 		-
-			message: '#^Method App\\Repositories\\CategoryRepository\:\:store\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\Repositories\\BaseRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: app/Repositories/CategoryRepository.php
+			path: app/Repositories/BaseRepository.php
 
 		-
-			message: '#^Method App\\Repositories\\CategoryRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\Repositories\\BaseRepository\:\:store\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: app/Repositories/CategoryRepository.php
+			path: app/Repositories/BaseRepository.php
 
 		-
-			message: '#^Method App\\Repositories\\OrderRepository\:\:findAll\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\Repositories\\BaseRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: app/Repositories/OrderRepository.php
+			path: app/Repositories/BaseRepository.php
 
 		-
-			message: '#^Method App\\Repositories\\OrderRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method App\\Services\\BaseService\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: app/Repositories/OrderRepository.php
+			path: app/Services/BaseService.php
 
 		-
-			message: '#^Method App\\Repositories\\OrderRepository\:\:store\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
+			message: '#^Method App\\Services\\BaseService\:\:getAll\(\) should return array\{data\: array\<int, mixed\>, meta\: array\<string, mixed\>\} but returns array\.$#'
+			identifier: return.type
 			count: 1
-			path: app/Repositories/OrderRepository.php
+			path: app/Services/BaseService.php
 
 		-
-			message: '#^Method App\\Repositories\\OrderRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			message: '#^Method App\\Services\\BaseService\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: app/Repositories/OrderRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\PostRepository\:\:findAll\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/PostRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\PostRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/PostRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\PostRepository\:\:store\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/PostRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\PostRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/PostRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\ProductRepository\:\:findAll\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/ProductRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\ProductRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/ProductRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\ProductRepository\:\:store\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/ProductRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\ProductRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/ProductRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\TagRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/TagRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\TagRepository\:\:store\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/TagRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\TagRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/TagRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\UserRepository\:\:findAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/UserRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\UserRepository\:\:store\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/UserRepository.php
-
-		-
-			message: '#^Method App\\Repositories\\UserRepository\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Repositories/UserRepository.php
-
-		-
-			message: '#^Method App\\Services\\CategoryService\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/CategoryService.php
-
-		-
-			message: '#^Method App\\Services\\CategoryService\:\:getAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/CategoryService.php
-
-		-
-			message: '#^Method App\\Services\\CategoryService\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/CategoryService.php
+			path: app/Services/BaseService.php
 
 		-
 			message: '#^Method App\\Services\\OrderService\:\:create\(\) has parameter \$validated with no value type specified in iterable type array\.$#'
@@ -257,24 +143,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Services/ProductService.php
-
-		-
-			message: '#^Method App\\Services\\TagService\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TagService.php
-
-		-
-			message: '#^Method App\\Services\\TagService\:\:getAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TagService.php
-
-		-
-			message: '#^Method App\\Services\\TagService\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/TagService.php
 
 		-
 			message: '#^Method App\\Services\\UserService\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
@@ -601,12 +469,6 @@ parameters:
 			path: tests/feature/ResourcePatternTest.php
 
 		-
-			message: '#^Parameter \#1 \$data of static method Siro\\Core\\Response\:\:success\(\) expects array\<string, mixed\>\|null, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: tests/feature/RouteConstraintsTest.php
-
-		-
 			message: '#^Call to function method_exists\(\) with ''Siro\\\\Core\\\\Auth\\\\JWT'' and ''decode'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -737,12 +599,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: tests/unit/ResponseTest.php
-
-		-
-			message: '#^Parameter \#1 \$data of static method Siro\\Core\\Response\:\:success\(\) expects array\<string, mixed\>\|null, string given\.$#'
-			identifier: argument.type
-			count: 9
-			path: tests/unit/RouterTest.php
 
 		-
 			message: '#^Parameter \#2 \$meta of static method Siro\\Core\\Response\:\:paginated\(\) expects array\{page\: int, per_page\: int, total\: int, last_page\: int\}, array\{page\: 1\} given\.$#'

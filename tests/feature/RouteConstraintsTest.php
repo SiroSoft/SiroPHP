@@ -34,7 +34,7 @@ final class RouteConstraintsTest extends TestCase
     public function testRouteGroupPrefixWorks(): void
     {
         $router = new Router();
-        $router->group('/api', function ($r) { $r->get('/v1/users', fn () => Response::success('ok')); });
+        $router->group('/api', function ($r) { $r->get('/v1/users', fn () => Response::success(null, 'ok')); });
         $req = new Request('GET', '/api/v1/users');
         $res = $router->dispatch($req);
         $this->assertEquals(200, $res->statusCode());

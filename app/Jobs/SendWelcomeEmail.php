@@ -16,6 +16,7 @@ use Siro\Core\Mail;
  */
 final class SendWelcomeEmail
 {
+    /** @param array<string, mixed> $data */
     public function handle(array $data = []): void
     {
         $email = (string) ($data['email'] ?? '');

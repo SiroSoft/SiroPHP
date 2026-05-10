@@ -15,6 +15,10 @@ abstract class BaseService
         $this->repo = $repo;
     }
 
+    /**
+     * @param array<string, string> $filters
+     * @return array{data: array<int, mixed>, meta: array<string, mixed>}
+     */
     public function getAll(array $filters = [], int $page = 1, int $perPage = 20): array
     {
         return $this->repo->findAll($filters, $page, $perPage);

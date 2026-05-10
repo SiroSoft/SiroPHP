@@ -254,6 +254,7 @@ final class AuthController extends Controller
         return $this->success(null, 'Password reset successfully');
     }
 
+    /** @return array{token: string, refresh_token: string, ttl: int} */
     private function tokenPair(int $userId): array
     {
         $ttl = max(60, (int) Env::get('JWT_TTL', '3600'));

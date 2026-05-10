@@ -14,7 +14,7 @@ final class RouterTest extends TestCase
     public function testStaticGetRouteMatches(): void
     {
         $router = new Router();
-        $router->get('/hello', fn () => Response::success('world'));
+        $router->get('/hello', fn () => Response::success(null, 'world'));
         $req = new Request('GET', '/hello');
         $res = $router->dispatch($req);
         $this->assertEquals(200, $res->statusCode());
@@ -23,7 +23,7 @@ final class RouterTest extends TestCase
     public function testPostRouteMatches(): void
     {
         $router = new Router();
-        $router->post('/data', fn () => Response::success('created', '', 201));
+        $router->post('/data', fn () => Response::success(null, 'created', 201));
         $req = new Request('POST', '/data');
         $res = $router->dispatch($req);
         $this->assertEquals(201, $res->statusCode());
@@ -32,7 +32,7 @@ final class RouterTest extends TestCase
     public function testPutRouteMatches(): void
     {
         $router = new Router();
-        $router->put('/data/1', fn () => Response::success('updated'));
+        $router->put('/data/1', fn () => Response::success(null, 'updated'));
         $req = new Request('PUT', '/data/1');
         $res = $router->dispatch($req);
         $this->assertEquals(200, $res->statusCode());
@@ -50,7 +50,7 @@ final class RouterTest extends TestCase
     public function testUndefinedRouteReturns404(): void
     {
         $router = new Router();
-        $router->get('/hello', fn () => Response::success('world'));
+        $router->get('/hello', fn () => Response::success(null, 'world'));
         $req = new Request('GET', '/nonexistent');
         $res = $router->dispatch($req);
         $this->assertEquals(404, $res->statusCode());
@@ -82,7 +82,7 @@ final class RouterTest extends TestCase
     public function testGroupPrefixAppliesToRoutes(): void
     {
         $router = new Router();
-        $router->group('/api', function ($r) { $r->get('/ping', fn () => Response::success('pong')); });
+        $router->group('/api', function ($r) { $r->get('/ping', fn () => Response::success(null, 'pong')); });
         $req = new Request('GET', '/api/ping');
         $res = $router->dispatch($req);
         $this->assertEquals(200, $res->statusCode());
@@ -91,7 +91,7 @@ final class RouterTest extends TestCase
     public function testOptionsReturns204ForExistingRoute(): void
     {
         $router = new Router();
-        $router->get('/users', fn () => Response::success('ok'));
+        $router->get('/users', fn () => Response::success(null, 'ok'));
         $req = new Request('OPTIONS', '/users');
         $res = $router->dispatch($req);
         $this->assertEquals(204, $res->statusCode());
@@ -109,9 +109,9 @@ final class RouterTest extends TestCase
     public function testGetRoutesReturnsAllRegisteredRoutes(): void
     {
         $router = new Router();
-        $router->get('/a', fn () => Response::success('a'));
-        $router->post('/b', fn () => Response::success('b'));
-        $router->get('/users/{id}', fn () => Response::success('c'));
+        $router->get('/a', fn () => Response::success(null, 'a'));
+        $router->post('/b', fn () => Response::success(null, 'b'));
+        $router->get('/users/{id}', fn () => Response::success(null, 'c'));
         $routes = $router->getRoutes();
         $methods = array_map(fn ($r) => $r['method'] . ' ' . $r['path'], $routes);
         $this->assertContains('GET /a', $methods);

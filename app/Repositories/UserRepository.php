@@ -20,6 +20,10 @@ final class UserRepository extends BaseRepository
         return $result[0] ?? null;
     }
 
+    /**
+     * @param array<string, string> $filters
+     * @return array{data: array<int, mixed>, meta: array<string, mixed>}
+     */
     public function findAll(array $filters = [], int $page = 1, int $perPage = 15): array
     {
         return $this->model->query()->orderBy('id', 'DESC')->paginate($perPage, $page);

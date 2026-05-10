@@ -17,6 +17,7 @@ use Siro\Core\Database;
  */
 final class ProcessPendingNotifications
 {
+    /** @param array<string, mixed> $data */
     public function handle(array $data = []): void
     {
         try {

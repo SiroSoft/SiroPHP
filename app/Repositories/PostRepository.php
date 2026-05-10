@@ -14,6 +14,10 @@ final class PostRepository extends BaseRepository
         return new Post();
     }
 
+    /**
+     * @param array<string, string> $filters
+     * @return array{data: array<int, mixed>, meta: array<string, mixed>}
+     */
     public function findAll(array $filters = [], int $page = 1, int $perPage = 20): array
     {
         $query = $this->model->query();
