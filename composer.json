@@ -33,6 +33,12 @@
         "post-create-project-cmd": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php siro key:generate || true"
+        ],
+        "release:check": [
+            "@php scripts/release-check.php --ci"
+        ],
+        "release:check:strict": [
+            "@php scripts/release-check.php --strict --with-prod-doctor"
         ]
     },
     "bin": [

@@ -13,6 +13,7 @@ Copy one template to `.env` and replace all `replace_with_*` values.
 ## 2) Run preflight checks
 
 ```bash
+composer release:check
 php siro doctor --prod
 php siro test
 php vendor/bin/phpstan analyse --no-progress --memory-limit=1G

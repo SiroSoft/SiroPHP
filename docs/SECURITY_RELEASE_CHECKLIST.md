@@ -37,6 +37,7 @@ Use this checklist before shipping to production.
 
 ## 6) Verification Gates
 
+- `composer release:check`
 - `php siro doctor --prod` passes except environment-specific HTTPS probe when expected
 - `php siro test` passes
 - `php vendor/bin/phpstan analyse --no-progress --memory-limit=1G` passes
