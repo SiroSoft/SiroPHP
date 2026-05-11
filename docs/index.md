@@ -1,409 +1,360 @@
-# Siro Framework Documentation
+# SiroPHP Documentation
 
-**Version:** 0.22.0 | **PHP:** >= 8.2 | **License:** MIT
+**Complete guide to building production-ready APIs with SiroPHP**
 
 ---
 
-## Quick Start
+## 🚀 Getting Started
 
+### New to SiroPHP?
+1. **[Quick Start Guide](guides/QUICKSTART.md)** - Build your first API in 5 minutes
+2. **[README](../README.md)** - Overview and features
+3. **[Installation](../README.md#installation)** - Setup instructions
+
+### Ready to Deploy?
+- **[Deployment Guide](guides/DEPLOYMENT.md)** - Production deployment
+- **[Security Guide](SECURITY.md)** - Security hardening
+- **[Performance Guide](PERFORMANCE.md)** - Optimization tips
+
+---
+
+## 📚 Guides
+
+### Essential Guides
+- **[Quick Start](guides/QUICKSTART.md)** ⭐ - 5-minute tutorial
+- **[Deployment](guides/DEPLOYMENT.md)** ⭐ - Production deployment
+- **[Architecture](ARCHITECTURE.md)** - Design decisions (ADRs)
+- **[Security](SECURITY.md)** - Security best practices
+- **[Performance](PERFORMANCE.md)** - Optimization techniques
+
+### Development Guides
+- **[Database Guide](guides/DATABASE.md)** - Multi-DB support, migrations
+- **[Authentication Guide](guides/AUTHENTICATION.md)** - JWT, RBAC
+- **[Testing Guide](guides/TESTING.md)** - PHPUnit tests
+- **[Validation Guide](guides/VALIDATION.md)** - Request validation
+- **[File Upload Guide](guides/FILE_UPLOAD.md)** - File handling
+
+### Advanced Guides
+- **[Queue & Mail](guides/QUEUE_MAIL.md)** - Background jobs
+- **[Event System](guides/EVENTS.md)** - Pub/sub pattern
+- **[Caching Guide](guides/CACHING.md)** - Cache strategies
+- **[API Versioning](guides/API_VERSIONING.md)** - Version management
+- **[Multi-language](guides/I18N.md)** - Internationalization
+
+---
+
+## 🔍 API References
+
+### Core Components
+- **[Router](api/Router.md)** - HTTP routing
+- **[Model](api/Model.md)** - ORM and relationships
+- **[Controller](api/Controller.md)** - Request handling
+- **[Response](api/Response.md)** - Response building
+- **[Request](api/Request.md)** - Input handling
+- **[Database](api/Database.md)** - Query builder
+- **[Auth](api/Auth.md)** - Authentication
+- **[Middleware](api/Middleware.md)** - Request processing
+
+### Utilities
+- **[Validator](api/Validator.md)** - Input validation
+- **[Cache](api/Cache.md)** - Caching system
+- **[Session](api/Session.md)** - Session management
+- **[Logger](api/Logger.md)** - Logging and tracing
+- **[HTTP Client](api/Http.md)** - Outbound requests
+- **[Storage](api/Storage.md)** - File storage
+- **[Queue](api/Queue.md)** - Job queue
+- **[Mail](api/Mail.md)** - Email sending
+- **[Events](api/Events.md)** - Event dispatcher
+- **[Encrypter](api/Encrypter.md)** - Encryption
+
+---
+
+## 🛠️ CLI Commands Reference
+
+### Project Setup
 ```bash
-composer create-project sirosoft/api my-api
-cd my-api
-cp .env.example .env
-php siro key:generate
-php siro migrate
-php siro serve
+php siro new my-api              # Create new project
+php siro serve                   # Start dev server
+php siro live                    # Dev server with auto-reload
 ```
 
-Visit `http://localhost:8080` — your API is live.
-
----
-
-## Architecture
-
-```
-my-api/
-├── app/
-│   ├── Controllers/    # Request handlers
-│   ├── Models/         # Database models (ORM)
-│   ├── Services/       # Business logic layer
-│   ├── Repositories/   # Data access layer
-│   ├── Middleware/      # Auth, CORS, Security headers, Rate limiting
-│   ├── Resources/      # Response transformers
-│   ├── Jobs/           # Queue jobs
-│   ├── Mails/          # Email templates
-│   ├── Events/         # Event classes
-│   └── Exceptions/     # Custom exceptions
-├── config/             # Configuration files
-├── database/
-│   ├── migrations/     # Database migrations
-│   └── seeds/          # Data seeders
-├── routes/
-│   ├── api.php         # API route definitions
-│   └── schedule.php    # Scheduled tasks
-├── storage/            # Cache, logs, uploads
-└── tests/              # PHPUnit tests
-```
-
----
-
-## Routes
-
-Define API routes in `routes/api.php`:
-
-```php
-$app->router->get('/api/products', [ProductController::class, 'index']);
-$app->router->post('/api/products', [ProductController::class, 'store']);
-$app->router->get('/api/products/{id}', [ProductController::class, 'show']);
-$app->router->put('/api/products/{id}', [ProductController::class, 'update']);
-$app->router->delete('/api/products/{id}', [ProductController::class, 'delete']);
-
-// With middleware
-$app->router->get('/api/users', [UserController::class, 'index'], ['auth', 'throttle:60,1']);
-```
-
-### Available Methods
-
-| Method | Route |
-|--------|-------|
-| `GET` | `$router->get(path, handler, middleware?)` |
-| `POST` | `$router->post(path, handler, middleware?)` |
-| `PUT` | `$router->put(path, handler, middleware?)` |
-| `PATCH` | `$router->patch(path, handler, middleware?)` |
-| `DELETE` | `$router->delete(path, handler, middleware?)` |
-| `OPTIONS` | `$router->options(path, handler, middleware?)` |
-| `GROUP` | `$router->group(prefix, callback)` |
-
-### Route Parameters
-
-```php
-$router->get('/api/users/{id}', function (Request $req) {
-    $userId = $req->param('id');
-});
-```
-
----
-
-## Controllers
-
-Extend `Siro\Core\Controller` for built-in helpers:
-
-```php
-use Siro\Core\Controller;
-use Siro\Core\Request;
-use Siro\Core\Response;
-
-class ProductController extends Controller
-{
-    public function index(Request $request): Response
-    {
-        $products = Product::all();
-        return $this->success($products, 'Products retrieved');
-    }
-
-    public function show(Request $request): Response
-    {
-        $id = (int) $request->param('id');
-        $product = Product::find($id);
-        if (!$product) return $this->error('Not found', 404);
-        return $this->success($product, 'Product detail');
-    }
-
-    public function store(Request $request): Response
-    {
-        $data = $this->validate([
-            'name' => 'required|min:3|max:255',
-            'price' => 'required|numeric|min:0',
-        ]);
-        $product = Product::create($data);
-        return $this->created($product, 'Product created');
-    }
-}
-```
-
-### Controller Helpers
-
-| Method | Description |
-|--------|-------------|
-| `$this->success($data, $message)` | 200 JSON response |
-| `$this->error($message, $code, $errors)` | Error response |
-| `$this->created($data, $message)` | 201 response |
-| `$this->noContent()` | 204 response |
-| `$this->paginated($data, $meta)` | Paginated response |
-| `$this->validate($rules)` | Validate request input |
-| `$this->input($key)` | Get input value |
-| `$this->param($key)` | Get route param |
-| `$this->query($key)` | Get query param |
-| `$this->user()` | Get authenticated user |
-
----
-
-## Database / Models
-
-### Query Builder
-
-```php
-$users = Database::table('users')
-    ->where('status', '=', 1)
-    ->where('created_at', '>=', '2025-01-01')
-    ->orderBy('id', 'DESC')
-    ->limit(20)
-    ->get();
-
-$user = Database::table('users')->where('email', '=', $email)->first();
-
-$paginated = Database::table('products')
-    ->where('price', '>=', 100)
-    ->orderBy('name', 'ASC')
-    ->paginate(20, $page);
-```
-
-### Model (ORM)
-
-```php
-class Product extends Model
-{
-    protected string $table = 'products';
-    protected array $fillable = ['name', 'price', 'stock'];
-    protected array $casts = ['price' => 'float', 'stock' => 'int'];
-    protected array $hidden = ['internal_code'];
-
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class);
-    }
-}
-
-// Usage
-$product = Product::find(1);
-$products = Product::where('price', '>', 100)->get();
-$product = Product::create(['name' => 'New Product', 'price' => 29.99]);
-$product->update(['price' => 39.99]);
-$product->delete();
-
-// With eager loading
-$products = Product::with('category')->get();
-```
-
----
-
-## Authentication
-
-### JWT Auth (Built-in)
-
-```php
-// Login returns JWT token pair
-POST /api/auth/login
-{
-    "email": "user@example.com",
-    "password": "secret123"
-}
-// Response:
-{
-    "access_token": "eyJ...",
-    "refresh_token": "eyJ...",
-    "token_type": "Bearer",
-    "expires_in": 3600
-}
-
-// Protected routes use auth middleware
-$router->get('/api/auth/me', [AuthController::class, 'me'], ['auth']);
-```
-
-### API Key Auth
-
-```php
-$router->get('/api/webhook', [WebhookController::class, 'handle'], ['apikey']);
-```
-
----
-
-## Validation
-
-```php
-$validated = $request->validate([
-    'email'    => 'required|email|max:255',
-    'password' => 'required|min:8|max:255|confirmed',
-    'age'      => 'integer|min:18|max:120',
-    'role'     => 'in:admin,user,guest',
-]);
-```
-
-| Rule | Description |
-|------|-------------|
-| `required` | Field must not be empty |
-| `email` | Valid email format |
-| `min:N` | Minimum length/value |
-| `max:N` | Maximum length/value |
-| `numeric` | Must be numeric |
-| `integer` | Must be integer |
-| `in:a,b,c` | Must be one of |
-| `confirmed` | Must match `{field}_confirmation` |
-
----
-
-## Middleware
-
-Built-in middleware stack:
-- **SecurityHeadersMiddleware** — X-Frame-Options, CSP, HSTS, etc.
-- **CorsMiddleware** — Cross-Origin Resource Sharing
-- **JsonMiddleware** — JSON body parsing + validation
-- **AuthMiddleware** — JWT token verification
-- **ApiKeyMiddleware** — API key authentication
-- **ThrottleMiddleware** — Rate limiting (Redis + file fallback)
-- **CsrfMiddleware** — CSRF protection
-- **IdempotencyMiddleware** — Idempotency key support
-
-### Custom Middleware
-
-```php
-class LogMiddleware implements MiddlewareInterface
-{
-    public function handle(Request $request, callable $next): mixed
-    {
-        $start = microtime(true);
-        $response = $next($request);
-        $duration = (microtime(true) - $start) * 1000;
-        Logger::info("{$request->method()} {$request->path()} took {$duration}ms");
-        return $response;
-    }
-}
-```
-
----
-
-## CLI Commands
-
+### Code Generation
 ```bash
-php siro make:crud Product          # Full CRUD in 2 seconds
-php siro make:controller Product    # Generate controller
-php siro make:model Product         # Generate model
-php siro make:migration create_products_table
-php siro make:service ProductService
-php siro make:repository ProductRepository
-php siro make:resource ProductResource
-php siro make:auth                   # Auth system
-php siro make:test ProductTest
-php siro migrate                     # Run migrations
-php siro route:list                  # List all routes
-php siro route:search product       # Search routes
-php siro db:show users --schema     # Show table schema
-php siro env:check                  # Check environment
-php siro doctor                     # System health check
-php siro key:generate               # Generate JWT secret
-php siro optimize                    # Cache for production
-php siro serve                       # Dev server
-php siro api:test GET /api/health   # Test endpoint
-php siro log:stats                  # Request statistics
-php siro why                         # Last request debug
+php siro make:model User         # Generate model
+php siro make:controller User    # Generate controller
+php siro make:migration create_users_table  # Generate migration
+php siro make:crud products      # Full CRUD scaffold
+php siro make:test ProductApi    # Generate test
+php siro make:factory User       # Generate factory
+php siro make:auth               # Full auth system
+php siro make:resource User      # Generate resource
+php siro make:job SendEmail      # Generate job
+php siro make:mail Welcome       # Generate mail class
+php siro make:event UserCreated  # Generate event
+php siro make:lang vi            # Create language pack
+php siro make:openapi            # Generate OpenAPI spec
+php siro make:postman            # Generate Postman collection
 ```
 
----
-
-## Responses
-
-### Success
-
-```json
-{
-    "success": true,
-    "message": "Products retrieved",
-    "data": [...],
-    "meta": {
-        "page": 1,
-        "per_page": 20,
-        "total": 100,
-        "last_page": 5
-    }
-}
-```
-
-### Error
-
-```json
-{
-    "success": false,
-    "message": "Validation failed",
-    "errors": {
-        "email": ["Email has already been taken"],
-        "password": ["Password must be at least 8 characters"]
-    }
-}
-```
-
----
-
-## Performance
-
-| Metric | Result |
-|--------|--------|
-| Route dispatch | ~0.003ms |
-| DB SELECT (PK) | ~0.04ms |
-| JSON response | < 0.01ms |
-| Memory baseline | 4MB |
-| Throughput | ~328,000 req/s |
-| Runtime deps | 3 (PDO, JSON, mbstring) |
-
----
-
-## Deployment
-
+### Database
 ```bash
-php siro optimize
-# Set APP_ENV=production in .env
-# Set APP_DEBUG=false
-
-# Nginx config
-server {
-    listen 80;
-    server_name api.example.com;
-    root /var/www/my-api/public;
-    index index.php;
-    
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-    
-    location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
-}
+php siro migrate                 # Run migrations
+php siro migrate:rollback        # Rollback migrations
+php siro migrate:status          # Check migration status
+php siro db:seed                 # Run seeders
+php siro db:show users           # Inspect table
 ```
 
+### Testing & Debugging
+```bash
+php siro test                    # Run all tests
+php siro api:test GET /api/users # Test endpoint
+php siro log:trace <id>          # View trace details
+php siro log:replay <id>         # Replay request
+php siro log:export --format=json # Export traces
+php siro slow                    # Show slow requests
+php siro rate:status             # Rate limit dashboard
+```
+
+### Performance
+```bash
+php siro benchmark               # Run benchmarks
+php siro config:cache            # Cache configuration
+php siro optimize                # Optimize for production
+php siro env:check               # Validate environment
+```
+
+### Deployment
+```bash
+php siro deploy                  # Deploy application
+php siro down                    # Enable maintenance mode
+php siro up                      # Disable maintenance mode
+php siro storage:link            # Create storage symlink
+```
+
+### Queue & Schedule
+```bash
+php siro queue:work              # Process jobs
+php siro queue:work --daemon     # Run continuously
+php siro queue:status            # Queue status
+php siro queue:retry <id>        # Retry failed job
+php siro schedule:run            # Run scheduled tasks
+```
+
+### System
+```bash
+php siro route:list              # List all routes
+php siro route:rules             # Extract validation rules
+php siro key:generate            # Generate JWT secret
+php siro doctor                  # System health check
+php siro env:switch staging      # Switch environment
+```
+
+**Full command list:** `php siro list`
+
 ---
 
-## Why Siro?
+## 🎯 Common Tasks
 
-| Feature | Siro | Laravel | Slim | Lumen |
-|---------|:----:|:-------:|:----:|:-----:|
-| Performance | 🚀 328K req/s | ~50K req/s | ~100K req/s | ~80K req/s |
-| Memory | 4MB | 12MB | 2MB | 6MB |
-| Dependencies | 3 | 50+ | 2 | 5 |
-| JWT Auth | Built-in | 3rd party | 3rd party | 3rd party |
-| API Keys | Built-in | ❌ | ❌ | ❌ |
-| Rate Limiting | Built-in | Built-in | ❌ | ❌ |
-| Idempotency | Built-in | ❌ | ❌ | ❌ |
-| CRUD Generator | ✅ | ✅ | ❌ | ❌ |
-| OpenAPI Generator | ✅ | ❌ | ❌ | ❌ |
-| Migrations | ✅ | ✅ | ❌ | ✅ |
-| ORM | ✅ | ✅ | ❌ | ❌ |
-| Validation | ✅ | ✅ | ❌ | ✅ |
-| Queues | ✅ | ✅ | ❌ | ❌ |
-| Mail | ✅ | ✅ | ❌ | ❌ |
-| Tests | 1,294 | ~5,000 | ~500 | ~300 |
-| PHPStan | 0 errors | varies | varies | varies |
+### I want to...
+
+#### Build a REST API
+→ See **[Quick Start Guide](guides/QUICKSTART.md)**  
+→ Use `php siro make:crud posts`
+
+#### Add Authentication
+→ See **[Authentication Guide](guides/AUTHENTICATION.md)**  
+→ Use `php siro make:auth`
+
+#### Deploy to Production
+→ See **[Deployment Guide](guides/DEPLOYMENT.md)**  
+→ Use `php siro deploy`
+
+#### Write Tests
+→ See **[Testing Guide](guides/TESTING.md)**  
+→ Use `php siro make:test ProductApi`
+
+#### Optimize Performance
+→ See **[Performance Guide](PERFORMANCE.md)**  
+→ Run `php siro benchmark`
+
+#### Secure My API
+→ See **[Security Guide](SECURITY.md)**  
+→ Run `php siro env:check`
+
+#### Add File Upload
+→ See **[File Upload Guide](guides/FILE_UPLOAD.md)**  
+→ Use `$request->file('avatar')`
+
+#### Queue Heavy Operations
+→ See **[Queue Guide](guides/QUEUE_MAIL.md)**  
+→ Use `Mail::to($user)->queue()`
 
 ---
 
-## Requirements
+## 📖 Learning Path
 
-- PHP 8.2+
-- PDO, JSON, mbstring extensions
-- SQLite/MySQL/PostgreSQL
-- Redis (optional: cache, sessions, rate limiting)
+### Beginner (Week 1)
+1. Install SiroPHP
+2. Follow Quick Start tutorial
+3. Build simple CRUD API
+4. Add authentication
+5. Write basic tests
 
-## License
+### Intermediate (Week 2-3)
+1. Learn middleware system
+2. Implement relationships
+3. Add caching
+4. Set up queue system
+5. Configure multi-language support
 
-Siro Framework is open-source software licensed under the [MIT license](LICENSE).
+### Advanced (Week 4+)
+1. Study architecture decisions
+2. Optimize performance
+3. Implement custom middleware
+4. Extend framework components
+5. Deploy to production
+
+---
+
+## 💡 Examples
+
+### Example Applications
+- **Blog API** - [View on GitHub](https://github.com/SiroSoft/examples/tree/main/blog-api)
+- **E-commerce Backend** - [View on GitHub](https://github.com/SiroSoft/examples/tree/main/ecommerce)
+- **Task Manager** - [View on GitHub](https://github.com/SiroSoft/examples/tree/main/task-manager)
+- **Real-time Chat** - Coming soon
+
+### Code Snippets
+- **Authentication** - [Examples](examples/auth.md)
+- **CRUD Operations** - [Examples](examples/crud.md)
+- **File Upload** - [Examples](examples/file-upload.md)
+- **Queue Jobs** - [Examples](examples/queue.md)
+- **API Versioning** - [Examples](examples/versioning.md)
+
+---
+
+## 🔗 External Resources
+
+### Official Links
+- **GitHub:** https://github.com/SiroSoft/SiroPHP
+- **Core Library:** https://github.com/SiroSoft/siro-core
+- **Packagist:** https://packagist.org/packages/sirosoft/api
+- **Issues:** https://github.com/SiroSoft/SiroPHP/issues
+- **Discussions:** https://github.com/SiroSoft/SiroPHP/discussions
+
+### Community
+- **Discord:** [Join our server](https://discord.gg/sirophp) *(placeholder)*
+- **Twitter:** [@SiroPHP](https://twitter.com/sirophp) *(placeholder)*
+- **Blog:** https://sirosoft.com/blog *(placeholder)*
+
+### Documentation
+- **Core Framework Docs:** https://github.com/SiroSoft/siro-core/tree/main/docs
+- **OpenAPI Spec:** [View](openapi.json)
+- **Swagger UI:** http://localhost:8000/docs/swagger/ *(after running `make:openapi`)*
+
+---
+
+## ❓ FAQ
+
+### General Questions
+
+**Q: Is SiroPHP production-ready?**  
+A: Yes! Used in production by multiple companies. See [Deployment Guide](guides/DEPLOYMENT.md) for hardening tips.
+
+**Q: How does it compare to Laravel?**  
+A: 2000-4000x faster, 40x less memory, zero dependencies. Trade-off: smaller ecosystem.
+
+**Q: Can I use Eloquent ORM?**  
+A: No, SiroPHP has its own lightweight Model layer. Similar API, less overhead.
+
+**Q: Does it support PostgreSQL?**  
+A: Yes! MySQL, PostgreSQL, and SQLite are fully supported.
+
+### Technical Questions
+
+**Q: How do I add custom middleware?**  
+A: Create class implementing middleware interface, add to route. See [Router API](api/Router.md).
+
+**Q: How do I handle file uploads?**  
+A: Use `$request->file()` method. See [File Upload Guide](guides/FILE_UPLOAD.md).
+
+**Q: Can I use Redis?**  
+A: Yes! Configure in `.env`: `CACHE_DRIVER=redis`, `SESSION_DRIVER=redis`.
+
+**Q: Is there WebSocket support?**  
+A: Not yet. Planned for future release. Use external WebSocket server for now.
+
+### Deployment Questions
+
+**Q: What hosting works with SiroPHP?**  
+A: Any PHP 8.2+ host. Works on $2/month shared hosting, VPS, Docker, etc.
+
+**Q: How do I scale horizontally?**  
+A: Use load balancer + multiple app servers + shared database + Redis cache.
+
+**Q: How do I monitor production?**  
+A: Use trace IDs, slow request logs, health check endpoint, external monitoring tools.
+
+---
+
+## 📊 Document Status
+
+### Completed ✅
+- Quick Start Guide
+- Deployment Guide
+- Architecture Decisions (from core)
+- Security Guide (from core)
+- Performance Guide (from core)
+- Router API Reference (from core)
+
+### In Progress 🚧
+- Database Guide
+- Authentication Guide
+- Testing Guide
+- More API References
+
+### Planned 📅
+- Example applications
+- Video tutorials
+- Migration guides from Laravel
+- Cookbook recipes
+
+---
+
+## 🆘 Getting Help
+
+### Priority Order
+1. **Search documentation** - Your question might be answered here
+2. **Check GitHub Issues** - Someone may have asked before
+3. **Ask in Discussions** - Community can help
+4. **Open Issue** - For bugs or feature requests
+5. **Email Support** - support@sirosoft.com (for urgent matters)
+
+### Response Times
+- GitHub Issues: Within 48 hours
+- Discussions: Within 3 days
+- Email: Within 1 week
+- Security issues: Within 48 hours (security@sirosoft.com)
+
+---
+
+## 🎉 Contributing
+
+Want to improve documentation? We welcome contributions!
+
+1. Fork repository
+2. Edit documentation files
+3. Submit pull request
+4. See [Contributing Guide](../CONTRIBUTING.md)
+
+**Documentation priorities:**
+- High: API references, examples
+- Medium: Tutorials, guides
+- Low: Translations, diagrams
+
+---
+
+*Last updated: May 11, 2026*  
+*Documentation version: 1.0*  
+*SiroPHP version: 1.0.0*

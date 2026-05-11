@@ -558,10 +558,40 @@ class ProductApiTest extends TestCase
 
 ---
 
-## 📚 Learn More
+## 📚 Documentation
+
+### Quick Start
+- **[Quick Start Guide](docs/guides/QUICKSTART.md)** ⭐ - Build your first API in 5 minutes
+- **[Deployment Guide](docs/guides/DEPLOYMENT.md)** ⭐ - Production deployment
+- **[Documentation Index](docs/INDEX.md)** - Complete documentation
+
+### In-Depth Guides
+- **[Architecture Decisions](docs/ARCHITECTURE.md)** - Why we made key design choices
+- **[Security Guide](docs/SECURITY.md)** - Security features and best practices
+- **[Performance Optimization](docs/PERFORMANCE.md)** - Benchmarking and tuning tips
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
+- **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community guidelines
+- **[Security Policy](SECURITY-POLICY.md)** - Reporting vulnerabilities
+
+### API References
+- [Router API](docs/api/Router.md)
+- [Model API](docs/api/Model.md)
+- [Database API](docs/api/Database.md)
+- [Auth API](docs/api/Auth.md)
+- [Full API Reference](docs/INDEX.md#api-references)
+
+### Examples & Tutorials
+- [Example Applications](docs/examples/) - Real-world code samples
+- [OpenAPI Spec](docs/openapi.json) - API specification
+- [Swagger UI](docs/swagger/) - Interactive API docs
+
+---
+
+## 🔗 External Resources
 
 - **📖 Core Framework Docs** → [github.com/SiroSoft/siro-core](https://github.com/SiroSoft/siro-core)
 - **🐛 Report Issues** → [github.com/SiroSoft/SiroPHP/issues](https://github.com/SiroSoft/SiroPHP/issues)
+- **💬 Discussions** → [github.com/SiroSoft/SiroPHP/discussions](https://github.com/SiroSoft/SiroPHP/discussions)
 - **📦 Packagist** → [packagist.org/packages/sirosoft/api](https://packagist.org/packages/sirosoft/api)
 
 ---
