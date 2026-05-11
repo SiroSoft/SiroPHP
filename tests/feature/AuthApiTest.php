@@ -104,6 +104,6 @@ final class AuthApiTest extends TestCase
     {
         $resp = $this->get('/health');
         $json = $resp->json();
-        $this->assertEquals('0.22.0', $json['data']['version']);
+        $this->assertEquals('1.0.0', $json['data']['version']);
     }
 }

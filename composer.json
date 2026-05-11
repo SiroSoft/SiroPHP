@@ -1,6 +1,6 @@
 {
     "name": "sirosoft/api",
-    "description": "Siro API Framework Core - Ultra-fast PHP micro-framework with built-in JWT auth, RBAC, rate limiting, migrations, ORM, and CRUD generator. Zero PHPStan errors.",
+    "description": "Siro API Framework Application Skeleton - Build production-ready APIs in minutes. Built-in JWT auth, CRUD generator, 62 CLI commands, Swagger UI.",
     "type": "project",
     "license": "MIT",
     "keywords": [
