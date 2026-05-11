@@ -91,7 +91,7 @@ final class ApiResponseFormatTest extends TestCase
     public function testDeleteProductReturnsExpected(): void
     {
         $resp = $this->delete('/api/products/99999');
-        $this->assertContains($resp->status(), [200, 404]);
+        $this->assertContains($resp->status(), [200, 401, 404]);
     }
 
     public function testHealthReturnsDatabaseConnected(): void

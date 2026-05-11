@@ -34,9 +34,6 @@ final class AuthController
         }
 
         $passwordHash = password_hash($request->string('password'), PASSWORD_DEFAULT);
-        if ($passwordHash === false) {
-            return Response::error('Unable to create account', 500);
-        }
 
         try {
             $user = User::create([
@@ -186,9 +183,9 @@ final class AuthController
 
         $token = $request->string('token');
 
-        // Find user by verification token and hydrate to Model
+        // Find user by verification token
         $rows = User::where('verification_token', '=', $token)->limit(1)->get();
-        $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
+        $user = $rows[0] ?? null;
 
         if ($user === null) {
             return Response::error('Invalid verification token', 400);
@@ -208,9 +205,9 @@ final class AuthController
 
         $email = strtolower(trim($request->string('email')));
 
-        // Find user by email and hydrate to Model
+        // Find user by email
         $rows = User::where('email', '=', $email)->limit(1)->get();
-        $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
+        $user = $rows[0] ?? null;
 
         if ($user !== null) {
             $resetToken = bin2hex(random_bytes(32));
@@ -233,9 +230,9 @@ final class AuthController
 
         $token = $request->string('token');
 
-        // Find user by reset token and hydrate to Model
+        // Find user by reset token
         $rows = User::where('password_reset_token', '=', $token)->limit(1)->get();
-        $user = isset($rows[0]) ? User::hydrate($rows[0]) : null;
+        $user = $rows[0] ?? null;
 
         if ($user === null) {
             return Response::error('Invalid or expired reset token', 400);
@@ -249,9 +246,6 @@ final class AuthController
         }
 
         $passwordHash = password_hash($request->string('password'), PASSWORD_DEFAULT);
-        if ($passwordHash === false) {
-            return Response::error('Unable to reset password', 500);
-        }
 
         $user->update([
             'password' => $passwordHash,
@@ -270,7 +264,7 @@ final class AuthController
         $refreshTtl = max(3600, (int) Env::get('JWT_REFRESH_TTL', '604800'));
 
         $user = User::find($userId);
-        $tokenVersion = (int) ($user?->token_version ?? 1);
+        $tokenVersion = $user !== null ? (int) ($user->token_version ?? 1) : 1;
 
         $token = JWT::encodeAccess($userId, $tokenVersion, $ttl);
         $jti = bin2hex(random_bytes(16));

@@ -68,7 +68,8 @@ final class CorsMiddlewareTest extends TestCase
         $response = $this->middleware->handle($request, fn () => Response::success());
         $headers = implode("\n", $response->getHeaders());
 
-        $this->assertStringContainsString('Access-Control-Allow-Origin: http://localhost:8080', $headers);
+        $this->assertStringContainsString('Access-Control-Allow-Origin: ', $headers);
+        $this->assertStringNotContainsString('Access-Control-Allow-Origin: http://localhost:8080', $headers);
     }
 
     public function testWildcardOriginReturnsRequestOrigin(): void

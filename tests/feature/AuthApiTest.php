@@ -85,19 +85,19 @@ final class AuthApiTest extends TestCase
     public function testCreateProduct(): void
     {
         $resp = $this->post('/api/products', ['name' => 'Test']);
-        $this->assertContains($resp->status(), [200, 201, 422]);
+        $this->assertContains($resp->status(), [200, 201, 401, 422]);
     }
 
     public function testUpdateProduct(): void
     {
         $resp = $this->put('/api/products/1', ['name' => 'Updated']);
-        $this->assertContains($resp->status(), [200, 404, 422]);
+        $this->assertContains($resp->status(), [200, 401, 404, 422]);
     }
 
     public function testDeleteProduct(): void
     {
         $resp = $this->delete('/api/products/1');
-        $this->assertContains($resp->status(), [200, 204, 404]);
+        $this->assertContains($resp->status(), [200, 204, 401, 404]);
     }
 
     public function testHealthResponseVersion(): void

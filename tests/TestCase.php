@@ -159,6 +159,46 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
+    /** @return array<string, mixed> */
+    protected function responseJson(Response $response): array
+    {
+        ob_start();
+        $response->send();
+        $output = (string) ob_get_clean();
+        $decoded = json_decode($output, true);
+
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    /** @return array<string, string> */
+    protected function authenticate(App $app): array
+    {
+        $email = 'auth-' . uniqid() . '@test.com';
+
+        $register = $this->dispatch($app, 'POST', '/api/auth/register', [
+            'name' => 'Test Auth User',
+            'email' => $email,
+            'password' => 'secret123',
+            'password_confirmation' => 'secret123',
+        ]);
+
+        $this->assertContains($register->statusCode(), [200, 201], 'Failed to register auth test user.');
+
+        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
+            'email' => $email,
+            'password' => 'secret123',
+        ]);
+
+        $this->assertSame(200, $login->statusCode(), 'Failed to login auth test user.');
+        $token = (string) (($this->responseJson($login)['data']['token'] ?? ''));
+        $this->assertNotSame('', $token, 'Auth token missing from login response.');
+
+        return [
+            'authorization' => 'Bearer ' . $token,
+            'content-type' => 'application/json',
+        ];
+    }
+
     /** @param array<string, string> $headers */
     protected function get(string $path, array $headers = []): TestResponse
     {

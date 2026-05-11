@@ -25,14 +25,16 @@ final class CategoriesTest extends TestCase
     public function testStoreReturns201WithValidData(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'POST', '/api/categories', ['name' => 'Test Category', 'slug' => 'test-category'], ['content-type' => 'application/json']);
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'POST', '/api/categories', ['name' => 'Test Category', 'slug' => 'test-category'], $headers);
         $this->assertEquals(201, $response->statusCode());
     }
 
     public function testStoreReturns422WithoutRequiredFields(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'POST', '/api/categories', [], ['content-type' => 'application/json']);
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'POST', '/api/categories', [], $headers);
         $this->assertEquals(422, $response->statusCode());
     }
 }

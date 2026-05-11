@@ -25,14 +25,16 @@ final class TagsOrdersPostsTest extends TestCase
     public function testTagsStoreReturns201(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'POST', '/api/tags', ['name' => 'TestTag'], ['content-type' => 'application/json']);
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'POST', '/api/tags', ['name' => 'TestTag'], $headers);
         $this->assertEquals(201, $response->statusCode());
     }
 
     public function testTagsStoreReturns422WithoutName(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'POST', '/api/tags', [], ['content-type' => 'application/json']);
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'POST', '/api/tags', [], $headers);
         $this->assertEquals(422, $response->statusCode());
     }
 
@@ -53,7 +55,8 @@ final class TagsOrdersPostsTest extends TestCase
     public function testOrdersStoreReturns422WithoutData(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'POST', '/api/orders', [], ['content-type' => 'application/json']);
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'POST', '/api/orders', [], $headers);
         $this->assertEquals(422, $response->statusCode());
     }
 
@@ -74,7 +77,8 @@ final class TagsOrdersPostsTest extends TestCase
     public function testPostsStoreReturns201(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'POST', '/api/posts', ['title' => 'Test Post', 'content' => 'Content body here', 'user_id' => 1], ['content-type' => 'application/json']);
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'POST', '/api/posts', ['title' => 'Test Post', 'content' => 'Content body here', 'user_id' => 1], $headers);
         $this->assertContains($response->statusCode(), [201, 422]);
     }
 }

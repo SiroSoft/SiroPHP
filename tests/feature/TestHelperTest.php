@@ -126,7 +126,7 @@ final class TestHelperTest extends TestCase
             'password' => 'secret123',
         ]);
         $login->assertOk();
-        $token = $login->json()['data']['access_token'] ?? '';
+        $token = $login->json()['data']['token'] ?? '';
 
         $created = $this->post('/api/products', [
             'name' => 'Helper Product',
