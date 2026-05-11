@@ -2,13 +2,14 @@
 
 **The Fastest PHP Micro-Framework Application Skeleton** — Ship a production-ready API with auth in 5 minutes. Built-in DI Container, Config Repository, RBAC support.
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![PHP Version](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Packagist](https://img.shields.io/badge/packagist-v0.22.0-blue.svg)](https://packagist.org/packages/sirosoft/api)
-[![Tests](https://img.shields.io/badge/tests-215%20passing-brightgreen.svg)](tests/)
-[![PHPStan](https://img.shields.io/badge/phpstan-level%206-brightgreen.svg)](https://github.com/SiroSoft/siro-core)
-[![PostgreSQL](https://img.shields.io/badge/postgresql-ready-blue.svg)](https://www.postgresql.org/)
-[![Security](https://img.shields.io/badge/security-log%20sanitized-brightgreen)](https://github.com/SiroSoft/siro-core)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![PHP 8.2+](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
+[![Packagist](https://img.shields.io/packagist/v/sirosoft/api?color=blue&label=packagist)](https://packagist.org/packages/sirosoft/api)
+[![Packagist Downloads](https://img.shields.io/packagist/dt/sirosoft/api?color=blue)](https://packagist.org/packages/sirosoft/api)
+[![CI](https://github.com/SiroSoft/SiroPHP/actions/workflows/test.yml/badge.svg)](https://github.com/SiroSoft/SiroPHP/actions)
+[![Core CI](https://github.com/SiroSoft/siro-core/actions/workflows/test.yml/badge.svg)](https://github.com/SiroSoft/siro-core/actions)
+[![Tests](https://img.shields.io/badge/tests-426%20passing-brightgreen.svg)](tests/)
+[![PHPStan](https://img.shields.io/badge/phpstan-level%207-0%20errors-brightgreen.svg)](https://github.com/SiroSoft/siro-core)
 
 ---
 
