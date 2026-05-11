@@ -2,7 +2,9 @@ name: Test
 
 on:
   push:
+    branches: [main, develop]
   pull_request:
+    branches: [main, develop]
 
 jobs:
   lint:
@@ -14,8 +16,23 @@ jobs:
         with:
           php-version: '8.2'
           tools: composer:v2
-      - name: PHP lint
-        run: find . -type f -name "*.php" -not -path "./vendor/*" -print0 | xargs -0 -n1 php -l
+      - name: PHP syntax check
+        run: find . -type f -name "*.php" -not -path "./vendor/*" -not -path "./storage/*" -print0 | xargs -0 -n1 php -l
+
+  code-style:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+      - name: PHP_CodeSniffer (PSR-12)
+        continue-on-error: true
+        run: vendor/bin/phpcs --standard=PSR12 --ignore=vendor,storage .
 
   static-analysis:
     runs-on: ubuntu-latest
@@ -35,7 +52,7 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
       - name: PHPStan
-        run: php -d memory_limit=512M vendor/bin/phpstan analyse --no-progress 2>&1 | head -80
+        run: php -d memory_limit=512M vendor/bin/phpstan analyse --no-progress
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -60,15 +77,6 @@ jobs:
   feature-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_DATABASE: sirophp_test
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
