@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Models\User;
-use App\Services\User as UserService;
+use App\Services\UserService;
 use Siro\Core\Auth\JWT;
 use Siro\Core\DB;
 use Siro\Core\Env;
@@ -273,10 +273,8 @@ final class AuthController
         $tokenVersion = (int) ($user?->token_version ?? 1);
 
         $token = JWT::encodeAccess($userId, $tokenVersion, $ttl);
-        $refreshToken = JWT::encodeRefresh($userId, $tokenVersion, $refreshTtl);
-
-        // Store refresh token
         $jti = bin2hex(random_bytes(16));
+        $refreshToken = JWT::encodeRefresh($userId, $tokenVersion, $refreshTtl, $jti);
         DB::table('refresh_tokens')->insert([
             'jti' => $jti,
             'user_id' => $userId,

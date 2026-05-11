@@ -19,6 +19,9 @@
         <testsuite name="Feature">
             <directory suffix="Test.php">tests/feature</directory>
         </testsuite>
+        <testsuite name="EdgeCase">
+            <directory suffix="Test.php">tests/edge_case</directory>
+        </testsuite>
     </testsuites>
 
     <source>

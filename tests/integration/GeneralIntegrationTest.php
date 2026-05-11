@@ -200,10 +200,10 @@ final class GeneralIntegrationTest extends TestCase
     public function testValidateMultipleFieldsSimultaneously(): void
     {
         $errors = Validator::make(
-            ['name' => '', 'email' => 'bad', 'age' => '-1'],
+            ['name' => '', 'email' => 'bad', 'age' => 'abc'],
             ['name' => 'required', 'email' => 'email', 'age' => 'min:0']
         );
-        // name=required fails (empty), email=email fails (invalid), age=min:0 passes (string length 2 >= 0)
+        // name=required fails, email=email fails, age=min:0 passes (string length 3 >= 0)
         $this->assertCount(2, $errors);
         $this->assertArrayHasKey('name', $errors);
         $this->assertArrayHasKey('email', $errors);

@@ -38,7 +38,7 @@ final class PostController extends Controller
         $post = $this->service->getById($id);
 
         if ($post === null) {
-            return $this->error($this->service->notFoundMessage(), 404);
+            return $this->error('Post not found', 404);
         }
 
         return $this->success(PostResource::make($post->toArray()), 'Post detail');

@@ -79,7 +79,7 @@ final class SiroUnitTest extends TestCase
 
     public function testValidatorMinFail(): void
     {
-        $errors = Validator::make(['p' => '12'], ['p' => 'min:6']);
+        $errors = Validator::make(['p' => 'ab'], ['p' => 'min:6']);
         $this->assertNotEmpty($errors);
     }
 

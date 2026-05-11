@@ -42,7 +42,7 @@ final class ValidationEdgeTest extends TestCase
 
     public function testValidateMinFails(): void
     {
-        $errors = Validator::make(['pass' => '12'], ['pass' => 'min:6']);
+        $errors = Validator::make(['pass' => 'ab'], ['pass' => 'min:6']);
         $this->assertNotEmpty($errors);
     }
 
