@@ -93,17 +93,29 @@ jobs:
         run: composer install --no-interaction --no-progress --prefer-dist
       - name: Prepare env
         run: |
-          echo "Creating .env from .env.testing..."
-          cp .env.testing .env
+          echo "Current directory: $(pwd)"
+          echo "Checking for .env files..."
+          ls -la .env* || echo "No .env files found"
+
           if [ ! -f .env ]; then
-            echo "ERROR: .env file was not created!"
-            exit 1
+            echo "Creating .env from .env.testing..."
+            cp .env.testing .env
+            if [ ! -f .env ]; then
+              echo "ERROR: .env file was not created!"
+              exit 1
+            fi
+            echo ".env file created successfully"
+          else
+            echo ".env file already exists"
           fi
-          echo ".env file created successfully"
+
           sed -i 's|DB_DATABASE=.*|DB_DATABASE=storage/test.db|g' .env
           sed -i 's|CACHE_DRIVER=.*|CACHE_DRIVER=file|g' .env
-          echo "Verifying .env contents:"
+
+          echo "Final .env contents (first 10 lines):"
           head -10 .env
+          echo "---"
+          echo "JWT_SECRET length: $(grep JWT_SECRET .env | cut -d'=' -f2 | wc -c)"
       - name: Migrate
         run: php siro migrate
       - name: PHPUnit Feature & Integration tests
