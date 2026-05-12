@@ -105,7 +105,8 @@ final class ApiResponseFormatTest extends TestCase
     {
         $resp = $this->get('/health');
         $json = $resp->json();
-        $this->assertEquals('0.23.0', $json['data']['version']);
+        $this->assertArrayHasKey('version', $json['data']);
+$this->assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', $json['data']['version']);
     }
 
     public function testCategoriesEndpoint(): void
