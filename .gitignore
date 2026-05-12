@@ -28,7 +28,6 @@
 # IDE and AI assistant folders (kept locally only)
 /.cline/
 .cline/
-.vscode/
 .idea/
 
 # CI/CD configs (kept locally only)
@@ -74,3 +73,5 @@ openapi_test.json
 .git_disabled/
 
 .vscode/
+
+!.vscode/siro.code-snippets
