@@ -54,7 +54,7 @@ $app->router->get('/', function (Request $req): mixed {
         'message' => Lang::get('messages.welcome'),
         'data' => [
             'name' => 'Siro API Framework',
-            'version' => \Siro\Core\Console::VERSION,
+            'version' => \Siro\Core\Console::getVersion(),
             'php' => PHP_VERSION,
             'locale' => Lang::locale(),
         ],
@@ -74,7 +74,7 @@ $app->router->get('/health', function (): array {
         'message' => 'OK',
         'data' => [
             'status' => 'healthy',
-            'version' => \Siro\Core\Console::VERSION,
+            'version' => \Siro\Core\Console::getVersion(),
             'php' => PHP_VERSION,
             'database' => $dbOk ? 'connected' : 'unreachable',
             'time' => date('c'),

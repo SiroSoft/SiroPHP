@@ -36,6 +36,7 @@ final class AuthController
         $passwordHash = password_hash($request->string('password'), PASSWORD_DEFAULT);
 
         try {
+            /** @var User $user */
             $user = User::create([
                 'name' => $request->string('name'),
                 'email' => $email,

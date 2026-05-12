@@ -13,3 +13,5 @@ parameters:
     excludePaths:
         - vendor/
         - storage/
+    universalObjectCratesClasses:
+        - Siro\Core\Model
