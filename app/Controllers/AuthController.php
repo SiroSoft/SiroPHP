@@ -264,7 +264,8 @@ final class AuthController
         $refreshTtl = max(3600, (int) Env::get('JWT_REFRESH_TTL', '604800'));
 
         $user = User::find($userId);
-        $tokenVersion = $user !== null ? (int) ($user->token_version ?? 1) : 1;
+        $rawVersion = $user !== null ? (int) ($user->token_version ?? 0) : 0;
+        $tokenVersion = $rawVersion > 0 ? $rawVersion : 1;
 
         $token = JWT::encodeAccess($userId, $tokenVersion, $ttl);
         $jti = bin2hex(random_bytes(16));

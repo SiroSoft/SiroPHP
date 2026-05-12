@@ -17,7 +17,21 @@ use Siro\Core\Request;
 use Siro\Core\Response;
 use Siro\Core\Storage;
 
+use Siro\Core\Metrics;
+
 /** @var \Siro\Core\App $app */
+
+// Prometheus metrics endpoint (no auth, no version)
+Metrics::init('siro', true);
+Metrics::registerRoute($app->router);
+$app->router->get('/health/ready', function (): mixed {
+    return Response::success(['status' => 'healthy']);
+});
+
+// API Versioning registration
+\Siro\Core\Middleware\VersionMiddleware::register(1, '/api/v1');
+\Siro\Core\Middleware\VersionMiddleware::register(2, '/api/v2');
+
 $app->router->get('/', function (Request $req): mixed {
     // Serve HTML homepage for browser requests
     $accept = $req->header('accept', '');
@@ -68,7 +82,7 @@ $app->router->get('/health', function (): array {
     ];
 });
 
-$app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::class], function ($router): void {
+$app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::class, 'version', 'etag', 'metrics'], function ($router): void {
     // Public auth routes
     $router->post('/auth/register', [AuthController::class, 'register'])
         ->middleware([JsonMiddleware::class, 'throttle:30,1']);

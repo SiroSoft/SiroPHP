@@ -6,6 +6,7 @@ namespace App\Middleware;
 
 use App\Models\User;
 use Siro\Core\Auth\JWT;
+use Siro\Core\DB;
 use Siro\Core\Middleware\MiddlewareInterface;
 use Siro\Core\Request;
 use Siro\Core\Response;
@@ -17,6 +18,9 @@ use Throwable;
  */
 final class AuthMiddleware implements MiddlewareInterface
 {
+    /** @var array<int, array<string, mixed>|null> */
+    private static array $userCache = [];
+
     public function handle(Request $request, callable $next, string ...$roles): mixed
     {
         $header = (string) $request->header('authorization', '');
@@ -50,31 +54,24 @@ final class AuthMiddleware implements MiddlewareInterface
                 ]);
             }
 
-            $user = User::find($userId);
-
-            if ($user === null || ((int) $user->status !== 1)) {
+            // Request-scoped user cache to avoid repeated DB queries for same user
+            $userData = self::resolveUser($userId, $tokenVersion);
+            if ($userData === null) {
                 return Response::error('Unauthorized', 401, [
-                    'token' => ['User not found or inactive'],
+                    'token' => ['User not found, inactive, or token revoked'],
                 ]);
             }
 
-            $userData = $user->toArray();
-            if ((int) ($userData['token_version'] ?? 1) !== $tokenVersion) {
-                return Response::error('Unauthorized', 401, [
-                    'token' => ['Token has been revoked'],
-                ]);
-            }
-
-            $role = (string) ($userData['role'] ?? 'user');
+            $role = $userData['role'];
 
             $request->setUser([
-                'id' => (int) ($userData['id'] ?? 0),
-                'name' => (string) ($userData['name'] ?? ''),
-                'email' => (string) ($userData['email'] ?? ''),
+                'id' => $userData['id'],
+                'name' => $userData['name'],
+                'email' => $userData['email'],
                 'role' => $role,
-                'status' => (int) ($userData['status'] ?? 0),
-                'token_version' => (int) ($userData['token_version'] ?? 1),
-                'created_at' => (string) ($userData['created_at'] ?? ''),
+                'status' => $userData['status'],
+                'token_version' => $userData['token_version'],
+                'created_at' => $userData['created_at'],
                 'claims' => $claims,
             ]);
 
@@ -99,5 +96,45 @@ final class AuthMiddleware implements MiddlewareInterface
         }
 
         return $next($request);
+    }
+
+    /** @return array<string, mixed>|null */
+    private static function resolveUser(int $userId, int $tokenVersion): ?array
+    {
+        if (isset(self::$userCache[$userId])) {
+            return self::$userCache[$userId];
+        }
+
+        $rows = DB::table((new User())->getTable())
+            ->where('id', '=', $userId)
+            ->limit(1)
+            ->get();
+
+        $row = $rows[0] ?? null;
+        if ($row === null) {
+            self::$userCache[$userId] = null;
+            return null;
+        }
+
+        $status = (int) ($row['status'] ?? 0);
+        $dbTokenVersion = (int) ($row['token_version'] ?? 1);
+
+        if ($status !== 1 || $dbTokenVersion !== $tokenVersion) {
+            self::$userCache[$userId] = null;
+            return null;
+        }
+
+        $userData = [
+            'id' => (int) ($row['id'] ?? $userId),
+            'name' => (string) ($row['name'] ?? ''),
+            'email' => (string) ($row['email'] ?? ''),
+            'role' => (string) ($row['role'] ?? 'user'),
+            'status' => $status,
+            'token_version' => $dbTokenVersion,
+            'created_at' => (string) ($row['created_at'] ?? ''),
+        ];
+
+        self::$userCache[$userId] = $userData;
+        return $userData;
     }
 }
