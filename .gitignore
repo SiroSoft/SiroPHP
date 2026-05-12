@@ -72,3 +72,5 @@ openapi_test.json
 /public/openapi.json
 
 .git_disabled/
+
+.vscode/
