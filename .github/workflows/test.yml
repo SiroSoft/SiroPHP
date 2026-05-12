@@ -132,5 +132,16 @@ jobs:
           tools: composer:v2
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Prepare env
+        run: |
+          echo "Creating .env from .env.testing..."
+          cp .env.testing .env
+          if [ ! -f .env ]; then
+            echo "ERROR: .env file was not created!"
+            exit 1
+          fi
+          sed -i 's|DB_DATABASE=.*|DB_DATABASE=storage/test.db|g' .env
+          sed -i 's|CACHE_DRIVER=.*|CACHE_DRIVER=file|g' .env
+          echo ".env file prepared for technical gate"
       - name: Run release technical gate
         run: composer release:check
