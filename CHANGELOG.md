@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.23.0 (2026-05-12) — API Versioning, ETag, Metrics, Auth Caching
+
+### 🆕 New Features
+- **API Versioning**: `version` middleware on `/api` group — header-based version negotiation
+  - Client: `Accept: application/vnd.siro.v2+json`
+  - Response: `X-API-Version: 1` header
+- **ETag / Conditional Requests**: `etag` middleware — auto 304 Not Modified for cached responses
+- **Prometheus Metrics**: `/metrics` endpoint in OpenMetrics format
+  - Auto-track request count, duration histogram, status codes
+
+### ⚡ Performance
+- **AuthMiddleware**: Request-scoped user cache — `User::find()` called once per request instead of every middleware
+- Updated to `sirosoft/core ^0.23`
+
+### 🧪 Testing
+- **426 tests** passing — 0 failures
+- Updated route integration tests for new middleware chain
+
+### 🔧 Config
+- phpunit.xml: coverage report (HTML, Clover, text)
+- Routes: `/health/ready`, `/metrics` unauthenticated endpoints
+
 ## v0.22.0 (2026-05-11) — Final Audit & Zero PHPStan Baseline
 
 ### Audit & Type Safety

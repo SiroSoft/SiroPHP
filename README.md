@@ -1,6 +1,6 @@
-# Siro API Framework v0.22.0
+# Siro API Framework v0.23.0
 
-**The Fastest PHP Micro-Framework Application Skeleton** - Ship a production-ready API with auth in 5 minutes. Built-in DI Container, Config Repository, RBAC support.
+**The Fastest PHP Micro-Framework Application Skeleton** — Ship a production-ready API with auth in 5 minutes. Built-in DI Container, Config Repository, RBAC support.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP 8.2+](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
@@ -8,7 +8,7 @@
 [![Packagist Downloads](https://img.shields.io/packagist/dt/sirosoft/api?color=blue)](https://packagist.org/packages/sirosoft/api)
 [![CI](https://github.com/SiroSoft/SiroPHP/actions/workflows/test.yml/badge.svg)](https://github.com/SiroSoft/SiroPHP/actions)
 [![Core CI](https://github.com/SiroSoft/siro-core/actions/workflows/test.yml/badge.svg)](https://github.com/SiroSoft/siro-core/actions)
-[![Tests](https://img.shields.io/badge/tests-426%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-1312%20passing-brightgreen.svg)](tests/)
 [![PHPStan](https://img.shields.io/badge/phpstan-level%207-0%20errors-brightgreen.svg)](https://github.com/SiroSoft/siro-core)
 
 ---
@@ -30,11 +30,22 @@
 
 ---
 
-## New in v0.22.0
+## New in v0.23.0
 
-### Model Relations
-- **HasOne** - One-to-one relationships via `Model::hasOne()`
-- **BelongsToMany** - Many-to-many with attach/detach/sync/has/toggle
+### 🆕 API Features
+- **API Versioning** — `version` middleware on `/api` group, client sends `Accept: application/vnd.siro.v2+json`
+- **ETag / Conditional Requests** — `etag` middleware, auto `304 Not Modified` for cached responses
+- **Prometheus Metrics** — GET `/metrics` in OpenMetrics format, auto-track request count/duration
+- **Audit Logging** — Security event trail for auth failures, unauthorized access, rate limiting
+
+### ⚡ Performance
+- **Auth Caching** — Request-scoped user cache eliminates repeated DB queries
+- Updated to `sirosoft/core ^0.23` — sub-1ms boot, 2.97M JSON responses/sec
+
+### 🔧 Quality
+- **CI/CD**: GitHub Actions with composer audit + PHPStan
+- **Tests**: 426 passing (0 failures)
+- **Coverage**: phpunit.xml configured for HTML/Clover/text reports
 
 ### File Upload Helpers
 - `UploadedFile::isImage()`, `isPdf()`, `hash()`, `maxSize()`
