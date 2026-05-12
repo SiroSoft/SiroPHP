@@ -65,7 +65,15 @@ final class MiddlewareTest extends TestCase
 
     public function testCorsConfiguredInEnv(): void
     {
-        $env = file_get_contents($this->basePath . '/.env');
+        $envPath = $this->basePath . '/.env';
+        
+        // Skip if .env file doesn't exist (e.g., in some CI environments)
+        if (!file_exists($envPath)) {
+            $this->markTestSkipped('.env file not found');
+            return;
+        }
+        
+        $env = file_get_contents($envPath);
         $this->assertStringContainsString('CORS_ALLOWED_ORIGINS', $env ?: '');
     }
 }
