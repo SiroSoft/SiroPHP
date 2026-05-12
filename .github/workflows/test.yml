@@ -93,29 +93,52 @@ jobs:
         run: composer install --no-interaction --no-progress --prefer-dist
       - name: Prepare env
         run: |
-          echo "Current directory: $(pwd)"
-          echo "Checking for .env files..."
-          ls -la .env* || echo "No .env files found"
-
+          echo "=== ENV PREPARATION DEBUG ==="
+          echo "Working directory: $(pwd)"
+          echo ""
+          echo "Listing all .env files:"
+          ls -la .env* 2>&1 || echo "No .env files found at all"
+          echo ""
+          
+          # Try to create .env from .env.testing or .env.example
           if [ ! -f .env ]; then
-            echo "Creating .env from .env.testing..."
-            cp .env.testing .env
-            if [ ! -f .env ]; then
-              echo "ERROR: .env file was not created!"
+            if [ -f .env.testing ]; then
+              echo "Copying .env.testing to .env..."
+              cp .env.testing .env
+            elif [ -f .env.example ]; then
+              echo "Copying .env.example to .env..."
+              cp .env.example .env
+            else
+              echo "ERROR: Neither .env.testing nor .env.example exists!"
               exit 1
             fi
-            echo ".env file created successfully"
           else
-            echo ".env file already exists"
+            echo ".env already exists, skipping copy"
           fi
-
+          
+          # Verify .env was created
+          if [ ! -f .env ]; then
+            echo "FATAL ERROR: .env file does not exist after copy attempt!"
+            echo "Current directory contents:"
+            ls -la
+            exit 1
+          fi
+          
+          echo ".env file exists: YES"
+          echo ".env file size: $(wc -c < .env) bytes"
+          echo ""
+          
+          # Configure for testing
           sed -i 's|DB_DATABASE=.*|DB_DATABASE=storage/test.db|g' .env
           sed -i 's|CACHE_DRIVER=.*|CACHE_DRIVER=file|g' .env
-
-          echo "Final .env contents (first 10 lines):"
-          head -10 .env
-          echo "---"
-          echo "JWT_SECRET length: $(grep JWT_SECRET .env | cut -d'=' -f2 | wc -c)"
+          
+          echo "Configuration updated:"
+          grep -E "^(DB_DATABASE|CACHE_DRIVER|JWT_SECRET)" .env || echo "Warning: Could not find expected config keys"
+          echo ""
+          echo "First 15 lines of .env:"
+          head -15 .env
+          echo ""
+          echo "=== ENV PREPARATION COMPLETE ==="
       - name: Migrate
         run: php siro migrate
       - name: PHPUnit Feature & Integration tests
@@ -134,14 +157,29 @@ jobs:
         run: composer install --no-interaction --no-progress --prefer-dist
       - name: Prepare env
         run: |
-          echo "Creating .env from .env.testing..."
-          cp .env.testing .env
+          echo "=== TECHNICAL GATE ENV PREPARATION ==="
           if [ ! -f .env ]; then
-            echo "ERROR: .env file was not created!"
+            if [ -f .env.testing ]; then
+              echo "Copying .env.testing to .env..."
+              cp .env.testing .env
+            elif [ -f .env.example ]; then
+              echo "Copying .env.example to .env..."
+              cp .env.example .env
+            else
+              echo "ERROR: No .env template found!"
+              exit 1
+            fi
+          fi
+          
+          if [ ! -f .env ]; then
+            echo "FATAL: .env not created!"
+            ls -la
             exit 1
           fi
+          
           sed -i 's|DB_DATABASE=.*|DB_DATABASE=storage/test.db|g' .env
           sed -i 's|CACHE_DRIVER=.*|CACHE_DRIVER=file|g' .env
-          echo ".env file prepared for technical gate"
+          echo ".env prepared successfully ($(wc -c < .env) bytes)"
+          echo "=== READY FOR TECHNICAL GATE ==="
       - name: Run release technical gate
         run: composer release:check
