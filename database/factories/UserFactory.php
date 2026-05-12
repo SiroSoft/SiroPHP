@@ -55,12 +55,16 @@ final class UserFactory
     public function create(): User|array
     {
         if ($this->count === 1) {
+            /** @var User */
             return User::create(array_merge($this->definition(), $this->overrides));
         }
 
+        /** @var array<int, User> */
         $results = [];
         for ($i = 0; $i < $this->count; $i++) {
-            $results[] = User::create(array_merge($this->definition(), $this->overrides));
+            /** @var User $user */
+            $user = User::create(array_merge($this->definition(), $this->overrides));
+            $results[] = $user;
         }
         return $results;
     }
