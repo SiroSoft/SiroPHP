@@ -99,7 +99,7 @@ jobs:
       - name: Migrate
         run: php siro migrate
       - name: PHPUnit Feature & Integration tests
-        run: php vendor/bin/phpunit --testsuite=Feature --testsuite=Integration --no-progress
+        run: php vendor/bin/phpunit --testsuite=Feature,Integration --no-progress
 
   technical-gate:
     runs-on: ubuntu-latest
