@@ -58,15 +58,15 @@ RUN mkdir -p storage/logs storage/framework storage/cache storage/sessions stora
 # Copy FrankenPHP config
 COPY frankenphp/Caddyfile /etc/caddy/Caddyfile
 
-# Generate JWT secret if not provided
-RUN php siro key:generate 2>/dev/null || true
-
-# Cache for production
+# Build-time config cache (uses env defaults only)
 RUN php siro config:cache 2>/dev/null; php siro env:cache 2>/dev/null || true
 
 USER www-data
 
 EXPOSE 80
 
-# FrankenPHP automatically uses worker mode for PHP files
+# Entrypoint: generate JWT secret if missing, then run FrankenPHP
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]

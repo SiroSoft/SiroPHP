@@ -8,8 +8,6 @@ services:
       dockerfile: Dockerfile.frankenphp
     ports:
       - "80:80"
-      - "443:443"
-      - "443:443/udp"
     environment:
       APP_ENV: production
       APP_DEBUG: "false"
@@ -41,8 +39,9 @@ services:
       APP_DEBUG: "false"
       DB_CONNECTION: sqlite
       DB_DATABASE: /app/storage/app.db
-      JWT_SECRET: "${JWT_SECRET:-change-this-in-production-please-use-32-char}"
+      JWT_SECRET: "${JWT_SECRET:-}"
     volumes:
+      - .:/app
       - storage_data:/app/storage
     restart: unless-stopped
 
