@@ -57,9 +57,9 @@ try {
 
     Router::setMiddlewareAliases([
         'auth' => \App\Middleware\AuthMiddleware::class,
-        'throttle' => \App\Middleware\ThrottleMiddleware::class,
-        'cors' => \App\Middleware\CorsMiddleware::class,
-        'json' => \App\Middleware\JsonMiddleware::class,
+        'throttle' => \Siro\Core\Middleware\ThrottleMiddleware::class,
+        'cors' => \Siro\Core\Middleware\CorsMiddleware::class,
+        'json' => \Siro\Core\Middleware\JsonMiddleware::class,
     ]);
 
     $app->boot();

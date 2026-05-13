@@ -7,6 +7,7 @@ namespace App\Tests;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Siro\Core\App;
 use Siro\Core\Database;
+use Siro\Core\Lang;
 use Siro\Core\Request;
 use Siro\Core\Response;
 use Siro\Core\Router;
@@ -32,6 +33,9 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
         $this->basePath = dirname(__DIR__);
+
+        // Reset static locale state to prevent leakage between tests
+        Lang::setLocale('en');
 
         // Clean rate limit files so tests don't interfere with each other
         $rateDir = $this->basePath . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'rate_limit';

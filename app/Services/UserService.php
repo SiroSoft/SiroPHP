@@ -26,7 +26,84 @@ final class UserService
             return false;
         }
 
-        return $user->update(['token_version' => ($user->token_version ?? 0) + 1]) > 0;
+        return $user->update(['token_version' => ($user->token_version ?? 0) + 1]);
+    }
+
+    public static function getByEmail(string $email): ?array
+    {
+        $rows = User::where('email', '=', $email)->limit(1)->get();
+        if ($rows === []) {
+            return null;
+        }
+        return $rows[0]->toArray();
+    }
+
+    public static function createUser(array $data): User
+    {
+        $passwordHash = password_hash($data['password'], PASSWORD_DEFAULT);
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => $passwordHash,
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+        ]);
+    }
+
+    public static function getTokenVersion(int $userId): int
+    {
+        $user = User::find($userId);
+        $rawVersion = $user !== null ? (int) ($user->token_version ?? 0) : 0;
+        return $rawVersion > 0 ? $rawVersion : 1;
+    }
+
+    public static function verifyEmail(string $token): bool
+    {
+        $rows = User::where('verification_token', '=', $token)->limit(1)->get();
+        $user = $rows[0] ?? null;
+        if ($user === null) {
+            return false;
+        }
+        $user->update([
+            'email_verified_at' => date('Y-m-d H:i:s'),
+            'verification_token' => null,
+        ]);
+        return true;
+    }
+
+    public static function initiatePasswordReset(string $email): void
+    {
+        $rows = User::where('email', '=', $email)->limit(1)->get();
+        $user = $rows[0] ?? null;
+        if ($user !== null) {
+            $resetToken = bin2hex(random_bytes(32));
+            $user->update([
+                'password_reset_token' => $resetToken,
+                'password_reset_expires_at' => date('Y-m-d H:i:s', time() + 3600),
+            ]);
+        }
+    }
+
+    public static function resetPassword(string $token, string $newPassword): bool
+    {
+        $rows = User::where('password_reset_token', '=', $token)->limit(1)->get();
+        $user = $rows[0] ?? null;
+        if ($user === null) {
+            return false;
+        }
+        $userData = $user->toArray();
+        $expiresAt = (string) ($userData['password_reset_expires_at'] ?? '');
+        if ($expiresAt !== '' && strtotime($expiresAt) < time()) {
+            return false;
+        }
+        $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $user->update([
+            'password' => $passwordHash,
+            'password_reset_token' => null,
+            'password_reset_expires_at' => null,
+            'token_version' => ($userData['token_version'] ?? 1) + 1,
+        ]);
+        return true;
     }
 
     /** @return array<string, mixed> */

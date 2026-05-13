@@ -1,4 +1,4 @@
-# Siro API Framework v0.23.0
+# Siro API Framework v0.24.0
 
 **The Fastest PHP Micro-Framework Application Skeleton** — Ship a production-ready API with auth in 5 minutes. Built-in DI Container, Config Repository, RBAC support.
 

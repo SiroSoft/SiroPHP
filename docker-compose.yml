@@ -12,7 +12,7 @@ services:
       APP_DEBUG: "false"
       DB_CONNECTION: sqlite
       DB_DATABASE: /app/storage/app.db
-      JWT_SECRET: "${JWT_SECRET:-change-this-in-production}"
+      JWT_SECRET: "${JWT_SECRET:-change-this-in-production-please-use-32-char}"
     volumes:
       - storage_data:/app/storage
     restart: unless-stopped
