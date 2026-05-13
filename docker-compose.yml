@@ -1,10 +1,39 @@
 version: '3.8'
 
 services:
+  # FrankenPHP — Production-grade PHP server (multi-worker, HTTP/2, HTTP/3)
+  frankenphp:
+    build:
+      context: .
+      dockerfile: Dockerfile.frankenphp
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /app/storage/app.db
+      SERVER_NAME: ":80"
+      JWT_SECRET: "${JWT_SECRET:-change-this-in-production-please-use-32-char}"
+    volumes:
+      - storage_data:/app/storage
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "php", "-r", "echo file_get_contents('http://localhost/health/ready');"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  # Legacy php -S server (single-threaded, dev only)
   app:
     build:
       context: .
       dockerfile: Dockerfile
+    profiles:
+      - legacy
     ports:
       - "8080:8080"
     environment:

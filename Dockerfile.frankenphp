@@ -1,0 +1,57 @@
+# Siro FrankenPHP — Production-grade PHP application server
+# Based on dunglas/frankenphp: worker mode, HTTP/2, HTTP/3, automatic HTTPS
+#
+# Build:
+#   docker build -f Dockerfile.frankenphp -t siro-app:latest .
+#
+# Run:
+#   docker run -p 80:80 -p 443:443 -p 443:443/udp siro-app:latest
+#
+# With custom .env:
+#   docker run -p 80:80 -v .env:/app/.env siro-app:latest
+
+FROM dunglas/frankenphp:1-php8.2 AS frankenphp
+
+# Install PHP extensions
+RUN install-php-extensions \
+    pdo \
+    pdo_mysql \
+    pdo_pgsql \
+    pdo_sqlite \
+    mbstring \
+    json \
+    openssl \
+    redis
+
+# Build stage: install deps
+FROM frankenphp AS builder
+
+WORKDIR /app
+
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+
+# Production stage
+FROM frankenphp
+
+WORKDIR /app
+
+COPY --from=builder /app/vendor ./vendor
+COPY . .
+
+# Create storage directories
+RUN mkdir -p storage/logs storage/framework storage/cache storage/sessions storage/app
+
+# Copy FrankenPHP config
+COPY frankenphp/Caddyfile /etc/caddy/Caddyfile
+
+# Generate JWT secret if not provided
+RUN php siro key:generate 2>/dev/null || true
+
+# Cache for production
+RUN php siro config:cache 2>/dev/null; php siro env:cache 2>/dev/null || true
+
+EXPOSE 80 443 443/udp
+
+# FrankenPHP automatically uses worker mode for PHP files
+CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
