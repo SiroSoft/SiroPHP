@@ -6,8 +6,6 @@ namespace App\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use App\Middleware\AuthMiddleware;
-use App\Middleware\ThrottleMiddleware;
-use App\Middleware\CorsMiddleware;
 use App\Middleware\JsonMiddleware;
 
 final class ComponentExistenceTest extends TestCase
@@ -19,12 +17,12 @@ final class ComponentExistenceTest extends TestCase
 
     public function testThrottleMiddlewareClassExists(): void
     {
-        $this->assertTrue(class_exists(ThrottleMiddleware::class));
+        $this->assertTrue(class_exists(\Siro\Core\Middleware\ThrottleMiddleware::class));
     }
 
     public function testCorsMiddlewareClassExists(): void
     {
-        $this->assertTrue(class_exists(CorsMiddleware::class));
+        $this->assertTrue(class_exists(\Siro\Core\Middleware\CorsMiddleware::class));
     }
 
     public function testJsonMiddlewareClassExists(): void
@@ -39,12 +37,12 @@ final class ComponentExistenceTest extends TestCase
 
     public function testThrottleMiddlewareHasHandle(): void
     {
-        $this->assertTrue(method_exists(ThrottleMiddleware::class, 'handle')); // @phpstan-ignore function.alreadyNarrowedType
+        $this->assertTrue(method_exists(\Siro\Core\Middleware\ThrottleMiddleware::class, 'handle')); // @phpstan-ignore function.alreadyNarrowedType
     }
 
     public function testCorsMiddlewareHasHandle(): void
     {
-        $this->assertTrue(method_exists(CorsMiddleware::class, 'handle')); // @phpstan-ignore function.alreadyNarrowedType
+        $this->assertTrue(method_exists(\Siro\Core\Middleware\CorsMiddleware::class, 'handle')); // @phpstan-ignore function.alreadyNarrowedType
     }
 
     public function testJsonMiddlewareHasHandle(): void

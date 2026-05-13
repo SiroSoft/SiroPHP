@@ -64,13 +64,10 @@ final class PostService
      */
     public function update(int $id, array $validated): ?array
     {
-        $post = $this->repo->findById($id);
-        if ($post === null) return null;
+        $result = $this->repo->update($id, $validated);
+        if ($result === null) return null;
 
-        $this->repo->update($id, $validated);
-
-        $updated = $this->repo->findById($id);
-        return $updated ? $updated->toArray() : null;
+        return $result->toArray();
     }
 
     /** Delete a post and its associated image. Returns true if deleted. */

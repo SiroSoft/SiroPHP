@@ -43,11 +43,10 @@ final class UserService
 
     public function createUser(array $data): User
     {
-        $passwordHash = password_hash($data['password'], PASSWORD_DEFAULT);
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => $passwordHash,
+            'password' => self::hashPassword($data['password']),
             'status' => 1,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
@@ -99,7 +98,7 @@ final class UserService
         if ($expiresAt !== '' && strtotime($expiresAt) < time()) {
             return false;
         }
-        $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $passwordHash = self::hashPassword($newPassword);
         $user->update([
             'password' => $passwordHash,
             'password_reset_token' => null,
@@ -134,12 +133,10 @@ final class UserService
             throw new DuplicateEmailException($email);
         }
 
-        $passwordHash = password_hash($data['password'], \PASSWORD_DEFAULT);
-
         $userData = [
             'name' => $data['name'],
             'email' => $email,
-            'password' => $passwordHash,
+            'password' => self::hashPassword($data['password']),
             'status' => 1,
         ];
 
@@ -174,8 +171,7 @@ final class UserService
         }
 
         if (isset($data['password'])) {
-            $passwordHash = password_hash($data['password'], \PASSWORD_DEFAULT);
-            $updateData['password'] = $passwordHash;
+            $updateData['password'] = self::hashPassword($data['password']);
         }
 
         if ($updateData === []) {
@@ -186,6 +182,31 @@ final class UserService
 
         $updated = $this->repo->findById($id);
         return $updated ? $updated->toArray() : null;
+    }
+
+    public function incrementLoginAttempts(int $userId, int $currentAttempts): void
+    {
+        $newAttempts = $currentAttempts + 1;
+        $update = ['login_attempts' => $newAttempts];
+
+        if ($newAttempts >= 5) {
+            $update['locked_until'] = date('Y-m-d H:i:s', time() + 900);
+        }
+
+        User::where('id', '=', $userId)->update($update);
+    }
+
+    public function resetLoginAttempts(int $userId): void
+    {
+        User::where('id', '=', $userId)->update([
+            'login_attempts' => 0,
+            'locked_until' => null,
+        ]);
+    }
+
+    private static function hashPassword(string $password): string
+    {
+        return password_hash($password, \PASSWORD_BCRYPT);
     }
 
     public function delete(int $id): bool

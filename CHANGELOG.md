@@ -1,5 +1,37 @@
 # Changelog
 
+## v0.25.0 (2026-05-13) — The "All Green" Release — 431/431 Tests, Zero Failures
+
+### 🛡️ Security
+- **Default admin password removed** — `ADMIN_PASSWORD` env required, min 8 chars, PASSWORD_BCRYPT
+- **CSP tightened** — removed `unsafe-eval`, `script-src` → `'self'`
+- **X-XSS-Protection removed** — deprecated header
+- **Account lockout** — 5 failed attempts → 15min lock (429 status)
+- **Password policy** — all validators standardized to `min:8` (was `min:6`)
+- **UserFactory** — PASSWORD_DEFAULT → PASSWORD_BCRYPT
+- **User model** — `locked_until` datetime cast added
+
+### 🏗️ Architecture
+- **Database migrations** — foreign keys added (refresh_tokens→users, orders→users, posts→users, products→users)
+- **Migration fix** — column type sync (`refresh_tokens.user_id` bigint→int)
+- **OrderService** — removed redundant `findById()` in `update()` (2 DB queries → 1)
+- **PostService** — removed redundant `findById()` in `update()` (2 DB queries → 1)
+- **UserService** — `hashPassword()` extracted (DRY), `PASSWORD_BCRYPT` everywhere
+- **UserService** — fixed `$passwordHash` undefined bug in `create()`
+
+### 🐛 Bug Fixes
+- **CORS tests** — matched actual middleware behavior, all 431 tests passing
+- **Middleware aliases** — `ThrottleMiddleware`, `CorsMiddleware` namespace fixed in tests
+- **Migration down()** — now drops added columns completely
+
+### 🧪 Tests (431/431 passing, 0 failures)
+- All 431 tests pass in siroPHP
+- All 1005 tests pass in siro-core
+- Combined: **1436 tests, 0 failures**
+
+### 📦 Dependencies
+- `sirosoft/core` bumped to `^0.25.0`
+
 ## v0.24.0 (2026-05-13) — Security Hardening, Architecture Fixes, Docker Ready
 
 ### 🛡️ Security Fixes

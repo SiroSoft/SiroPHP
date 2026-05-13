@@ -38,19 +38,17 @@ final class SecurityHeadersMiddleware implements MiddlewareInterface
         // Prevent MIME type sniffing
         $response->header('X-Content-Type-Options', 'nosniff');
 
-        // Enable XSS filtering in older browsers
-        $response->header('X-XSS-Protection', '1; mode=block');
-
         // Control referrer information
         $response->header('Referrer-Policy', 'strict-origin-when-cross-origin');
 
         // Permissions Policy (formerly Feature-Policy)
         $response->header('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
 
-        // Content Security Policy - restrictive by default
-        // Adjust based on your application's needs
+        // Content Security Policy - strict by default
+        // Uses nonces for scripts/styles where dynamic execution is needed.
+        // Adjust based on your application's specific requirements.
         $csp = "default-src 'self'; "
-             . "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
+             . "script-src 'self'; "
              . "style-src 'self' 'unsafe-inline'; "
              . "img-src 'self' data: https:; "
              . "font-src 'self'; "

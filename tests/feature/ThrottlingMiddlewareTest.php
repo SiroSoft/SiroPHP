@@ -8,7 +8,7 @@ use App\Tests\TestCase;
 
 final class ThrottlingMiddlewareTest extends TestCase
 {
-    public function testThrottleMiddlewareFileExists(): void { $this->assertFileExists($this->basePath . '/app/Middleware/ThrottleMiddleware.php'); }
+    public function testThrottleMiddlewareFileExists(): void { $this->assertTrue(class_exists(\Siro\Core\Middleware\ThrottleMiddleware::class)); }
     public function testEnvHasThrottleConfig(): void
     {
         $envPath = $this->basePath . '/.env';

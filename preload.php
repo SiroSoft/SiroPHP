@@ -26,6 +26,7 @@ if (!defined('SIRO_BASE_PATH')) {
 $files = [
     $corePath . '/App.php',
     $corePath . '/Router.php',
+    $corePath . '/RouteMatcher.php',
     $corePath . '/Request.php',
     $corePath . '/Response.php',
     $corePath . '/Config.php',
@@ -35,6 +36,7 @@ $files = [
     $corePath . '/Database.php',
     $corePath . '/Schema.php',
     $corePath . '/DB/QueryBuilder.php',
+    $corePath . '/DB/SqlCompiler.php',
     $corePath . '/DB/ModelQueryBuilder.php',
     $corePath . '/DB/Blueprint.php',
     $corePath . '/DB/Column.php',

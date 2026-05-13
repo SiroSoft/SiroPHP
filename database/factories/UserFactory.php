@@ -44,7 +44,7 @@ final class UserFactory
         return [
             'name' => 'User_' . $suffix,
             'email' => 'user_' . $suffix . '@example.com',
-            'password' => password_hash('password', PASSWORD_DEFAULT),
+            'password' => password_hash('password', PASSWORD_BCRYPT),
             'status' => 1,
             'token_version' => 1,
             'created_at' => date('Y-m-d H:i:s'),

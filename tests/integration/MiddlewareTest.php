@@ -50,17 +50,19 @@ final class MiddlewareTest extends TestCase
 
     public function testThrottleMiddlewareFileExists(): void
     {
-        $this->assertFileExists($this->basePath . '/app/Middleware/ThrottleMiddleware.php');
+        $reflection = new \ReflectionClass(\Siro\Core\Middleware\ThrottleMiddleware::class);
+        $this->assertFileExists($reflection->getFileName());
     }
 
     public function testCorsMiddlewareFileExists(): void
     {
-        $this->assertFileExists($this->basePath . '/app/Middleware/CorsMiddleware.php');
+        $reflection = new \ReflectionClass(\Siro\Core\Middleware\CorsMiddleware::class);
+        $this->assertFileExists($reflection->getFileName());
     }
 
     public function testThrottleMiddlewareClassExists(): void
     {
-        $this->assertFileExists($this->basePath . '/app/Middleware/ThrottleMiddleware.php');
+        $this->assertTrue(class_exists(\Siro\Core\Middleware\ThrottleMiddleware::class));
     }
 
     public function testCorsConfiguredInEnv(): void

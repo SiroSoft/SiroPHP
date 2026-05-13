@@ -23,7 +23,7 @@ final class AuthController
         $request->validate([
             'name' => 'required|min:3|max:120',
             'email' => 'required|email|max:255',
-            'password' => 'required|min:6|max:255',
+            'password' => 'required|min:8|max:255',
         ]);
 
         $email = strtolower(trim($request->string('email')));
@@ -65,7 +65,7 @@ final class AuthController
     {
         $request->validate([
             'email' => 'required|email|max:255',
-            'password' => 'required|min:6|max:255',
+            'password' => 'required|min:8|max:255',
         ]);
 
         $email = strtolower(trim($request->string('email')));
@@ -79,9 +79,17 @@ final class AuthController
             return Response::error('Account is inactive', 403);
         }
 
+        $lockedUntil = $userData['locked_until'] ?? null;
+        if ($lockedUntil !== null && $lockedUntil !== '' && strtotime((string) $lockedUntil) > time()) {
+            return Response::error('Account is temporarily locked. Try again later.', 429);
+        }
+
         if (!password_verify($request->string('password'), $userData['password'])) {
+            $this->userService->incrementLoginAttempts((int) $userData['id'], (int) ($userData['login_attempts'] ?? 0));
             return Response::error('Invalid credentials', 401);
         }
+
+        $this->userService->resetLoginAttempts((int) $userData['id']);
 
         $userId = (int) $userData['id'];
         $tokens = $this->tokenPair($userId);
@@ -172,7 +180,7 @@ final class AuthController
     {
         $request->validate([
             'token' => 'required',
-            'password' => 'required|min:6|max:255',
+            'password' => 'required|min:8|max:255',
         ]);
 
         $token = $request->string('token');

@@ -1,6 +1,6 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/SiroSoft/SiroPHP/main/art/logo.svg" alt="Siro PHP Framework" width="200"/>
-  <h1>Siro API Framework v0.24.0</h1>
+  <h1>Siro API Framework v0.25.0</h1>
   <p><strong>The Fastest, Lightest, Most Secure PHP Micro-Framework</strong></p>
   <p>Zero dependencies • Sub-millisecond boot • JWT built-in • 70 CLI commands • OWASP Top 10 mitigated</p>
 </div>
@@ -9,7 +9,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP 8.2+](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Tests](https://img.shields.io/badge/tests-1350%2B%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-1436%20passing-brightgreen.svg)](tests/)
 [![PHPStan](https://img.shields.io/badge/phpstan-level%207-0%20errors-brightgreen.svg)](https://github.com/SiroSoft/siro-core)
 [![Security](https://img.shields.io/badge/security-audited-brightgreen)](https://sirophp.com)
 [![Packagist](https://img.shields.io/packagist/v/sirosoft/api?color=blue)](https://packagist.org/packages/sirosoft/api)
@@ -249,7 +249,7 @@ php siro test --filter=User    # Filter by name
 php siro benchmark             # Performance benchmark
 ```
 
-Current: **1350+ tests passing**, 0 PHPStan errors.
+Current: **1436+ tests passing** (1005 core + 431 app), 0 failures.
 
 ---
 

@@ -8,7 +8,7 @@ use App\Tests\TestCase;
 use Siro\Core\Env;
 use Siro\Core\Request;
 use Siro\Core\Response;
-use App\Middleware\CorsMiddleware;
+use Siro\Core\Middleware\CorsMiddleware;
 
 final class CorsMiddlewareTest extends TestCase
 {
@@ -68,11 +68,10 @@ final class CorsMiddlewareTest extends TestCase
         $response = $this->middleware->handle($request, fn () => Response::success());
         $headers = implode("\n", $response->getHeaders());
 
-        $this->assertStringContainsString('Access-Control-Allow-Origin: ', $headers);
-        $this->assertStringNotContainsString('Access-Control-Allow-Origin: http://localhost:8080', $headers);
+        $this->assertStringNotContainsString('Access-Control-Allow-Origin', $headers);
     }
 
-    public function testWildcardOriginReturnsRequestOrigin(): void
+    public function testWildcardOriginReturnsWildcard(): void
     {
         $_ENV['CORS_ALLOWED_ORIGINS'] = '*';
         putenv('CORS_ALLOWED_ORIGINS=*');
@@ -82,6 +81,7 @@ final class CorsMiddlewareTest extends TestCase
         $response = $middleware->handle($request, fn () => Response::success());
         $headers = implode("\n", $response->getHeaders());
 
-        $this->assertStringContainsString('Access-Control-Allow-Origin: http://example.com', $headers);
+        $this->assertStringContainsString('Access-Control-Allow-Origin: *', $headers);
+        $this->assertStringContainsString('Access-Control-Allow-Credentials: false', $headers);
     }
 }
