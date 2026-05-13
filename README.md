@@ -19,23 +19,23 @@
 ---
 
 ```bash
-# Zero → Production API with Auth trong 5 phút
+# Zero → Production API with Auth in 5 minutes
 composer create-project sirosoft/api my-api && cd my-api && php siro serve
 #                                           ^
-#                        http://localhost:8080 đã có JWT auth + CRUD
+#                        http://localhost:8080 with JWT auth + CRUD
 ```
 
 ---
 
 ## 🚀 Why Siro?
 
-| Bạn đau đầu với | Siro giải quyết |
-|----------------|-----------------|
-| **Laravel/Symfony quá nặng** (~60-100 dependencies) | **Zero** runtime dependencies. Chỉ cần PHP + PDO |
-| **Boot chậm** (50-80ms mỗi request) | **~1ms** cold boot. Nhanh hơn 50-80 lần |
-| **JWT auth mất cả buổi setup** | **Có sẵn**. Algorithm pinning, key rotation, JTI blacklist |
-| **CRUD viết tay mỏi tay** | **1 lệnh**: `make:crud Product` ra Controller + Service + Repository + Model + Migration + Test |
-| **Bảo mật phải tự lo** | **OWASP Top 10** mitigated ngay từ đầu: CSP, CORS, CSRF, Rate Limit, SQLi, XSS |
+| You struggle with | Siro solves it |
+|------------------|----------------|
+| **Laravel/Symfony too heavy** (~60-100 dependencies) | **Zero** runtime dependencies. Just PHP + PDO |
+| **Slow boot** (50-80ms per request) | **~1ms** cold boot. 50-80x faster |
+| **JWT auth takes hours to setup** | **Built-in**. Algorithm pinning, key rotation, JTI blacklist |
+| **Manual CRUD boilerplate** | **1 command**: `make:crud Product` generates Controller + Service + Repository + Model + Migration + Test |
+| **Security left to developers** | **OWASP Top 10** mitigated from the start: CSP, CORS, CSRF, Rate Limit, SQLi, XSS |
 | **Dependency vulnerabilities** | **Zero transitive dependencies**. Composer audit = 0 issues |
 
 ---
