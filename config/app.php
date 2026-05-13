@@ -11,5 +11,5 @@ return [
     'locale' => Env::get('APP_LOCALE', 'en'),
     'fallback_locale' => Env::get('APP_FALLBACK_LOCALE', 'en'),
     'trusted_proxies' => Env::get('APP_TRUSTED_PROXIES', ''),
-    'url' => defined('APP_URL') ? APP_URL : 'http://localhost:8080',
+    'url' => Env::get('APP_URL', 'http://localhost:8080'),
 ];

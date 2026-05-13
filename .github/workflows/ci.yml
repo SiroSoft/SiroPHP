@@ -40,6 +40,22 @@ jobs:
           coverage: xdebug
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist
+      - name: Prepare environment
+        run: |
+          if [ ! -f .env ]; then
+            if [ -f .env.testing ]; then
+              cp .env.testing .env
+            elif [ -f .env.example ]; then
+              cp .env.example .env
+            else
+              echo "ERROR: No .env template found!"
+              exit 1
+            fi
+          fi
+          sed -i 's|DB_DATABASE=.*|DB_DATABASE=storage/test.db|g' .env
+          sed -i 's|CACHE_DRIVER=.*|CACHE_DRIVER=file|g' .env
+      - name: Migrate database
+        run: php siro migrate
       - name: Run tests
         run: php -d zend_extension=xdebug vendor/bin/phpunit --coverage-text
       - name: Upload coverage

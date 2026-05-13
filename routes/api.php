@@ -9,8 +9,8 @@ use App\Controllers\PostController;
 use App\Controllers\ProductController;
 use App\Controllers\TagController;
 use App\Controllers\UserController;
-use App\Middleware\CorsMiddleware;
-use App\Middleware\JsonMiddleware;
+use Siro\Core\Middleware\CorsMiddleware;
+use Siro\Core\Middleware\JsonMiddleware;
 use App\Middleware\SecurityHeadersMiddleware;
 use Siro\Core\Lang;
 use Siro\Core\Request;
@@ -177,7 +177,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
         $path = $file->store('avatars');
         return Response::success([
             'path' => $path,
-            'url' => Storage::url($path),
+            'url' => $path,
             'original_name' => $file->getClientOriginalName(),
             'size' => $file->getSize(),
             'mime' => $file->getMimeType(),

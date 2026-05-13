@@ -1,0 +1,72 @@
+# Siro FrankenPHP — Production-grade PHP application server
+# Based on dunglas/frankenphp: worker mode, HTTP/2, HTTP/3, automatic HTTPS
+#
+# Build:
+#   docker build -f Dockerfile.frankenphp -t siro-app:latest .
+#
+# Run:
+#   docker run -p 80:80 siro-app:latest
+#
+# With custom .env:
+#   docker run -p 80:80 -v .env:/app/.env siro-app:latest
+
+FROM dunglas/frankenphp:1-php8.2 AS frankenphp
+
+# Install PHP extensions
+RUN install-php-extensions \
+    pdo \
+    pdo_mysql \
+    pdo_pgsql \
+    pdo_sqlite \
+    mbstring \
+    json \
+    openssl \
+    redis
+
+# Production OPcache config
+RUN { \
+    echo 'opcache.memory_consumption=128'; \
+    echo 'opcache.interned_strings_buffer=8'; \
+    echo 'opcache.max_accelerated_files=10000'; \
+    echo 'opcache.revalidate_freq=0'; \
+    echo 'opcache.validate_timestamps=0'; \
+    echo 'opcache.enable_cli=1'; \
+    echo 'opcache.preload=/app/preload.php'; \
+} > /usr/local/etc/php/conf.d/opcache.ini
+
+# Build stage: install deps
+FROM frankenphp AS builder
+
+WORKDIR /app
+
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+
+# Production stage
+FROM frankenphp
+
+WORKDIR /app
+
+COPY --from=builder /app/vendor ./vendor
+COPY . .
+
+# Create storage directories
+RUN mkdir -p storage/logs storage/framework storage/cache storage/sessions storage/app && \
+    chown -R www-data:www-data storage && \
+    chown -R www-data:www-data /app/public
+
+# Copy FrankenPHP config
+COPY frankenphp/Caddyfile /etc/caddy/Caddyfile
+
+# Build-time config cache (uses env defaults only)
+RUN php siro config:cache 2>/dev/null; php siro env:cache 2>/dev/null || true
+
+USER www-data
+
+EXPOSE 80
+
+# Entrypoint: generate JWT secret if missing, then run FrankenPHP
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]

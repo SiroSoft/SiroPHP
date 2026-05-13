@@ -1,0 +1,67 @@
+# Siro FrankenPHP Caddyfile
+# Production-grade PHP application server
+# 
+# Environment variables:
+#   APP_ENV       - Application environment (production/local)
+#   APP_DEBUG     - Debug mode (true/false)
+#   SERVER_NAME   - Server name (default: :80)
+#   CADDY_GLOBAL  - Extra global Caddy options
+
+{
+    # Global options — HTTPS via reverse proxy (not direct edge)
+    auto_https off
+    {$CADDY_GLOBAL}
+}
+
+{$SERVER_NAME:-:80} {
+    # Trusted reverse proxy headers
+    trusted_proxies static private_ranges
+    request_header X-Forwarded-Proto {>X-Forwarded-Proto}
+    # Root directory
+    root * /app/public
+    public /app/public
+
+    # Logs
+    log {
+        output file /app/storage/logs/frankenphp-access.log
+        format json
+    }
+
+    # Security headers
+    header {
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    # Compress static assets
+    encode zstd gzip
+
+    # Static files (no PHP processing needed)
+    route /storage/* {
+        root * /app/storage/app
+        file_server
+    }
+
+    # PHP files processed by FrankenPHP worker
+    php_server {
+        # Max request body size: 10MB
+        max_request_body 10485760
+    }
+
+    # Health check endpoint (bypasses PHP worker)
+    @health {
+        path /health/ready
+    }
+    rewrite @health /index.php
+    
+    # 404 for unknown static files
+    handle_errors {
+        @404 {
+            expression {http.error.status_code} == 404
+        }
+        rewrite @404 /index.php
+    }
+}
