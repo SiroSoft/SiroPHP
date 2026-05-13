@@ -35,7 +35,10 @@ final class UserService
         if ($rows === []) {
             return null;
         }
-        return $rows[0]->toArray();
+        $data = $rows[0]->toArray();
+        // password is in $hidden, include it for auth checks
+        $data['password'] = $rows[0]->getAttribute('password');
+        return $data;
     }
 
     public function createUser(array $data): User
