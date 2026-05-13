@@ -44,21 +44,7 @@ final class SecurityHeadersMiddleware implements MiddlewareInterface
         // Permissions Policy (formerly Feature-Policy)
         $response->header('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
 
-        // Content Security Policy - strict by default
-        // Uses nonces for scripts/styles where dynamic execution is needed.
-        // Adjust based on your application's specific requirements.
-        $csp = "default-src 'self'; "
-             . "script-src 'self'; "
-             . "style-src 'self' 'unsafe-inline'; "
-             . "img-src 'self' data: https:; "
-             . "font-src 'self'; "
-             . "connect-src 'self'; "
-             . "frame-ancestors 'none'; "
-             . "base-uri 'self'; "
-             . "form-action 'self'";
-
-        $response->header('Content-Security-Policy', $csp);
-
+        // CSP is handled by core CspMiddleware to avoid header duplication
         // HTTP Strict Transport Security (only if HTTPS)
         if ($this->isHttps()) {
             $response->header(
