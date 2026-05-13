@@ -5,7 +5,7 @@
 #   docker build -f Dockerfile.frankenphp -t siro-app:latest .
 #
 # Run:
-#   docker run -p 80:80 -p 443:443 -p 443:443/udp siro-app:latest
+#   docker run -p 80:80 siro-app:latest
 #
 # With custom .env:
 #   docker run -p 80:80 -v .env:/app/.env siro-app:latest
@@ -22,6 +22,17 @@ RUN install-php-extensions \
     json \
     openssl \
     redis
+
+# Production OPcache config
+RUN { \
+    echo 'opcache.memory_consumption=128'; \
+    echo 'opcache.interned_strings_buffer=8'; \
+    echo 'opcache.max_accelerated_files=10000'; \
+    echo 'opcache.revalidate_freq=0'; \
+    echo 'opcache.validate_timestamps=0'; \
+    echo 'opcache.enable_cli=1'; \
+    echo 'opcache.preload=/app/preload.php'; \
+} > /usr/local/etc/php/conf.d/opcache.ini
 
 # Build stage: install deps
 FROM frankenphp AS builder
@@ -40,7 +51,9 @@ COPY --from=builder /app/vendor ./vendor
 COPY . .
 
 # Create storage directories
-RUN mkdir -p storage/logs storage/framework storage/cache storage/sessions storage/app
+RUN mkdir -p storage/logs storage/framework storage/cache storage/sessions storage/app && \
+    chown -R www-data:www-data storage && \
+    chown -R www-data:www-data /app/public
 
 # Copy FrankenPHP config
 COPY frankenphp/Caddyfile /etc/caddy/Caddyfile
@@ -51,7 +64,9 @@ RUN php siro key:generate 2>/dev/null || true
 # Cache for production
 RUN php siro config:cache 2>/dev/null; php siro env:cache 2>/dev/null || true
 
-EXPOSE 80 443 443/udp
+USER www-data
+
+EXPOSE 80
 
 # FrankenPHP automatically uses worker mode for PHP files
 CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]

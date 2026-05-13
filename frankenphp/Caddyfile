@@ -8,12 +8,15 @@
 #   CADDY_GLOBAL  - Extra global Caddy options
 
 {
-    # Global options
+    # Global options — HTTPS via reverse proxy (not direct edge)
     auto_https off
     {$CADDY_GLOBAL}
 }
 
 {$SERVER_NAME:-:80} {
+    # Trusted reverse proxy headers
+    trusted_proxies static private_ranges
+    request_header X-Forwarded-Proto {>X-Forwarded-Proto}
     # Root directory
     root * /app/public
     public /app/public
