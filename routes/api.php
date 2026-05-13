@@ -177,7 +177,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
         $path = $file->store('avatars');
         return Response::success([
             'path' => $path,
-            'url' => Storage::url($path),
+            'url' => $path,
             'original_name' => $file->getClientOriginalName(),
             'size' => $file->getSize(),
             'mime' => $file->getMimeType(),

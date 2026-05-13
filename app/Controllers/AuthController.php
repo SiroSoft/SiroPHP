@@ -14,6 +14,11 @@ use Throwable;
 
 final class AuthController
 {
+    public function __construct(
+        private readonly UserService $userService
+    ) {
+    }
+
     public function register(Request $request): Response
     {
         $request->validate([
@@ -24,7 +29,7 @@ final class AuthController
 
         $email = strtolower(trim($request->string('email')));
 
-        $existingUser = UserService::getByEmail($email);
+        $existingUser = $this->userService->getByEmail($email);
         if ($existingUser !== null) {
             return Response::error('Validation failed', 422, [
                 'email' => ['Email has already been taken'],
@@ -32,7 +37,7 @@ final class AuthController
         }
 
         try {
-            $user = UserService::createUser([
+            $user = $this->userService->createUser([
                 'name' => $request->string('name'),
                 'email' => $email,
                 'password' => $request->string('password'),
@@ -65,7 +70,7 @@ final class AuthController
         ]);
 
         $email = strtolower(trim($request->string('email')));
-        $userData = UserService::getByEmail($email);
+        $userData = $this->userService->getByEmail($email);
 
         if ($userData === null || !isset($userData['password']) || !is_string($userData['password'])) {
             return Response::error('Invalid credentials', 401);
@@ -163,7 +168,7 @@ final class AuthController
             return Response::error('Unauthorized', 401);
         }
 
-        if (!UserService::incrementTokenVersion($userId)) {
+        if (!$this->userService->incrementTokenVersion($userId)) {
             return Response::error('Unable to revoke token', 500);
         }
 
@@ -175,7 +180,7 @@ final class AuthController
         $request->validate(['token' => 'required']);
 
         $token = $request->string('token');
-        $result = UserService::verifyEmail($token);
+        $result = $this->userService->verifyEmail($token);
 
         if (!$result) {
             return Response::error('Invalid verification token', 400);
@@ -189,7 +194,7 @@ final class AuthController
         $request->validate(['email' => 'required|email']);
 
         $email = strtolower(trim($request->string('email')));
-        UserService::initiatePasswordReset($email);
+        $this->userService->initiatePasswordReset($email);
 
         return Response::success(null, 'If the email exists, a reset link has been sent.');
     }
@@ -202,7 +207,7 @@ final class AuthController
         ]);
 
         $token = $request->string('token');
-        $result = UserService::resetPassword($token, $request->string('password'));
+        $result = $this->userService->resetPassword($token, $request->string('password'));
 
         if (!$result) {
             return Response::error('Invalid or expired reset token', 400);
@@ -217,7 +222,7 @@ final class AuthController
         $ttl = max(60, (int) Env::get('JWT_TTL', '3600'));
         $refreshTtl = max(3600, (int) Env::get('JWT_REFRESH_TTL', '604800'));
 
-        $tokenVersion = UserService::getTokenVersion($userId);
+        $tokenVersion = $this->userService->getTokenVersion($userId);
 
         $token = JWT::encodeAccess($userId, $tokenVersion, $ttl);
         $jti = bin2hex(random_bytes(16));

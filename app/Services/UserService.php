@@ -15,7 +15,7 @@ final class UserService
     {
     }
 
-    public static function incrementTokenVersion(int $userId): bool
+    public function incrementTokenVersion(int $userId): bool
     {
         if ($userId <= 0) {
             return false;
@@ -29,7 +29,7 @@ final class UserService
         return $user->update(['token_version' => ($user->token_version ?? 0) + 1]);
     }
 
-    public static function getByEmail(string $email): ?array
+    public function getByEmail(string $email): ?array
     {
         $rows = User::where('email', '=', $email)->limit(1)->get();
         if ($rows === []) {
@@ -38,7 +38,7 @@ final class UserService
         return $rows[0]->toArray();
     }
 
-    public static function createUser(array $data): User
+    public function createUser(array $data): User
     {
         $passwordHash = password_hash($data['password'], PASSWORD_DEFAULT);
         return User::create([
@@ -50,14 +50,14 @@ final class UserService
         ]);
     }
 
-    public static function getTokenVersion(int $userId): int
+    public function getTokenVersion(int $userId): int
     {
         $user = User::find($userId);
         $rawVersion = $user !== null ? (int) ($user->token_version ?? 0) : 0;
         return $rawVersion > 0 ? $rawVersion : 1;
     }
 
-    public static function verifyEmail(string $token): bool
+    public function verifyEmail(string $token): bool
     {
         $rows = User::where('verification_token', '=', $token)->limit(1)->get();
         $user = $rows[0] ?? null;
@@ -71,7 +71,7 @@ final class UserService
         return true;
     }
 
-    public static function initiatePasswordReset(string $email): void
+    public function initiatePasswordReset(string $email): void
     {
         $rows = User::where('email', '=', $email)->limit(1)->get();
         $user = $rows[0] ?? null;
@@ -84,7 +84,7 @@ final class UserService
         }
     }
 
-    public static function resetPassword(string $token, string $newPassword): bool
+    public function resetPassword(string $token, string $newPassword): bool
     {
         $rows = User::where('password_reset_token', '=', $token)->limit(1)->get();
         $user = $rows[0] ?? null;
