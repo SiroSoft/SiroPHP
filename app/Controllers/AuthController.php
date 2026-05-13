@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Services\RefreshTokenService;
 use App\Services\UserService;
-use Siro\Core\Auth\JWT;
-use Siro\Core\DB;
-use Siro\Core\Env;
 use Siro\Core\Request;
 use Siro\Core\Response;
 use Throwable;
@@ -15,7 +13,8 @@ use Throwable;
 final class AuthController
 {
     public function __construct(
-        private readonly UserService $userService
+        private readonly UserService $userService,
+        private readonly RefreshTokenService $refreshTokenService,
     ) {
     }
 
@@ -104,41 +103,11 @@ final class AuthController
     {
         $request->validate(['refresh_token' => 'required']);
 
-        $refreshToken = $request->string('refresh_token');
+        $tokens = $this->refreshTokenService->verifyAndRotate($request->string('refresh_token'));
 
-        try {
-            $claims = JWT::decode($refreshToken);
-        } catch (Throwable) {
+        if ($tokens === null) {
             return Response::error('Invalid or expired refresh token', 401);
         }
-
-        if (($claims['type'] ?? '') !== JWT::TYPE_REFRESH) {
-            return Response::error('Invalid token type', 401);
-        }
-
-        $userId = (int) ($claims['sub'] ?? 0);
-        $jti = (string) ($claims['jti'] ?? '');
-
-        if ($userId <= 0 || $jti === '') {
-            return Response::error('Invalid token', 401);
-        }
-
-        // Check refresh token was not revoked
-        $stored = DB::table('refresh_tokens')
-            ->where('jti', '=', $jti)
-            ->where('revoked', '=', 0)
-            ->first();
-
-        if ($stored === null) {
-            return Response::error('Refresh token revoked', 401);
-        }
-
-        // Revoke old refresh token (rotation)
-        DB::table('refresh_tokens')
-            ->where('jti', '=', $jti)
-            ->update(['revoked' => 1]);
-
-        $tokens = $this->tokenPair($userId);
 
         return Response::success([
             'token' => $tokens['token'],
@@ -219,26 +188,6 @@ final class AuthController
     /** @return array{token:string,refresh_token:string,ttl:int} */
     private function tokenPair(int $userId): array
     {
-        $ttl = max(60, (int) Env::get('JWT_TTL', '3600'));
-        $refreshTtl = max(3600, (int) Env::get('JWT_REFRESH_TTL', '604800'));
-
-        $tokenVersion = $this->userService->getTokenVersion($userId);
-
-        $token = JWT::encodeAccess($userId, $tokenVersion, $ttl);
-        $jti = bin2hex(random_bytes(16));
-        $refreshToken = JWT::encodeRefresh($userId, $tokenVersion, $refreshTtl, $jti);
-        DB::table('refresh_tokens')->insert([
-            'jti' => $jti,
-            'user_id' => $userId,
-            'revoked' => 0,
-            'expires_at' => date('Y-m-d H:i:s', time() + $refreshTtl),
-            'created_at' => date('Y-m-d H:i:s'),
-        ]);
-
-        return [
-            'token' => $token,
-            'refresh_token' => $refreshToken,
-            'ttl' => $ttl,
-        ];
+        return $this->refreshTokenService->createPair($userId);
     }
 }

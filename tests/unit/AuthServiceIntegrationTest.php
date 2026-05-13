@@ -15,14 +15,14 @@ final class AuthServiceIntegrationTest extends TestCase
         $source = $this->getMethodSource(AuthController::class, 'register');
 
         $this->assertStringContainsString(
-            'UserService::getByEmail',
+            'userService->getByEmail',
             $source,
-            'register() must use UserService::getByEmail()'
+            'register() must use $this->userService->getByEmail()'
         );
         $this->assertStringContainsString(
-            'UserService::createUser',
+            'userService->createUser',
             $source,
-            'register() must use UserService::createUser()'
+            'register() must use $this->userService->createUser()'
         );
     }
 
@@ -31,9 +31,9 @@ final class AuthServiceIntegrationTest extends TestCase
         $source = $this->getMethodSource(AuthController::class, 'login');
 
         $this->assertStringContainsString(
-            'UserService::getByEmail',
+            'userService->getByEmail',
             $source,
-            'login() must use UserService::getByEmail()'
+            'login() must use $this->userService->getByEmail()'
         );
     }
 
@@ -42,9 +42,9 @@ final class AuthServiceIntegrationTest extends TestCase
         $source = $this->getMethodSource(AuthController::class, 'verifyEmail');
 
         $this->assertStringContainsString(
-            'UserService::verifyEmail',
+            'userService->verifyEmail',
             $source,
-            'verifyEmail() must use UserService::verifyEmail()'
+            'verifyEmail() must use $this->userService->verifyEmail()'
         );
     }
 
@@ -53,9 +53,9 @@ final class AuthServiceIntegrationTest extends TestCase
         $source = $this->getMethodSource(AuthController::class, 'forgotPassword');
 
         $this->assertStringContainsString(
-            'UserService::initiatePasswordReset',
+            'userService->initiatePasswordReset',
             $source,
-            'forgotPassword() must use UserService::initiatePasswordReset()'
+            'forgotPassword() must use $this->userService->initiatePasswordReset()'
         );
     }
 
@@ -64,15 +64,15 @@ final class AuthServiceIntegrationTest extends TestCase
         $source = $this->getMethodSource(AuthController::class, 'resetPassword');
 
         $this->assertStringContainsString(
-            'UserService::resetPassword',
+            'userService->resetPassword',
             $source,
-            'resetPassword() must use UserService::resetPassword()'
+            'resetPassword() must use $this->userService->resetPassword()'
         );
     }
 
-    public function testUserServiceHasAllRequiredStaticMethods(): void
+    public function testUserServiceHasAllRequiredMethods(): void
     {
-        $requiredStaticMethods = [
+        $requiredMethods = [
             'getByEmail',
             'createUser',
             'getTokenVersion',
@@ -84,7 +84,7 @@ final class AuthServiceIntegrationTest extends TestCase
 
         $reflection = new \ReflectionClass(UserService::class);
 
-        foreach ($requiredStaticMethods as $method) {
+        foreach ($requiredMethods as $method) {
             $this->assertTrue(
                 $reflection->hasMethod($method),
                 "UserService must have method: {$method}()"
@@ -92,9 +92,9 @@ final class AuthServiceIntegrationTest extends TestCase
 
             $methodReflection = $reflection->getMethod($method);
 
-            $this->assertTrue(
+            $this->assertFalse(
                 $methodReflection->isStatic(),
-                "UserService::{$method}() must be static"
+                "UserService::{$method}() must NOT be static (instance DI)"
             );
 
             $this->assertTrue(
