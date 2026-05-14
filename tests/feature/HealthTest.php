@@ -20,8 +20,10 @@ final class HealthTest extends TestCase
         $app = $this->createApp();
         $response = $this->dispatch($app, 'GET', '/health');
         $payload = $response->payload();
+        $data = $payload['data'] ?? [];
+        /** @var array<string, mixed> $data */
         $this->assertTrue($payload['success'] ?? false);
-        $this->assertEquals('healthy', $payload['data']['status'] ?? '');
+        $this->assertEquals('healthy', $data['status'] ?? '');
     }
 
     public function testHealthShowsDatabaseConnected(): void
@@ -29,7 +31,9 @@ final class HealthTest extends TestCase
         $app = $this->createApp();
         $response = $this->dispatch($app, 'GET', '/health');
         $payload = $response->payload();
-        $this->assertEquals('connected', $payload['data']['database'] ?? '');
+        $data = $payload['data'] ?? [];
+        /** @var array<string, mixed> $data */
+        $this->assertEquals('connected', $data['database'] ?? '');
     }
 
     public function testHealthIncludesVersion(): void
@@ -37,7 +41,9 @@ final class HealthTest extends TestCase
         $app = $this->createApp();
         $response = $this->dispatch($app, 'GET', '/health');
         $payload = $response->payload();
-        $this->assertNotEmpty($payload['data']['version'] ?? '');
+        $data = $payload['data'] ?? [];
+        /** @var array<string, mixed> $data */
+        $this->assertNotEmpty($data['version'] ?? '');
     }
 
     public function testHealthIncludesPhpVersion(): void
@@ -45,7 +51,9 @@ final class HealthTest extends TestCase
         $app = $this->createApp();
         $response = $this->dispatch($app, 'GET', '/health');
         $payload = $response->payload();
-        $this->assertNotEmpty($payload['data']['php'] ?? '');
+        $data = $payload['data'] ?? [];
+        /** @var array<string, mixed> $data */
+        $this->assertNotEmpty($data['php'] ?? '');
     }
 
     public function testHealthIncludesTimestamp(): void
@@ -53,6 +61,8 @@ final class HealthTest extends TestCase
         $app = $this->createApp();
         $response = $this->dispatch($app, 'GET', '/health');
         $payload = $response->payload();
-        $this->assertNotEmpty($payload['data']['time'] ?? '');
+        $data = $payload['data'] ?? [];
+        /** @var array<string, mixed> $data */
+        $this->assertNotEmpty($data['time'] ?? '');
     }
 }

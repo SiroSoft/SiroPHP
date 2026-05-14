@@ -104,6 +104,10 @@ final class AuthApiTest extends TestCase
     {
         $resp = $this->get('/health');
         $json = $resp->json();
-        $this->assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', $json['data']['version']);
+        $jsonData = $json['data'] ?? [];
+        /** @var array<string, mixed> $jsonData */
+        $rawVersion = $jsonData['version'] ?? '';
+        /** @var string $rawVersion */
+        $this->assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', $rawVersion);
     }
 }

@@ -34,6 +34,9 @@
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php siro key:generate || true"
         ],
+        "benchmark:ci": "@php scripts/benchmark-ci.php",
+        "sbom": "@php scripts/generate-sbom.php",
+        "audit:supply-chain": "@php scripts/audit-supply-chain.php",
         "release:check": [
             "@php scripts/release-check.php --ci"
         ],

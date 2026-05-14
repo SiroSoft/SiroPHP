@@ -24,6 +24,7 @@ final class AuthMiddlewareTest extends TestCase
         $request = new Request('GET', '/api/protected');
         $next = fn (Request $req): Response => Response::success();
         $response = $this->middleware->handle($request, $next);
+        /** @var Response $response */
         $this->assertEquals(401, $response->statusCode());
     }
 
@@ -32,6 +33,7 @@ final class AuthMiddlewareTest extends TestCase
         $request = new Request('GET', '/api/protected', [], ['authorization' => 'Bearer invalid-token']);
         $next = fn (Request $req): Response => Response::success();
         $response = $this->middleware->handle($request, $next);
+        /** @var Response $response */
         $this->assertEquals(401, $response->statusCode());
     }
 
@@ -40,6 +42,7 @@ final class AuthMiddlewareTest extends TestCase
         $request = new Request('GET', '/api/protected', [], ['authorization' => 'Bearer ']);
         $next = fn (Request $req): Response => Response::success();
         $response = $this->middleware->handle($request, $next);
+        /** @var Response $response */
         $this->assertEquals(401, $response->statusCode());
     }
 }

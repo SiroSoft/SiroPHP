@@ -39,8 +39,13 @@ final class AuthMiddleware implements MiddlewareInterface
 
         try {
             $claims = JWT::decode($token);
-            $userId = (int) ($claims['sub'] ?? 0);
-            $tokenVersion = (int) ($claims['ver'] ?? 0);
+            /** @var array<string, mixed> $claims */
+            $rawSub = $claims['sub'] ?? 0;
+            $rawVer = $claims['ver'] ?? 0;
+            /** @var int|string $rawSub */
+            /** @var int|string $rawVer */
+            $userId = (int) $rawSub;
+            $tokenVersion = (int) $rawVer;
 
             if ($userId <= 0) {
                 return Response::error('Unauthorized', 401, [
@@ -63,6 +68,7 @@ final class AuthMiddleware implements MiddlewareInterface
             }
 
             $role = $userData['role'];
+            /** @var string $role */
 
             $request->setUser([
                 'id' => $userData['id'],
@@ -111,27 +117,43 @@ final class AuthMiddleware implements MiddlewareInterface
             ->get();
 
         $row = $rows[0] ?? null;
+        /** @var array<string, mixed>|null $row */
         if ($row === null) {
             self::$userCache[$userId] = null;
             return null;
         }
 
-        $status = (int) ($row['status'] ?? 0);
-        $dbTokenVersion = (int) ($row['token_version'] ?? 1);
+        $rawStatus = $row['status'] ?? 0;
+        $rawTokenVersion = $row['token_version'] ?? 1;
+        /** @var int|string $rawStatus */
+        /** @var int|string $rawTokenVersion */
+        $status = (int) $rawStatus;
+        $dbTokenVersion = (int) $rawTokenVersion;
 
         if ($status !== 1 || $dbTokenVersion !== $tokenVersion) {
             self::$userCache[$userId] = null;
             return null;
         }
 
+        $rawId = $row['id'] ?? $userId;
+        $rawName = $row['name'] ?? '';
+        $rawEmail = $row['email'] ?? '';
+        $rawRole = $row['role'] ?? 'user';
+        $rawCreatedAt = $row['created_at'] ?? '';
+        /** @var int|string $rawId */
+        /** @var string $rawName */
+        /** @var string $rawEmail */
+        /** @var string $rawRole */
+        /** @var string $rawCreatedAt */
+
         $userData = [
-            'id' => (int) ($row['id'] ?? $userId),
-            'name' => (string) ($row['name'] ?? ''),
-            'email' => (string) ($row['email'] ?? ''),
-            'role' => (string) ($row['role'] ?? 'user'),
+            'id' => (int) $rawId,
+            'name' => $rawName,
+            'email' => $rawEmail,
+            'role' => $rawRole,
             'status' => $status,
             'token_version' => $dbTokenVersion,
-            'created_at' => (string) ($row['created_at'] ?? ''),
+            'created_at' => $rawCreatedAt,
         ];
 
         self::$userCache[$userId] = $userData;

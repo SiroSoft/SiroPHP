@@ -23,6 +23,7 @@ final class WelcomeMail
     public function build(array $data = []): string
     {
         $name = $data['name'] ?? 'User';
+        /** @var string $name */
 
         $safeName = htmlspecialchars($name, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         return '<!DOCTYPE html>

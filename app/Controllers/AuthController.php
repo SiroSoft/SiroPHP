@@ -8,6 +8,7 @@ use App\Services\RefreshTokenService;
 use App\Services\UserService;
 use Siro\Core\Request;
 use Siro\Core\Response;
+use Siro\Core\Session;
 use Throwable;
 
 final class AuthController
@@ -75,24 +76,42 @@ final class AuthController
             return Response::error('Invalid credentials', 401);
         }
 
-        if ((int) ($userData['status'] ?? 0) !== 1) {
+        /** @var array<string, mixed> $userData */
+        $status = $userData['status'] ?? 0;
+        /** @var int|string $status */
+        if ((int) $status !== 1) {
             return Response::error('Account is inactive', 403);
         }
 
         $lockedUntil = $userData['locked_until'] ?? null;
-        if ($lockedUntil !== null && $lockedUntil !== '' && strtotime((string) $lockedUntil) > time()) {
+        /** @var string|null $lockedUntil */
+        if ($lockedUntil !== null && $lockedUntil !== '' && strtotime($lockedUntil) > time()) {
             return Response::error('Account is temporarily locked. Try again later.', 429);
         }
 
-        if (!password_verify($request->string('password'), $userData['password'])) {
-            $this->userService->incrementLoginAttempts((int) $userData['id'], (int) ($userData['login_attempts'] ?? 0));
+        $hash = $userData['password'];
+        /** @var string $hash */
+        if (!password_verify($request->string('password'), $hash)) {
+            $userId = $userData['id'];
+            $loginAttempts = $userData['login_attempts'] ?? 0;
+            /** @var int|string $userId */
+            /** @var int|string $loginAttempts */
+            $this->userService->incrementLoginAttempts((int) $userId, (int) $loginAttempts);
             return Response::error('Invalid credentials', 401);
         }
 
-        $this->userService->resetLoginAttempts((int) $userData['id']);
+        $userId = $userData['id'];
+        /** @var int|string $userId */
+        $this->userService->resetLoginAttempts((int) $userId);
 
-        $userId = (int) $userData['id'];
-        $tokens = $this->tokenPair($userId);
+        Session::instance()->regenerate();
+
+        $tokens = $this->tokenPair((int) $userId);
+
+        $name = $userData['name'] ?? '';
+        $emailField = $userData['email'] ?? '';
+        /** @var string $name */
+        /** @var string $emailField */
 
         return Response::success([
             'token' => $tokens['token'],
@@ -100,9 +119,9 @@ final class AuthController
             'token_type' => 'Bearer',
             'expires_in' => $tokens['ttl'],
             'user' => [
-                'id' => $userId,
-                'name' => (string) ($userData['name'] ?? ''),
-                'email' => (string) ($userData['email'] ?? ''),
+                'id' => (int) $userId,
+                'name' => $name,
+                'email' => $emailField,
             ],
         ], 'Login successful');
     }
@@ -139,7 +158,10 @@ final class AuthController
     public function logout(Request $request): Response
     {
         $user = $request->user();
-        $userId = (int) ($user['id'] ?? 0);
+        /** @var array<string, mixed>|null $user */
+        $rawId = $user['id'] ?? 0;
+        /** @var int|string $rawId */
+        $userId = (int) $rawId;
 
         if ($userId <= 0) {
             return Response::error('Unauthorized', 401);

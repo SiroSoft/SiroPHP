@@ -18,7 +18,7 @@ final class CategoryResource extends Resource
     {
         return [
             'id' => $this->data['id'] ?? null,
-            'name' => $this->data['name'] ?? null,
+            'name' => is_string($this->data['name'] ?? null) ? htmlspecialchars($this->data['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['name'] ?? null),
             'created_at' => $this->data['created_at'] ?? null,
         ];
     }

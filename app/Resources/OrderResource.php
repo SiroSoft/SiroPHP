@@ -6,16 +6,12 @@ namespace App\Resources;
 
 use Siro\Core\Resource;
 
-/**
- * Order API resource transformer.
- *
- * Converts order data for API responses, decoding items from JSON.
- */
 final class OrderResource extends Resource
 {
     public function toArray(): array
     {
-        $items = $this->data['items'] ?? null;
+        $d = $this->data;
+        $items = $d['items'] ?? null;
         if (is_string($items)) {
             $items = json_decode($items, true) ?? [];
         }
@@ -23,15 +19,30 @@ final class OrderResource extends Resource
             $items = [];
         }
 
+        $id = $d['id'] ?? 0;
+        $customerName = $d['customer_name'] ?? '';
+        $customerEmail = $d['customer_email'] ?? '';
+        $total = $d['total'] ?? 0;
+        $status = $d['status'] ?? 'pending';
+        $createdAt = $d['created_at'] ?? '';
+        $updatedAt = $d['updated_at'] ?? '';
+        /** @var int|string $id */
+        /** @var string $customerName */
+        /** @var string $customerEmail */
+        /** @var float|int|string $total */
+        /** @var string $status */
+        /** @var string $createdAt */
+        /** @var string $updatedAt */
+
         return [
-            'id' => (int) ($this->data['id'] ?? 0),
-            'customer_name' => (string) ($this->data['customer_name'] ?? ''),
-            'customer_email' => (string) ($this->data['customer_email'] ?? ''),
-            'total' => (float) ($this->data['total'] ?? 0),
-            'status' => (string) ($this->data['status'] ?? 'pending'),
+            'id' => (int) $id,
+            'customer_name' => htmlspecialchars($customerName, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+            'customer_email' => htmlspecialchars($customerEmail, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+            'total' => (float) $total,
+            'status' => is_string($status) ? htmlspecialchars($status, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $status,
             'items' => $items,
-            'created_at' => (string) ($this->data['created_at'] ?? ''),
-            'updated_at' => (string) ($this->data['updated_at'] ?? ''),
+            'created_at' => $createdAt,
+            'updated_at' => $updatedAt,
         ];
     }
 }

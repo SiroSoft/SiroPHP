@@ -22,6 +22,7 @@ final class OrderController extends Controller
         $perPage = $request->queryInt('per_page', 20);
 
         $result = $this->service->getAll($request->all(), $page, $perPage);
+        /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
         return $this->paginated(
             OrderResource::collection($result['data']),
             $result['meta'],
@@ -31,10 +32,13 @@ final class OrderController extends Controller
 
     public function show(Request $request): Response
     {
-        $id = (int) $request->param('id');
+        $rawId = $request->param('id');
+        /** @var int|string $rawId */
+        $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         $order = $this->service->getById($id);
+        /** @var array<string, mixed>|null $order */
         if ($order === null) return $this->error('Order not found', 404);
 
         return $this->success(OrderResource::make($order), 'Order detail');
@@ -58,12 +62,15 @@ final class OrderController extends Controller
         $validated['items'] = is_array($items) ? $items : '[]';
 
         $order = $this->service->create($validated);
+        /** @var array<string, mixed> $order */
         return $this->created(OrderResource::make($order), 'Order created');
     }
 
     public function update(Request $request): Response
     {
-        $id = (int) $request->param('id');
+        $rawId = $request->param('id');
+        /** @var int|string $rawId */
+        $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         $validated = $this->validate([
@@ -74,6 +81,7 @@ final class OrderController extends Controller
         ]);
 
         $order = $this->service->update($id, $validated);
+        /** @var array<string, mixed>|null $order */
         if ($order === null) return $this->error('Order not found', 404);
 
         return $this->success(OrderResource::make($order), 'Order updated');
@@ -81,7 +89,9 @@ final class OrderController extends Controller
 
     public function delete(Request $request): Response
     {
-        $id = (int) $request->param('id');
+        $rawId = $request->param('id');
+        /** @var int|string $rawId */
+        $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         return $this->service->delete($id)

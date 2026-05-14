@@ -57,7 +57,10 @@ final class MassAssignmentTest extends TestCase
         $user = $model->create(['name' => 'Alice', 'email' => 'alice@test.com']);
         $user->fill(['name' => 'Alice Updated', 'is_admin' => 1]);
         $user->save();
-        $fresh = $model::find($user->id);
+        $userId = $user->id;
+        /** @var int|string $userId */
+        $fresh = $model::find($userId);
+        $this->assertNotNull($fresh);
         $this->assertSame('Alice Updated', $fresh->name);
     }
 }

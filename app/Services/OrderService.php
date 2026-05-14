@@ -25,7 +25,9 @@ final class OrderService
     {
         $filters = [];
         if (isset($queryParams['status']) && $queryParams['status'] !== '') {
-            $filters['status'] = $queryParams['status'];
+            $status = $queryParams['status'];
+            /** @var string $status */
+            $filters['status'] = $status;
         }
 
         return $this->repo->findAll($filters, $page, $perPage);

@@ -27,7 +27,9 @@ final class PostService
     {
         $filters = [];
         if (isset($queryParams['locale']) && $queryParams['locale'] !== '') {
-            $filters['locale'] = $queryParams['locale'];
+            $locale = $queryParams['locale'];
+            /** @var string $locale */
+            $filters['locale'] = $locale;
         }
 
         return $this->repo->findAll($filters, $page, $perPage);
@@ -52,6 +54,7 @@ final class PostService
         ];
 
         if ($uploadedFile !== null) {
+            /** @var \Siro\Core\UploadedFile $uploadedFile */
             $data['image'] = $uploadedFile->store('posts');
         }
 
@@ -65,6 +68,7 @@ final class PostService
     public function update(int $id, array $validated): ?array
     {
         $result = $this->repo->update($id, $validated);
+        /** @var \Siro\Core\Model|null $result */
         if ($result === null) return null;
 
         return $result->toArray();
@@ -74,11 +78,14 @@ final class PostService
     public function delete(int $id): bool
     {
         $post = $this->repo->findById($id);
+        /** @var \Siro\Core\Model|null $post */
         if ($post === null) return false;
 
         $postData = $post->toArray();
-        if (!empty($postData['image'])) {
-            Storage::delete($postData['image']);
+        $image = $postData['image'] ?? '';
+        /** @var string $image */
+        if ($image !== '') {
+            Storage::delete($image);
         }
 
         return $this->repo->destroy($id);

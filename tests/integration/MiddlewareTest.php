@@ -24,6 +24,7 @@ final class MiddlewareTest extends TestCase
         $request = new Request('GET', '/api/protected');
         $next = fn (Request $req): Response => Response::success();
         $response = $this->middleware->handle($request, $next);
+        /** @var Response $response */
         $this->assertEquals(401, $response->statusCode());
     }
 
@@ -32,6 +33,7 @@ final class MiddlewareTest extends TestCase
         $request = new Request('GET', '/api/protected', [], ['authorization' => 'Bearer invalid-token']);
         $next = fn (Request $req): Response => Response::success();
         $response = $this->middleware->handle($request, $next);
+        /** @var Response $response */
         $this->assertEquals(401, $response->statusCode());
     }
 
@@ -40,6 +42,7 @@ final class MiddlewareTest extends TestCase
         $request = new Request('GET', '/api/protected', [], ['authorization' => 'Bearer ']);
         $next = fn (Request $req): Response => Response::success();
         $response = $this->middleware->handle($request, $next);
+        /** @var Response $response */
         $this->assertEquals(401, $response->statusCode());
     }
 
@@ -51,13 +54,13 @@ final class MiddlewareTest extends TestCase
     public function testThrottleMiddlewareFileExists(): void
     {
         $reflection = new \ReflectionClass(\Siro\Core\Middleware\ThrottleMiddleware::class);
-        $this->assertFileExists($reflection->getFileName());
+        $this->assertFileExists((string) $reflection->getFileName());
     }
 
     public function testCorsMiddlewareFileExists(): void
     {
         $reflection = new \ReflectionClass(\Siro\Core\Middleware\CorsMiddleware::class);
-        $this->assertFileExists($reflection->getFileName());
+        $this->assertFileExists((string) $reflection->getFileName());
     }
 
     public function testThrottleMiddlewareClassExists(): void
@@ -69,7 +72,6 @@ final class MiddlewareTest extends TestCase
     {
         $envPath = $this->basePath . '/.env';
 
-        // Skip if .env file doesn't exist (e.g., in some CI environments)
         if (!file_exists($envPath)) {
             $this->markTestSkipped('.env file not found');
         }

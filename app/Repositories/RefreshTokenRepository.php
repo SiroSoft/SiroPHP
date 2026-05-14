@@ -8,6 +8,7 @@ use Siro\Core\DB;
 
 class RefreshTokenRepository
 {
+    /** @return array<string, mixed>|null */
     public function findActiveByJti(string $jti): ?array
     {
         $row = DB::table('refresh_tokens')

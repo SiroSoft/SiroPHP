@@ -28,13 +28,13 @@ class AppCommandsTest extends TestCase
         $siroPath = $this->basePath . '/siro';
         $this->assertFileExists($siroPath, 'siro CLI script should exist');
         
-        $content = file_get_contents($siroPath);
+        $content = file_get_contents($siroPath) ?: '';
         $this->assertStringStartsWith('#!', $content, 'siro script should have shebang');
     }
 
     public function testSiroVersionViaCli(): void
     {
-        $output = shell_exec('php ' . escapeshellarg($this->basePath . '/siro') . ' --version 2>&1');
+        $output = (string) shell_exec('php ' . escapeshellarg($this->basePath . '/siro') . ' --version 2>&1');
         $this->assertStringContainsString('0.24.0', $output, 'CLI should report v0.24.0');
     }
 
@@ -59,7 +59,7 @@ class AppCommandsTest extends TestCase
         // Just test that serve command exists and can be initiated
         ob_start();
         $exitCode = $this->console->run(['siro', 'serve', '--help']);
-        $output = ob_get_clean();
+        $output = ob_get_clean() ?: '';
         $this->assertEquals(0, $exitCode, 'serve --help should exit 0');
         $this->assertStringContainsString('port', strtolower($output), 'Serve help should mention port');
     }
@@ -76,7 +76,7 @@ class AppCommandsTest extends TestCase
     {
         ob_start();
         $exitCode = $this->console->run(['siro', 'make:controller']);
-        $output = ob_get_clean();
+        $output = ob_get_clean() ?: '';
         $this->assertEquals(1, $exitCode, 'make:controller without args should exit 1');
         $this->assertStringContainsString('usage', strtolower($output), 'Should show usage info');
     }
@@ -86,7 +86,7 @@ class AppCommandsTest extends TestCase
         // Check the routes file references health endpoint
         $routesFile = $this->basePath . '/routes/api.php';
         $this->assertFileExists($routesFile);
-        $content = file_get_contents($routesFile);
+        $content = file_get_contents($routesFile) ?: '';
         $this->assertStringContainsString('/health/ready', $content, 'Routes should include health endpoint');
     }
 }

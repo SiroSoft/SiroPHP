@@ -59,32 +59,48 @@ final class RouterTest extends TestCase
     public function testDynamicRouteWithParam(): void
     {
         $router = new Router();
-        $router->get('/users/{id}', fn (Request $req) => Response::success(['id' => (int) $req->param('id')]));
+        $router->get('/users/{id}', function (Request $req): Response {
+            $rawId = $req->param('id');
+            /** @var int|string $rawId */
+            return Response::success(['id' => (int) $rawId]);
+        });
         $req = new Request('GET', '/users/42');
         $res = $router->dispatch($req);
-        $this->assertSame(42, $res->payload()['data']['id']);
+        $payload = $res->payload();
+        $payloadData = $payload['data'] ?? [];
+        /** @var array<string, mixed> $payloadData */
+        $this->assertSame(42, $payloadData['id']);
     }
 
     public function testDynamicRouteWithMultipleParams(): void
     {
         $router = new Router();
-        $router->get('/posts/{postId}/comments/{commentId}', fn (Request $req) => Response::success([
-            'postId' => (int) $req->param('postId'),
-            'commentId' => (int) $req->param('commentId'),
-        ]));
+        $router->get('/posts/{postId}/comments/{commentId}', function (Request $req): Response {
+            $rawPostId = $req->param('postId');
+            $rawCommentId = $req->param('commentId');
+            /** @var int|string $rawPostId */
+            /** @var int|string $rawCommentId */
+            return Response::success([
+                'postId' => (int) $rawPostId,
+                'commentId' => (int) $rawCommentId,
+            ]);
+        });
         $req = new Request('GET', '/posts/10/comments/5');
         $res = $router->dispatch($req);
-        $data = $res->payload()['data'];
-        $this->assertSame(10, $data['postId']);
-        $this->assertSame(5, $data['commentId']);
+        $payload = $res->payload();
+        $payloadData = $payload['data'] ?? [];
+        /** @var array<string, mixed> $payloadData */
+        $this->assertSame(10, $payloadData['postId']);
+        $this->assertSame(5, $payloadData['commentId']);
     }
 
     public function testGroupPrefixAppliesToRoutes(): void
     {
         $router = new Router();
-        $router->group('/api', function ($r) { $r->get('/ping', fn () => Response::success(null, 'pong')); });
+        $router->group('/api', function (\Siro\Core\Router $r): void { $r->get('/ping', fn () => Response::success(null, 'pong')); });
         $req = new Request('GET', '/api/ping');
         $res = $router->dispatch($req);
+        /** @var Response $res */
         $this->assertEquals(200, $res->statusCode());
     }
 

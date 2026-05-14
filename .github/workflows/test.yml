@@ -51,8 +51,8 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
-      - name: PHPStan
-        run: php -d memory_limit=512M vendor/bin/phpstan analyse --no-progress
+      - name: PHPStan (Level Max)
+        run: php -d memory_limit=512M vendor/bin/phpstan analyse --level=max --no-progress
 
   unit-tests:
     runs-on: ubuntu-latest
