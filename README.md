@@ -9,7 +9,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP 8.2+](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Tests](https://img.shields.io/badge/tests-19037%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-19037%20total-brightgreen.svg)](tests/)
 [![PHPStan](https://img.shields.io/badge/PHPStan-Level%20Max-brightgreen.svg)](https://phpstan.org)
 [![Psalm](https://img.shields.io/badge/Psalm-Level%201-brightgreen.svg)](https://psalm.dev)
 [![Security](https://img.shields.io/badge/security-OWASP%20Top%2010%20Mitigated-brightgreen)](docs/SECURITY.md)
@@ -254,7 +254,7 @@ php siro test --filter=User    # Filter by name
 php siro benchmark             # Performance benchmark
 ```
 
-Current: **19,037 tests passing** (18,568 core + 469 app), 0 failures.
+Current: **19,467 tests total** (19,037 core + 430 app). Core: 0 failures.
 
 ---
 
