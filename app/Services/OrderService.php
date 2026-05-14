@@ -56,9 +56,6 @@ final class OrderService
      */
     public function update(int $id, array $validated): mixed
     {
-        $order = $this->repo->findById($id);
-        if ($order === null) return null;
-
         $data = $validated;
         if (isset($data['items']) && is_array($data['items'])) {
             $data['items'] = json_encode($data['items']);

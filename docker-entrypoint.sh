@@ -9,8 +9,20 @@ fi
 
 # If JWT_SECRET is set via env, ensure .env has it for framework
 if [ -n "${JWT_SECRET}" ]; then
-    echo "JWT_SECRET=${JWT_SECRET}" > /app/.env
-    echo "APP_ENV=${APP_ENV:-production}" >> /app/.env
+    # Only update JWT-related vars, don't overwrite existing .env
+    touch /app/.env
+    if grep -q "^JWT_SECRET=" /app/.env 2>/dev/null; then
+        sed -i "s|^JWT_SECRET=.*|JWT_SECRET=${JWT_SECRET}|" /app/.env
+    else
+        echo "JWT_SECRET=${JWT_SECRET}" >> /app/.env
+    fi
+    if [ -n "${APP_ENV}" ]; then
+        if grep -q "^APP_ENV=" /app/.env 2>/dev/null; then
+            sed -i "s|^APP_ENV=.*|APP_ENV=${APP_ENV}|" /app/.env
+        else
+            echo "APP_ENV=${APP_ENV}" >> /app/.env
+        fi
+    fi
 fi
 
 # Re-cache config with runtime env values

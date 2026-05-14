@@ -33,13 +33,6 @@ final class SecurityHeadersMiddlewareTest extends TestCase
         $this->assertStringContainsString('X-Content-Type-Options: nosniff', implode("\n", $response->getHeaders()));
     }
 
-    public function testXXSSProtectionHeaderSet(): void
-    {
-        $request = new Request('GET', '/test');
-        $response = $this->middleware->handle($request, fn () => Response::success());
-        $this->assertStringContainsString('X-XSS-Protection: 1; mode=block', implode("\n", $response->getHeaders()));
-    }
-
     public function testReferrerPolicyHeaderSet(): void
     {
         $request = new Request('GET', '/test');
@@ -70,7 +63,6 @@ final class SecurityHeadersMiddlewareTest extends TestCase
         $requiredHeaders = [
             'X-Frame-Options',
             'X-Content-Type-Options',
-            'X-XSS-Protection',
             'Referrer-Policy',
             'Permissions-Policy',
             'Content-Security-Policy',

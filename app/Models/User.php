@@ -36,6 +36,9 @@ final class User extends Model
         'id' => 'int',
         'status' => 'int',
         'token_version' => 'int',
+        'login_attempts' => 'int',
+        'locked_until' => 'datetime',
+        'email_verified_at' => 'datetime',
     ];
 
     /** @var array<int, string> */
@@ -50,5 +53,7 @@ final class User extends Model
         'verification_token',
         'password_reset_token',
         'password_reset_expires_at',
+        'login_attempts',
+        'locked_until',
     ];
 }

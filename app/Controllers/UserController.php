@@ -50,7 +50,7 @@ final class UserController extends Controller
         $data = $this->validate([
             'name' => 'required|min:3|max:120',
             'email' => 'required|email|max:255',
-            'password' => 'required|min:6|max:255',
+            'password' => 'required|min:8|max:255',
         ]);
 
         try {
@@ -71,7 +71,7 @@ final class UserController extends Controller
         $data = $this->validate([
             'name' => 'min:3|max:120',
             'email' => 'email|max:255',
-            'password' => 'min:6|max:255',
+            'password' => 'min:8|max:255',
         ]);
 
         try {
