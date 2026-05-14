@@ -9,10 +9,14 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP 8.2+](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Tests](https://img.shields.io/badge/tests-1436%20passing-brightgreen.svg)](tests/)
-[![PHPStan](https://img.shields.io/badge/phpstan-level%207-0%20errors-brightgreen.svg)](https://github.com/SiroSoft/siro-core)
-[![Security](https://img.shields.io/badge/security-audited-brightgreen)](https://sirophp.com)
+[![Tests](https://img.shields.io/badge/tests-19037%20passing-brightgreen.svg)](tests/)
+[![PHPStan](https://img.shields.io/badge/PHPStan-Level%20Max-brightgreen.svg)](https://phpstan.org)
+[![Psalm](https://img.shields.io/badge/Psalm-Level%201-brightgreen.svg)](https://psalm.dev)
+[![Security](https://img.shields.io/badge/security-OWASP%20Top%2010%20Mitigated-brightgreen)](docs/SECURITY.md)
+[![Mutation](https://img.shields.io/badge/mutation-MSI%20≥80%25-brightgreen)](https://infection.github.io)
+[![SBOM](https://img.shields.io/badge/sbom-CycloneDX-blue)](https://cyclonedx.org)
 [![Packagist](https://img.shields.io/packagist/v/sirosoft/api?color=blue)](https://packagist.org/packages/sirosoft/api)
+[![Downloads](https://img.shields.io/packagist/dt/sirosoft/api?color=blue)](https://packagist.org/packages/sirosoft/api)
 
 </div>
 
@@ -250,7 +254,7 @@ php siro test --filter=User    # Filter by name
 php siro benchmark             # Performance benchmark
 ```
 
-Current: **1436+ tests passing** (1005 core + 431 app), 0 failures.
+Current: **19,037 tests passing** (18,568 core + 469 app), 0 failures.
 
 ---
 
