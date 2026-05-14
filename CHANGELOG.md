@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.26.0 (2026-05-14) — The "Hardened" Release — 13 Critical/High Security Fixes in SiroPHP
+## v0.26.0 (2026-05-15) — The "Hardened" Release — 13 Critical/High Security Fixes in SiroPHP
 
 ### 🛡️ Security Hardening
 
@@ -35,9 +35,24 @@
 ### 📦 Dependencies
 - `sirosoft/core` bumped to `^0.26.0`
 
+### 🏥 Health Endpoint
+- `GET /health` — registered by default, returns JSON status from core health check
+- `make health` / `composer health` — CLI health check
+
+### 🛑 Graceful Shutdown
+- SIGTERM handler in `public/index.php` calls `App::shutdown()` for clean Docker termination
+
+### 📚 API Documentation
+- `make docs` / `composer docs:generate` — generate API reference via phpDocumentor
+
+### ⚙️ Infrastructure
+- Makefile targets: `health`, `docs`, `sbom`, `loadtest`, `production-check`
+- `.gitignore` — added `/coverage/`, `/storage/framework/*`, `/.phpdoc/`
+- PHPStan level max — 0 errors
+
 ### Scores After Fixes
-- **Security**: 8.5 → **9.6** | **Production Readiness**: 8.0 → **9.2**
-- **Overall SiroPHP**: 8.5 → **9.3**
+- **Security**: 8.5 → **9.6** | **Production Readiness**: 8.0 → **9.5**
+- **Overall SiroPHP**: 8.5 → **9.5**
 
 ## v0.25.0 (2026-05-13) — The "All Green" Release — 431/431 Tests, Zero Failures
 
