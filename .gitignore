@@ -10,6 +10,7 @@
 !/storage/logs/.gitkeep
 
 /storage/rate_limit/*
+/storage/sbom/
 /storage/*.db
 
 # Generated API documentation (kept locally only)

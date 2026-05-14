@@ -1,4 +1,4 @@
-.PHONY: help test analyse audit check
+.PHONY: help test test-coverage analyse audit sbom loadtest check production-check clean
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -15,7 +15,15 @@ analyse: ## Run PHPStan
 audit: ## Composer security audit
 	@composer audit --format=table || true
 
-check: audit analyse test ## Run all quality checks
+sbom: ## Generate CycloneDX SBOM
+	@php scripts/generate-sbom.php
+
+loadtest: ## Run basic load test (requires Apache Bench)
+	@php scripts/loadtest.php
+
+check: audit sbom analyse test ## Run all quality checks
+
+production-check: audit sbom analyse test test-coverage loadtest ## Full production readiness check
 
 clean: ## Clean cache and coverage
 	@rm -rf coverage/ .phpunit.cache
