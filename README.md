@@ -21,13 +21,13 @@
 ```bash
 # Zero → Production API with Auth in 5 minutes
 composer create-project sirosoft/api my-api && cd my-api && php siro serve
-#                                           ^
-#                        http://localhost:8080 with JWT auth + CRUD
+#                                                                     ^
+#                                  http://localhost:8080 with JWT auth + CRUD
 ```
 
 ---
 
-## 🚀 Why Siro?
+## Why Siro?
 
 | You struggle with | Siro solves it |
 |------------------|----------------|
@@ -40,7 +40,7 @@ composer create-project sirosoft/api my-api && cd my-api && php siro serve
 
 ---
 
-## 📦 6 Commands → Full API with Auth
+## 6 Commands → Full API with Auth
 
 ```bash
 # 1. Generate JWT secret (32-byte random)
@@ -62,77 +62,78 @@ php siro frankenphp:serve --docker
 #    Or dev server:
 php siro serve --port=8080
 
-# API của bạn đã ONLINE với đầy đủ auth + CRUD ✅
+# API is ONLINE with full auth + CRUD ✅
 ```
 
 ---
 
-## ⚡ Best of Siro
+## What You Get
 
-### 🛡️ Security built-in (Không cần config gì thêm)
-```
-🔐 JWT Algorithm Pinning    — Không bao giờ trust token's alg header
-🔄 JWT Key Rotation          — Previous secret với version tracking
-⛔ JTI Blacklist             — Revoke từng token riêng lẻ
-🛡️ CSP Middleware             — Content-Security-Policy strict-dynamic
-🌐 CORS                      — Configurable origins, credentials
-🍪 CSRF                      — Session-based + Double-submit cookie cho SPA
-🚦 Rate Limiter              — Redis + file fallback
-📋 Audit Log                 — SIEM-ready security.log
-🔍 SQL Injection             — 100% prepared statements
-❌ XSS                        — htmlspecialchars + CSP headers
-```
+### Security — Hardened by Default
 
-### ⚡ Performance không tưởng cho PHP
+| Protection | How Siro Handles It |
+|------------|-------------------|
+| JWT Algorithm Pinning | Never trusts the token's `alg` header |
+| JWT Key Rotation | Version-tracked secrets, seamless rotation |
+| JTI Blacklist | Revoke individual tokens on demand |
+| CSP Middleware | Content-Security-Policy with strict-dynamic |
+| CORS | Configurable origins, credentials support |
+| CSRF | Session-based + double-submit cookie for SPAs |
+| Rate Limiter | Redis primary + file fallback |
+| Audit Log | SIEM-ready `security.log` output |
+| SQL Injection | 100% prepared statements everywhere |
+| XSS | `htmlspecialchars` + CSP headers |
+
+### Performance — Unreal for PHP
 
 ```
-Benchmark                          Kết quả
+Benchmark                          Result
 ─────────────────────────────────────────────────────
   Static route dispatch           0.002ms  (488K ops/sec)
   Dynamic route dispatch          0.009ms
-  Middleware pipeline (10 lớp)    0.012ms  (negligible)
-  Cold boot (chưa có cache)       ~1ms     (Linux + OPcache)
-  1000 routes registration        1.2ms
-  Memory mỗi request              ~2KB     (không leak)
+  Middleware pipeline (10 layers) 0.012ms  (negligible)
+  Cold boot (no cache)            ~1ms     (Linux + OPcache)
+  1000 routes registered          1.2ms
+  Memory per request              ~2KB     (no leak)
   JSON serialize (1000 items)     1.8ms
-  Query SQLite (500 rows)         0.5ms
-  Full App lifecycle              ~0.4ms   (2.300 req/sec)
+  SQLite query (500 rows)         0.5ms
+  Full app lifecycle              ~0.4ms   (2,300 req/sec)
 ```
 
-### 🖥️ 70 CLI Commands
+### 70 CLI Commands
 
 ```
-  make:*       23 commands      make:auth, make:crud, make:controller, make:model...
-  db:*          5 commands      migrate, rollback, seed, show
-  log:*         9 commands      tail, trace, replay, stats, slow, export, cleanup, top
-  queue:*       4 commands      work, retry, flush, status
-  cache:*       3 commands      config:cache, config:clear, env:cache
-  server:*      4 commands      serve, frankenphp:serve, live, deploy
-  debug:*       2 commands      debug:last, debug:health
-  system:*     20 commands      key:generate, benchmark, route:list, test, doctor...
+  make:*       23 commands     make:auth, make:crud, make:controller, make:model...
+  db:*          5 commands     migrate, rollback, seed, show
+  log:*         9 commands     tail, trace, replay, stats, slow, export, cleanup, top
+  queue:*       4 commands     work, retry, flush, status
+  cache:*       3 commands     config:cache, config:clear, env:cache
+  server:*      4 commands     serve, frankenphp:serve, live, deploy
+  debug:*       2 commands     debug:last, debug:health
+  system:*     20 commands     key:generate, benchmark, route:list, test, doctor...
 ```
 
-Tất cả commands có `--help`, tự động suggest khi gõ sai (Levenshtein).
+Every command supports `--help`. Typo-tolerant with Levenshtein suggestion.
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 Request → Router → [Middleware Pipeline] → Controller → Service → Repository → Model → DB
-                                                              ↕
-                                                           Resource → JSON Response
+                                                               ↕
+                                                            Resource → JSON Response
 ```
 
 ```
 📁 app/
-├── Controllers/     # Nhận request, trả response
-├── Services/        # Business logic
-├── Repositories/    # Database access
-├── Models/          # ORM
-├── Resources/       # JSON transform
+├── Controllers/     # Handle requests, return responses
+├── Services/        # Business logic layer
+├── Repositories/    # Database access layer
+├── Models/          # ORM models
+├── Resources/       # JSON transformation
 ├── Middleware/       # Auth, JSON, SecurityHeaders
-└── Exceptions/      # Custom exceptions
+└── Exceptions/      # Custom exception classes
 
 📁 config/           # app.php, database.php, jwt.php, cors.php, cache.php, mail.php
 📁 routes/           # api.php
@@ -143,7 +144,7 @@ Request → Router → [Middleware Pipeline] → Controller → Service → Repo
 
 ---
 
-## 🔌 API Endpoints (After `make:auth`)
+## API Endpoints (After `make:auth`)
 
 ```http
 ### Authentication (public)
@@ -187,16 +188,16 @@ Error format:
 
 ---
 
-## 🧰 Full Feature Breakdown
+## Feature Breakdown
 
-| Tính năng | Chi tiết |
-|-----------|----------|
+| Feature | Details |
+|---------|---------|
 | **JWT Auth** | Access + Refresh tokens, algorithm pinning (HS256/RS256), key rotation, JTI blacklist, audience validation |
 | **CRUD Generator** | `php siro make:crud Product` → Controller + Service + Repository + Model + Resource + Migration + Test |
 | **Query Builder** | SELECT, JOIN, WHERE, GROUP BY, HAVING, subqueries, pagination, aggregates |
 | **ORM** | HasOne, HasMany, BelongsTo, BelongsToMany, eager loading, soft deletes |
 | **Migrations** | Create, rollback, status. Supports MySQL, PostgreSQL, SQLite |
-| **Validation** | 15+ rules: required, email, unique, exists, min, max, confirmed, in, regex, file, image, date, url. Custom rules + custom messages |
+| **Validation** | 15+ rules: required, email, unique, exists, min, max, confirmed, in, regex, file, image, date, url. Custom rules + messages |
 | **Cache** | File + Redis drivers, auto-prefix, query/route/config caching |
 | **Rate Limiting** | Per-route configurable, Redis primary + file fallback |
 | **Middleware** | Auth, CORS, CSP, CSRF, ETag, Version, Metrics, Audit, Throttle, Idempotency, SecurityHeaders, JSON |
@@ -207,12 +208,12 @@ Error format:
 | **Debug** | `X-Siro-Trace-Id`, request replay (`log:replay`), slow query detection, log sanitization, `debug:last` |
 | **API Versioning** | Header-based via `Accept: application/vnd.siro.v2+json`, route overrides per version |
 | **Prometheus** | `/metrics` endpoint, auto-track request count, duration histogram, status codes |
-| **CLI** | 70 commands với help, aliases, Levenshtein suggestion khi gõ sai |
+| **CLI** | 70 commands with help, aliases, Levenshtein suggestion on typos |
 | **Encryption** | AES-256-CBC, HKDF key separation, Encrypt-then-MAC, `hash_equals` timing-safe |
 
 ---
 
-## 🐳 Production Deployment
+## Production Deployment
 
 ```bash
 # FrankenPHP (multi-worker, HTTP/2, HTTP/3, auto HTTPS)
@@ -225,10 +226,10 @@ docker run -p 80:80 -p 443:443 -v .env:/app/.env my-api
 
 ---
 
-## 📚 Documentation
+## Documentation
 
-| Module | Link | Mô tả |
-|--------|------|-------|
+| Module | Link | Description |
+|--------|------|-------------|
 | **Database** | [docs/DATABASE.md](https://github.com/SiroSoft/siro-core/blob/main/docs/DATABASE.md) | QueryBuilder, Models, Migrations, Relations |
 | **Cache** | [docs/CACHE.md](https://github.com/SiroSoft/siro-core/blob/main/docs/CACHE.md) | File/Redis, query caching |
 | **Logger** | [docs/LOGGER.md](https://github.com/SiroSoft/siro-core/blob/main/docs/LOGGER.md) | Log levels, sanitization, audit |
@@ -240,7 +241,7 @@ docker run -p 80:80 -p 443:443 -v .env:/app/.env my-api
 
 ---
 
-## 🧪 Test
+## Test
 
 ```bash
 php siro test                  # Run all tests
@@ -253,28 +254,28 @@ Current: **1436+ tests passing** (1005 core + 431 app), 0 failures.
 
 ---
 
-## 📋 Requirements
+## Requirements
 
 - PHP 8.2+
 - ext-pdo, ext-json, ext-mbstring
-- ext-redis (optional, cho cache/rate limiter)
-- ext-openssl (optional, cho Encrypter)
+- ext-redis (optional, for cache/rate limiter)
+- ext-openssl (optional, for Encrypter)
 
 ---
 
-## 🎯 Use Cases
+## Use Cases
 
-| Scenario | Tại sao chọn Siro |
-|----------|-------------------|
-| **REST API / Microservices** | Boot 1ms, zero deps, JWT built-in, 70 CLI commands |
-| **Startup MVP** | `make:crud` trong 1 lệnh, auth trong 5 phút |
+| Scenario | Why Siro |
+|----------|----------|
+| **REST API / Microservices** | 1ms boot, zero deps, JWT built-in, 70 CLI commands |
+| **Startup MVP** | `make:crud` in one command, auth in 5 minutes |
 | **High-throughput API (10K+ req/s)** | 488K ops/sec static route, 2KB memory/req |
 | **SPA Backend (React/Vue)** | JWT + CORS + CSRF double-submit + API versioning |
-| **Serverless (Lambda/CF)** | Zero deps, boot 1ms — lý tưởng cho cold start |
+| **Serverless (Lambda/CF)** | Zero deps, 1ms boot — ideal for cold starts |
 
 ---
 
-## 📄 License
+## License
 
 MIT © [SiroSoft](https://sirophp.com)
 
