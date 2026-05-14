@@ -39,7 +39,7 @@ final class OrderResource extends Resource
             'customer_name' => htmlspecialchars($customerName, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
             'customer_email' => htmlspecialchars($customerEmail, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
             'total' => (float) $total,
-            'status' => is_string($status) ? htmlspecialchars($status, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $status,
+            'status' => htmlspecialchars($status, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
             'items' => $items,
             'created_at' => $createdAt,
             'updated_at' => $updatedAt,

@@ -44,34 +44,4 @@ final class SecurityHeadersMiddleware implements MiddlewareInterface
         return $response;
     }
 
-    /**
-     * Check if the request is using HTTPS
-     *
-     * @return bool True if HTTPS is enabled
-     */
-    private function isHttps(): bool
-    {
-        // Check various HTTPS indicators
-        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
-            return true;
-        }
-
-        if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-            return true;
-        }
-
-        if (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on') {
-            return true;
-        }
-
-        if (isset($_SERVER['SERVER_PORT'])) {
-            $serverPort = $_SERVER['SERVER_PORT'];
-            /** @var int|string $serverPort */
-            if ((int) $serverPort === 443) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

@@ -41,8 +41,12 @@ final class UserController extends Controller
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         $currentUser = $request->user();
-        $currentUserId = is_array($currentUser) ? (int) ($currentUser['id'] ?? 0) : 0;
-        $currentUserRole = is_array($currentUser) ? (string) ($currentUser['role'] ?? 'user') : 'user';
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
         if ($currentUserId !== $id && $currentUserRole !== 'admin') {
             return $this->error('Forbidden', 403);
         }
@@ -84,8 +88,12 @@ final class UserController extends Controller
         $id = (int) $rawId;
 
         $currentUser = $request->user();
-        $currentUserId = is_array($currentUser) ? (int) ($currentUser['id'] ?? 0) : 0;
-        $currentUserRole = is_array($currentUser) ? (string) ($currentUser['role'] ?? 'user') : 'user';
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
         if ($currentUserId !== $id && $currentUserRole !== 'admin') {
             return $this->error('Forbidden', 403);
         }
@@ -121,8 +129,12 @@ final class UserController extends Controller
         $id = (int) $rawId;
 
         $currentUser = $request->user();
-        $currentUserId = is_array($currentUser) ? (int) ($currentUser['id'] ?? 0) : 0;
-        $currentUserRole = is_array($currentUser) ? (string) ($currentUser['role'] ?? 'user') : 'user';
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
         if ($currentUserId !== $id && $currentUserRole !== 'admin') {
             return $this->error('Forbidden', 403);
         }
