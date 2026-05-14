@@ -248,13 +248,35 @@ docker run -p 80:80 -p 443:443 -v .env:/app/.env my-api
 ## Test
 
 ```bash
-php siro test                  # Run all tests
-php siro test --coverage       # With coverage report
-php siro test --filter=User    # Filter by name
-php siro benchmark             # Performance benchmark
+# Core framework tests
+cd vendor/sirosoft/core
+php vendor/bin/phpunit --no-coverage              # 19,038 tests, 0 failures
+php vendor/bin/phpstan analyse --level=max         # 0 errors
+php vendor/bin/psalm --taint-analysis              # 0 errors
+composer audit                                     # 0 vulnerabilities
+php scripts/chaos-test.php                         # Chaos engineering
+php scripts/health-check.php                       # System health
+
+# Application tests
+cd your-project/
+php siro test                                       # 430 app tests
+php siro test --coverage                            # With coverage
+php siro benchmark                                  # Performance
 ```
 
-Current: **19,467 tests total** (19,037 core + 430 app). Core: 0 failures.
+### Verified Results
+
+| Suite | Tests | Assertions | Status |
+|-------|-------|-----------|--------|
+| Core Unit | 988 | 2,547 | ✅ 0 failures |
+| Core Fuzz | 17,851 | 28,849 | ✅ 0 failures |
+| Core DAST | 157 | 166 | ✅ 0 failures |
+| Core Integration | 42 | 90 | ✅ 0 failures |
+| **Core Total** | **19,038** | **31,652** | **✅ 0 failures** |
+| PHPStan Level Max | — | — | ✅ 0 errors |
+| Psalm Level 1 | — | — | ✅ 0 errors |
+| App Tests | 430 | 534 | ✅ |
+| **Grand Total** | **19,468** | **32,186** | **✅** |
 
 ---
 
