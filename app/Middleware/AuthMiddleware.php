@@ -24,18 +24,13 @@ final class AuthMiddleware implements MiddlewareInterface
     public function handle(Request $request, callable $next, string ...$roles): mixed
     {
         $header = (string) $request->header('authorization', '');
-        if (!preg_match('/^Bearer\s+(.+)$/i', $header, $matches)) {
+        if (!str_starts_with(strtolower($header), 'bearer ')) {
             return Response::error('Unauthorized', 401, [
-                'token' => ['Missing bearer token'],
+                'token' => ['Invalid or expired token'],
             ]);
         }
 
-        $token = trim($matches[1]);
-        if ($token === '') {
-            return Response::error('Unauthorized', 401, [
-                'token' => ['Missing bearer token'],
-            ]);
-        }
+        $token = trim(substr($header, 7));
 
         try {
             $claims = JWT::decode($token);
@@ -47,15 +42,9 @@ final class AuthMiddleware implements MiddlewareInterface
             $userId = (int) $rawSub;
             $tokenVersion = (int) $rawVer;
 
-            if ($userId <= 0) {
+            if ($userId <= 0 || $tokenVersion <= 0) {
                 return Response::error('Unauthorized', 401, [
-                    'token' => ['Invalid token subject'],
-                ]);
-            }
-
-            if ($tokenVersion <= 0) {
-                return Response::error('Unauthorized', 401, [
-                    'token' => ['Invalid token version'],
+                    'token' => ['Invalid or expired token'],
                 ]);
             }
 
@@ -63,7 +52,7 @@ final class AuthMiddleware implements MiddlewareInterface
             $userData = self::resolveUser($userId, $tokenVersion);
             if ($userData === null) {
                 return Response::error('Unauthorized', 401, [
-                    'token' => ['User not found, inactive, or token revoked'],
+                    'token' => ['Invalid or expired token'],
                 ]);
             }
 
