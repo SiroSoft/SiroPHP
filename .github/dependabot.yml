@@ -5,14 +5,18 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
-      - "automerge"
-    commit-message:
-      prefix: "chore"
-      prefix-development: "chore"
-    versioning-strategy: increase
-    ignore:
-      - dependency-name: "sirosoft/core"
-        update-types: ["version-update:semver-major"]
+      - "ci"
