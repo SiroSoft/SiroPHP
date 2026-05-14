@@ -30,6 +30,7 @@ final class CorsMiddlewareTest extends TestCase
     {
         $request = new Request('OPTIONS', '/test', [], ['origin' => 'http://localhost:8080']);
         $response = $this->middleware->handle($request, fn () => Response::success());
+        /** @var Response $response */
         $this->assertSame(204, $response->statusCode());
     }
 
@@ -37,6 +38,7 @@ final class CorsMiddlewareTest extends TestCase
     {
         $request = new Request('GET', '/test', [], ['origin' => 'http://localhost:8080']);
         $response = $this->middleware->handle($request, fn () => Response::success());
+        /** @var Response $response */
         $headers = implode("\n", $response->getHeaders());
 
         $this->assertStringContainsString('Access-Control-Allow-Origin', $headers);
@@ -48,6 +50,7 @@ final class CorsMiddlewareTest extends TestCase
     {
         $request = new Request('GET', '/test', [], ['origin' => 'http://localhost:8080']);
         $response = $this->middleware->handle($request, fn () => Response::success());
+        /** @var Response $response */
         $headers = implode("\n", $response->getHeaders());
 
         $this->assertStringContainsString('Access-Control-Allow-Credentials: true', $headers);
@@ -57,6 +60,7 @@ final class CorsMiddlewareTest extends TestCase
     {
         $request = new Request('GET', '/test', [], ['origin' => 'http://localhost:8080']);
         $response = $this->middleware->handle($request, fn () => Response::success());
+        /** @var Response $response */
         $headers = implode("\n", $response->getHeaders());
 
         $this->assertStringContainsString('Vary: Origin', $headers);
@@ -66,6 +70,7 @@ final class CorsMiddlewareTest extends TestCase
     {
         $request = new Request('GET', '/test', [], ['origin' => 'http://evil.com']);
         $response = $this->middleware->handle($request, fn () => Response::success());
+        /** @var Response $response */
         $headers = implode("\n", $response->getHeaders());
 
         $this->assertStringNotContainsString('Access-Control-Allow-Origin', $headers);
@@ -79,6 +84,7 @@ final class CorsMiddlewareTest extends TestCase
         $middleware = new CorsMiddleware();
         $request = new Request('GET', '/test', [], ['origin' => 'http://example.com']);
         $response = $middleware->handle($request, fn () => Response::success());
+        /** @var Response $response */
         $headers = implode("\n", $response->getHeaders());
 
         $this->assertStringContainsString('Access-Control-Allow-Origin: *', $headers);

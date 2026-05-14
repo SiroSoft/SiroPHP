@@ -46,7 +46,10 @@ final class EventTest extends TestCase
     public function testEventEmitPassesPayload(): void
     {
         $result = null;
-        Event::on('test.payload', function ($data) use (&$result) { $result = $data['key']; });
+        Event::on('test.payload', function ($data) use (&$result): void {
+            /** @var array<string, mixed> $data */
+            $result = $data['key'];
+        });
         Event::emit('test.payload', ['key' => 'value']);
         $this->assertSame('value', $result);
     }

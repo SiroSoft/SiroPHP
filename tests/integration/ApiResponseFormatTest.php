@@ -98,15 +98,21 @@ final class ApiResponseFormatTest extends TestCase
     {
         $resp = $this->get('/health');
         $json = $resp->json();
-        $this->assertEquals('connected', $json['data']['database']);
+        $jsonData = $json['data'] ?? [];
+        /** @var array<string, mixed> $jsonData */
+        $this->assertEquals('connected', $jsonData['database']);
     }
 
     public function testHealthReturnsVersion(): void
     {
         $resp = $this->get('/health');
         $json = $resp->json();
-        $this->assertArrayHasKey('version', $json['data']);
-$this->assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', $json['data']['version']);
+        $jsonData = $json['data'] ?? [];
+        /** @var array<string, mixed> $jsonData */
+        $this->assertArrayHasKey('version', $jsonData);
+        $rawVersion = $jsonData['version'] ?? '';
+        /** @var string $rawVersion */
+        $this->assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', $rawVersion);
     }
 
     public function testCategoriesEndpoint(): void

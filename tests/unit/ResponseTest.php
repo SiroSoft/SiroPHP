@@ -35,9 +35,11 @@ final class ResponseTest extends TestCase
     {
         $r = Response::paginated([1, 2, 3], ['page' => 1, 'per_page' => 15, 'total' => 3, 'last_page' => 1]);
         $p = $r->payload();
+        $meta = $p['meta'] ?? [];
+        /** @var array<string, mixed> $meta */
         $this->assertTrue($p['success']);
         $this->assertSame([1, 2, 3], $p['data']);
-        $this->assertSame(3, $p['meta']['total']);
+        $this->assertSame(3, $meta['total']);
     }
 
     public function testJsonPayloadIsPreserved(): void

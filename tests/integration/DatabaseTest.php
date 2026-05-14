@@ -57,7 +57,9 @@ final class DatabaseTest extends TestCase
         $db->execute('INSERT INTO test_integration_users (name, email, age) VALUES (:name, :email, :age)', ['name' => 'John Doe', 'email' => 'john@test.com', 'age' => 30]);
         $db->execute('UPDATE test_integration_users SET age = :age WHERE email = :email', ['age' => 31, 'email' => 'john@test.com']);
         $users = $db->select('SELECT * FROM test_integration_users WHERE email = :email', ['email' => 'john@test.com']);
-        $this->assertEquals(31, (int)$users[0]['age']);
+        $age = $users[0]['age'] ?? 0;
+        /** @var int|string $age */
+        $this->assertEquals(31, (int) $age);
     }
 
     public function testDeleteRecord(): void

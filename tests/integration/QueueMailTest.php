@@ -101,7 +101,9 @@ final class QueueMailTest extends TestCase
         Queue::push(NoopJob::class, [], 3600);
         $row = Database::first("SELECT * FROM jobs");
         $this->assertNotNull($row);
-        $this->assertGreaterThan(time(), (int)$row['available_at']);
+        $availableAt = $row['available_at'] ?? 0;
+        /** @var int|string $availableAt */
+        $this->assertGreaterThan(time(), (int) $availableAt);
         $processed = Queue::work();
         $this->assertFalse((bool)$processed);
     }
@@ -115,11 +117,15 @@ final class QueueMailTest extends TestCase
         Queue::push(FailingJob::class, [], 0, 0, 2);
         Queue::work();
         $job = Database::first("SELECT * FROM jobs");
-        $this->assertEquals(1, (int)$job['attempts']);
+        $attempts = $job['attempts'] ?? 0;
+        /** @var int|string $attempts */
+        $this->assertEquals(1, (int) $attempts);
 
+        $jobId = $job['id'] ?? 0;
+        /** @var int|string $jobId */
         Database::execute("UPDATE jobs SET available_at = :now WHERE id = :id", [
             'now' => time(),
-            'id' => $job['id'],
+            'id' => $jobId,
         ]);
         Queue::work();
 
@@ -195,7 +201,7 @@ final class PriorityJob
     /** @var array<int, int> */
     public static array $order = [];
     /** @param array<string, mixed> $data */
-    public function handle(array $data = []): void { self::$order[] = $data['id'] ?? 0; }
+    public function handle(array $data = []): void { $id = $data['id'] ?? 0; /** @var int|string $id */ self::$order[] = (int) $id; }
 }
 
 final class FailingJob

@@ -107,12 +107,12 @@ final class AuthServiceIntegrationTest extends TestCase
     private function getMethodSource(string $className, string $methodName): string
     {
         $reflection = new \ReflectionMethod($className, $methodName);
-        $filename = $reflection->getFileName();
+        $filename = (string) $reflection->getFileName();
         $startLine = $reflection->getStartLine() - 1;
         $endLine = $reflection->getEndLine();
         $length = $endLine - $startLine;
 
-        $source = file($filename);
+        $source = file($filename) ?: [];
 
         return implode('', array_slice($source, $startLine, $length));
     }

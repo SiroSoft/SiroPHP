@@ -12,6 +12,10 @@ final class CategoryService implements BaseService
     {
     }
 
+    /**
+     * @param array<string, mixed> $filters
+     * @return array<string, mixed>
+     */
     public function getAll(array $filters = [], int $page = 1, int $perPage = 20): array
     {
         return $this->repo->findAll($filters, $page, $perPage);
@@ -22,11 +26,13 @@ final class CategoryService implements BaseService
         return $this->repo->findById($id);
     }
 
+    /** @param array<string, mixed> $data */
     public function create(array $data): mixed
     {
         return $this->repo->store($data);
     }
 
+    /** @param array<string, mixed> $data */
     public function update(int $id, array $data): mixed
     {
         return $this->repo->update($id, $data);

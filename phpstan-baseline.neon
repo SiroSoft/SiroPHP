@@ -1,12 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Parameter \#2 \$meta of method Siro\\Core\\Controller\:\:paginated\(\) expects array\{page\: int, per_page\: int, total\: int, last_page\: int\}, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/CategoryController.php
-
-		-
 			message: '#^Parameter \#1 \$queryParams of method App\\Services\\OrderService\:\:getAll\(\) expects array\<string, mixed\>, array\<int\|string, mixed\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -24,8 +18,4 @@ parameters:
 			count: 1
 			path: app/Controllers/ProductController.php
 
-		-
-			message: '#^Parameter \#2 \$meta of method Siro\\Core\\Controller\:\:paginated\(\) expects array\{page\: int, per_page\: int, total\: int, last_page\: int\}, array\<string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/TagController.php
+

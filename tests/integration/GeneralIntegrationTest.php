@@ -35,7 +35,9 @@ final class GeneralIntegrationTest extends TestCase
         $this->assertEquals(200, $response->statusCode());
         $payload = $response->payload();
         $this->assertTrue($payload['success']);
-        $this->assertArrayHasKey('version', $payload['data']);
+        $payloadData = $payload['data'] ?? [];
+        /** @var array<string, mixed> $payloadData */
+        $this->assertArrayHasKey('version', $payloadData);
     }
 
     public function testRouterReturns404ForUnknownRoute(): void
@@ -122,7 +124,9 @@ final class GeneralIntegrationTest extends TestCase
         $p = $r->payload();
         $this->assertTrue($p['success']);
         $this->assertArrayHasKey('data', $p);
-        $this->assertArrayHasKey('page', $p['meta']);
+        $meta = $p['meta'] ?? [];
+        /** @var array<string, mixed> $meta */
+        $this->assertArrayHasKey('page', $meta);
     }
 
     public function testXssInRequestBodyPassesLengthValidation(): void
@@ -236,6 +240,7 @@ final class GeneralIntegrationTest extends TestCase
     public function testValidatorExtendAddsCustomRule(): void
     {
         Validator::extend('uppercase', function ($value) {
+            /** @var string $value */
             return strtoupper($value) === $value ? true : ':field must be uppercase';
         });
         $errors = Validator::make(['code' => 'abc'], ['code' => 'uppercase']);
@@ -245,6 +250,7 @@ final class GeneralIntegrationTest extends TestCase
     public function testValidatorExtendPassesForValidInput(): void
     {
         Validator::extend('uppercase2', function ($value) {
+            /** @var string $value */
             return strtoupper($value) === $value ? true : ':field must be uppercase';
         });
         $errors = Validator::make(['code' => 'ABC'], ['code' => 'uppercase2']);

@@ -16,6 +16,7 @@ class RefreshTokenService
     ) {
     }
 
+    /** @return array{token: string, refresh_token: string, ttl: int} */
     public function createPair(int $userId): array
     {
         $ttl = max(60, (int) Env::get('JWT_TTL', '3600'));
@@ -35,6 +36,7 @@ class RefreshTokenService
         ];
     }
 
+    /** @return array{token: string, refresh_token: string, ttl: int}|null */
     public function verifyAndRotate(string $refreshToken): ?array
     {
         try {
@@ -43,10 +45,15 @@ class RefreshTokenService
             return null;
         }
 
+        /** @var array<string, mixed> $claims */
         if (($claims['type'] ?? '') !== JWT::TYPE_REFRESH) return null;
 
-        $userId = (int) ($claims['sub'] ?? 0);
-        $jti = (string) ($claims['jti'] ?? '');
+        $rawUserId = $claims['sub'] ?? 0;
+        $rawJti = $claims['jti'] ?? '';
+        /** @var int|string $rawUserId */
+        /** @var string $rawJti */
+        $userId = (int) $rawUserId;
+        $jti = $rawJti;
 
         if ($userId <= 0 || $jti === '') return null;
 

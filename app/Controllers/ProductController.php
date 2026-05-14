@@ -22,6 +22,7 @@ final class ProductController extends Controller
         $page = max($request->queryInt('page', 1), 1);
 
         $result = $this->service->getAll($request->all(), $page, $perPage);
+        /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
 
         return $this->paginated(
             ProductResource::collection($result['data']),
@@ -32,12 +33,15 @@ final class ProductController extends Controller
 
     public function show(Request $request): Response
     {
-        $id = (int) $request->param('id');
+        $rawId = $request->param('id');
+        /** @var int|string $rawId */
+        $id = (int) $rawId;
         if ($id <= 0) {
             return $this->error('Invalid id', 422);
         }
 
         $item = $this->service->getById($id);
+        /** @var array<string, mixed>|null $item */
         if ($item === null) {
             return $this->error('Product not found', 404);
         }
@@ -57,12 +61,15 @@ final class ProductController extends Controller
         ]);
 
         $item = $this->service->create($validated);
+        /** @var array<string, mixed> $item */
         return $this->created(ProductResource::make($item), 'Product created');
     }
 
     public function update(Request $request): Response
     {
-        $id = (int) $request->param('id');
+        $rawId = $request->param('id');
+        /** @var int|string $rawId */
+        $id = (int) $rawId;
         if ($id <= 0) {
             return $this->error('Invalid id', 422);
         }
@@ -77,6 +84,7 @@ final class ProductController extends Controller
         ]);
 
         $item = $this->service->update($id, $validated);
+        /** @var array<string, mixed>|null $item */
         if ($item === null) {
             return $this->error('Product not found', 404);
         }
@@ -86,7 +94,9 @@ final class ProductController extends Controller
 
     public function delete(Request $request): Response
     {
-        $id = (int) $request->param('id');
+        $rawId = $request->param('id');
+        /** @var int|string $rawId */
+        $id = (int) $rawId;
         if ($id <= 0) {
             return $this->error('Invalid id', 422);
         }

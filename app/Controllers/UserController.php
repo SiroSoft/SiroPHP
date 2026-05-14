@@ -24,6 +24,7 @@ final class UserController extends Controller
         $perPage = min(100, max(1, $request->queryInt('per_page', 15)));
 
         $result = $this->service->getAll($page, $perPage);
+        /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
 
         return $this->paginated(
             UserResource::collection($result['data']),
@@ -34,9 +35,24 @@ final class UserController extends Controller
 
     public function show(Request $request): Response
     {
-        $id = (int) $request->param('id');
+        $rawId = $request->param('id');
+        /** @var int|string $rawId */
+        $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
+
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
+        if ($currentUserId !== $id && $currentUserRole !== 'admin') {
+            return $this->error('Forbidden', 403);
+        }
+
         $user = $this->service->getById($id);
+        /** @var array<string, mixed>|null $user */
 
         if ($user === null) {
             return $this->error('User not found', 404);
@@ -55,6 +71,7 @@ final class UserController extends Controller
 
         try {
             $userData = $this->service->create($data);
+            /** @var array<string, mixed> $userData */
         } catch (DuplicateEmailException) {
             return $this->error('Validation failed', 422, [
                 'email' => ['Email has already been taken'],
@@ -66,7 +83,20 @@ final class UserController extends Controller
 
     public function update(Request $request): Response
     {
-        $id = (int) $request->param('id');
+        $rawId = $request->param('id');
+        /** @var int|string $rawId */
+        $id = (int) $rawId;
+
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
+        if ($currentUserId !== $id && $currentUserRole !== 'admin') {
+            return $this->error('Forbidden', 403);
+        }
 
         $data = $this->validate([
             'name' => 'min:3|max:120',
@@ -76,6 +106,7 @@ final class UserController extends Controller
 
         try {
             $userData = $this->service->update($id, $data);
+            /** @var array<string, mixed>|null $userData */
         } catch (DuplicateEmailException) {
             return $this->error('Validation failed', 422, [
                 'email' => ['Email has already been taken'],
@@ -93,7 +124,20 @@ final class UserController extends Controller
 
     public function delete(Request $request): Response
     {
-        $id = (int) $request->param('id');
+        $rawId = $request->param('id');
+        /** @var int|string $rawId */
+        $id = (int) $rawId;
+
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
+        if ($currentUserId !== $id && $currentUserRole !== 'admin') {
+            return $this->error('Forbidden', 403);
+        }
 
         return $this->service->delete($id)
             ? $this->noContent()

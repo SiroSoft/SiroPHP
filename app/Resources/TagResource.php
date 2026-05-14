@@ -15,7 +15,7 @@ final class TagResource extends Resource
     {
         return [
             'id' => $this->data['id'] ?? 0,
-            'name' => $this->data['name'] ?? '',
+            'name' => is_string($this->data['name'] ?? null) ? htmlspecialchars($this->data['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['name'] ?? ''),
             'created_at' => $this->data['created_at'] ?? '',
         ];
     }

@@ -27,21 +27,34 @@ final class ProductService
     public function getAll(array $queryParams = [], int $page = 1, int $perPage = 20): array
     {
         $sort = $queryParams['sort'] ?? 'id';
+        /** @var string $sort */
         if (!in_array($sort, self::ALLOWED_SORTS, true)) {
             $sort = 'id';
         }
 
-        $order = strtolower($queryParams['order'] ?? 'desc');
+        $rawOrder = $queryParams['order'] ?? 'desc';
+        /** @var string $rawOrder */
+        $order = strtolower($rawOrder);
         if (!in_array($order, ['asc', 'desc'], true)) {
             $order = 'desc';
         }
 
+        $category = $queryParams['category'] ?? '';
+        $productStatus = $queryParams['status'] ?? '';
+        $priceMin = $queryParams['price_min'] ?? '';
+        $priceMax = $queryParams['price_max'] ?? '';
+        $search = $queryParams['search'] ?? '';
+        /** @var string $category */
+        /** @var string $productStatus */
+        /** @var string $priceMin */
+        /** @var string $priceMax */
+        /** @var string $search */
         $filters = [
-            'category' => $queryParams['category'] ?? '',
-            'status' => $queryParams['status'] ?? '',
-            'price_min' => $queryParams['price_min'] ?? '',
-            'price_max' => $queryParams['price_max'] ?? '',
-            'search' => $queryParams['search'] ?? '',
+            'category' => $category,
+            'status' => $productStatus,
+            'price_min' => $priceMin,
+            'price_max' => $priceMax,
+            'search' => $search,
             'sort' => $sort,
             'order' => $order,
         ];
@@ -60,8 +73,12 @@ final class ProductService
      */
     public function create(array $data): mixed
     {
-        $data['price'] = (float) ($data['price'] ?? 0);
-        $data['stock'] = (int) ($data['stock'] ?? 0);
+        $rawPrice = $data['price'] ?? 0;
+        $rawStock = $data['stock'] ?? 0;
+        /** @var int|float|string $rawPrice */
+        /** @var int|float|string $rawStock */
+        $data['price'] = (float) $rawPrice;
+        $data['stock'] = (int) $rawStock;
         $data['status'] = $data['status'] ?? 'active';
 
         return $this->repo->store($data);
@@ -73,10 +90,14 @@ final class ProductService
     public function update(int $id, array $data): mixed
     {
         if (isset($data['price'])) {
-            $data['price'] = (float) $data['price'];
+            $rawPrice = $data['price'];
+            /** @var int|float|string $rawPrice */
+            $data['price'] = (float) $rawPrice;
         }
         if (isset($data['stock'])) {
-            $data['stock'] = (int) $data['stock'];
+            $rawStock = $data['stock'];
+            /** @var int|float|string $rawStock */
+            $data['stock'] = (int) $rawStock;
         }
 
         return $this->repo->update($id, $data);

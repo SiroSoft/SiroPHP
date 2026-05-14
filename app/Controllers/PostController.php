@@ -18,11 +18,16 @@ final class PostController extends Controller
 
     public function index(Request $request): Response
     {
+        $rawPage = $request->query('page', 1);
+        $rawPerPage = $request->query('per_page', 20);
+        /** @var int|string $rawPage */
+        /** @var int|string $rawPerPage */
         $result = $this->service->getAll(
             $request->all(),
-            (int) $request->query('page', 1),
-            (int) $request->query('per_page', 20)
+            (int) $rawPage,
+            (int) $rawPerPage
         );
+        /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
 
         return $this->paginated(
             PostResource::collection($result['data']),
@@ -33,15 +38,32 @@ final class PostController extends Controller
 
     public function show(Request $request): Response
     {
-        $id = (int) $request->param('id');
+        $rawId = $request->param('id');
+        /** @var int|string $rawId */
+        $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
-        $post = $this->service->getById($id);
 
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
+
+        $post = $this->service->getById($id);
+        /** @var \Siro\Core\Model|null $post */
         if ($post === null) {
             return $this->error('Post not found', 404);
         }
 
-        return $this->success(PostResource::make($post->toArray()), 'Post detail');
+        $postData = $post->toArray();
+        $postUserId = is_numeric($postData['user_id'] ?? null) ? (int) $postData['user_id'] : 0;
+        if ($currentUserId !== $postUserId && $currentUserRole !== 'admin') {
+            return $this->error('Forbidden', 403);
+        }
+
+        return $this->success(PostResource::make($postData), 'Post detail');
     }
 
     public function store(Request $request): Response
@@ -56,12 +78,31 @@ final class PostController extends Controller
         $file = $request->file('image');
         $post = $this->service->create($validated, $file);
 
+        /** @var \Siro\Core\Model $post */
         return $this->created(PostResource::make($post->toArray()), 'Post created');
     }
 
     public function update(Request $request): Response
     {
-        $id = (int) $request->param('id');
+        $rawId = $request->param('id');
+        /** @var int|string $rawId */
+        $id = (int) $rawId;
+
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
+        $existing = $this->service->getById($id);
+        if ($existing !== null) {
+            $existingData = $existing instanceof \Siro\Core\Model ? $existing->toArray() : (array) $existing;
+            $postUserId = is_numeric($existingData['user_id'] ?? null) ? (int) $existingData['user_id'] : 0;
+            if ($currentUserId !== $postUserId && $currentUserRole !== 'admin') {
+                return $this->error('Forbidden', 403);
+            }
+        }
 
         $validated = $this->validate([
             'title' => 'min:3|max:255',
@@ -71,6 +112,7 @@ final class PostController extends Controller
         ]);
 
         $post = $this->service->update($id, $validated);
+        /** @var array<string, mixed>|null $post */
         if ($post === null) {
             return $this->error('Post not found', 404);
         }
@@ -80,7 +122,25 @@ final class PostController extends Controller
 
     public function delete(Request $request): Response
     {
-        $id = (int) $request->param('id');
+        $rawId = $request->param('id');
+        /** @var int|string $rawId */
+        $id = (int) $rawId;
+
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
+        $existing = $this->service->getById($id);
+        if ($existing !== null) {
+            $existingData = $existing instanceof \Siro\Core\Model ? $existing->toArray() : (array) $existing;
+            $postUserId = is_numeric($existingData['user_id'] ?? null) ? (int) $existingData['user_id'] : 0;
+            if ($currentUserId !== $postUserId && $currentUserRole !== 'admin') {
+                return $this->error('Forbidden', 403);
+            }
+        }
 
         return $this->service->delete($id)
             ? $this->success(null, 'Post deleted')

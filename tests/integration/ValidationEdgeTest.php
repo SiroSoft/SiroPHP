@@ -168,7 +168,8 @@ final class ValidationEdgeTest extends TestCase
     public function testValidatorExtendWorks(): void
     {
         Validator::extend('even', function ($v) {
-            return ((int)$v) % 2 === 0 ? true : ':field must be even';
+            /** @var int|string $v */
+            return ((int) $v) % 2 === 0 ? true : ':field must be even';
         });
         $errors = Validator::make(['num' => '3'], ['num' => 'even']);
         $this->assertArrayHasKey('num', $errors);

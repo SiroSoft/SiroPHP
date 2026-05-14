@@ -168,10 +168,10 @@ abstract class TestCase extends BaseTestCase
     {
         ob_start();
         $response->send();
-        $output = (string) ob_get_clean();
+        $output = strval(ob_get_clean());
         $decoded = json_decode($output, true);
-
-        return is_array($decoded) ? $decoded : [];
+        /** @var array<string, mixed> $decoded */
+        return $decoded;
     }
 
     /** @return array<string, string> */
@@ -194,7 +194,12 @@ abstract class TestCase extends BaseTestCase
         ]);
 
         $this->assertSame(200, $login->statusCode(), 'Failed to login auth test user.');
-        $token = (string) (($this->responseJson($login)['data']['token'] ?? ''));
+        $loginJson = $this->responseJson($login);
+        $loginData = $loginJson['data'] ?? [];
+        /** @var array<string, mixed> $loginData */
+        $rawToken = $loginData['token'] ?? '';
+        /** @var string $rawToken */
+        $token = $rawToken;
         $this->assertNotSame('', $token, 'Auth token missing from login response.');
 
         return [
@@ -386,9 +391,13 @@ final class TestResponse
             ob_start();
             $this->response->send();
             $output = ob_get_clean();
-            $this->parsedBody = json_decode((string) $output, true) ?? [];
+            $decoded = json_decode(strval($output), true);
+            /** @var array<string, mixed>|null $decoded */
+            $this->parsedBody = is_array($decoded) ? $decoded : [];
         }
-        return $this->parsedBody;
+        $parsedBody = $this->parsedBody;
+        /** @var array<string, mixed> $parsedBody */
+        return $parsedBody;
     }
 
     public function status(): int

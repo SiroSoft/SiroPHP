@@ -19,8 +19,12 @@ final class SendWelcomeEmail
     /** @param array<string, mixed> $data */
     public function handle(array $data = []): void
     {
-        $email = (string) ($data['email'] ?? '');
-        $name = (string) ($data['name'] ?? 'User');
+        $rawEmail = $data['email'] ?? '';
+        $rawName = $data['name'] ?? 'User';
+        /** @var string $rawEmail */
+        /** @var string $rawName */
+        $email = $rawEmail;
+        $name = $rawName;
 
         if ($email === '') {
             return;

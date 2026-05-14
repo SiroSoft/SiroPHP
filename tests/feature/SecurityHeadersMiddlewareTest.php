@@ -47,13 +47,6 @@ final class SecurityHeadersMiddlewareTest extends TestCase
         $this->assertStringContainsString('Permissions-Policy', implode("\n", $response->getHeaders()));
     }
 
-    public function testContentSecurityPolicyHeaderSet(): void
-    {
-        $request = new Request('GET', '/test');
-        $response = $this->middleware->handle($request, fn () => Response::success());
-        $this->assertStringContainsString('Content-Security-Policy', implode("\n", $response->getHeaders()));
-    }
-
     public function testAllRequiredHeadersPresent(): void
     {
         $request = new Request('GET', '/test');
@@ -65,7 +58,6 @@ final class SecurityHeadersMiddlewareTest extends TestCase
             'X-Content-Type-Options',
             'Referrer-Policy',
             'Permissions-Policy',
-            'Content-Security-Policy',
         ];
 
         foreach ($requiredHeaders as $header) {

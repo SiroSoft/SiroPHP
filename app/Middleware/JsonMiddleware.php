@@ -15,7 +15,7 @@ final class JsonMiddleware implements MiddlewareInterface
         $method = $request->method();
 
         if (in_array($method, ['POST', 'PUT', 'PATCH'], true)) {
-            $contentType = $request->header('content-type', '');
+            $contentType = strval($request->header('content-type', ''));
             if ($contentType !== '' && !str_contains(strtolower($contentType), 'application/json')) {
                 return Response::error('Content-Type must be application/json', 415);
             }

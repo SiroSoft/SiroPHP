@@ -112,7 +112,6 @@ final class TestHelperTest extends TestCase
         $response->assertOk();
         $response->assertJson(['success' => true]);
 
-        // Register and login a new user for auth
         $email = 'crud-' . uniqid() . '@test.com';
         $this->post('/api/auth/register', [
             'name' => 'Crud Test',
@@ -126,7 +125,12 @@ final class TestHelperTest extends TestCase
             'password' => 'secret123',
         ]);
         $login->assertOk();
-        $token = $login->json()['data']['token'] ?? '';
+        $loginJson = $login->json();
+        $loginData = $loginJson['data'] ?? [];
+        /** @var array<string, mixed> $loginData */
+        $rawToken = $loginData['token'] ?? '';
+        /** @var string $rawToken */
+        $token = $rawToken;
 
         $created = $this->post('/api/products', [
             'name' => 'Helper Product',

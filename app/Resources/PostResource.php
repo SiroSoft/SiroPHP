@@ -13,7 +13,7 @@ final class PostResource extends Resource
         return [
             'id' => $this->data['id'] ?? null,
             'title' => is_string($this->data['title'] ?? null) ? htmlspecialchars($this->data['title'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['title'] ?? null),
-            'body' => $this->data['body'] ?? null,
+            'body' => is_string($this->data['body'] ?? null) ? htmlspecialchars($this->data['body'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['body'] ?? null),
             'locale' => $this->data['locale'] ?? null,
             'status' => $this->data['status'] ?? null,
             'image' => $this->data['image'] ?? null,

@@ -33,9 +33,16 @@ final class ProcessPendingNotifications
         }
 
         foreach ($notifications as $notification) {
-            $email = $notification['email'] ?? '';
-            $subject = $notification['subject'] ?? 'Notification';
-            $body = $notification['body'] ?? 'You have a new notification.';
+            /** @var array<string, mixed> $notification */
+            $rawEmail = $notification['email'] ?? '';
+            $rawSubject = $notification['subject'] ?? 'Notification';
+            $rawBody = $notification['body'] ?? 'You have a new notification.';
+            /** @var string $rawEmail */
+            /** @var string $rawSubject */
+            /** @var string $rawBody */
+            $email = $rawEmail;
+            $subject = $rawSubject;
+            $body = $rawBody;
 
             if ($email !== '') {
                 \Siro\Core\Mail::to($email)
