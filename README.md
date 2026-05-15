@@ -78,6 +78,7 @@ php siro route:list
 | **Laravel/Symfony too heavy** (~60-100 dependencies) | **Zero** runtime dependencies. Just PHP + PDO |
 | **Slow boot** (50-80ms per request) | **~1ms** cold boot. 50-80x faster |
 | **JWT auth takes hours to setup** | **Built-in**. Algorithm pinning, key rotation, JTI blacklist |
+| **N+1 queries kill performance** | **Auto-detected**. `php siro why` shows exact N+1 warnings with fix |
 | **Manual CRUD boilerplate** | **1 command**: `make:crud Product` generates Controller + Service + Repository + Model + Migration + Test |
 | **Security left to developers** | **OWASP Top 10** mitigated from the start: CSP, CORS, CSRF, Rate Limit, SQLi, XSS |
 | **Dependency vulnerabilities** | **Zero transitive dependencies**. Composer audit = 0 issues |
