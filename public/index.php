@@ -11,8 +11,19 @@ require BASE_PATH . '/vendor/autoload.php';
 
 function siroJsonError(int $statusCode, string $message, ?Throwable $e = null): never
 {
-    http_response_code($statusCode);
-    header('Content-Type: application/json; charset=utf-8');
+    static $recursionGuard = false;
+    if ($recursionGuard) {
+        http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
+        echo '{"success":false,"message":"Internal error"}';
+        exit(1);
+    }
+    $recursionGuard = true;
+
+    if (!headers_sent()) {
+        http_response_code($statusCode);
+        header('Content-Type: application/json; charset=utf-8');
+    }
 
     $error = [
         'success' => false,
@@ -28,7 +39,8 @@ function siroJsonError(int $statusCode, string $message, ?Throwable $e = null): 
         }
     }
 
-    echo json_encode($error, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    $json = json_encode($error, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR);
+    echo $json !== false ? $json : '{"success":false,"message":"Internal error"}';
     exit(1);
 }
 
@@ -52,6 +64,13 @@ register_shutdown_function(function (): void {
     }
 });
 
+if (extension_loaded('pcntl')) {
+    pcntl_signal(SIGTERM, function (): void {
+        \Siro\Core\App::shutdown();
+        exit(0);
+    });
+}
+
 try {
     $app = new App(BASE_PATH);
 
@@ -63,6 +82,19 @@ try {
     ]);
 
     $app->boot();
+
+    // Register default health route
+    \Siro\Core\Route::setRouter($app->router);
+    \Siro\Core\Route::get('/health', function () {
+        $checkScript = dirname(__DIR__) . '/vendor/sirosoft/core/scripts/health-check.php';
+        $output = @shell_exec(escapeshellcmd(PHP_BINARY) . ' ' . escapeshellarg($checkScript) . ' ' . escapeshellarg(BASE_PATH) . ' json 2>/dev/null');
+        /** @var array<string, mixed>|null $decoded */
+        $decoded = (is_string($output) && $output !== '') ? json_decode($output, true) : null;
+        /** @var array<string, mixed> $data */
+        $data = is_array($decoded) ? $decoded : ['status' => 'error', 'message' => 'Health check unavailable'];
+        $status = ($data['status'] ?? '') === 'ok' ? 200 : 503;
+        return \Siro\Core\Response::json($data, $status);
+    });
 
     // Apply log sanitization config from .env
     \Siro\Core\Logger::setSanitizeConfig([

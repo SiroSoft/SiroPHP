@@ -10,6 +10,7 @@
 !/storage/logs/.gitkeep
 
 /storage/rate_limit/*
+/storage/sbom/
 /storage/*.db
 
 # Generated API documentation (kept locally only)
@@ -44,6 +45,7 @@ Thumbs.db
 /storage/api-test-history.json
 
 .phpunit.cache
+.phpdoc/
 
 # Temporary reports and audit files
 *.md.backup
@@ -69,6 +71,9 @@ openapi-auth.json
 openapi_test.json
 /public/postman_collection.json
 /public/openapi.json
+/coverage/
+/storage/framework/routes.php
+/storage/framework/config.php
 
 .git_disabled/
 

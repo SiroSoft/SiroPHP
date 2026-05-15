@@ -24,7 +24,7 @@
     },
     "require": {
         "php": ">=8.2",
-        "sirosoft/core": "^0.25.0",
+        "sirosoft/core": "^0.26.2",
         "ext-pdo": "*",
         "ext-json": "*",
         "ext-mbstring": "*"
@@ -37,6 +37,8 @@
         "benchmark:ci": "@php scripts/benchmark-ci.php",
         "sbom": "@php scripts/generate-sbom.php",
         "audit:supply-chain": "@php scripts/audit-supply-chain.php",
+        "health": "@php scripts/health-check.php",
+        "docs:generate": "@php scripts/generate-docs.php",
         "release:check": [
             "@php scripts/release-check.php --ci"
         ],

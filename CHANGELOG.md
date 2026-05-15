@@ -1,6 +1,39 @@
 # Changelog
 
-## v0.26.0 (2026-05-14) — The "Hardened" Release — 13 Critical/High Security Fixes in SiroPHP
+## v0.26.2 (2026-05-15) — Bump sirosoft/core to v0.26.2
+
+### 📦 Dependencies
+- `sirosoft/core` bumped to `^0.26.2`
+
+### 🆕 New (from core v0.26.2)
+- **Row locking** — `lockForUpdate()`, `sharedLock()` for SELECT queries
+- **RIGHT JOIN & CROSS JOIN** — `rightJoin()`, `crossJoin()` methods
+- **`whereHas` / `orWhereHas` / `whereDoesntHave`** — relation existence queries
+- **Container extension points** — `tag()`, `tagged()`, `rebound()`, `when()` for contextual DI
+- **N+1 detection** — automatic warning when relation accessed without eager loading
+- **Gzip for raw responses** — automatic compression for `Response::raw()`
+- **SoftDeletes `forceDelete()`** — now respects `$primaryKey` config
+- **`siro why` N+1 detection** — shows N+1 warnings in debug output
+- **PostgreSQL row locking** — `FOR SHARE` for pg, `LOCK IN SHARE MODE` for MySQL
+- **Tinker query log** — shows DB query count after each expression
+
+### 🏗 Infrastructure
+- **Helm chart** — `helm/siro-api/` for K8s deployment
+- **CD workflow** — automated Docker build + Helm upgrade on git push
+
+## v0.26.1 (2026-05-15) — Bump sirosoft/core to v0.26.1
+
+### 📦 Dependencies
+- `sirosoft/core` bumped to `^0.26.1`
+
+### 🆕 New (from core v0.26.1)
+- **`php siro tinker`** — Interactive PHP playground in app context
+- **Model Observer** — `Model::observe()` for lifecycle hooks
+- **Composite primary keys** — `$primaryKey` configurable per model
+- **Env cache encrypted** — AES-256 encryption for cached env vars
+- **Gzip file downloads** — automatic compression for text-based files
+
+## v0.26.0 (2026-05-15) — The "Hardened" Release — 13 Critical/High Security Fixes in SiroPHP
 
 ### 🛡️ Security Hardening
 
@@ -35,9 +68,24 @@
 ### 📦 Dependencies
 - `sirosoft/core` bumped to `^0.26.0`
 
+### 🏥 Health Endpoint
+- `GET /health` — registered by default, returns JSON status from core health check
+- `make health` / `composer health` — CLI health check
+
+### 🛑 Graceful Shutdown
+- SIGTERM handler in `public/index.php` calls `App::shutdown()` for clean Docker termination
+
+### 📚 API Documentation
+- `make docs` / `composer docs:generate` — generate API reference via phpDocumentor
+
+### ⚙️ Infrastructure
+- Makefile targets: `health`, `docs`, `sbom`, `loadtest`, `production-check`
+- `.gitignore` — added `/coverage/`, `/storage/framework/*`, `/.phpdoc/`
+- PHPStan level max — 0 errors
+
 ### Scores After Fixes
-- **Security**: 8.5 → **9.6** | **Production Readiness**: 8.0 → **9.2**
-- **Overall SiroPHP**: 8.5 → **9.3**
+- **Security**: 8.5 → **9.6** | **Production Readiness**: 8.0 → **9.5**
+- **Overall SiroPHP**: 8.5 → **9.5**
 
 ## v0.25.0 (2026-05-13) — The "All Green" Release — 431/431 Tests, Zero Failures
 

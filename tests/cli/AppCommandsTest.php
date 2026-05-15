@@ -35,7 +35,7 @@ class AppCommandsTest extends TestCase
     public function testSiroVersionViaCli(): void
     {
         $output = (string) shell_exec('php ' . escapeshellarg($this->basePath . '/siro') . ' --version 2>&1');
-        $this->assertStringContainsString('0.24.0', $output, 'CLI should report v0.24.0');
+        $this->assertStringContainsString('0.26.2', $output, 'CLI should report v0.26.2');
     }
 
     public function testRateStatus(): void

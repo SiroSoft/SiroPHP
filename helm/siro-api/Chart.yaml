@@ -1,0 +1,17 @@
+apiVersion: v2
+name: siro-api
+description: A Helm chart for deploying Siro API Framework on Kubernetes
+type: application
+version: 0.1.0
+appVersion: "0.26.2"
+keywords:
+  - php
+  - api
+  - siro
+  - frankenphp
+home: https://github.com/SiroSoft/SiroPHP
+sources:
+  - https://github.com/SiroSoft/siro-core
+maintainers:
+  - name: SiroSoft Team
+    url: https://sirophp.com

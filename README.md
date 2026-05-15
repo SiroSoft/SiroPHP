@@ -1,6 +1,6 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/SiroSoft/SiroPHP/main/art/logo.svg" alt="Siro PHP Framework" width="200"/>
-  <h1>Siro API Framework v0.26.0</h1>
+  <h1>Siro API Framework v0.26.2</h1>
   <p><strong>The Fastest, Lightest, Most Secure PHP Micro-Framework</strong></p>
   <p>Zero dependencies • Sub-millisecond boot • JWT built-in • 70 CLI commands • OWASP Top 10 mitigated</p>
 </div>
@@ -9,10 +9,14 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP 8.2+](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Tests](https://img.shields.io/badge/tests-1436%20passing-brightgreen.svg)](tests/)
-[![PHPStan](https://img.shields.io/badge/phpstan-level%207-0%20errors-brightgreen.svg)](https://github.com/SiroSoft/siro-core)
-[![Security](https://img.shields.io/badge/security-audited-brightgreen)](https://sirophp.com)
+[![Tests](https://img.shields.io/badge/tests-19037%20total-brightgreen.svg)](tests/)
+[![PHPStan](https://img.shields.io/badge/PHPStan-Level%20Max-brightgreen.svg)](https://phpstan.org)
+[![Psalm](https://img.shields.io/badge/Psalm-Level%201-brightgreen.svg)](https://psalm.dev)
+[![Security](https://img.shields.io/badge/security-OWASP%20Top%2010%20Mitigated-brightgreen)](docs/SECURITY.md)
+[![Mutation](https://img.shields.io/badge/mutation-MSI%20≥80%25-brightgreen)](https://infection.github.io)
+[![SBOM](https://img.shields.io/badge/sbom-CycloneDX-blue)](https://cyclonedx.org)
 [![Packagist](https://img.shields.io/packagist/v/sirosoft/api?color=blue)](https://packagist.org/packages/sirosoft/api)
+[![Downloads](https://img.shields.io/packagist/dt/sirosoft/api?color=blue)](https://packagist.org/packages/sirosoft/api)
 
 </div>
 
@@ -25,6 +29,46 @@ composer create-project sirosoft/api my-api && cd my-api && php siro serve
 #                                  http://localhost:8080 with JWT auth + CRUD
 ```
 
+## The Siro Flow — Integrated Terminal-Native Workflow
+
+**For local development and small-team API workflows, you rarely need to leave the terminal.**
+
+```bash
+# ── BUILD ──────────────────────────────────────────────
+composer create-project sirosoft/api my-api
+cd my-api
+php siro key:generate
+php siro make:crud Product       # Controller + Service + Repository + Model + Migration + Test
+php siro make:auth               # Auth: register/login/refresh/forgot/reset
+php siro migrate
+php siro serve                   # Start at :8080
+
+# ── TEST ───────────────────────────────────────────────
+php siro t POST /api/auth/login --body='{"email":"test@test.com","password":"123456"}'
+php siro t GET /api/products
+php siro t POST /api/orders --body='{"product_id":1,"quantity":5}'
+
+# ── DEBUG ──────────────────────────────────────────────
+php siro why                      # Why did production fail? (5 seconds)
+php siro replay siro_a1b2c3       # Replay exact failed request
+php siro replay siro_a1b2c3 --edit # Edit body → test fix
+php siro tinker                   # Interactive PHP playground
+
+# ── MONITOR ────────────────────────────────────────────
+php siro log:tail                 # Local log streaming
+php siro log:stats                # Request stats
+php siro doctor                   # System health check
+curl localhost:8080/health        # HTTP health check
+curl localhost:8080/metrics       # Prometheus endpoint
+
+# ── DOCUMENT ───────────────────────────────────────────
+php siro make:openapi --with-swagger
+php siro route:list
+```
+
+**Everything above is built-in — zero packages to install for these workflows.**  
+(For production-scale monitoring, Siro integrates with standard tools: Prometheus, Grafana, Datadog.)
+
 ---
 
 ## Why Siro?
@@ -34,6 +78,7 @@ composer create-project sirosoft/api my-api && cd my-api && php siro serve
 | **Laravel/Symfony too heavy** (~60-100 dependencies) | **Zero** runtime dependencies. Just PHP + PDO |
 | **Slow boot** (50-80ms per request) | **~1ms** cold boot. 50-80x faster |
 | **JWT auth takes hours to setup** | **Built-in**. Algorithm pinning, key rotation, JTI blacklist |
+| **N+1 queries kill performance** | **Auto-detected**. `php siro why` shows exact N+1 warnings with fix |
 | **Manual CRUD boilerplate** | **1 command**: `make:crud Product` generates Controller + Service + Repository + Model + Migration + Test |
 | **Security left to developers** | **OWASP Top 10** mitigated from the start: CSP, CORS, CSRF, Rate Limit, SQLi, XSS |
 | **Dependency vulnerabilities** | **Zero transitive dependencies**. Composer audit = 0 issues |
@@ -109,7 +154,7 @@ Benchmark                          Result
   queue:*       4 commands     work, retry, flush, status
   cache:*       3 commands     config:cache, config:clear, env:cache
   server:*      4 commands     serve, frankenphp:serve, live, deploy
-  debug:*       2 commands     debug:last, debug:health
+  debug:*       3 commands     debug:last, debug:health, tinker
   system:*     20 commands     key:generate, benchmark, route:list, test, doctor...
 ```
 
@@ -194,7 +239,7 @@ Error format:
 |---------|---------|
 | **JWT Auth** | Access + Refresh tokens, algorithm pinning (HS256/RS256), key rotation, JTI blacklist, audience validation |
 | **CRUD Generator** | `php siro make:crud Product` → Controller + Service + Repository + Model + Resource + Migration + Test |
-| **Query Builder** | SELECT, JOIN, WHERE, GROUP BY, HAVING, subqueries, pagination, aggregates |
+| **Query Builder** | SELECT, JOIN (INNER/LEFT/RIGHT/CROSS), WHERE, GROUP BY, HAVING, subqueries, pagination, aggregates, `whereHas`, row locking (FOR UPDATE/SHARE) |
 | **ORM** | HasOne, HasMany, BelongsTo, BelongsToMany, eager loading, soft deletes |
 | **Migrations** | Create, rollback, status. Supports MySQL, PostgreSQL, SQLite |
 | **Validation** | 15+ rules: required, email, unique, exists, min, max, confirmed, in, regex, file, image, date, url. Custom rules + messages |
@@ -205,7 +250,9 @@ Error format:
 | **Queue** | DB-based jobs, exponential backoff, timeout, priority, failed job retry |
 | **Mail** | Sendmail + SMTP (STARTTLS, AUTH LOGIN), async queuing, HTML + attachments |
 | **Events** | Pub/sub, wildcards, one-time listeners. Model events: creating, created, saving, saved, deleting, deleted |
-| **Debug** | `X-Siro-Trace-Id`, request replay (`log:replay`), slow query detection, log sanitization, `debug:last` |
+| **Debug** | `X-Siro-Trace-Id`, request replay (`log:replay`), slow query detection, log sanitization, `debug:last`, `siro tinker` REPL |
+| **Observers** | Model lifecycle hooks via `Model::observe()` — saving, creating, updating, deleting, force deleting |
+| **Gzip Files** | Automatic compression for text-based file downloads (text, JSON, XML, SVG, fonts) |
 | **API Versioning** | Header-based via `Accept: application/vnd.siro.v2+json`, route overrides per version |
 | **Prometheus** | `/metrics` endpoint, auto-track request count, duration histogram, status codes |
 | **CLI** | 70 commands with help, aliases, Levenshtein suggestion on typos |
@@ -244,13 +291,35 @@ docker run -p 80:80 -p 443:443 -v .env:/app/.env my-api
 ## Test
 
 ```bash
-php siro test                  # Run all tests
-php siro test --coverage       # With coverage report
-php siro test --filter=User    # Filter by name
-php siro benchmark             # Performance benchmark
+# Core framework tests
+cd vendor/sirosoft/core
+php vendor/bin/phpunit --no-coverage              # 19,038 tests, 0 failures
+php vendor/bin/phpstan analyse --level=max         # 0 errors
+php vendor/bin/psalm --taint-analysis              # 0 errors
+composer audit                                     # 0 vulnerabilities
+php scripts/chaos-test.php                         # Chaos engineering
+php scripts/health-check.php                       # System health
+
+# Application tests
+cd your-project/
+php siro test                                       # 430 app tests
+php siro test --coverage                            # With coverage
+php siro benchmark                                  # Performance
 ```
 
-Current: **1436+ tests passing** (1005 core + 431 app), 0 failures.
+### Verified Results
+
+| Suite | Tests | Assertions | Status |
+|-------|-------|-----------|--------|
+| Core Unit | 988 | 2,547 | ✅ 0 failures |
+| Core Fuzz | 17,851 | 28,849 | ✅ 0 failures |
+| Core DAST | 157 | 166 | ✅ 0 failures |
+| Core Integration | 42 | 90 | ✅ 0 failures |
+| **Core Total** | **19,038** | **31,652** | **✅ 0 failures** |
+| PHPStan Level Max | — | — | ✅ 0 errors |
+| Psalm Level 1 | — | — | ✅ 0 errors |
+| App Tests | 430 | 534 | ✅ |
+| **Grand Total** | **19,468** | **32,186** | **✅** |
 
 ---
 
