@@ -85,104 +85,103 @@ abstract class TestCase extends BaseTestCase
             return;
         }
 
-        // For MySQL: use CREATE TABLE IF NOT EXISTS directly (skip migration files)
-        if (in_array(self::$dbDriver, ['mysql', 'mariadb'], true)) {
-            $pdo->exec("CREATE TABLE IF NOT EXISTS migrations (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                migration VARCHAR(255) NOT NULL UNIQUE,
-                batch INT NOT NULL DEFAULT 1,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )");
+        // Build driver-specific SQL helpers
+        $ai = 'INT AUTO_INCREMENT';        // auto_increment syntax
+        $dt = 'DATETIME';                  // datetime type
+        $ti = 'TINYINT';                   // tinyint type
+        $ts = 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP'; // created_at default
+        $insertMig = 'INSERT IGNORE INTO migrations (migration, batch) VALUES (:m, :b)';
+        $quote = '`';                      // identifier quote char
 
-            // Create users table if not exists
-            $pdo->exec("CREATE TABLE IF NOT EXISTS users (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255) NOT NULL DEFAULT '',
-                email VARCHAR(255) NOT NULL UNIQUE,
-                password VARCHAR(255) NOT NULL DEFAULT '',
-                status TINYINT DEFAULT 1,
-                token_version INT DEFAULT 1,
-                role VARCHAR(50) DEFAULT 'user',
-                verification_token VARCHAR(255) NULL,
-                email_verified_at DATETIME NULL,
-                password_reset_token VARCHAR(255) NULL,
-                password_reset_expires_at DATETIME NULL,
-                login_attempts INT DEFAULT 0,
-                locked_until DATETIME NULL,
-                created_at DATETIME,
-                updated_at DATETIME,
-                deleted_at DATETIME NULL
-            )");
-
-            // Create refresh_tokens table for auth
-            $pdo->exec("CREATE TABLE IF NOT EXISTS refresh_tokens (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NOT NULL,
-                token VARCHAR(255) NOT NULL,
-                jti VARCHAR(255),
-                expires_at DATETIME,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                revoked_at DATETIME NULL
-            )");
-
-            // Create jobs table for queue
-            $pdo->exec("CREATE TABLE IF NOT EXISTS jobs (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                queue VARCHAR(255) NOT NULL DEFAULT 'default',
-                payload TEXT,
-                attempts INT DEFAULT 0,
-                reserved_at INT NULL,
-                available_at INT NOT NULL,
-                created_at INT NOT NULL
-            )");
-
-            // Record migration so system doesn't try to run them
-            $existing = $pdo->query("SELECT migration FROM migrations")->fetchAll(\PDO::FETCH_COLUMN);
-            $existingMigrations = array_flip($existing ?: []);
-
-            $files = glob($migrationsDir . '/*.php') ?: [];
-            sort($files);
-            foreach ($files as $file) {
-                $name = basename($file);
-                if (!isset($existingMigrations[$name])) {
-                    $batch = 1;
-                    try {
-                        // Try running the migration — if it fails (column exists), just record it
-                        $migration = require $file;
-                        if (is_object($migration) && method_exists($migration, 'up')) {
-                            try {
-                                $migration->up();
-                            } catch (\Throwable) {
-                                // Column exists or table already created — ignore
-                            }
-                        }
-                        $pdo->prepare("INSERT IGNORE INTO migrations (migration, batch) VALUES (:m, :b)")
-                            ->execute(['m' => $name, 'b' => $batch]);
-                    } catch (\Throwable) {
-                        // Skip problematic migrations
-                    }
-                }
-            }
+        // Driver-specific SQL syntax
+        if (in_array(self::$dbDriver, ['pgsql', 'postgres', 'postgresql'], true)) {
+            $ai = 'SERIAL'; $dt = 'TIMESTAMP'; $ti = 'SMALLINT';
+            $ts = 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP';
+            $insertMig = 'INSERT INTO migrations (migration, batch) VALUES (:m, :b) ON CONFLICT (migration) DO NOTHING';
+            $quote = '"';
+        } elseif (in_array(self::$dbDriver, ['mysql', 'mariadb'], true)) {
+            $ai = 'INT AUTO_INCREMENT'; $dt = 'DATETIME'; $ti = 'TINYINT';
+            $ts = 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP';
+            $insertMig = 'INSERT IGNORE INTO migrations (migration, batch) VALUES (:m, :b)';
+            $quote = '`';
         } else {
-            // SQLite mode — original behavior
-            $dbPath = dirname(__DIR__) . '/storage/test.db';
-            if (file_exists($dbPath)) {
-                @unlink($dbPath);
-            }
+            // SQLite
+            $ai = 'INTEGER PRIMARY KEY AUTOINCREMENT'; $dt = 'TEXT'; $ti = 'INTEGER';
+            $ts = 'TEXT DEFAULT (datetime(\'now\'))';
+            $insertMig = 'INSERT OR IGNORE INTO migrations (migration, batch) VALUES (:m, :b)';
+            $quote = '"';
+        }
 
-            $files = glob($migrationsDir . '/*.php') ?: [];
-            if ($files === []) {
-                return;
-            }
-            sort($files);
-            foreach ($files as $file) {
-                $migration = require $file;
-                if (is_object($migration) && method_exists($migration, 'up')) {
-                    try {
-                        $migration->up();
-                    } catch (\Throwable) {
+        $q = $quote; // shorthand
+
+        // Create migrations table
+        $pdo->exec("CREATE TABLE IF NOT EXISTS migrations (
+            id $ai,
+            migration VARCHAR(255) NOT NULL UNIQUE,
+            batch INT NOT NULL DEFAULT 1,
+            created_at $ts
+        )");
+
+        // Create users table
+        $idCol = self::$dbDriver === 'sqlite' ? 'INTEGER PRIMARY KEY AUTOINCREMENT' : "id $ai PRIMARY KEY";
+        $pdo->exec("CREATE TABLE IF NOT EXISTS users (
+            $idCol,
+            name VARCHAR(255) NOT NULL DEFAULT '',
+            email VARCHAR(255) NOT NULL UNIQUE,
+            password VARCHAR(255) NOT NULL DEFAULT '',
+            status $ti DEFAULT 1,
+            token_version INT DEFAULT 1,
+            role VARCHAR(50) DEFAULT 'user',
+            verification_token VARCHAR(255) NULL,
+            email_verified_at $dt NULL,
+            password_reset_token VARCHAR(255) NULL,
+            password_reset_expires_at $dt NULL,
+            login_attempts INT DEFAULT 0,
+            locked_until $dt NULL,
+            created_at $dt,
+            updated_at $dt,
+            deleted_at $dt NULL
+        )");
+
+        // Create refresh_tokens table
+        $pdo->exec("CREATE TABLE IF NOT EXISTS refresh_tokens (
+            $idCol,
+            user_id INT NOT NULL,
+            token VARCHAR(255) NOT NULL,
+            jti VARCHAR(255),
+            expires_at $dt,
+            created_at $dt DEFAULT CURRENT_TIMESTAMP,
+            revoked_at $dt NULL
+        )");
+
+        // Create jobs table
+        $pdo->exec("CREATE TABLE IF NOT EXISTS jobs (
+            $idCol,
+            queue VARCHAR(255) NOT NULL DEFAULT 'default',
+            payload TEXT,
+            attempts INT DEFAULT 0,
+            reserved_at INT NULL,
+            available_at INT NOT NULL,
+            created_at INT NOT NULL
+        )");
+
+        // Record migration so system doesn't try to run them
+        $existing = $pdo->query("SELECT migration FROM {$q}migrations{$q}")->fetchAll(\PDO::FETCH_COLUMN);
+        $existingMigrations = array_flip($existing ?: []);
+
+        $files = glob($migrationsDir . '/*.php') ?: [];
+        sort($files);
+        foreach ($files as $file) {
+            $name = basename($file);
+            if (!isset($existingMigrations[$name])) {
+                $batch = 1;
+                try {
+                    $migration = require $file;
+                    if (is_object($migration) && method_exists($migration, 'up')) {
+                        try { $migration->up(); } catch (\Throwable) {}
                     }
-                }
+                    $pdo->prepare($insertMig)->execute(['m' => $name, 'b' => $batch]);
+                } catch (\Throwable) {}
             }
         }
 
