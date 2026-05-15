@@ -1,6 +1,6 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/SiroSoft/SiroPHP/main/art/logo.svg" alt="Siro PHP Framework" width="200"/>
-  <h1>Siro API Framework v0.26.0</h1>
+  <h1>Siro API Framework v0.26.1</h1>
   <p><strong>The Fastest, Lightest, Most Secure PHP Micro-Framework</strong></p>
   <p>Zero dependencies • Sub-millisecond boot • JWT built-in • 70 CLI commands • OWASP Top 10 mitigated</p>
 </div>
@@ -52,6 +52,7 @@ php siro t POST /api/orders --body='{"product_id":1,"quantity":5}'
 php siro why                      # Why did production fail? (5 seconds)
 php siro replay siro_a1b2c3       # Replay exact failed request
 php siro replay siro_a1b2c3 --edit # Edit body → test fix
+php siro tinker                   # Interactive PHP playground
 
 # ── MONITOR ────────────────────────────────────────────
 php siro log:tail                 # Local log streaming
@@ -152,7 +153,7 @@ Benchmark                          Result
   queue:*       4 commands     work, retry, flush, status
   cache:*       3 commands     config:cache, config:clear, env:cache
   server:*      4 commands     serve, frankenphp:serve, live, deploy
-  debug:*       2 commands     debug:last, debug:health
+  debug:*       3 commands     debug:last, debug:health, tinker
   system:*     20 commands     key:generate, benchmark, route:list, test, doctor...
 ```
 
@@ -248,7 +249,9 @@ Error format:
 | **Queue** | DB-based jobs, exponential backoff, timeout, priority, failed job retry |
 | **Mail** | Sendmail + SMTP (STARTTLS, AUTH LOGIN), async queuing, HTML + attachments |
 | **Events** | Pub/sub, wildcards, one-time listeners. Model events: creating, created, saving, saved, deleting, deleted |
-| **Debug** | `X-Siro-Trace-Id`, request replay (`log:replay`), slow query detection, log sanitization, `debug:last` |
+| **Debug** | `X-Siro-Trace-Id`, request replay (`log:replay`), slow query detection, log sanitization, `debug:last`, `siro tinker` REPL |
+| **Observers** | Model lifecycle hooks via `Model::observe()` — saving, creating, updating, deleting, force deleting |
+| **Gzip Files** | Automatic compression for text-based file downloads (text, JSON, XML, SVG, fonts) |
 | **API Versioning** | Header-based via `Accept: application/vnd.siro.v2+json`, route overrides per version |
 | **Prometheus** | `/metrics` endpoint, auto-track request count, duration histogram, status codes |
 | **CLI** | 70 commands with help, aliases, Levenshtein suggestion on typos |

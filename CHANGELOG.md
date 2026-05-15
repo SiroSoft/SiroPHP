@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.26.1 (2026-05-15) — Bump sirosoft/core to v0.26.1
+
+### 📦 Dependencies
+- `sirosoft/core` bumped to `^0.26.1`
+
+### 🆕 New (from core v0.26.1)
+- **`php siro tinker`** — Interactive PHP playground in app context
+- **Model Observer** — `Model::observe()` for lifecycle hooks
+- **Composite primary keys** — `$primaryKey` configurable per model
+- **Env cache encrypted** — AES-256 encryption for cached env vars
+- **Gzip file downloads** — automatic compression for text-based files
+
 ## v0.26.0 (2026-05-15) — The "Hardened" Release — 13 Critical/High Security Fixes in SiroPHP
 
 ### 🛡️ Security Hardening
