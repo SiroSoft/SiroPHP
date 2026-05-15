@@ -14,30 +14,18 @@ use Siro\Core\Router;
 use Siro\Core\Schema;
 use Siro\Core\ValidationException;
 
-/**
- * Base test case for SiroPHP application tests.
- *
- * Provides HTTP test helpers (get/post/put/delete), response
- * assertion helpers (assertOk, assertStatus, assertJson),
- * and database assertions (assertDatabaseHas, assertDatabaseMissing).
- *
- * @package App\Tests
- */
-
 abstract class TestCase extends BaseTestCase
 {
     protected string $basePath;
     private static bool $tablesCreated = false;
+    private static string $dbDriver = '';
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->basePath = dirname(__DIR__);
-
-        // Reset static locale state to prevent leakage between tests
         Lang::setLocale('en');
 
-        // Clean rate limit files so tests don't interfere with each other
         $rateDir = $this->basePath . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'rate_limit';
         if (is_dir($rateDir)) {
             foreach (glob($rateDir . DIRECTORY_SEPARATOR . '*.json') ?: [] as $f) {
@@ -45,7 +33,6 @@ abstract class TestCase extends BaseTestCase
             }
         }
 
-        // Rollback previous test's transaction, start fresh one
         self::resetTransaction();
     }
 
@@ -58,7 +45,7 @@ abstract class TestCase extends BaseTestCase
     protected static function resetTransaction(): void
     {
         try {
-            $pdo = \Siro\Core\Database::connection();
+            $pdo = Database::connection();
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
                 $pdo->beginTransaction();
@@ -70,7 +57,7 @@ abstract class TestCase extends BaseTestCase
     protected static function rollbackTransaction(): void
     {
         try {
-            $pdo = \Siro\Core\Database::connection();
+            $pdo = Database::connection();
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
@@ -85,34 +72,122 @@ abstract class TestCase extends BaseTestCase
         }
         self::$tablesCreated = true;
 
-        // Delete existing test database to start clean
-        $dbPath = dirname(__DIR__) . '/storage/test.db';
-        if (file_exists($dbPath)) {
-            @unlink($dbPath);
-        }
-
         $migrationsDir = dirname(__DIR__) . '/database/migrations';
         if (!is_dir($migrationsDir)) {
             return;
         }
-        $files = glob($migrationsDir . '/*.php') ?: [];
-        if ($files === []) {
+
+        // Detect driver — skip SQLite file deletion for MySQL/MariaDB
+        try {
+            $pdo = Database::connection();
+            self::$dbDriver = (string) $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        } catch (\Throwable) {
             return;
         }
-        sort($files);
-        foreach ($files as $file) {
-            $migration = require $file;
-            if (is_object($migration) && method_exists($migration, 'up')) {
-                try {
-                    $migration->up();
-                } catch (\Throwable) {
+
+        // For MySQL: use CREATE TABLE IF NOT EXISTS directly (skip migration files)
+        if (in_array(self::$dbDriver, ['mysql', 'mariadb'], true)) {
+            $pdo->exec("CREATE TABLE IF NOT EXISTS migrations (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                migration VARCHAR(255) NOT NULL UNIQUE,
+                batch INT NOT NULL DEFAULT 1,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )");
+
+            // Create users table if not exists
+            $pdo->exec("CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL DEFAULT '',
+                email VARCHAR(255) NOT NULL UNIQUE,
+                password VARCHAR(255) NOT NULL DEFAULT '',
+                status TINYINT DEFAULT 1,
+                token_version INT DEFAULT 1,
+                role VARCHAR(50) DEFAULT 'user',
+                verification_token VARCHAR(255) NULL,
+                email_verified_at DATETIME NULL,
+                password_reset_token VARCHAR(255) NULL,
+                password_reset_expires_at DATETIME NULL,
+                login_attempts INT DEFAULT 0,
+                locked_until DATETIME NULL,
+                created_at DATETIME,
+                updated_at DATETIME,
+                deleted_at DATETIME NULL
+            )");
+
+            // Create refresh_tokens table for auth
+            $pdo->exec("CREATE TABLE IF NOT EXISTS refresh_tokens (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                token VARCHAR(255) NOT NULL,
+                jti VARCHAR(255),
+                expires_at DATETIME,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                revoked_at DATETIME NULL
+            )");
+
+            // Create jobs table for queue
+            $pdo->exec("CREATE TABLE IF NOT EXISTS jobs (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                queue VARCHAR(255) NOT NULL DEFAULT 'default',
+                payload TEXT,
+                attempts INT DEFAULT 0,
+                reserved_at INT NULL,
+                available_at INT NOT NULL,
+                created_at INT NOT NULL
+            )");
+
+            // Record migration so system doesn't try to run them
+            $existing = $pdo->query("SELECT migration FROM migrations")->fetchAll(\PDO::FETCH_COLUMN);
+            $existingMigrations = array_flip($existing ?: []);
+
+            $files = glob($migrationsDir . '/*.php') ?: [];
+            sort($files);
+            foreach ($files as $file) {
+                $name = basename($file);
+                if (!isset($existingMigrations[$name])) {
+                    $batch = 1;
+                    try {
+                        // Try running the migration — if it fails (column exists), just record it
+                        $migration = require $file;
+                        if (is_object($migration) && method_exists($migration, 'up')) {
+                            try {
+                                $migration->up();
+                            } catch (\Throwable) {
+                                // Column exists or table already created — ignore
+                            }
+                        }
+                        $pdo->prepare("INSERT IGNORE INTO migrations (migration, batch) VALUES (:m, :b)")
+                            ->execute(['m' => $name, 'b' => $batch]);
+                    } catch (\Throwable) {
+                        // Skip problematic migrations
+                    }
+                }
+            }
+        } else {
+            // SQLite mode — original behavior
+            $dbPath = dirname(__DIR__) . '/storage/test.db';
+            if (file_exists($dbPath)) {
+                @unlink($dbPath);
+            }
+
+            $files = glob($migrationsDir . '/*.php') ?: [];
+            if ($files === []) {
+                return;
+            }
+            sort($files);
+            foreach ($files as $file) {
+                $migration = require $file;
+                if (is_object($migration) && method_exists($migration, 'up')) {
+                    try {
+                        $migration->up();
+                    } catch (\Throwable) {
+                    }
                 }
             }
         }
 
         // Start transaction for test isolation
         try {
-            $pdo = \Siro\Core\Database::connection();
             if (!$pdo->inTransaction()) {
                 $pdo->beginTransaction();
             }
@@ -126,7 +201,7 @@ abstract class TestCase extends BaseTestCase
             'auth' => \App\Middleware\AuthMiddleware::class,
             'throttle' => \Siro\Core\Middleware\ThrottleMiddleware::class,
             'cors' => \Siro\Core\Middleware\CorsMiddleware::class,
-            'json' => \App\Middleware\JsonMiddleware::class,
+            'json' => \Siro\Core\Middleware\JsonMiddleware::class,
         ]);
 
         $app = new App($this->basePath);
@@ -135,26 +210,19 @@ abstract class TestCase extends BaseTestCase
         putenv('THROTTLE_FALLBACK=disabled');
         $app->loadRoutes($this->basePath . '/routes/api.php');
 
-        // Run migrations after boot so Database is configured
         self::ensureTablesCreated();
 
         return $app;
     }
 
-    /**
-     * @param array<string, mixed> $body
-     * @param array<string, string> $headers
-     */
     protected function dispatch(App $app, string $method, string $path, array $body = [], array $headers = []): Response
     {
-        // Extract query string from path
         $queryParams = [];
         $pathParts = explode('?', $path, 2);
         $cleanPath = $pathParts[0];
         if (isset($pathParts[1])) {
             parse_str($pathParts[1], $queryParams);
         }
-        /** @var array<string, string> $headers */
         $request = new Request($method, $cleanPath, $queryParams, $headers, $body, '127.0.0.1');
         try {
             return $app->router->dispatch($request);
@@ -163,18 +231,15 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
-    /** @return array<string, mixed> */
     protected function responseJson(Response $response): array
     {
         ob_start();
         $response->send();
         $output = strval(ob_get_clean());
         $decoded = json_decode($output, true);
-        /** @var array<string, mixed> $decoded */
         return $decoded;
     }
 
-    /** @return array<string, string> */
     protected function authenticate(App $app): array
     {
         $email = 'auth-' . uniqid() . '@test.com';
@@ -196,10 +261,7 @@ abstract class TestCase extends BaseTestCase
         $this->assertSame(200, $login->statusCode(), 'Failed to login auth test user.');
         $loginJson = $this->responseJson($login);
         $loginData = $loginJson['data'] ?? [];
-        /** @var array<string, mixed> $loginData */
-        $rawToken = $loginData['token'] ?? '';
-        /** @var string $rawToken */
-        $token = $rawToken;
+        $token = $loginData['token'] ?? '';
         $this->assertNotSame('', $token, 'Auth token missing from login response.');
 
         return [
@@ -208,41 +270,30 @@ abstract class TestCase extends BaseTestCase
         ];
     }
 
-    /** @param array<string, string> $headers */
     protected function get(string $path, array $headers = []): TestResponse
     {
         $app = $this->createApp();
         return new TestResponse($this->dispatch($app, 'GET', $path, [], $headers));
     }
 
-    /**
-     * @param array<string, mixed> $body
-     * @param array<string, string> $headers
-     */
     protected function post(string $path, array $body = [], array $headers = []): TestResponse
     {
         $app = $this->createApp();
         return new TestResponse($this->dispatch($app, 'POST', $path, $body, $headers));
     }
 
-    /**
-     * @param array<string, mixed> $body
-     * @param array<string, string> $headers
-     */
     protected function put(string $path, array $body = [], array $headers = []): TestResponse
     {
         $app = $this->createApp();
         return new TestResponse($this->dispatch($app, 'PUT', $path, $body, $headers));
     }
 
-    /** @param array<string, string> $headers */
     protected function delete(string $path, array $headers = []): TestResponse
     {
         $app = $this->createApp();
         return new TestResponse($this->dispatch($app, 'DELETE', $path, [], $headers));
     }
 
-    /** @param array<string, mixed> $conditions */
     protected function assertDatabaseHas(string $table, array $conditions, ?string $connection = null): void
     {
         $driver = Database::connection($connection)->getAttribute(\PDO::ATTR_DRIVER_NAME);
@@ -261,15 +312,10 @@ abstract class TestCase extends BaseTestCase
         $this->assertGreaterThan(
             0,
             $count,
-            sprintf(
-                'Failed asserting that table [%s] has row matching %s.',
-                $table,
-                json_encode($conditions, JSON_UNESCAPED_UNICODE)
-            )
+            sprintf('Failed asserting that table [%s] has row matching %s.', $table, json_encode($conditions, JSON_UNESCAPED_UNICODE))
         );
     }
 
-    /** @param array<string, mixed> $conditions */
     protected function assertDatabaseMissing(string $table, array $conditions, ?string $connection = null): void
     {
         $driver = Database::connection($connection)->getAttribute(\PDO::ATTR_DRIVER_NAME);
@@ -285,22 +331,13 @@ abstract class TestCase extends BaseTestCase
         $stmt->execute($bindings);
         $count = (int) $stmt->fetchColumn();
 
-        $this->assertEquals(
-            0,
-            $count,
-            sprintf(
-                'Failed asserting that table [%s] does not have row matching %s.',
-                $table,
-                json_encode($conditions, JSON_UNESCAPED_UNICODE)
-            )
-        );
+        $this->assertEquals(0, $count, sprintf('Failed asserting that table [%s] does not have row matching %s.', $table, json_encode($conditions, JSON_UNESCAPED_UNICODE)));
     }
 }
 
 final class TestResponse
 {
     private Response $response;
-    /** @var array<string, mixed>|null */
     private ?array $parsedBody = null;
 
     public function __construct(Response $response)
@@ -314,47 +351,15 @@ final class TestResponse
         return $this;
     }
 
-    public function assertOk(): self
-    {
-        return $this->assertStatus(200);
-    }
+    public function assertOk(): self { return $this->assertStatus(200); }
+    public function assertCreated(): self { return $this->assertStatus(201); }
+    public function assertNoContent(): self { return $this->assertStatus(204); }
+    public function assertUnauthorized(): self { return $this->assertStatus(401); }
+    public function assertForbidden(): self { return $this->assertStatus(403); }
+    public function assertNotFound(): self { return $this->assertStatus(404); }
+    public function assertValidationError(): self { return $this->assertStatus(422); }
+    public function assertServerError(): self { return $this->assertStatus(500); }
 
-    public function assertCreated(): self
-    {
-        return $this->assertStatus(201);
-    }
-
-    public function assertNoContent(): self
-    {
-        return $this->assertStatus(204);
-    }
-
-    public function assertUnauthorized(): self
-    {
-        return $this->assertStatus(401);
-    }
-
-    public function assertForbidden(): self
-    {
-        return $this->assertStatus(403);
-    }
-
-    public function assertNotFound(): self
-    {
-        return $this->assertStatus(404);
-    }
-
-    public function assertValidationError(): self
-    {
-        return $this->assertStatus(422);
-    }
-
-    public function assertServerError(): self
-    {
-        return $this->assertStatus(500);
-    }
-
-    /** @param array<string, mixed> $expected */
     public function assertJson(array $expected): self
     {
         $body = $this->json();
@@ -384,7 +389,6 @@ final class TestResponse
         return $this;
     }
 
-    /** @return array<string, mixed> */
     public function json(): array
     {
         if ($this->parsedBody === null) {
@@ -392,12 +396,9 @@ final class TestResponse
             $this->response->send();
             $output = ob_get_clean();
             $decoded = json_decode(strval($output), true);
-            /** @var array<string, mixed>|null $decoded */
             $this->parsedBody = is_array($decoded) ? $decoded : [];
         }
-        $parsedBody = $this->parsedBody;
-        /** @var array<string, mixed> $parsedBody */
-        return $parsedBody;
+        return $this->parsedBody;
     }
 
     public function status(): int
