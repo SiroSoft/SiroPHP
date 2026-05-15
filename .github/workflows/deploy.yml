@@ -75,7 +75,7 @@ jobs:
           version: v3.14.0
 
       - name: Set up kubectl
-        uses: azure/setup-kubectl@v5
+        uses: azure/setup-kubectl@v4
         with:
           version: v1.29.0
 
