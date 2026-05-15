@@ -1,6 +1,6 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/SiroSoft/SiroPHP/main/art/logo.svg" alt="Siro PHP Framework" width="200"/>
-  <h1>Siro API Framework v0.26.1</h1>
+  <h1>Siro API Framework v0.26.2</h1>
   <p><strong>The Fastest, Lightest, Most Secure PHP Micro-Framework</strong></p>
   <p>Zero dependencies • Sub-millisecond boot • JWT built-in • 70 CLI commands • OWASP Top 10 mitigated</p>
 </div>
@@ -238,7 +238,7 @@ Error format:
 |---------|---------|
 | **JWT Auth** | Access + Refresh tokens, algorithm pinning (HS256/RS256), key rotation, JTI blacklist, audience validation |
 | **CRUD Generator** | `php siro make:crud Product` → Controller + Service + Repository + Model + Resource + Migration + Test |
-| **Query Builder** | SELECT, JOIN, WHERE, GROUP BY, HAVING, subqueries, pagination, aggregates |
+| **Query Builder** | SELECT, JOIN (INNER/LEFT/RIGHT/CROSS), WHERE, GROUP BY, HAVING, subqueries, pagination, aggregates, `whereHas`, row locking (FOR UPDATE/SHARE) |
 | **ORM** | HasOne, HasMany, BelongsTo, BelongsToMany, eager loading, soft deletes |
 | **Migrations** | Create, rollback, status. Supports MySQL, PostgreSQL, SQLite |
 | **Validation** | 15+ rules: required, email, unique, exists, min, max, confirmed, in, regex, file, image, date, url. Custom rules + messages |

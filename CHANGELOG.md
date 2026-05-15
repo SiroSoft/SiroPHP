@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.26.2 (2026-05-15) — Bump sirosoft/core to v0.26.2
+
+### 📦 Dependencies
+- `sirosoft/core` bumped to `^0.26.2`
+
+### 🆕 New (from core v0.26.2)
+- **Row locking** — `lockForUpdate()`, `sharedLock()` for SELECT queries
+- **RIGHT JOIN & CROSS JOIN** — `rightJoin()`, `crossJoin()` methods
+- **`whereHas` / `orWhereHas` / `whereDoesntHave`** — relation existence queries
+- **Container extension points** — `tag()`, `tagged()`, `rebound()`, `when()` for contextual DI
+- **N+1 detection** — automatic warning when relation accessed without eager loading
+- **Gzip for raw responses** — automatic compression for `Response::raw()`
+- **SoftDeletes `forceDelete()`** — now respects `$primaryKey` config
+
 ## v0.26.1 (2026-05-15) — Bump sirosoft/core to v0.26.1
 
 ### 📦 Dependencies
