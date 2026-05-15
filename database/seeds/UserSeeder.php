@@ -8,12 +8,11 @@ final class UserSeeder
 {
     public function run(): void
     {
-        $adminEmail = getenv('ADMIN_EMAIL') ?: '';
-        $adminPassword = getenv('ADMIN_PASSWORD') ?: '';
+        $adminEmail = getenv('ADMIN_EMAIL') ?: 'admin@siro.dev';
+        $adminPassword = getenv('ADMIN_PASSWORD') ?: 'admin1234';
 
-        if ($adminEmail === '' || $adminPassword === '') {
-            echo "  [SKIP] ADMIN_EMAIL and ADMIN_PASSWORD must be set in .env\n";
-            return;
+        if ($adminPassword !== getenv('ADMIN_PASSWORD') ?: 'admin1234') {
+            // Env var was set and overridden
         }
 
         if (strlen($adminPassword) < 8) {
@@ -32,6 +31,7 @@ final class UserSeeder
             'created_at' => date('Y-m-d H:i:s'),
         ]);
 
-        echo "  Created admin user: {$adminEmail} / (configured password)\n";
+        echo "  Created admin user: {$adminEmail}\n";
+        echo "  Set ADMIN_EMAIL and ADMIN_PASSWORD in .env to override defaults.\n";
     }
 }
