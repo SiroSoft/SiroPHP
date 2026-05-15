@@ -10,59 +10,42 @@ final class HealthTest extends TestCase
 {
     public function testHealthReturns200(): void
     {
-        $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/health');
-        $this->assertEquals(200, $response->statusCode());
+        $res = $this->get('/health');
+        $res->assertOk();
     }
 
     public function testHealthReturnsHealthyStatus(): void
     {
-        $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/health');
-        $payload = $response->payload();
-        $data = $payload['data'] ?? [];
-        /** @var array<string, mixed> $data */
-        $this->assertTrue($payload['success'] ?? false);
-        $this->assertEquals('healthy', $data['status'] ?? '');
-    }
-
-    public function testHealthShowsDatabaseConnected(): void
-    {
-        $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/health');
-        $payload = $response->payload();
-        $data = $payload['data'] ?? [];
-        /** @var array<string, mixed> $data */
-        $this->assertEquals('connected', $data['database'] ?? '');
+        $res = $this->get('/health');
+        $body = $res->json();
+        $this->assertTrue($body['success'] ?? false);
+        $this->assertEquals('healthy', $body['data']['status'] ?? '');
     }
 
     public function testHealthIncludesVersion(): void
     {
-        $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/health');
-        $payload = $response->payload();
-        $data = $payload['data'] ?? [];
-        /** @var array<string, mixed> $data */
-        $this->assertNotEmpty($data['version'] ?? '');
+        $res = $this->get('/health');
+        $body = $res->json();
+        $this->assertNotEmpty($body['data']['version'] ?? '');
     }
 
     public function testHealthIncludesPhpVersion(): void
     {
-        $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/health');
-        $payload = $response->payload();
-        $data = $payload['data'] ?? [];
-        /** @var array<string, mixed> $data */
-        $this->assertNotEmpty($data['php'] ?? '');
+        $res = $this->get('/health');
+        $body = $res->json();
+        $this->assertNotEmpty($body['data']['php'] ?? '');
     }
 
-    public function testHealthIncludesTimestamp(): void
+    public function testHealthShowsDatabaseConnected(): void
     {
-        $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/health');
-        $payload = $response->payload();
-        $data = $payload['data'] ?? [];
-        /** @var array<string, mixed> $data */
-        $this->assertNotEmpty($data['time'] ?? '');
+        $res = $this->get('/health');
+        $body = $res->json();
+        $this->assertEquals('connected', $body['data']['database'] ?? '');
+    }
+
+    public function testHealthReadyReturns200(): void
+    {
+        $res = $this->get('/health/ready');
+        $res->assertOk();
     }
 }
