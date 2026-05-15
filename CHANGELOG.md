@@ -13,6 +13,13 @@
 - **N+1 detection** — automatic warning when relation accessed without eager loading
 - **Gzip for raw responses** — automatic compression for `Response::raw()`
 - **SoftDeletes `forceDelete()`** — now respects `$primaryKey` config
+- **`siro why` N+1 detection** — shows N+1 warnings in debug output
+- **PostgreSQL row locking** — `FOR SHARE` for pg, `LOCK IN SHARE MODE` for MySQL
+- **Tinker query log** — shows DB query count after each expression
+
+### 🏗 Infrastructure
+- **Helm chart** — `helm/siro-api/` for K8s deployment
+- **CD workflow** — automated Docker build + Helm upgrade on git push
 
 ## v0.26.1 (2026-05-15) — Bump sirosoft/core to v0.26.1
 
