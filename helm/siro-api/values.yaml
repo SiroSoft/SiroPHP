@@ -1,0 +1,77 @@
+# Default values for siro-api Helm chart.
+# This is a YAML-formatted file.
+
+replicaCount: 2
+
+image:
+  repository: ghcr.io/sirosoft/siro-api
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+env:
+  APP_ENV: production
+  APP_DEBUG: "false"
+  APP_NAME: "Siro API"
+  DB_CONNECTION: sqlite
+  DB_DATABASE: /app/storage/app.db
+  CACHE_DRIVER: file
+  SESSION_DRIVER: file
+  LOG_LEVEL: warning
+
+jwt:
+  secret: ""
+  algorithm: HS256
+  ttl: 3600
+  refreshTtl: 604800
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+  #  - secretName: siro-api-tls
+  #    hosts:
+  #      - api.example.com
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 64Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+persistence:
+  enabled: true
+  size: 1Gi
+  storageClass: ""
+
+probes:
+  enabled: true
+  readinessPath: /health/ready
+  livenessPath: /health
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
