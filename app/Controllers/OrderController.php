@@ -37,9 +37,22 @@ final class OrderController extends Controller
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
+
         $order = $this->service->getById($id);
         /** @var array<string, mixed>|null $order */
         if ($order === null) return $this->error('Order not found', 404);
+
+        $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
+        if ($currentUserId !== $orderUserId && $currentUserRole !== 'admin') {
+            return $this->error('Forbidden', 403);
+        }
 
         return $this->success(OrderResource::make($order), 'Order detail');
     }
@@ -73,6 +86,23 @@ final class OrderController extends Controller
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
+
+        $order = $this->service->getById($id);
+        /** @var array<string, mixed>|null $order */
+        if ($order === null) return $this->error('Order not found', 404);
+
+        $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
+        if ($currentUserId !== $orderUserId && $currentUserRole !== 'admin') {
+            return $this->error('Forbidden', 403);
+        }
+
         $validated = $this->validate([
             'customer_name' => 'min:2|max:200',
             'customer_email' => 'email',
@@ -93,6 +123,23 @@ final class OrderController extends Controller
         /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
+
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
+
+        $order = $this->service->getById($id);
+        /** @var array<string, mixed>|null $order */
+        if ($order === null) return $this->error('Order not found', 404);
+
+        $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
+        if ($currentUserId !== $orderUserId && $currentUserRole !== 'admin') {
+            return $this->error('Forbidden', 403);
+        }
 
         return $this->service->delete($id)
             ? $this->noContent()
