@@ -157,25 +157,19 @@ parameters:
 			path: tests/TestCase.php
 
 		-
-			message: '#^Cannot access offset ''database'' on mixed\.$#'
+			message: '#^Cannot access offset ''status'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: tests/feature/HealthTest.php
+			path: tests/feature/AuthApiTest.php
 
 		-
-			message: '#^Cannot access offset ''php'' on mixed\.$#'
+			message: '#^Cannot access offset ''database'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 2
 			path: tests/feature/HealthTest.php
 
 		-
 			message: '#^Cannot access offset ''status'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/feature/HealthTest.php
-
-		-
-			message: '#^Cannot access offset ''version'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: tests/feature/HealthTest.php

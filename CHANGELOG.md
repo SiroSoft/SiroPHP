@@ -47,7 +47,7 @@
 - **docs/index.md** — Version cập nhật 0.27.0, fix link guides
 
 ### 📦 Dependencies
-- `sirosoft/core` bumped to `^0.27.0`
+- `sirosoft/core` — **local dev: v0.27.0** (requires Packagist publish for production use)
 
 ---
 

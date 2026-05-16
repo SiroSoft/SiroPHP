@@ -1,6 +1,6 @@
 {
     "name": "sirosoft/api",
-    "description": "Siro API Framework Application Skeleton - Build production-ready APIs in minutes. Built-in JWT auth, CRUD generator, 62 CLI commands, Swagger UI.",
+    "description": "Siro API Framework Application Skeleton - Build production-ready APIs in minutes. Built-in JWT auth, CRUD generator, 72 CLI commands, Swagger UI.",
     "type": "project",
     "license": "MIT",
     "keywords": [
@@ -24,7 +24,7 @@
     },
     "require": {
         "php": ">=8.2",
-        "sirosoft/core": "^0.27.0",
+        "sirosoft/core": "^0.26.2",
         "ext-pdo": "*",
         "ext-json": "*",
         "ext-mbstring": "*"

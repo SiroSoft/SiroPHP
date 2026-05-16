@@ -31,20 +31,6 @@ $app->router->get('/health/live', function (): array {
 
 $app->router->get('/health/ready', function (): array {
     $dbOk = false;
-    try { \Siro\Core\Database::connection()->query('SELECT 1'); $dbOk = true; } catch (\Throwable) {}
-    return [
-        'success' => true,
-        'message' => $dbOk ? 'OK' : 'Degraded',
-        'data' => [
-            'status' => $dbOk ? 'ready' : 'degraded',
-            'database' => $dbOk ? 'connected' : 'unreachable',
-            'time' => date('c'),
-        ],
-    ];
-})->middleware('throttle:30,1');
-
-$app->router->get('/health/ready', function (): array {
-    $dbOk = false;
     try {
         \Siro\Core\Database::connection()->query('SELECT 1');
         $dbOk = true;
