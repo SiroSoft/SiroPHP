@@ -1,6 +1,11 @@
 # Changelog
 
-## v0.27.0 (2026-05-16) — Root Cleanup, Test Fixes & Enterprise-Ready Suite
+## v0.27.0 (2026-05-16) — Full Enterprise Release
+
+### 🚀 New CLI Commands
+- **`php siro new <project>`** — Create project from skeleton via `composer create-project`
+- **`php siro make:auth`** — Generate AuthController + User model + auth routes
+- **`php siro serve`** — Now prints `/health/live` and `/health/ready` probe URLs
 
 ### 🏗 Root Directory Cleanup
 - **54 → 36 entries** — xoá benchmark/, frankenphp/, helm/, semgrep-rules/
@@ -10,14 +15,36 @@
 - Xoá `app/Listeners/` (rỗng), `app/Crons/` (1 file example không dùng)
 - Thêm `app/Exceptions/Handler.php` — centralized error handler
 
-### 🧪 Test Suite — 455 Tests, 0 Failures
-- **Fix auth tests** — 20+ test files sử dụng `authenticate()` trước khi gọi endpoint cần auth
+### 🔐 Security Fixes
+- **User $fillable** — Xoá `role`, `status`, `token_version`, `login_attempts`, `locked_until` khỏi mass-assignable
+- **OrderController** — Thêm ownership check cho show/update/delete (fix IDOR)
+- **PostService** — user_id handling
+
+### 🧪 Test Suite — 463 Tests, 0 Failures
+- **Fix auth tests** — 20+ test files authenticate trước khi gọi endpoint cần auth
 - **Fix SQLite compatibility** — EagerLoading/MassAssignment/QueueMail skip khi dùng SQLite
 - **Fix refresh_tokens schema** — TestCase::ensureTablesCreated matching migration
 - **Thêm edge cases** — `PaginationEdgeTest`, `InputEdgeTest`
 - **Thêm MetricsEndpointTest** — test /metrics và /health endpoints
+- **Thêm ValidatorUnitTest** — 8 unit tests (không cần database)
 - **`make:test` template** — dùng fluent helpers thay vì `dispatch()` thủ công
 - **`php siro test`** — không còn code coverage warning, exit code 0
+
+### 🏗 Architecture
+- **UserService → Repository** — 8 methods chuyển từ `User::where()` sang `$this->repo->methodName()`
+- **UserRepository** — thêm `findByEmail()`, `findBy()`, `create()`, `findById()`, `updateWhere()`, `incrementWhere()`
+- **Route refactor** — 58 dòng CRUD → 6 dòng `$router->resource()`
+
+### 🩺 Health Endpoints
+- `/health` — Database check + version (giữ nguyên format)
+- `/health/live` — Process alive probe
+- `/health/ready` — Deep health check
+
+### 📚 Documentation
+- **13 guides**: TESTING, DATABASE, AUTHENTICATION, VALIDATION, FILE_UPLOAD, QUEUE_MAIL, EVENTS, CACHING, API_VERSIONING, I18N, QUICKSTART, DEPLOYMENT, MIGRATION
+- **Example projects**: blog.md + ecommerce.md với curl workflows
+- **OpenAPI 3.0.3 spec** — 26 endpoints, 30+ schemas, Bearer JWT + API Key security
+- **docs/index.md** — Version cập nhật 0.27.0, fix link guides
 
 ### 📦 Dependencies
 - `sirosoft/core` bumped to `^0.27.0`
