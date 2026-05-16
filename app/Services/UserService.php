@@ -21,12 +21,15 @@ final class UserService
             return false;
         }
 
-        $user = User::find($userId);
+        $user = $this->repo->findById($userId);
         if ($user === null) {
             return false;
         }
 
-        return $user->update(['token_version' => ($user->token_version ?? 0) + 1]);
+        $rawVersion = $user['token_version'] ?? 0;
+        $currentVersion = is_numeric($rawVersion) ? (int) $rawVersion : 0;
+        $this->repo->updateWhere('id', $userId, ['token_version' => $currentVersion + 1]);
+        return true;
     }
 
     /** @return array<string, mixed>|null */
