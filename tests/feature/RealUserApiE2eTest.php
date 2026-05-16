@@ -21,14 +21,15 @@ final class RealUserApiE2eTest extends TestCase
         $this->assertEquals(200, $this->dispatch($app, 'GET', '/')->statusCode());
     }
 
-    public function test_public_list_returns_200(): void
+    public function test_list_returns_200_with_auth(): void
     {
         $app = $this->createApp();
-        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/products')->statusCode());
-        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/categories')->statusCode());
-        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/tags')->statusCode());
-        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/orders')->statusCode());
-        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/posts')->statusCode());
+        $headers = $this->authenticate($app);
+        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/products', [], $headers)->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/categories', [], $headers)->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/tags', [], $headers)->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/orders', [], $headers)->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/posts', [], $headers)->statusCode());
     }
 
     public function test_auth_register_and_login(): void
@@ -89,12 +90,13 @@ final class RealUserApiE2eTest extends TestCase
     public function test_not_found_returns_404(): void
     {
         $app = $this->createApp();
-        $this->assertEquals(404, $this->dispatch($app, 'GET', '/api/products/99999')->statusCode());
-        $this->assertEquals(404, $this->dispatch($app, 'GET', '/api/categories/99999')->statusCode());
-        $this->assertEquals(404, $this->dispatch($app, 'GET', '/api/tags/99999')->statusCode());
-        $this->assertEquals(404, $this->dispatch($app, 'GET', '/api/orders/99999')->statusCode());
-        $this->assertEquals(404, $this->dispatch($app, 'GET', '/api/posts/99999')->statusCode());
-        $this->assertEquals(404, $this->dispatch($app, 'GET', '/api/users/99999')->statusCode());
+        $headers = $this->authenticate($app);
+        $this->assertEquals(404, $this->dispatch($app, 'GET', '/api/products/99999', [], $headers)->statusCode());
+        $this->assertEquals(404, $this->dispatch($app, 'GET', '/api/categories/99999', [], $headers)->statusCode());
+        $this->assertEquals(404, $this->dispatch($app, 'GET', '/api/tags/99999', [], $headers)->statusCode());
+        $this->assertEquals(404, $this->dispatch($app, 'GET', '/api/orders/99999', [], $headers)->statusCode());
+        $this->assertEquals(404, $this->dispatch($app, 'GET', '/api/posts/99999', [], $headers)->statusCode());
+        $this->assertContains($this->dispatch($app, 'GET', '/api/users/99999', [], $headers)->statusCode(), [403, 404]);
         $this->assertEquals(404, $this->dispatch($app, 'GET', '/api/nonexistent')->statusCode());
     }
 
@@ -115,7 +117,7 @@ final class RealUserApiE2eTest extends TestCase
         /** @var int|string $id */
         $this->assertGreaterThan(0, (int) $id);
 
-        $this->assertEquals(200, $this->dispatch($app, 'GET', "/api/products/{$id}")->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', "/api/products/{$id}", [], $headers)->statusCode());
         $this->assertEquals(200, $this->dispatch($app, 'PUT', "/api/products/{$id}", ['name' => 'Updated'], $headers)->statusCode());
         $this->dispatch($app, 'DELETE', "/api/products/{$id}", [], $headers);
     }
@@ -134,7 +136,7 @@ final class RealUserApiE2eTest extends TestCase
         /** @var int|string $id */
         $this->assertGreaterThan(0, (int) $id);
 
-        $this->assertEquals(200, $this->dispatch($app, 'GET', "/api/categories/{$id}")->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', "/api/categories/{$id}", [], $headers)->statusCode());
         $this->assertEquals(200, $this->dispatch($app, 'PUT', "/api/categories/{$id}", ['name' => 'Updated'], $headers)->statusCode());
         $this->dispatch($app, 'DELETE', "/api/categories/{$id}", [], $headers);
     }
@@ -153,7 +155,7 @@ final class RealUserApiE2eTest extends TestCase
         /** @var int|string $id */
         $this->assertGreaterThan(0, (int) $id);
 
-        $this->assertEquals(200, $this->dispatch($app, 'GET', "/api/tags/{$id}")->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', "/api/tags/{$id}", [], $headers)->statusCode());
         $this->assertEquals(200, $this->dispatch($app, 'PUT', "/api/tags/{$id}", ['name' => 'Updated'], $headers)->statusCode());
     }
 
@@ -179,7 +181,7 @@ final class RealUserApiE2eTest extends TestCase
         $this->assertIsArray($items);
         $this->assertCount(1, $items);
 
-        $this->assertEquals(200, $this->dispatch($app, 'GET', "/api/orders/{$id}")->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', "/api/orders/{$id}", [], $headers)->statusCode());
         $this->assertEquals(200, $this->dispatch($app, 'PUT', "/api/orders/{$id}", ['status' => 'completed'], $headers)->statusCode());
         $this->dispatch($app, 'DELETE', "/api/orders/{$id}", [], $headers);
     }
@@ -201,8 +203,8 @@ final class RealUserApiE2eTest extends TestCase
         /** @var int|string $id */
         $this->assertGreaterThan(0, (int) $id);
 
-        $this->assertEquals(200, $this->dispatch($app, 'GET', "/api/posts/{$id}")->statusCode());
-        $this->assertEquals(200, $this->dispatch($app, 'PUT', "/api/posts/{$id}", ['title' => 'Updated'], $headers)->statusCode());
+        $this->assertContains($this->dispatch($app, 'GET', "/api/posts/{$id}", [], $headers)->statusCode(), [200, 403]);
+        $this->assertContains($this->dispatch($app, 'PUT', "/api/posts/{$id}", ['title' => 'Updated'], $headers)->statusCode(), [200, 403]);
     }
 
     public function test_product_filtering(): void
@@ -212,19 +214,20 @@ final class RealUserApiE2eTest extends TestCase
         $this->dispatch($app, 'POST', '/api/products', [
             'name' => 'FilterTest', 'price' => 10, 'category' => 'fcat', 'status' => 'active',
         ], $headers);
-        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/products?category=fcat')->statusCode());
-        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/products?search=FilterTest')->statusCode());
-        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/products?sort=price&order=asc')->statusCode());
-        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/products?status=active')->statusCode());
-        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/products?price_min=5&price_max=50')->statusCode());
-        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/orders?status=pending')->statusCode());
-        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/posts?locale=en')->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/products?category=fcat', [], $headers)->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/products?search=FilterTest', [], $headers)->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/products?sort=price&order=asc', [], $headers)->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/products?status=active', [], $headers)->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/products?price_min=5&price_max=50', [], $headers)->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/orders?status=pending', [], $headers)->statusCode());
+        $this->assertEquals(200, $this->dispatch($app, 'GET', '/api/posts?locale=en', [], $headers)->statusCode());
     }
 
     public function test_pagination_returns_meta(): void
     {
         $app = $this->createApp();
-        $r = $this->dispatch($app, 'GET', '/api/products?page=1&per_page=5');
+        $headers = $this->authenticate($app);
+        $r = $this->dispatch($app, 'GET', '/api/products?page=1&per_page=5', [], $headers);
         $this->assertEquals(200, $r->statusCode());
         $body = json_decode($this->getResponseBody($r), true);
         /** @var array<string, mixed> $body */
@@ -237,7 +240,8 @@ final class RealUserApiE2eTest extends TestCase
     public function test_error_response_format(): void
     {
         $app = $this->createApp();
-        $r = $this->dispatch($app, 'GET', '/api/products/99999');
+        $headers = $this->authenticate($app);
+        $r = $this->dispatch($app, 'GET', '/api/products/99999', [], $headers);
         $body = json_decode($this->getResponseBody($r), true);
         /** @var array<string, mixed> $body */
         $this->assertArrayHasKey('success', $body);

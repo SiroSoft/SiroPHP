@@ -6,7 +6,6 @@ namespace App\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use App\Middleware\AuthMiddleware;
-use App\Middleware\JsonMiddleware;
 
 final class ComponentExistenceTest extends TestCase
 {
@@ -27,7 +26,7 @@ final class ComponentExistenceTest extends TestCase
 
     public function testJsonMiddlewareClassExists(): void
     {
-        $this->assertTrue(class_exists(JsonMiddleware::class));
+        $this->assertTrue(class_exists(\Siro\Core\Middleware\JsonMiddleware::class));
     }
 
     public function testAuthMiddlewareHasHandle(): void
@@ -47,7 +46,7 @@ final class ComponentExistenceTest extends TestCase
 
     public function testJsonMiddlewareHasHandle(): void
     {
-        $this->assertTrue(method_exists(JsonMiddleware::class, 'handle')); // @phpstan-ignore function.alreadyNarrowedType
+        $this->assertTrue(method_exists(\Siro\Core\Middleware\JsonMiddleware::class, 'handle')); // @phpstan-ignore function.alreadyNarrowedType
     }
 
     public function testAuthControllerExists(): void

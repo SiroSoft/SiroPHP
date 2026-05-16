@@ -46,7 +46,8 @@ final class CrudValidationTest extends TestCase
 
     public function testProductIndexIsPaginated(): void
     {
-        $resp = $this->get('/api/products');
+        $auth = $this->authenticate();
+        $resp = $this->get('/api/products', $auth);
         $json = $resp->json();
         $this->assertArrayHasKey('success', $json);
         $this->assertArrayHasKey('data', $json);
@@ -54,7 +55,8 @@ final class CrudValidationTest extends TestCase
 
     public function testResponseFormatHasSuccess(): void
     {
-        $resp = $this->get('/api/products');
+        $auth = $this->authenticate();
+        $resp = $this->get('/api/products', $auth);
         $json = $resp->json();
         $this->assertArrayHasKey('success', $json);
         $this->assertArrayHasKey('message', $json);
@@ -63,13 +65,15 @@ final class CrudValidationTest extends TestCase
 
     public function testPutWithoutIdReturns404(): void
     {
-        $resp = $this->put('/api/products/999999', ['name' => 'Test']);
+        $auth = $this->authenticate();
+        $resp = $this->put('/api/products/999999', ['name' => 'Test'], $auth);
         $this->assertContains($resp->status(), [401, 404]);
     }
 
     public function testDeleteWithoutIdReturns404(): void
     {
-        $resp = $this->delete('/api/products/999999');
+        $auth = $this->authenticate();
+        $resp = $this->delete('/api/products/999999', $auth);
         $this->assertContains($resp->status(), [401, 404]);
     }
 
@@ -80,26 +84,31 @@ final class CrudValidationTest extends TestCase
 
     public function testUsersEndpointReturnsSuccess(): void
     {
-        $this->get('/api/users')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/users', $auth)->assertOk();
     }
 
     public function testTagsEndpointReturnsSuccess(): void
     {
-        $this->get('/api/tags')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/tags', $auth)->assertOk();
     }
 
     public function testOrdersEndpointReturnsSuccess(): void
     {
-        $this->get('/api/orders')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/orders', $auth)->assertOk();
     }
 
     public function testPostsEndpointReturnsSuccess(): void
     {
-        $this->get('/api/posts')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/posts', $auth)->assertOk();
     }
 
     public function testCategoriesEndpointReturnsSuccess(): void
     {
-        $this->get('/api/categories')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/categories', $auth)->assertOk();
     }
 }

@@ -30,6 +30,14 @@
 /.cline/
 .cline/
 .idea/
+.vscode/
+.cursorrules
+llms.txt
+
+!.vscode/siro.code-snippets
+
+# Test runtime data
+/tests/storage/
 
 # CI/CD configs (kept locally only)
 .gitpod.yml
@@ -60,7 +68,6 @@ test_e2e.php
 test_http.php
 check_db.php
 cleanup_repo.php
-benchmark/
 
 # Generated docs (tracked by source, not build output)
 /docs/openapi.json
@@ -76,8 +83,4 @@ openapi_test.json
 /storage/framework/config.php
 
 .git_disabled/
-
-.vscode/
-
-!.vscode/siro.code-snippets
 

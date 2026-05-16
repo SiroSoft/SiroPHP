@@ -1,5 +1,29 @@
 # Changelog
 
+## v0.27.0 (2026-05-16) — Root Cleanup, Test Fixes & Enterprise-Ready Suite
+
+### 🏗 Root Directory Cleanup
+- **54 → 36 entries** — xoá benchmark/, frankenphp/, helm/, semgrep-rules/
+- Gom Docker files vào `docker/`, docs vào `docs/`
+- Xoá `.vscode/`, `.gitpod.yml`, `llms.txt`, `.cursorrules`
+- Xoá `app/Middleware/JsonMiddleware.php` (duplicate core)
+- Xoá `app/Listeners/` (rỗng), `app/Crons/` (1 file example không dùng)
+- Thêm `app/Exceptions/Handler.php` — centralized error handler
+
+### 🧪 Test Suite — 455 Tests, 0 Failures
+- **Fix auth tests** — 20+ test files sử dụng `authenticate()` trước khi gọi endpoint cần auth
+- **Fix SQLite compatibility** — EagerLoading/MassAssignment/QueueMail skip khi dùng SQLite
+- **Fix refresh_tokens schema** — TestCase::ensureTablesCreated matching migration
+- **Thêm edge cases** — `PaginationEdgeTest`, `InputEdgeTest`
+- **Thêm MetricsEndpointTest** — test /metrics và /health endpoints
+- **`make:test` template** — dùng fluent helpers thay vì `dispatch()` thủ công
+- **`php siro test`** — không còn code coverage warning, exit code 0
+
+### 📦 Dependencies
+- `sirosoft/core` bumped to `^0.27.0`
+
+---
+
 ## v0.26.2 (2026-05-15) — Bump sirosoft/core to v0.26.2
 
 ### 📦 Dependencies

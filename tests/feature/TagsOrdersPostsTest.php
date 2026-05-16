@@ -11,14 +11,16 @@ final class TagsOrdersPostsTest extends TestCase
     public function testTagsIndexReturns200(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/api/tags');
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'GET', '/api/tags', [], $headers);
         $this->assertEquals(200, $response->statusCode());
     }
 
     public function testTagsShowReturns404(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/api/tags/999');
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'GET', '/api/tags/999', [], $headers);
         $this->assertEquals(404, $response->statusCode());
     }
 
@@ -41,14 +43,16 @@ final class TagsOrdersPostsTest extends TestCase
     public function testOrdersIndexReturns200(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/api/orders');
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'GET', '/api/orders', [], $headers);
         $this->assertEquals(200, $response->statusCode());
     }
 
     public function testOrdersShowReturns404(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/api/orders/999');
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'GET', '/api/orders/999', [], $headers);
         $this->assertEquals(404, $response->statusCode());
     }
 
@@ -63,14 +67,16 @@ final class TagsOrdersPostsTest extends TestCase
     public function testPostsIndexReturns200(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/api/posts');
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'GET', '/api/posts', [], $headers);
         $this->assertEquals(200, $response->statusCode());
     }
 
     public function testPostsShowReturns404(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/api/posts/999');
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'GET', '/api/posts/999', [], $headers);
         $this->assertEquals(404, $response->statusCode());
     }
 
@@ -78,7 +84,7 @@ final class TagsOrdersPostsTest extends TestCase
     {
         $app = $this->createApp();
         $headers = $this->authenticate($app);
-        $response = $this->dispatch($app, 'POST', '/api/posts', ['title' => 'Test Post', 'content' => 'Content body here', 'user_id' => 1], $headers);
+        $response = $this->dispatch($app, 'POST', '/api/posts', ['title' => 'Test Post', 'body' => 'Content body here', 'user_id' => 1], $headers);
         $this->assertContains($response->statusCode(), [201, 422]);
     }
 }

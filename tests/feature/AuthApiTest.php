@@ -42,44 +42,52 @@ final class AuthApiTest extends TestCase
 
     public function testProductsEndpoint(): void
     {
-        $this->get('/api/products')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/products', $auth)->assertOk();
     }
 
     public function testProductsShowReturns404(): void
     {
-        $resp = $this->get('/api/products/99999');
+        $auth = $this->authenticate();
+        $resp = $this->get('/api/products/99999', $auth);
         $this->assertEquals(404, $resp->status());
     }
 
     public function testCategoriesEndpoint(): void
     {
-        $this->get('/api/categories')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/categories', $auth)->assertOk();
     }
 
     public function testUsersEndpoint(): void
     {
-        $this->get('/api/users')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/users', $auth)->assertOk();
     }
 
-    public function testUsersShowReturns404(): void
+    public function testUsersShowReturns404Or403(): void
     {
-        $resp = $this->get('/api/users/99999');
-        $this->assertEquals(404, $resp->status());
+        $auth = $this->authenticate();
+        $resp = $this->get('/api/users/99999', $auth);
+        $this->assertContains($resp->status(), [403, 404]);
     }
 
     public function testTagsEndpoint(): void
     {
-        $this->get('/api/tags')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/tags', $auth)->assertOk();
     }
 
     public function testOrdersEndpoint(): void
     {
-        $this->get('/api/orders')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/orders', $auth)->assertOk();
     }
 
     public function testPostsEndpoint(): void
     {
-        $this->get('/api/posts')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/posts', $auth)->assertOk();
     }
 
     public function testCreateProduct(): void

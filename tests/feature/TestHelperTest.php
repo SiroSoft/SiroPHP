@@ -108,10 +108,6 @@ final class TestHelperTest extends TestCase
 
     public function testProductCrudViaHelpers(): void
     {
-        $response = $this->get('/api/products');
-        $response->assertOk();
-        $response->assertJson(['success' => true]);
-
         $email = 'crud-' . uniqid() . '@test.com';
         $this->post('/api/auth/register', [
             'name' => 'Crud Test',
@@ -132,10 +128,16 @@ final class TestHelperTest extends TestCase
         /** @var string $rawToken */
         $token = $rawToken;
 
+        $authHeaders = ['Authorization' => 'Bearer ' . $token];
+
+        $response = $this->get('/api/products', $authHeaders);
+        $response->assertOk();
+        $response->assertJson(['success' => true]);
+
         $created = $this->post('/api/products', [
             'name' => 'Helper Product',
             'price' => 29.99,
-        ], ['Authorization' => 'Bearer ' . $token]);
+        ], $authHeaders);
         $created->assertCreated();
         $created->assertJsonPath('data.name', 'Helper Product');
     }

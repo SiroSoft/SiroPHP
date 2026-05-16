@@ -20,6 +20,16 @@ abstract class TestCase extends BaseTestCase
     private static bool $tablesCreated = false;
     private static string $dbDriver = '';
 
+    protected static function isSqlite(): bool
+    {
+        try {
+            $pdo = Database::connection();
+            return $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite';
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -123,7 +133,7 @@ abstract class TestCase extends BaseTestCase
         )");
 
         // Create users table
-        $idCol = self::$dbDriver === 'sqlite' ? 'INTEGER PRIMARY KEY AUTOINCREMENT' : "id $ai PRIMARY KEY";
+        $idCol = self::$dbDriver === 'sqlite' ? 'id INTEGER PRIMARY KEY AUTOINCREMENT' : "id $ai PRIMARY KEY";
         $pdo->exec("CREATE TABLE IF NOT EXISTS users (
             $idCol,
             name VARCHAR(255) NOT NULL DEFAULT '',
@@ -147,11 +157,10 @@ abstract class TestCase extends BaseTestCase
         $pdo->exec("CREATE TABLE IF NOT EXISTS refresh_tokens (
             $idCol,
             user_id INT NOT NULL,
-            token VARCHAR(255) NOT NULL,
             jti VARCHAR(255),
+            revoked SMALLINT DEFAULT 0,
             expires_at $dt,
-            created_at $dt DEFAULT CURRENT_TIMESTAMP,
-            revoked_at $dt NULL
+            created_at $dt DEFAULT CURRENT_TIMESTAMP
         )");
 
         // Create jobs table
@@ -239,8 +248,9 @@ abstract class TestCase extends BaseTestCase
         return $decoded;
     }
 
-    protected function authenticate(App $app): array
+    protected function authenticate(?App $app = null): array
     {
+        $app ??= $this->createApp();
         $email = 'auth-' . uniqid() . '@test.com';
 
         $register = $this->dispatch($app, 'POST', '/api/auth/register', [
