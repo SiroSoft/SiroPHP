@@ -28,18 +28,18 @@
 - **[Performance](PERFORMANCE.md)** - Optimization techniques
 
 ### Development Guides
-- **Database Guide** - Multi-DB support, migrations *(coming soon)*
-- **Authentication Guide** - JWT, RBAC *(coming soon)*
-- **Testing Guide** - PHPUnit tests *(coming soon)*
-- **Validation Guide** - Request validation *(coming soon)*
-- **File Upload Guide** - File handling *(coming soon)*
+- **[Database Guide](guides/DATABASE.md)** - Multi-DB support, migrations
+- **[Authentication Guide](guides/AUTHENTICATION.md)** - JWT, RBAC
+- **[Testing Guide](guides/TESTING.md)** - PHPUnit tests
+- **[Validation Guide](guides/VALIDATION.md)** - Request validation
+- **[File Upload Guide](guides/FILE_UPLOAD.md)** - File handling
 
 ### Advanced Guides
-- **Queue & Mail** - Background jobs *(coming soon)*
-- **Event System** - Pub/sub pattern *(coming soon)*
-- **Caching Guide** - Cache strategies *(coming soon)*
-- **API Versioning** - Version management *(coming soon)*
-- **Multi-language** - Internationalization *(coming soon)*
+- **[Queue & Mail](guides/QUEUE_MAIL.md)** - Background jobs
+- **[Event System](guides/EVENTS.md)** - Pub/sub pattern
+- **[Caching Guide](guides/CACHING.md)** - Cache strategies
+- **[API Versioning](guides/API_VERSIONING.md)** - Version management
+- **[Multi-language](guides/I18N.md)** - Internationalization
 
 ---
 

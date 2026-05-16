@@ -27,7 +27,21 @@ $app->router->get('/health/live', function (): array {
             'time' => date('c'),
         ],
     ];
-});
+})->middleware('throttle:30,1');
+
+$app->router->get('/health/ready', function (): array {
+    $dbOk = false;
+    try { \Siro\Core\Database::connection()->query('SELECT 1'); $dbOk = true; } catch (\Throwable) {}
+    return [
+        'success' => true,
+        'message' => $dbOk ? 'OK' : 'Degraded',
+        'data' => [
+            'status' => $dbOk ? 'ready' : 'degraded',
+            'database' => $dbOk ? 'connected' : 'unreachable',
+            'time' => date('c'),
+        ],
+    ];
+})->middleware('throttle:30,1');
 
 $app->router->get('/health/ready', function (): array {
     $dbOk = false;
@@ -92,13 +106,11 @@ $app->router->get('/health', function (): array {
         'message' => 'OK',
         'data' => [
             'status' => 'healthy',
-            'version' => \Siro\Core\Console::getVersion(),
-            'php' => PHP_VERSION,
             'database' => $dbOk ? 'connected' : 'unreachable',
             'time' => date('c'),
         ],
     ];
-});
+})->middleware('throttle:30,1');
 
 $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::class, 'version', 'etag', 'metrics'], function (\Siro\Core\Router $router): void {
     // Public auth routes
@@ -148,7 +160,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             'size' => $file->getSize(),
             'mime' => $file->getMimeType(),
         ], 'Avatar uploaded');
-    })->middleware([JsonMiddleware::class]);
+    })->middleware([JsonMiddleware::class, 'throttle:10,1']);
 
     $router->get('/profile', function (Request $req): array {
         $locale = $req->queryString('locale', 'en');
