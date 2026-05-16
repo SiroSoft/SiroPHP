@@ -18,8 +18,35 @@ use Siro\Core\Metrics;
 // Prometheus metrics endpoint (no auth, no version)
 Metrics::init('siro', true);
 Metrics::registerRoute($app->router);
-$app->router->get('/health/ready', function (): mixed {
-    return Response::success(['status' => 'healthy']);
+$app->router->get('/health/live', function (): array {
+    return [
+        'success' => true,
+        'message' => 'OK',
+        'data' => [
+            'status' => 'alive',
+            'time' => date('c'),
+        ],
+    ];
+});
+
+$app->router->get('/health/ready', function (): array {
+    $dbOk = false;
+    try {
+        \Siro\Core\Database::connection()->query('SELECT 1');
+        $dbOk = true;
+    } catch (\Throwable) {
+    }
+    return [
+        'success' => true,
+        'message' => 'OK',
+        'data' => [
+            'status' => $dbOk ? 'ready' : 'degraded',
+            'version' => \Siro\Core\Console::getVersion(),
+            'php' => PHP_VERSION,
+            'database' => $dbOk ? 'connected' : 'unreachable',
+            'time' => date('c'),
+        ],
+    ];
 });
 
 // API Versioning registration
