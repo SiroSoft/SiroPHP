@@ -21,25 +21,21 @@ final class UserService
             return false;
         }
 
-        $user = User::find($userId);
+        $user = $this->repo->findById($userId);
         if ($user === null) {
             return false;
         }
 
-        return $user->update(['token_version' => ($user->token_version ?? 0) + 1]);
+        $rawVersion = $user['token_version'] ?? 0;
+        $currentVersion = is_numeric($rawVersion) ? (int) $rawVersion : 0;
+        $this->repo->updateWhere('id', $userId, ['token_version' => $currentVersion + 1]);
+        return true;
     }
 
     /** @return array<string, mixed>|null */
     public function getByEmail(string $email): ?array
     {
-        $rows = User::where('email', '=', $email)->limit(1)->get();
-        if ($rows === []) {
-            return null;
-        }
-        $data = $rows[0]->toArray();
-        // password is in $hidden, include it for auth checks
-        $data['password'] = $rows[0]->getAttribute('password');
-        return $data;
+        return $this->repo->findByEmail($email);
     }
 
     /** @param array<string, mixed> $data */
@@ -51,7 +47,8 @@ final class UserService
         /** @var string $name */
         /** @var string $email */
         /** @var string $password */
-        return User::create([
+        /** @var User $user */
+        $user = $this->repo->create([
             'name' => $name,
             'email' => $email,
             'password' => self::hashPassword($password),
@@ -59,24 +56,26 @@ final class UserService
             'verification_token' => hash('sha256', bin2hex(random_bytes(32))),
             'created_at' => date('Y-m-d H:i:s'),
         ]);
+        return $user;
     }
 
     public function getTokenVersion(int $userId): int
     {
-        $user = User::find($userId);
-        $rawVersion = $user !== null ? (int) ($user->token_version ?? 0) : 0;
+        $user = $this->repo->findById($userId);
+        if ($user === null) return 1;
+        $tokenVersion = $user['token_version'];
+        $rawVersion = is_numeric($tokenVersion) ? (int) $tokenVersion : 0;
         return $rawVersion > 0 ? $rawVersion : 1;
     }
 
     public function verifyEmail(string $token): bool
     {
         $hashedToken = hash('sha256', $token);
-        $rows = User::where('verification_token', '=', $hashedToken)->limit(1)->get();
-        $user = $rows[0] ?? null;
+        $user = $this->repo->findBy('verification_token', $hashedToken);
         if ($user === null) {
             return false;
         }
-        $user->update([
+        $this->repo->updateWhere('id', $user['id'], [
             'email_verified_at' => date('Y-m-d H:i:s'),
             'verification_token' => null,
         ]);
@@ -85,36 +84,30 @@ final class UserService
 
     public function initiatePasswordReset(string $email): void
     {
-        $rows = User::where('email', '=', $email)->limit(1)->get();
-        $user = $rows[0] ?? null;
-        if ($user !== null) {
-            $resetToken = bin2hex(random_bytes(32));
-            $hashedToken = hash('sha256', $resetToken);
-            $user->update([
-                'password_reset_token' => $hashedToken,
-                'password_reset_expires_at' => date('Y-m-d H:i:s', time() + 3600),
-            ]);
-        }
+        $resetToken = bin2hex(random_bytes(32));
+        $hashedToken = hash('sha256', $resetToken);
+        $this->repo->updateWhere('email', $email, [
+            'password_reset_token' => $hashedToken,
+            'password_reset_expires_at' => date('Y-m-d H:i:s', time() + 3600),
+        ]);
     }
 
     public function resetPassword(string $token, string $newPassword): bool
     {
         $hashedToken = hash('sha256', $token);
-        $rows = User::where('password_reset_token', '=', $hashedToken)->limit(1)->get();
-        $user = $rows[0] ?? null;
+        $user = $this->repo->findBy('password_reset_token', $hashedToken);
         if ($user === null) {
             return false;
         }
-        $userData = $user->toArray();
-        $expiresAt = $userData['password_reset_expires_at'] ?? '';
-        $tokenVersion = $userData['token_version'] ?? 1;
+        $expiresAt = $user['password_reset_expires_at'] ?? '';
+        $tokenVersion = $user['token_version'] ?? 1;
         /** @var string $expiresAt */
         /** @var int|string $tokenVersion */
         if ($expiresAt !== '' && strtotime($expiresAt) < time()) {
             return false;
         }
         $passwordHash = self::hashPassword($newPassword);
-        $user->update([
+        $this->repo->updateWhere('id', $user['id'], [
             'password' => $passwordHash,
             'password_reset_token' => null,
             'password_reset_expires_at' => null,
@@ -186,9 +179,8 @@ final class UserService
             /** @var string $rawEmail */
             $email = strtolower(trim($rawEmail));
             $existing = $this->repo->findByEmail($email);
-            /** @var \Siro\Core\Model|null $existing */
             if ($existing !== null) {
-                $existingId = $existing->toArray()['id'] ?? 0;
+                $existingId = $existing['id'] ?? 0;
                 /** @var int|string $existingId */
                 if ((int) $existingId !== $id) {
                     throw new DuplicateEmailException($email);
@@ -209,9 +201,7 @@ final class UserService
 
         $this->repo->update($id, $updateData);
 
-        $updated = $this->repo->findById($id);
-        /** @var \Siro\Core\Model|null $updated */
-        return $updated ? $updated->toArray() : null;
+        return $this->repo->findById($id);
     }
 
     public function incrementLoginAttempts(int $userId, int $currentAttempts): void
@@ -223,12 +213,12 @@ final class UserService
             $update['locked_until'] = date('Y-m-d H:i:s', time() + 900);
         }
 
-        User::where('id', '=', $userId)->update($update);
+        $this->repo->updateWhere('id', $userId, $update);
     }
 
     public function resetLoginAttempts(int $userId): void
     {
-        User::where('id', '=', $userId)->update([
+        $this->repo->updateWhere('id', $userId, [
             'login_attempts' => 0,
             'locked_until' => null,
         ]);

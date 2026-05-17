@@ -11,14 +11,16 @@ final class CategoriesTest extends TestCase
     public function testIndexReturns200(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/api/categories');
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'GET', '/api/categories', [], $headers);
         $this->assertEquals(200, $response->statusCode());
     }
 
     public function testShowReturns404ForInvalidId(): void
     {
         $app = $this->createApp();
-        $response = $this->dispatch($app, 'GET', '/api/categories/999');
+        $headers = $this->authenticate($app);
+        $response = $this->dispatch($app, 'GET', '/api/categories/999', [], $headers);
         $this->assertEquals(404, $response->statusCode());
     }
 

@@ -10,7 +10,7 @@ final class I18nTest extends TestCase
 {
     public function testEnglishGreeting(): void
     {
-        $res = $this->get('/profile?locale=en&name=World');
+        $res = $this->get('/api/profile?locale=en&name=World');
         $res->assertOk();
         $body = $res->json();
         $this->assertStringContainsString('Hello', $body['message'] ?? '');
@@ -46,7 +46,7 @@ final class I18nTest extends TestCase
         $res->assertOk();
         $body = $res->json();
         $this->assertArrayHasKey('available_locales', $body['data'] ?? []);
-        $this->assertArrayHasKey('en', $body['data']['available_locales'] ?? []);
-        $this->assertArrayHasKey('vi', $body['data']['available_locales'] ?? []);
+        $this->assertContains('en', $body['data']['available_locales'] ?? []);
+        $this->assertContains('vi', $body['data']['available_locales'] ?? []);
     }
 }

@@ -34,6 +34,7 @@ $files = [
     $corePath . '/Config.php',
     $corePath . '/Env.php',
     $corePath . '/Logger.php',
+    $corePath . '/Logger/LoggerInstance.php',
 
     $corePath . '/Database.php',
     $corePath . '/Schema.php',
@@ -42,6 +43,8 @@ $files = [
     $corePath . '/DB/ModelQueryBuilder.php',
     $corePath . '/DB/Blueprint.php',
     $corePath . '/DB/Column.php',
+    $corePath . '/DB/DatabaseInstance.php',
+    $corePath . '/DB/EagerLoader.php',
 
     $corePath . '/Auth/JWT.php',
     $corePath . '/Auth/AuthGuard.php',
@@ -50,6 +53,7 @@ $files = [
 
     $corePath . '/Model.php',
     $corePath . '/Cache.php',
+    $corePath . '/Cache/CacheInstance.php',
     $corePath . '/Storage.php',
 
     $corePath . '/Middleware/AuthMiddleware.php',
@@ -69,6 +73,9 @@ $files = [
     $corePath . '/Queue.php',
     $corePath . '/UploadedFile.php',
     $corePath . '/ValidationException.php',
+    $corePath . '/Validator.php',
+    $corePath . '/Metrics.php',
+    $corePath . '/Mail.php',
 
     $corePath . '/DB/Relations/HasOne.php',
     $corePath . '/DB/Relations/HasMany.php',

@@ -1,14 +1,14 @@
 <div align="center">
-  <h1>⚡ Siro API Framework v0.26.2</h1>
+  <h1>⚡ Siro API Framework v0.27.0</h1>
   <p><strong>The Fastest, Lightest, Most Secure PHP Micro-Framework</strong></p>
-  <p>Zero dependencies • Sub-millisecond boot • JWT built-in • 70 CLI commands • OWASP Top 10 mitigated</p>
+  <p>Zero dependencies • Sub-millisecond boot • JWT built-in • 72 CLI commands • OWASP Top 10 mitigated • PHPStan level max • 463 tests</p>
 </div>
 
 <div align="center">
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP 8.2+](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Tests](https://img.shields.io/badge/tests-19037%20total-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-463%20pass-brightgreen.svg)](tests/)
 [![PHPStan](https://img.shields.io/badge/PHPStan-Level%20Max-brightgreen.svg)](https://phpstan.org)
 [![Psalm](https://img.shields.io/badge/Psalm-Level%201-brightgreen.svg)](https://psalm.dev)
 [![Security](https://img.shields.io/badge/security-OWASP%20Top%2010%20Mitigated-brightgreen)](docs/SECURITY.md)
@@ -76,9 +76,12 @@ php siro route:list
 |------------------|----------------|
 | **Laravel/Symfony too heavy** (~60-100 dependencies) | **Zero** runtime dependencies. Just PHP + PDO |
 | **Slow boot** (50-80ms per request) | **~1ms** cold boot. 50-80x faster |
-| **JWT auth takes hours to setup** | **Built-in**. Algorithm pinning, key rotation, JTI blacklist |
-| **N+1 queries kill performance** | **Auto-detected**. `php siro why` shows exact N+1 warnings with fix |
+| **JWT auth takes hours to setup** | **Built-in**. Algorithm pinning, key rotation, JTI blacklist, token_version revocation |
+| **N+1 queries kill performance** | **Auto-detected**. Identity map + eager loading + `php siro why` |
 | **Manual CRUD boilerplate** | **1 command**: `make:crud Product` generates Controller + Service + Repository + Model + Migration + Test |
+| **Security vulnerabilities** | **9 security fixes** from expert audit. AuthGuard, mass-assignment, IDOR, ModelNotFoundException |
+| **Testing takes minutes** | **463 tests in 34s**. `php siro test` — 0 failures, PHPStan level max |
+| **Poor documentation** | **13 guides** + 2 example projects + OpenAPI spec + Swagger UI |
 | **Security left to developers** | **OWASP Top 10** mitigated from the start: CSP, CORS, CSRF, Rate Limit, SQLi, XSS |
 | **Dependency vulnerabilities** | **Zero transitive dependencies**. Composer audit = 0 issues |
 

@@ -163,7 +163,7 @@ php siro env:switch staging      # Switch environment
 → Use `php siro make:crud posts`
 
 #### Add Authentication
-→ See **[Authentication Guide](guides/AUTHENTICATION.md)**  
+→ See Authentication Guide *(coming soon)*
 → Use `php siro make:auth`
 
 #### Deploy to Production
@@ -171,7 +171,7 @@ php siro env:switch staging      # Switch environment
 → Use `php siro deploy`
 
 #### Write Tests
-→ See **[Testing Guide](guides/TESTING.md)**  
+→ See Testing Guide *(coming soon)*
 → Use `php siro make:test ProductApi`
 
 #### Optimize Performance
@@ -183,11 +183,11 @@ php siro env:switch staging      # Switch environment
 → Run `php siro env:check`
 
 #### Add File Upload
-→ See **[File Upload Guide](guides/FILE_UPLOAD.md)**  
+→ See File Upload Guide *(coming soon)*
 → Use `$request->file('avatar')`
 
 #### Queue Heavy Operations
-→ See **[Queue Guide](guides/QUEUE_MAIL.md)**  
+→ See Queue Guide *(coming soon)*
 → Use `Mail::to($user)->queue()`
 
 ---
@@ -225,12 +225,7 @@ php siro env:switch staging      # Switch environment
 - **Task Manager** - [View on GitHub](https://github.com/SiroSoft/examples/tree/main/task-manager)
 - **Real-time Chat** - Coming soon
 
-### Code Snippets
-- **Authentication** - [Examples](examples/auth.md)
-- **CRUD Operations** - [Examples](examples/crud.md)
-- **File Upload** - [Examples](examples/file-upload.md)
-- **Queue Jobs** - [Examples](examples/queue.md)
-- **API Versioning** - [Examples](examples/versioning.md)
+### Code Snippets *(coming soon)*
 
 ---
 
@@ -277,7 +272,7 @@ A: Yes! MySQL, PostgreSQL, and SQLite are fully supported.
 A: Create class implementing middleware interface, add to route. See [Router API](api/Router.md).
 
 **Q: How do I handle file uploads?**  
-A: Use `$request->file()` method. See [File Upload Guide](guides/FILE_UPLOAD.md).
+A: Use `$request->file()` method. See File Upload Guide *(coming soon)*.
 
 **Q: Can I use Redis?**  
 A: Yes! Configure in `.env`: `CACHE_DRIVER=redis`, `SESSION_DRIVER=redis`.
@@ -309,10 +304,8 @@ A: Use trace IDs, slow request logs, health check endpoint, external monitoring 
 - Router API Reference (from core)
 
 ### In Progress 🚧
-- Database Guide
-- Authentication Guide
-- Testing Guide
 - More API References
+- Guides documentation
 
 ### Planned 📅
 - Example applications
@@ -355,6 +348,6 @@ Want to improve documentation? We welcome contributions!
 
 ---
 
-*Last updated: May 12, 2026*  
-*Documentation version: 0.23*  
-*SiroPHP version: 0.23.0*
+*Last updated: May 16, 2026*  
+*Documentation version: 0.27.0*  
+*SiroPHP version: 0.27.0*

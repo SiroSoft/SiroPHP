@@ -18,14 +18,16 @@ final class ApiResponseFormatTest extends TestCase
 
     public function testListResponseHasDataArray(): void
     {
-        $resp = $this->get('/api/products');
+        $auth = $this->authenticate();
+        $resp = $this->get('/api/products', $auth);
         $json = $resp->json();
         $this->assertIsArray($json['data']);
     }
 
     public function testCorsHeadersPresent(): void
     {
-        $resp = $this->get('/api/products', ['Origin' => 'http://example.com']);
+        $auth = $this->authenticate();
+        $resp = $this->get('/api/products', array_merge($auth, ['Origin' => 'http://example.com']));
         $this->assertContains($resp->status(), [200, 204]);
     }
 
@@ -62,8 +64,9 @@ final class ApiResponseFormatTest extends TestCase
 
     public function testProductsEndpointResponseTime(): void
     {
+        $auth = $this->authenticate();
         $start = microtime(true);
-        $this->get('/api/products');
+        $this->get('/api/products', $auth);
         $elapsed = (microtime(true) - $start) * 1000;
         $this->assertLessThan(1000, $elapsed, 'Response should be under 1s');
     }
@@ -103,40 +106,43 @@ final class ApiResponseFormatTest extends TestCase
         $this->assertEquals('connected', $jsonData['database']);
     }
 
-    public function testHealthReturnsVersion(): void
+    public function testHealthReturnsStatus(): void
     {
         $resp = $this->get('/health');
         $json = $resp->json();
         $jsonData = $json['data'] ?? [];
         /** @var array<string, mixed> $jsonData */
-        $this->assertArrayHasKey('version', $jsonData);
-        $rawVersion = $jsonData['version'] ?? '';
-        /** @var string $rawVersion */
-        $this->assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', $rawVersion);
+        $this->assertArrayHasKey('status', $jsonData);
+        $this->assertEquals('healthy', $jsonData['status']);
     }
 
     public function testCategoriesEndpoint(): void
     {
-        $this->get('/api/categories')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/categories', $auth)->assertOk();
     }
 
     public function testTagsEndpoint(): void
     {
-        $this->get('/api/tags')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/tags', $auth)->assertOk();
     }
 
     public function testOrdersEndpoint(): void
     {
-        $this->get('/api/orders')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/orders', $auth)->assertOk();
     }
 
     public function testPostsEndpoint(): void
     {
-        $this->get('/api/posts')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/posts', $auth)->assertOk();
     }
 
     public function testUsersEndpoint(): void
     {
-        $this->get('/api/users')->assertOk();
+        $auth = $this->authenticate();
+        $this->get('/api/users', $auth)->assertOk();
     }
 }

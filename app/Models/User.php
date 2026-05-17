@@ -46,14 +46,6 @@ final class User extends Model
         'name',
         'email',
         'password',
-        'role',
-        'status',
-        'token_version',
-        'email_verified_at',
-        'verification_token',
-        'password_reset_token',
         'password_reset_expires_at',
-        'login_attempts',
-        'locked_until',
     ];
 }

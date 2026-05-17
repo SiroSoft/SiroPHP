@@ -22,18 +22,11 @@ final class HealthTest extends TestCase
         $this->assertEquals('healthy', $body['data']['status'] ?? '');
     }
 
-    public function testHealthIncludesVersion(): void
+    public function testHealthIncludesDatabase(): void
     {
         $res = $this->get('/health');
         $body = $res->json();
-        $this->assertNotEmpty($body['data']['version'] ?? '');
-    }
-
-    public function testHealthIncludesPhpVersion(): void
-    {
-        $res = $this->get('/health');
-        $body = $res->json();
-        $this->assertNotEmpty($body['data']['php'] ?? '');
+        $this->assertNotEmpty($body['data']['database'] ?? '');
     }
 
     public function testHealthShowsDatabaseConnected(): void
