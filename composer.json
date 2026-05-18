@@ -34,6 +34,13 @@
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php siro key:generate || true"
         ],
+        "test": "php vendor/bin/phpunit --no-coverage",
+        "test:coverage": "php -d zend_extension=xdebug vendor/bin/phpunit --coverage-html coverage/html",
+        "analyse": "php -d memory_limit=512M vendor/bin/phpstan analyse --level=max",
+        "check": [
+            "php -d memory_limit=512M vendor/bin/phpstan analyse --level=max --no-progress",
+            "php vendor/bin/phpunit --no-coverage"
+        ],
         "benchmark:ci": "@php scripts/benchmark-ci.php",
         "sbom": "@php scripts/generate-sbom.php",
         "audit:supply-chain": "@php scripts/audit-supply-chain.php",
