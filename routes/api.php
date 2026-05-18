@@ -91,6 +91,8 @@ $app->router->get('/health', function (): array {
         'data' => [
             'status' => 'healthy',
             'database' => $dbOk ? 'connected' : 'unreachable',
+            'php' => PHP_VERSION,
+            'app_env' => \Siro\Core\Env::get('APP_ENV', 'local'),
             'time' => date('c'),
         ],
     ];

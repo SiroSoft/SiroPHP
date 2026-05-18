@@ -3,6 +3,8 @@
 <head>
 <meta charset=UTF-8>
 <meta name=viewport content="width=device-width,initial-scale=1.0">
+<meta name=description content="SiroPHP API Framework — dev dashboard with live API tester, traces, debug workflow">
+<link rel=icon href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
 <title>SiroPHP — Debug-first API Framework</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -313,6 +315,8 @@ button{font-family:inherit;cursor:pointer}
   </div>
 </div>
 
+</div>
+
 <div class=ft>
   SiroPHP v0.27.2 · <a href=https://github.com/SiroSoft/SiroPHP>GitHub</a> · <a href=/health>Health</a> · 462 tests · PHPStan Level Max · From production bug → verified fix in minutes.
 </div>
@@ -371,7 +375,7 @@ async function refreshStatus(){
     var r=await fetch('/health');var d=await r.json();
     if(d.data){
       // Environment
-      var env=d.data.env||d.data.app_env||'local';
+      var env=d.data.app_env||'local';
       document.getElementById('piEnv').textContent=env;
       document.getElementById('env-tag').textContent='· '+env+' mode';
       if(env==='production'){
