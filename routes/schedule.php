@@ -15,13 +15,4 @@ declare(strict_types=1);
 /** @var \Siro\Core\Schedule $schedule */
 $schedule->command('queue:work')->everyMinute();
 
-$schedule->call(function () {
-    $logDir = __DIR__ . '/../storage/logs/traces';
-    foreach (glob($logDir . '/*.json') ?: [] as $file) {
-        if (filemtime($file) < time() - 86400 * 7) {
-            @unlink($file);
-        }
-    }
-})->hourly();
-
 $schedule->command('log:cleanup --days=30')->daily();
