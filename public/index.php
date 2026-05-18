@@ -83,19 +83,6 @@ try {
 
     $app->boot();
 
-    // Register default health route
-    \Siro\Core\Route::setRouter($app->router);
-    \Siro\Core\Route::get('/health', function () {
-        $checkScript = dirname(__DIR__) . '/vendor/sirosoft/core/scripts/health-check.php';
-        $output = @shell_exec(escapeshellcmd(PHP_BINARY) . ' ' . escapeshellarg($checkScript) . ' ' . escapeshellarg(BASE_PATH) . ' json 2>/dev/null');
-        /** @var array<string, mixed>|null $decoded */
-        $decoded = (is_string($output) && $output !== '') ? json_decode($output, true) : null;
-        /** @var array<string, mixed> $data */
-        $data = is_array($decoded) ? $decoded : ['status' => 'error', 'message' => 'Health check unavailable'];
-        $status = ($data['status'] ?? '') === 'ok' ? 200 : 503;
-        return \Siro\Core\Response::json($data, $status);
-    });
-
     // Apply log sanitization config from .env
     \Siro\Core\Logger::setSanitizeConfig([
         'headers' => array_map('trim', explode(',', (string) \Siro\Core\Env::get('LOG_SANITIZE_HEADERS', 'authorization,cookie,x-api-key,session-id'))),

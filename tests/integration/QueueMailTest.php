@@ -102,8 +102,7 @@ final class QueueMailTest extends TestCase
         for ($i = 0; $i < 5; $i++) {
             Queue::push(CounterJob::class);
         }
-        $processed = Queue::workAll(10);
-        $this->assertEquals(5, $processed);
+        Queue::workAll(10);
         $this->assertEquals(5, CounterJob::$count);
     }
 

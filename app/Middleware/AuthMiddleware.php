@@ -18,9 +18,6 @@ use Throwable;
  */
 final class AuthMiddleware implements MiddlewareInterface
 {
-    /** @var array<int, array<string, mixed>|null> */
-    private static array $userCache = [];
-
     public function handle(Request $request, callable $next, string ...$roles): mixed
     {
         $header = (string) $request->header('authorization', '');
@@ -96,10 +93,6 @@ final class AuthMiddleware implements MiddlewareInterface
     /** @return array<string, mixed>|null */
     private static function resolveUser(int $userId, int $tokenVersion): ?array
     {
-        if (isset(self::$userCache[$userId])) {
-            return self::$userCache[$userId];
-        }
-
         $rows = DB::table((new User())->getTable())
             ->where('id', '=', $userId)
             ->limit(1)
@@ -108,7 +101,6 @@ final class AuthMiddleware implements MiddlewareInterface
         $row = $rows[0] ?? null;
         /** @var array<string, mixed>|null $row */
         if ($row === null) {
-            self::$userCache[$userId] = null;
             return null;
         }
 
@@ -120,7 +112,6 @@ final class AuthMiddleware implements MiddlewareInterface
         $dbTokenVersion = (int) $rawTokenVersion;
 
         if ($status !== 1 || $dbTokenVersion !== $tokenVersion) {
-            self::$userCache[$userId] = null;
             return null;
         }
 
@@ -135,7 +126,7 @@ final class AuthMiddleware implements MiddlewareInterface
         /** @var string $rawRole */
         /** @var string $rawCreatedAt */
 
-        $userData = [
+        return [
             'id' => (int) $rawId,
             'name' => $rawName,
             'email' => $rawEmail,
@@ -144,8 +135,5 @@ final class AuthMiddleware implements MiddlewareInterface
             'token_version' => $dbTokenVersion,
             'created_at' => $rawCreatedAt,
         ];
-
-        self::$userCache[$userId] = $userData;
-        return $userData;
     }
 }

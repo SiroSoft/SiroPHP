@@ -7,17 +7,15 @@ use Siro\Core\Middleware\CorsMiddleware;
 use Siro\Core\Middleware\JsonMiddleware;
 use App\Middleware\SecurityHeadersMiddleware;
 use Siro\Core\Lang;
+use Siro\Core\Metrics;
 use Siro\Core\Request;
 use Siro\Core\Response;
-use Siro\Core\Storage;
-
-use Siro\Core\Metrics;
 
 /** @var \Siro\Core\App $app */
 
-// Prometheus metrics endpoint (no auth, no version)
 Metrics::init('siro', true);
 Metrics::registerRoute($app->router);
+
 $app->router->get('/health/live', function (): array {
     return [
         'success' => true,

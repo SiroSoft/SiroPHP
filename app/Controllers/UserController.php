@@ -70,15 +70,14 @@ final class UserController extends Controller
         ]);
 
         try {
-            $userData = $this->service->create($data);
-            /** @var array<string, mixed> $userData */
+            $user = $this->service->create($data);
         } catch (DuplicateEmailException) {
             return $this->error('Validation failed', 422, [
                 'email' => ['Email has already been taken'],
             ]);
         }
 
-        return $this->created(UserResource::make($userData), 'User created');
+        return $this->created(UserResource::make($user), 'User created');
     }
 
     public function update(Request $request): Response
