@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.28.1 (2026-05-19) — Migration Fixes + QueryBuilder Enhancements
+
+### 🏗 Migration System
+- **File naming**: Chuẩn hóa `Y_m_d_His` format
+- **`migrate:fresh`**: Drop all tables + re-migrate
+- **`migrate:status --pending`**: Filter pending only
+
+### 🔧 QueryBuilder
+- **`groupByRaw()` / `havingRaw()`**: Raw SQL functions trong GROUP BY, HAVING
+- **`DB::raw()`**: Raw expression facade
+
+### 🖥 CLI
+- **`registerCommand()`**: App tự đăng ký command, không hardcode vendor
+- **`env:check`**: Check MySQL version (JSON column support)
+
 ## v0.28.0 (2026-05-19) — Comprehensive Security Audit + Zero Errors
 
 ### 🛡️ Security & Quality
