@@ -1,14 +1,14 @@
 <div align="center">
-  <h1>⚡ Siro API Framework v0.27.0</h1>
+  <h1>⚡ Siro API Framework v0.28.1</h1>
   <p><strong>The Fastest, Lightest, Most Secure PHP Micro-Framework</strong></p>
-  <p>Zero dependencies • Sub-millisecond boot • JWT built-in • 72 CLI commands • OWASP Top 10 mitigated • PHPStan level max • 463 tests</p>
+  <p>Zero dependencies • Sub-millisecond boot • JWT built-in • 72 CLI commands • OWASP Top 10 mitigated • PHPStan level max • 462 tests • 19,496 total</p>
 </div>
 
 <div align="center">
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PHP 8.2+](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Tests](https://img.shields.io/badge/tests-463%20pass-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-462%20pass-brightgreen.svg)](tests/)
 [![PHPStan](https://img.shields.io/badge/PHPStan-Level%20Max-brightgreen.svg)](https://phpstan.org)
 [![Psalm](https://img.shields.io/badge/Psalm-Level%201-brightgreen.svg)](https://psalm.dev)
 [![Security](https://img.shields.io/badge/security-OWASP%20Top%2010%20Mitigated-brightgreen)](docs/SECURITY.md)
@@ -80,7 +80,7 @@ php siro route:list
 | **N+1 queries kill performance** | **Auto-detected**. Identity map + eager loading + `php siro why` |
 | **Manual CRUD boilerplate** | **1 command**: `make:crud Product` generates Controller + Service + Repository + Model + Migration + Test |
 | **Security vulnerabilities** | **9 security fixes** from expert audit. AuthGuard, mass-assignment, IDOR, ModelNotFoundException |
-| **Testing takes minutes** | **463 tests in 34s**. `php siro test` — 0 failures, PHPStan level max |
+| **Testing takes minutes** | **462 tests in 34s**. `php siro test` — 0 failures, PHPStan level max |
 | **Poor documentation** | **13 guides** + 2 example projects + OpenAPI spec + Swagger UI |
 | **Security left to developers** | **OWASP Top 10** mitigated from the start: CSP, CORS, CSRF, Rate Limit, SQLi, XSS |
 | **Dependency vulnerabilities** | **Zero transitive dependencies**. Composer audit = 0 issues |
@@ -295,16 +295,15 @@ docker run -p 80:80 -p 443:443 -v .env:/app/.env my-api
 ```bash
 # Core framework tests
 cd vendor/sirosoft/core
-php vendor/bin/phpunit --no-coverage              # 19,038 tests, 0 failures
+php vendor/bin/phpunit --no-coverage              # 19,034 tests, 0 failures
 php vendor/bin/phpstan analyse --level=max         # 0 errors
 php vendor/bin/psalm --taint-analysis              # 0 errors
 composer audit                                     # 0 vulnerabilities
-php scripts/chaos-test.php                         # Chaos engineering
 php scripts/health-check.php                       # System health
 
 # Application tests
 cd your-project/
-php siro test                                       # 430 app tests
+php siro test                                       # 462 app tests
 php siro test --coverage                            # With coverage
 php siro benchmark                                  # Performance
 ```
@@ -313,15 +312,18 @@ php siro benchmark                                  # Performance
 
 | Suite | Tests | Assertions | Status |
 |-------|-------|-----------|--------|
-| Core Unit | 988 | 2,547 | ✅ 0 failures |
+| Core Unit | 984 | 2,545 | ✅ 0 failures |
 | Core Fuzz | 17,851 | 28,849 | ✅ 0 failures |
 | Core DAST | 157 | 166 | ✅ 0 failures |
-| Core Integration | 42 | 90 | ✅ 0 failures |
-| **Core Total** | **19,038** | **31,652** | **✅ 0 failures** |
+| Core Security | 42 | 104 | ✅ 0 failures |
+| Core Performance | 24 | 24 | ✅ 0 failures |
+| Core Debug | 24 | 71 | ✅ 0 failures |
+| Core CLI | 252 | 1,715 | ✅ 0 failures |
+| **Core Total** | **19,034** | **31,638** | **✅ 0 failures** |
 | PHPStan Level Max | — | — | ✅ 0 errors |
 | Psalm Level 1 | — | — | ✅ 0 errors |
-| App Tests | 430 | 534 | ✅ |
-| **Grand Total** | **19,468** | **32,186** | **✅** |
+| App Tests | 462 | 783 | ✅ |
+| **Grand Total** | **19,496** | **32,421** | **✅** |
 
 ---
 
