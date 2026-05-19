@@ -33,4 +33,5 @@ return [
     'password' => Env::get('DB_PASSWORD', ''),
     'charset' => Env::get('DB_CHARSET', 'utf8mb4'),
     'slow_query_threshold' => (int) Env::get('DB_SLOW_QUERY_THRESHOLD', '100'),
+    'capture_queries' => Env::bool('APP_DEBUG', false),
 ];

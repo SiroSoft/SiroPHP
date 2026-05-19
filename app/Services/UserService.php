@@ -184,14 +184,14 @@ final class UserService
 
     public function incrementLoginAttempts(int $userId, int $currentAttempts): void
     {
+        $this->repo->atomicIncrement('id', $userId, 'login_attempts', 1);
+
         $newAttempts = $currentAttempts + 1;
-        $update = ['login_attempts' => $newAttempts];
-
         if ($newAttempts >= 5) {
-            $update['locked_until'] = date('Y-m-d H:i:s', time() + 900);
+            $this->repo->updateWhere('id', $userId, [
+                'locked_until' => date('Y-m-d H:i:s', time() + 900),
+            ]);
         }
-
-        $this->repo->updateWhere('id', $userId, $update);
     }
 
     public function resetLoginAttempts(int $userId): void

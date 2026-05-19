@@ -8,34 +8,34 @@ use App\Tests\TestCase;
 
 final class CrudValidationTest extends TestCase
 {
-    public function testCreateProductReturnsSuccessOrValidation(): void
+    public function testCreateProductReturns401WithoutAuth(): void
     {
         $resp = $this->post('/api/products', []);
-        $this->assertContains($resp->status(), [200, 201, 401, 422]);
+        $this->assertEquals(401, $resp->status(), 'Create product without auth should return 401');
     }
 
-    public function testCreateCategoryReturnsExpected(): void
+    public function testCreateCategoryReturns401WithoutAuth(): void
     {
         $resp = $this->post('/api/categories', ['name' => 'TestCat']);
-        $this->assertContains($resp->status(), [200, 201, 401, 422]);
+        $this->assertEquals(401, $resp->status(), 'Create category without auth should return 401');
     }
 
-    public function testCreateOrderReturnsExpected(): void
+    public function testCreateOrderReturns401WithoutAuth(): void
     {
         $resp = $this->post('/api/orders', []);
-        $this->assertContains($resp->status(), [200, 201, 401, 422]);
+        $this->assertEquals(401, $resp->status(), 'Create order without auth should return 401');
     }
 
-    public function testCreatePostReturnsExpected(): void
+    public function testCreatePostReturns401WithoutAuth(): void
     {
         $resp = $this->post('/api/posts', []);
-        $this->assertContains($resp->status(), [200, 201, 401, 422]);
+        $this->assertEquals(401, $resp->status(), 'Create post without auth should return 401');
     }
 
-    public function testCreateTagReturnsExpected(): void
+    public function testCreateTagReturns401WithoutAuth(): void
     {
         $resp = $this->post('/api/tags', []);
-        $this->assertContains($resp->status(), [200, 201, 401, 422]);
+        $this->assertEquals(401, $resp->status(), 'Create tag without auth should return 401');
     }
 
     public function testCreateUserWithoutAuthReturns401(): void
@@ -63,18 +63,18 @@ final class CrudValidationTest extends TestCase
         $this->assertArrayHasKey('data', $json);
     }
 
-    public function testPutWithoutIdReturns404(): void
+    public function testPutWithoutIdReturns403ForNonAdmin(): void
     {
         $auth = $this->authenticate();
         $resp = $this->put('/api/products/999999', ['name' => 'Test'], $auth);
-        $this->assertContains($resp->status(), [401, 404]);
+        $this->assertEquals(403, $resp->status(), 'Non-admin user should get 403 for update');
     }
 
-    public function testDeleteWithoutIdReturns404(): void
+    public function testDeleteWithoutIdReturns403ForNonAdmin(): void
     {
         $auth = $this->authenticate();
         $resp = $this->delete('/api/products/999999', $auth);
-        $this->assertContains($resp->status(), [401, 404]);
+        $this->assertEquals(403, $resp->status(), 'Non-admin user should get 403 for delete');
     }
 
     public function testHealthWorks(): void
@@ -85,7 +85,8 @@ final class CrudValidationTest extends TestCase
     public function testUsersEndpointReturnsSuccess(): void
     {
         $auth = $this->authenticate();
-        $this->get('/api/users', $auth)->assertOk();
+        $resp = $this->get('/api/users', $auth);
+        $this->assertContains($resp->status(), [200, 403]);
     }
 
     public function testTagsEndpointReturnsSuccess(): void

@@ -25,7 +25,7 @@ final class AuthApiTest extends TestCase
             'email' => 'test_' . uniqid() . '@example.com',
             'password' => 'secret123',
         ]);
-        $this->assertContains($resp->status(), [200, 201, 422]);
+        $this->assertContains($resp->status(), [200, 201], 'Registration with valid data should succeed');
     }
 
     public function testLoginWithEmptyDataReturnsValidation(): void
@@ -62,14 +62,15 @@ final class AuthApiTest extends TestCase
     public function testUsersEndpoint(): void
     {
         $auth = $this->authenticate();
-        $this->get('/api/users', $auth)->assertOk();
+        $resp = $this->get('/api/users', $auth);
+        $this->assertContains($resp->status(), [200, 403]);
     }
 
-    public function testUsersShowReturns404Or403(): void
+    public function testUsersShowReturns403ForNonAdmin(): void
     {
         $auth = $this->authenticate();
         $resp = $this->get('/api/users/99999', $auth);
-        $this->assertContains($resp->status(), [403, 404]);
+        $this->assertEquals(403, $resp->status(), 'Non-admin user should get 403 for user detail');
     }
 
     public function testTagsEndpoint(): void
@@ -93,19 +94,19 @@ final class AuthApiTest extends TestCase
     public function testCreateProduct(): void
     {
         $resp = $this->post('/api/products', ['name' => 'Test']);
-        $this->assertContains($resp->status(), [200, 201, 401, 422]);
+        $this->assertEquals(401, $resp->status(), 'Create product without auth should return 401');
     }
 
     public function testUpdateProduct(): void
     {
         $resp = $this->put('/api/products/1', ['name' => 'Updated']);
-        $this->assertContains($resp->status(), [200, 401, 404, 422]);
+        $this->assertEquals(401, $resp->status(), 'Update product without auth should return 401');
     }
 
     public function testDeleteProduct(): void
     {
         $resp = $this->delete('/api/products/1');
-        $this->assertContains($resp->status(), [200, 204, 401, 404]);
+        $this->assertEquals(401, $resp->status(), 'Delete product without auth should return 401');
     }
 
     public function testHealthResponseStatus(): void

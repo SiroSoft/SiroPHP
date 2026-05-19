@@ -20,6 +20,12 @@ final class UserController extends Controller
 
     public function index(Request $request): Response
     {
+        $currentUser = $request->user();
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
+        if ($currentUserRole !== 'admin') {
+            return $this->error('Forbidden', 403);
+        }
+
         $page = max(1, $request->queryInt('page', 1));
         $perPage = min(100, max(1, $request->queryInt('per_page', 15)));
 
@@ -63,6 +69,12 @@ final class UserController extends Controller
 
     public function store(Request $request): Response
     {
+        $currentUser = $request->user();
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
+        if ($currentUserRole !== 'admin') {
+            return $this->error('Forbidden', 403);
+        }
+
         $data = $this->validate([
             'name' => 'required|min:3|max:120',
             'email' => 'required|email|max:255',

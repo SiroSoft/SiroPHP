@@ -69,6 +69,8 @@ final class AuthController
         $userData = $this->userService->getByEmail($email);
 
         if ($userData === null || !isset($userData['password']) || !is_string($userData['password'])) {
+            // Normalize timing to prevent user enumeration
+            password_verify('dummy', '$2y$12$012345678901234567890123456789012345678901234567890123456789');
             return Response::error('Invalid credentials', 401);
         }
 

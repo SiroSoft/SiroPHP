@@ -62,17 +62,18 @@ final class OrderController extends Controller
         $validated = $this->validate([
             'customer_name' => 'required|min:2|max:200',
             'customer_email' => 'required|email',
-            'total' => 'required|numeric|min:0',
-            'status' => 'required|in:pending,completed,cancelled',
+            'items' => 'required',
         ]);
 
         $items = $request->input('items');
-        if ($items !== null && !is_array($items)) {
+        if (!is_array($items)) {
             return $this->error('Validation failed', 422, [
                 'items' => ['Items must be an array'],
             ]);
         }
-        $validated['items'] = is_array($items) ? $items : '[]';
+        $validated['items'] = $items;
+        $validated['total'] = $this->calculateTotal($items);
+        $validated['status'] = 'pending';
 
         $order = $this->service->create($validated);
         /** @var array<string, mixed> $order */
@@ -106,8 +107,6 @@ final class OrderController extends Controller
         $validated = $this->validate([
             'customer_name' => 'min:2|max:200',
             'customer_email' => 'email',
-            'total' => 'numeric|min:0',
-            'status' => 'in:pending,completed,cancelled',
         ]);
 
         $order = $this->service->update($id, $validated);
@@ -144,5 +143,19 @@ final class OrderController extends Controller
         return $this->service->delete($id)
             ? $this->noContent()
             : $this->error('Order not found', 404);
+    }
+
+    /** @param array<array-key, mixed> $items */
+    private function calculateTotal(array $items): float
+    {
+        $total = 0.0;
+        foreach ($items as $item) {
+            if (is_array($item) && isset($item['price'])) {
+                $qty = isset($item['quantity']) && is_numeric($item['quantity']) ? (float) $item['quantity'] : 1.0;
+                $price = is_numeric($item['price']) ? (float) $item['price'] : 0.0;
+                $total += $price * $qty;
+            }
+        }
+        return round($total, 2);
     }
 }
