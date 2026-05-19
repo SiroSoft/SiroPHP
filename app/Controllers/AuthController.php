@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Exceptions\DuplicateEmailException;
 use App\Services\RefreshTokenService;
 use App\Services\UserService;
 use Siro\Core\Request;
@@ -29,21 +30,16 @@ final class AuthController
 
         $email = strtolower(trim($request->string('email')));
 
-        $existingUser = $this->userService->getByEmail($email);
-        if ($existingUser !== null) {
-            return Response::error('Validation failed', 422, [
-                'email' => ['Email has already been taken'],
-            ]);
-        }
-
         try {
-            $user = $this->userService->createUser([
+            $user = $this->userService->create([
                 'name' => $request->string('name'),
                 'email' => $email,
                 'password' => $request->string('password'),
             ]);
-        } catch (Throwable) {
-            return Response::error('Unable to create account', 500);
+        } catch (DuplicateEmailException) {
+            return Response::error('Validation failed', 422, [
+                'email' => ['Email has already been taken'],
+            ]);
         }
 
         $userId = (int) $user->id;

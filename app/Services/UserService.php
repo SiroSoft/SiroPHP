@@ -38,27 +38,6 @@ final class UserService
         return $this->repo->findByEmail($email);
     }
 
-    /** @param array<string, mixed> $data */
-    public function createUser(array $data): User
-    {
-        $name = $data['name'] ?? '';
-        $email = $data['email'] ?? '';
-        $password = $data['password'] ?? '';
-        /** @var string $name */
-        /** @var string $email */
-        /** @var string $password */
-        /** @var User $user */
-        $user = $this->repo->create([
-            'name' => $name,
-            'email' => $email,
-            'password' => self::hashPassword($password),
-            'status' => 1,
-            'verification_token' => hash('sha256', bin2hex(random_bytes(32))),
-            'created_at' => date('Y-m-d H:i:s'),
-        ]);
-        return $user;
-    }
-
     public function getTokenVersion(int $userId): int
     {
         $user = $this->repo->findById($userId);
@@ -129,10 +108,10 @@ final class UserService
 
     /**
      * @param array<string, mixed> $data
-     * @return array<string, mixed>
+     * @return User
      * @throws DuplicateEmailException
      */
-    public function create(array $data): array
+    public function create(array $data): User
     {
         $rawEmail = $data['email'] ?? '';
         /** @var string $rawEmail */
@@ -145,16 +124,15 @@ final class UserService
 
         $rawPassword = $data['password'] ?? '';
         /** @var string $rawPassword */
-        $userData = [
+        /** @var User $user */
+        $user = $this->repo->create([
             'name' => $data['name'],
             'email' => $email,
             'password' => self::hashPassword($rawPassword),
             'status' => 1,
-        ];
-
-        $user = $this->repo->store($userData);
-        /** @var \Siro\Core\Model|null $user */
-        return $user ? $user->toArray() : [];
+            'created_at' => date('Y-m-d H:i:s'),
+        ]);
+        return $user;
     }
 
     /**

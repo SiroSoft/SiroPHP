@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Exceptions;
 
+use Siro\Core\Env;
 use Siro\Core\Request;
 use Siro\Core\Response;
 use Siro\Core\ValidationException;
@@ -25,11 +26,7 @@ final class Handler
 
     private static function defaultError(\Throwable $e): Response
     {
-        $debug = false;
-        if (defined('SIRO_BASE_PATH') && is_string(SIRO_BASE_PATH)) {
-            $debug = is_file(SIRO_BASE_PATH . '/.env')
-                && (bool) ($_ENV['APP_DEBUG'] ?? false);
-        }
+        $debug = Env::bool('APP_DEBUG', false);
 
         $message = $debug ? $e->getMessage() : 'Internal Server Error';
         $data = $debug ? ['trace' => $e->getTraceAsString()] : [];

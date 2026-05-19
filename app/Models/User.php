@@ -39,6 +39,7 @@ final class User extends Model
         'login_attempts' => 'int',
         'locked_until' => 'datetime',
         'email_verified_at' => 'datetime',
+        'created_at' => 'datetime',
     ];
 
     /** @var array<int, string> */
@@ -46,6 +47,10 @@ final class User extends Model
         'name',
         'email',
         'password',
-        'password_reset_expires_at',
+        'status',
     ];
+
+    // Example relationships (uncomment and adjust as needed):
+    // public function posts(): HasMany { return $this->hasMany(Post::class); }
+    // public function orders(): HasMany { return $this->hasMany(Order::class); }
 }

@@ -15,14 +15,14 @@ final class AuthServiceIntegrationTest extends TestCase
         $source = $this->getMethodSource(AuthController::class, 'register');
 
         $this->assertStringContainsString(
-            'userService->getByEmail',
+            'userService->create',
             $source,
-            'register() must use $this->userService->getByEmail()'
+            'register() must use $this->userService->create()'
         );
         $this->assertStringContainsString(
-            'userService->createUser',
+            'DuplicateEmailException',
             $source,
-            'register() must use $this->userService->createUser()'
+            'register() must catch DuplicateEmailException'
         );
     }
 
@@ -74,7 +74,7 @@ final class AuthServiceIntegrationTest extends TestCase
     {
         $requiredMethods = [
             'getByEmail',
-            'createUser',
+            'create',
             'getTokenVersion',
             'verifyEmail',
             'initiatePasswordReset',

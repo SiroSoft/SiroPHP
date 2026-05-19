@@ -1,4 +1,6 @@
 *
 !.gitignore
 !.gitkeep
+!main/
+!daily/
 !traces/
