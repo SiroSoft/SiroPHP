@@ -16,6 +16,10 @@ use Siro\Core\Response;
 Metrics::init('siro', true);
 Metrics::registerRoute($app->router);
 
+// Prevent 404 noise from browser requests
+$app->router->get('/favicon.ico', fn () => Response::noContent());
+$app->router->get('/robots.txt', fn () => Response::raw("User-agent: *\nDisallow: /", 'text/plain'));
+
 $app->router->get('/health/live', function (): array {
     return [
         'success' => true,
