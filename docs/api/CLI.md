@@ -7,8 +7,35 @@ Siro ships with **72 CLI commands**. Every task — from project creation to pro
 ```bash
 php siro                    # Core workflow overview
 php siro list               # All 72 commands grouped
+php siro list --raw         # Raw command list (for tab completion)
 php siro <cmd> --help       # Details + options
 php siro --version          # Show version
+```
+
+## Tab Completion
+
+Type faster. Press Tab to autocomplete commands.
+
+### Bash
+
+```bash
+# Add to ~/.bashrc
+source /path/to/siro-completion.bash
+```
+
+### Zsh
+
+```bash
+# Add to ~/.zshrc
+source /path/to/siro-completion.zsh
+```
+
+### How it works
+
+```bash
+php siro mak + Tab → php siro make:crud
+php siro mig + Tab → php siro migrate
+php siro log: + Tab → log:tail, log:trace, log:replay, ...
 ```
 
 ---

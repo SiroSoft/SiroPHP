@@ -14,6 +14,8 @@
 [![Security](https://img.shields.io/badge/security-OWASP%20Top%2010-brightgreen)](docs/SECURITY.md)
 [![Packagist](https://img.shields.io/packagist/v/sirosoft/api)](https://packagist.org/packages/sirosoft/api)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![IDE Helper](https://img.shields.io/badge/IDE-autocomplete-brightgreen)](_ide_helper.php)
+[![Shell Completion](https://img.shields.io/badge/shell-bash%20%7C%20zsh-blue)](siro-completion.bash)
 
 </div>
 
@@ -26,7 +28,22 @@ php siro key:generate && php siro make:auth && php siro migrate && php siro serv
 
 ---
 
-## Debug a production bug without a trace ID
+## First-run experience that doesn't suck
+
+```bash
+# Tab completion works out-of-box
+php siro mak + Tab → make:crud
+
+# IDE autocomplete for all facades
+Route::get(), DB::table(), Cache::get(), Event::dispatch()
+
+# Errors that tell you what's wrong, not just "500"
+# "Token has expired" vs "Token signature is invalid"
+```
+
+---
+
+Debug a production bug without a trace ID
 
 **Every framework logs errors. Siro lets you replay them.**
 
