@@ -8,6 +8,7 @@ Siro ships with **72 CLI commands**. Every task — from project creation to pro
 php siro                    # Core workflow overview
 php siro list               # All 72 commands grouped
 php siro list --raw         # Raw command list (for tab completion)
+php siro list --json        # JSON format (for tooling)
 php siro <cmd> --help       # Details + options
 php siro --version          # Show version
 ```

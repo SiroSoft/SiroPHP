@@ -2,18 +2,21 @@
 
 ## Overview
 
-Siro provides two debug helpers available globally. No `use` statement needed.
+Siro provides debug helpers available globally. No `use` statement needed.
 
 ---
 
-## `dd()`
+## `sd()` (Siro Dump)
 
-Dump variable(s) and stop execution.
+Dump variable(s) and stop execution. `dd()` also available as alias.
 
 ```php
+sd($variable);
+sd($request, $user, $query);  // Multiple values
+sd($data);
+
+// Or use the Laravel-compatible alias:
 dd($variable);
-dd($request, $user, $query);  // Multiple values
-dd($data);
 ```
 
 Output:
@@ -48,7 +51,7 @@ Useful inside loops or middleware for debugging without breaking the flow.
 public function store(Request $request): Response
 {
     dump($request->all());  // See what's coming in (continues)
-    dd($request->user());   // See user, then stop
+    sd($request->user());   // See user, then stop
 }
 
 // In QueryBuilder — debug SQL
@@ -60,8 +63,8 @@ $results = $query->get();
 public function test_example(): void
 {
     $response = $this->get('/api/users');
-    dd($response->json());  // See full response
+    sd($response->json());  // See full response
 }
 ```
 
-> **Pro tip**: In production, `dd()` and `dump()` are disabled when `APP_DEBUG=false`. Your app won't crash if you accidentally leave them in code.
+> **Pro tip**: In production, `sd()` and `dump()` are disabled when `APP_DEBUG=false`. Your app won't crash if you accidentally leave them in code.
