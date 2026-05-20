@@ -288,9 +288,11 @@ Error format:
 ```json
 {
     "success": false,
-    "message": "Error description",
+    "message": "Validation failed",
     "errors": {
-        "field": ["Validation error message"]
+        "email": ["Email is required"],
+        "password": ["Password must be at least 8 characters"]
     }
 }
+```
 ```

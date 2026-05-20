@@ -221,6 +221,7 @@ On validation failure, a 422 response is returned:
 {
     "success": false,
     "message": "Validation failed",
+    "data": null,
     "errors": {
         "email": ["Email has already been taken"],
         "password": ["Password must be at least 8 characters"]
