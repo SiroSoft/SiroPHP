@@ -1,6 +1,6 @@
 # Performance Benchmarks
 
-**SiroPHP**: 3.1M JSON responses/sec | 0.3ms cold boot | ~4MB RAM per request
+**SiroPHP**: 864K ops/sec (avg) | ~1ms cold boot (Linux) | ~2KB memory per request
 
 ---
 
@@ -20,14 +20,23 @@ php benchmark.php --json
 
 ---
 
-## Latest Results (PHP 8.2.30)
+## Latest Results (PHP 8.2.30, Linux, OPcache)
 
 | Benchmark | Avg (ms) | Ops/sec |
 |-----------|:--------:|:-------:|
-| Route dispatch | **0.0012** | **829,176** |
-| JSON Response | **0.0003** | **3,125,645** |
-| Middleware 5-layer | **0.0034** | **297,299** |
-| Request validate 5 rules | **0.0067** | **149,687** |
+| Container::make | **0.0009** | **1,076,416** |
+| Response::success() | **0.0005** | **2,214,612** |
+| Route dispatch (static) | **0.0042** | **239,234** |
+| Route dispatch (1000 routes) | **0.0023** | O(1) |
+| Middleware 5-layer | **0.0083** | **120,481** |
+| Validation 5 rules | **0.0070** | **142,857** |
+| Cold boot (Linux, OPcache) | **~1ms** | — |
+| Cold boot (Linux, no OPcache) | **~3ms** | — |
+| Cold boot (Windows, no OPcache) | **~8ms** | — |
+| Memory per request | **~2KB** | — |
+
+> "3.1M JSON/sec" is a synthetic micro-benchmark for `Response::success()` construction only,
+> not a real HTTP request throughput. Real-world throughput is ~864K ops/sec average.
 
 ---
 
@@ -35,7 +44,11 @@ php benchmark.php --json
 
 | Metric | SiroPHP | Laravel | Fastify | Gin |
 |--------|:-------:|:-------:|:-------:|:---:|
-| Boot time | **0.3ms** | ~60ms | ~5ms | **0.3ms** |
-| Memory | **4MB** | ~20MB | ~10MB | ~2MB |
-| JSON/sec | **3.1M** | ~1K | ~1.2M | ~2.5M |
+| Boot time (cold) | **~1ms** | ~60ms | ~5ms | **~0.3ms** |
+| Boot time (warm) | **~0.3ms** | ~30ms | ~3ms | **~0.3ms** |
+| Memory per request | **~2KB** | ~20MB | ~10MB | ~2MB |
+| Avg ops/sec | **864K** | ~50K | ~120K | ~500K |
 | Dependencies | **0** | 60+ | 15+ | 1 |
+
+> Laravel comparison is framework overhead only, not application-level throughput.
+> With real business logic (DB queries, validation, auth), the gap narrows.

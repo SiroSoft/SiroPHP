@@ -15,7 +15,7 @@ final class PostRepository extends BaseRepository
     }
 
     /**
-     * @param array<string, string> $filters
+     * @param array<string, mixed> $filters
      * @return array{data: array<int, mixed>, meta: array<string, mixed>}
      */
     public function findAll(array $filters = [], int $page = 1, int $perPage = 20): array
@@ -23,6 +23,10 @@ final class PostRepository extends BaseRepository
         $query = $this->model->query();
         if (isset($filters['locale']) && $filters['locale'] !== '') {
             $query->where('locale', '=', $filters['locale']);
+        }
+        $userId = $filters['user_id'] ?? 0;
+        if (is_numeric($userId) && (int) $userId > 0) {
+            $query->where('user_id', '=', (int) $userId);
         }
         return $query->orderBy('id', 'desc')->paginate($perPage, $page);
     }

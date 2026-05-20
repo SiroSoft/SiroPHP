@@ -22,8 +22,22 @@ final class PostController extends Controller
         $rawPerPage = $request->query('per_page', 20);
         /** @var int|string $rawPage */
         /** @var int|string $rawPerPage */
+
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
+
+        $params = $request->all();
+        if ($currentUserRole !== 'admin') {
+            $params['user_id'] = $currentUserId;
+        }
+
         $result = $this->service->getAll(
-            $request->all(),
+            $params,
             (int) $rawPage,
             (int) $rawPerPage
         );
@@ -59,7 +73,7 @@ final class PostController extends Controller
 
         $postData = $post->toArray();
         $postUserId = is_numeric($postData['user_id'] ?? null) ? (int) $postData['user_id'] : 0;
-        if ($currentUserId !== $postUserId && $currentUserRole !== 'admin') {
+        if ($currentUserRole !== 'admin' && $currentUserId !== $postUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -74,6 +88,13 @@ final class PostController extends Controller
             'locale' => 'required|in:en,vi',
             'status' => 'in:draft,published',
         ]);
+
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+        }
+        $validated['user_id'] = $currentUserId;
 
         $file = $request->file('image');
         $post = $this->service->create($validated, $file);
@@ -99,7 +120,7 @@ final class PostController extends Controller
         if ($existing !== null) {
             $existingData = $existing instanceof \Siro\Core\Model ? $existing->toArray() : (array) $existing;
             $postUserId = is_numeric($existingData['user_id'] ?? null) ? (int) $existingData['user_id'] : 0;
-            if ($currentUserId !== $postUserId && $currentUserRole !== 'admin') {
+            if ($currentUserRole !== 'admin' && $currentUserId !== $postUserId) {
                 return $this->error('Forbidden', 403);
             }
         }
@@ -137,7 +158,7 @@ final class PostController extends Controller
         if ($existing !== null) {
             $existingData = $existing instanceof \Siro\Core\Model ? $existing->toArray() : (array) $existing;
             $postUserId = is_numeric($existingData['user_id'] ?? null) ? (int) $existingData['user_id'] : 0;
-            if ($currentUserId !== $postUserId && $currentUserRole !== 'admin') {
+            if ($currentUserRole !== 'admin' && $currentUserId !== $postUserId) {
                 return $this->error('Forbidden', 403);
             }
         }

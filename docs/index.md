@@ -9,7 +9,8 @@
 ### New to SiroPHP?
 1. **[Quick Start Guide](guides/QUICKSTART.md)** - Build your first API in 5 minutes
 2. **[README](../README.md)** - Overview and features
-3. **[Installation](../README.md#installation)** - Setup instructions
+3. **[Installation](../README.md)** - Setup instructions
+4. **[Workflow Guide](WORKFLOW.md)** - Complete dev flow from zero to production
 
 ### Ready to Deploy?
 - **[Deployment Guide](guides/DEPLOYMENT.md)** - Production deployment
@@ -48,24 +49,57 @@
 ### Core Components
 - **[Router](api/Router.md)** - HTTP routing
 - **[Model](api/Model.md)** - ORM and relationships
+- **[Request](api/Request.md)** - Input handling, validation, auth
+- **[Response](api/Response.md)** - Response factories, pagination
+- **[Container](api/Container.md)** - DI container, autowiring
+- **[Middleware](api/Middleware.md)** - Pipeline, built-in middleware
+- **[Validation](api/Validation.md)** - Rules, FormRequest, custom rules
 - **[Controller](api/Controller.md)** - Request handling
 - **[Response](api/Response.md)** - Response building
 - **[Request](api/Request.md)** - Input handling
-- **[Database](api/Database.md)** - Query builder
-- **[Auth](api/Auth.md)** - Authentication
-- **[Middleware](api/Middleware.md)** - Request processing
+- **[Request](api/Request.md)** - Input, validation, auth
+- **[Response](api/Response.md)** - Success/error factories
+- **[Container](api/Container.md)** - DI container, autowiring
+- **[Middleware](api/Middleware.md)** - Pipeline, built-in middleware
 
-### Utilities
-- **[Validator](api/Validator.md)** - Input validation
-- **[Cache](api/Cache.md)** - Caching system
+### Services
+- **[Validation](api/Validation.md)** - Rules, FormRequest, custom rules
+- **[Logger](api/Logger.md)** - Logging, channels, sanitization
 - **[Session](api/Session.md)** - Session management
-- **[Logger](api/Logger.md)** - Logging and tracing
-- **[HTTP Client](api/Http.md)** - Outbound requests
-- **[Storage](api/Storage.md)** - File storage
-- **[Queue](api/Queue.md)** - Job queue
+- **[Cache](guides/CACHING.md)** - Caching strategies
+- **[Queue](api/Queue.md)** - Background jobs
 - **[Mail](api/Mail.md)** - Email sending
-- **[Events](api/Events.md)** - Event dispatcher
-- **[Encrypter](api/Encrypter.md)** - Encryption
+- **[Storage](api/Storage.md)** - File storage (local + S3)
+- **[Events](api/Events.md)** - Pub/sub event system
+- **[Schedule](api/Schedule.md)** - Task scheduling
+- **[Encryption](api/Encryption.md)** - AES-256 encryption
+- **[Hash](api/Hash.md)** - Password hashing
+- **[Http](api/Http.md)** - HTTP client (cURL)
+
+### Data
+- **[Resource](api/Resource.md)** - JSON transformation
+- **[Collection](api/Collection.md)** - Array utilities
+- **[Pagination](api/Pagination.md)** - Built-in pagination
+- **[Str](api/Str.md)** - String manipulation
+- **[Url](api/Url.md)** - Signed URLs
+- **[Config](api/Config.md)** - Config loader & caching
+- **[Lang](api/Lang.md)** - i18n translation
+- **[Helpers](api/Helpers.md)** - dd(), dump()
+
+### Models & Database
+- **[Model](api/Model.md)** - ORM, relationships, CRUD
+- **[Database Guide](guides/DATABASE.md)** - Query builder, migrations
+- **[SoftDeletes](api/SoftDeletes.md)** - Soft delete trait
+- **[Observers](api/Observers.md)** - Model lifecycle hooks
+
+### CLI & Debug
+- **[CLI Reference](api/CLI.md)** - All 72 commands
+- **[Custom Commands](api/Console.md)** - Register custom CLI commands
+- **[Debug](api/Debug.md)** - Trace system, request replay
+- **[Testing](api/Testing.md)** - HTTP test helpers
+- **[FormRequest](api/FormRequest.md)** - Encapsulated validation
+- **[Metrics](api/Metrics.md)** - Prometheus endpoint
+- **[UploadedFile](api/UploadedFile.md)** - File upload handling
 
 ---
 

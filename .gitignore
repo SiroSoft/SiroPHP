@@ -85,3 +85,7 @@ openapi_test.json
 
 .git_disabled/
 
+# Generated IDE helpers (regenerate with php siro make:openapi)
+_ide_helper.php
+.phpstorm.meta.php
+

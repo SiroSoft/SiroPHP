@@ -21,7 +21,20 @@ final class OrderController extends Controller
         $page = $request->queryInt('page', 1);
         $perPage = $request->queryInt('per_page', 20);
 
-        $result = $this->service->getAll($request->all(), $page, $perPage);
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        $currentUserRole = 'user';
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+        }
+
+        $params = $request->all();
+        if ($currentUserRole !== 'admin') {
+            $params['user_id'] = $currentUserId;
+        }
+
+        $result = $this->service->getAll($params, $page, $perPage);
         /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
         return $this->paginated(
             OrderResource::collection($result['data']),
@@ -50,7 +63,7 @@ final class OrderController extends Controller
         if ($order === null) return $this->error('Order not found', 404);
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
-        if ($currentUserId !== $orderUserId && $currentUserRole !== 'admin') {
+        if ($currentUserRole !== 'admin' && $currentUserId !== $orderUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -64,6 +77,13 @@ final class OrderController extends Controller
             'customer_email' => 'required|email',
             'items' => 'required',
         ]);
+
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+        }
+        $validated['user_id'] = $currentUserId;
 
         $items = $request->input('items');
         if (!is_array($items)) {
@@ -100,7 +120,7 @@ final class OrderController extends Controller
         if ($order === null) return $this->error('Order not found', 404);
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
-        if ($currentUserId !== $orderUserId && $currentUserRole !== 'admin') {
+        if ($currentUserRole !== 'admin' && $currentUserId !== $orderUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -136,7 +156,7 @@ final class OrderController extends Controller
         if ($order === null) return $this->error('Order not found', 404);
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
-        if ($currentUserId !== $orderUserId && $currentUserRole !== 'admin') {
+        if ($currentUserRole !== 'admin' && $currentUserId !== $orderUserId) {
             return $this->error('Forbidden', 403);
         }
 

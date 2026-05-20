@@ -21,7 +21,9 @@ final class EventTest extends TestCase
             CREATE TABLE IF NOT EXISTS event_test_users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
-                email TEXT NOT NULL
+                email TEXT NOT NULL,
+                created_at TEXT,
+                updated_at TEXT
             )
         ");
         $pdo->exec("DELETE FROM event_test_users");

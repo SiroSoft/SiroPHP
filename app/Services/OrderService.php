@@ -17,7 +17,7 @@ final class OrderService
     {
     }
 
-    /** Get paginated orders with optional status filter.
+    /** Get paginated orders with optional status/user_id filter.
      * @param array<string, mixed> $queryParams
      * @return array<string, mixed>
      */
@@ -28,6 +28,10 @@ final class OrderService
             $status = $queryParams['status'];
             /** @var string $status */
             $filters['status'] = $status;
+        }
+        $uid = $queryParams['user_id'] ?? 0;
+        if (is_numeric($uid) && (int) $uid > 0) {
+            $filters['user_id'] = (int) $uid;
         }
 
         return $this->repo->findAll($filters, $page, $perPage);

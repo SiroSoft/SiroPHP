@@ -19,7 +19,7 @@ final class PostService
     {
     }
 
-    /** Get paginated posts with optional locale filter.
+    /** Get paginated posts with optional locale/user_id filter.
      * @param array<string, mixed> $queryParams
      * @return array<string, mixed>
      */
@@ -30,6 +30,10 @@ final class PostService
             $locale = $queryParams['locale'];
             /** @var string $locale */
             $filters['locale'] = $locale;
+        }
+        $uid = $queryParams['user_id'] ?? 0;
+        if (is_numeric($uid) && (int) $uid > 0) {
+            $filters['user_id'] = (int) $uid;
         }
 
         return $this->repo->findAll($filters, $page, $perPage);
@@ -46,11 +50,13 @@ final class PostService
      */
     public function create(array $validated, mixed $uploadedFile = null): mixed
     {
+        $rawUid = $validated['user_id'] ?? 0;
         $data = [
             'title' => $validated['title'],
             'body' => $validated['body'],
             'locale' => $validated['locale'],
             'status' => $validated['status'] ?? 'draft',
+            'user_id' => is_numeric($rawUid) ? (int) $rawUid : 0,
         ];
 
         if ($uploadedFile !== null) {

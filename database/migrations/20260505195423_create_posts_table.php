@@ -10,6 +10,7 @@ return new class {
     {
         Schema::create('posts', function (Blueprint $t) {
             $t->id();
+            $t->integer('user_id');
             $t->string('title');
             $t->text('body');
             $t->string('image', 255)->nullable();

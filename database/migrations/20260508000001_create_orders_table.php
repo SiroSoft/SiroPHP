@@ -10,6 +10,7 @@ return new class {
     {
         Schema::create('orders', function (Blueprint $t) {
             $t->id();
+            $t->integer('user_id');
             $t->string('customer_name', 200);
             $t->string('customer_email', 200);
             $t->decimal('total', 12, 2);
