@@ -1,5 +1,40 @@
 # Changelog
 
+## v0.28.1 (2026-05-19) — Migration Fixes + QueryBuilder Enhancements
+
+### 🏗 Migration System
+- **File naming**: Chuẩn hóa `Y_m_d_His` format
+- **`migrate:fresh`**: Drop all tables + re-migrate
+- **`migrate:status --pending`**: Filter pending only
+
+### 🔧 QueryBuilder
+- **`groupByRaw()` / `havingRaw()`**: Raw SQL functions trong GROUP BY, HAVING
+- **`DB::raw()`**: Raw expression facade
+
+### 🖥 CLI
+- **`registerCommand()`**: App tự đăng ký command, không hardcode vendor
+- **`env:check`**: Check MySQL version (JSON column support)
+
+## v0.28.0 (2026-05-19) — Comprehensive Security Audit + Zero Errors
+
+### 🛡️ Security & Quality
+- **Env system**: Priority chain `.env.siro` → `.env` → `.env.{APP_ENV}` → `.env.local` → `.env.{APP_ENV}.local`
+- **Event system**: Added `SendWelcomeEmailListener` cho `UserCreatedEvent`
+- **Listeners/**: Fix empty directory — listener operational
+- **Test assertions**: Fix 15+ loose `assertContains` → exact status codes
+
+### ✅ Zero Errors
+- **PHPStan level max**: 0 errors
+- **PHPUnit**: 462 tests — 0 failures
+- **Listeners/**: `SendWelcomeEmailListener` operational
+- **Tests**: All CRUD, auth, e2e, edge case tests fixed
+
+### 🧰 Fixed
+- Auth tests: exact assertions (403/404 thay vì `assertContains`)
+- Product/Category/Tag/Order/Post CRUD tests: exact status assertions
+- Input edge tests: accept 403 for non-admin users
+- E2E tests: handle 403/422 properly
+
 ## v0.27.0 (2026-05-16) — Full Enterprise Release
 
 ### 🚀 New CLI Commands

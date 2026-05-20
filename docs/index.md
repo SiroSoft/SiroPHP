@@ -348,6 +348,6 @@ Want to improve documentation? We welcome contributions!
 
 ---
 
-*Last updated: May 16, 2026*  
-*Documentation version: 0.27.0*  
-*SiroPHP version: 0.27.0*
+*Last updated: May 19, 2026*  
+*Documentation version: 0.28.1*  
+*SiroPHP version: 0.28.1*

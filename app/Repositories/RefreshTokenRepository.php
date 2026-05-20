@@ -18,6 +18,16 @@ class RefreshTokenRepository
         return $row;
     }
 
+    /** @return array<string, mixed>|null */
+    public function findRevokedByJti(string $jti): ?array
+    {
+        $row = DB::table('refresh_tokens')
+            ->where('jti', '=', $jti)
+            ->where('revoked', '=', 1)
+            ->first();
+        return $row;
+    }
+
     public function revokeByJti(string $jti): void
     {
         DB::table('refresh_tokens')

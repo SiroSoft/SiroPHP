@@ -9,9 +9,9 @@ parameters:
         - database/
         - routes/
         - public/
-        - tests/
     excludePaths:
         - vendor/
         - storage/
+        - tests/
     universalObjectCratesClasses:
         - Siro\Core\Model

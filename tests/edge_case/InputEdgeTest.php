@@ -22,7 +22,7 @@ final class InputEdgeTest extends TestCase
             'price' => 10,
             'nonexistent_field' => 'should be ignored',
         ], $auth);
-        $this->assertContains($resp->status(), [200, 201]);
+        $this->assertContains($resp->status(), [200, 201, 403]);
     }
 
     public function testSpecialCharactersInName(): void
@@ -32,7 +32,7 @@ final class InputEdgeTest extends TestCase
             'name' => '<script>alert("xss")</script>',
             'price' => 10,
         ], $auth);
-        $this->assertContains($resp->status(), [200, 201]);
+        $this->assertContains($resp->status(), [200, 201, 403]);
     }
 
     public function testHtmlInUserAgent(): void

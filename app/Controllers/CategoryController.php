@@ -37,6 +37,12 @@ final class CategoryController extends Controller
 
     public function store(Request $request): Response
     {
+        $currentUser = $request->user();
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
+        if ($currentUserRole !== 'admin') {
+            return $this->error('Forbidden', 403);
+        }
+
         $item = $this->service->create($this->validate(['name' => 'required|min:2|max:100']));
         /** @var array<string, mixed> $item */
         return $this->created(CategoryResource::make($item), 'Category created');
@@ -44,6 +50,12 @@ final class CategoryController extends Controller
 
     public function update(Request $request): Response
     {
+        $currentUser = $request->user();
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
+        if ($currentUserRole !== 'admin') {
+            return $this->error('Forbidden', 403);
+        }
+
         $rawId = $request->param('id');
         /** @var int|string $rawId */
         $id = (int) $rawId;
@@ -56,6 +68,12 @@ final class CategoryController extends Controller
 
     public function delete(Request $request): Response
     {
+        $currentUser = $request->user();
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
+        if ($currentUserRole !== 'admin') {
+            return $this->error('Forbidden', 403);
+        }
+
         $rawId = $request->param('id');
         /** @var int|string $rawId */
         $id = (int) $rawId;

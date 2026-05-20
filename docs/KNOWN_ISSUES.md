@@ -1,6 +1,6 @@
 # Known Issues & Limitations
 
-## v0.23 Known Issues
+## v0.28 Known Issues
 
 ### Database
 
@@ -8,7 +8,7 @@
 |-------|----------|------------|
 | No transaction rollback in CLI | Low | Use `DB::transaction()` manually |
 | SQLite foreign keys off by default | Medium | Enable with `PRAGMA foreign_keys = ON` |
-| No migrations rollback (only reset) | Low | `migrate:fresh` drops and recreates |
+| No partial rollback for specific migration | Low | `migrate:rollback --step=N` or `migrate:fresh` (v0.28.1) |
 
 ### Auth
 
@@ -29,7 +29,7 @@
 
 | Issue | Severity | Workaround |
 |-------|----------|------------|
-| File-based only (no Redis) | Medium | Use database queue |
+| Queue only DB-based (Redis driver planned for v1.0) | Low | Use database queue with retries |
 | No job retry UI | Low | Check `failed_jobs` table manually |
 
 ---

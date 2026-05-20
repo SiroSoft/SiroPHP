@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\User;
+use Siro\Core\DB;
+use Siro\Core\Database;
 use Siro\Core\Model;
 
 final class UserRepository extends BaseRepository
@@ -63,6 +65,12 @@ final class UserRepository extends BaseRepository
     public function updateWhere(string $column, mixed $value, array $data): void
     {
         User::where($column, '=', $value)->limit(1)->update($data);
+    }
+
+    public function atomicIncrement(string $column, mixed $value, string $field, int $amount): void
+    {
+        $table = (new User())->getTable();
+        Database::execute("UPDATE {$table} SET {$field} = {$field} + ? WHERE {$column} = ?", [$amount, $value]);
     }
 
     public function incrementWhere(string $column, mixed $value, string $field, int $amount): void

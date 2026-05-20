@@ -40,7 +40,6 @@ $app->router->get('/health/ready', function (): array {
         'data' => [
             'status' => $dbOk ? 'ready' : 'degraded',
             'version' => \Siro\Core\Console::getVersion(),
-            'php' => PHP_VERSION,
             'database' => $dbOk ? 'connected' : 'unreachable',
             'time' => date('c'),
         ],
@@ -71,7 +70,6 @@ $app->router->get('/', function (Request $req): mixed {
         'data' => [
             'name' => 'Siro API Framework',
             'version' => \Siro\Core\Console::getVersion(),
-            'php' => PHP_VERSION,
             'locale' => Lang::locale(),
         ],
         'meta' => [],
@@ -98,7 +96,7 @@ $app->router->get('/health', function (): array {
     ];
 })->middleware('throttle:30,1');
 
-$app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::class, 'version', 'etag', 'metrics'], function (\Siro\Core\Router $router): void {
+$app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::class, 'version', 'etag', 'metrics', 'audit'], function (\Siro\Core\Router $router): void {
     // Public auth routes
     $router->post('/auth/register', [AuthController::class, 'register'])
         ->middleware([JsonMiddleware::class, 'throttle:30,1']);

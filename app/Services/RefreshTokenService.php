@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Repositories\RefreshTokenRepository;
 use Siro\Core\Auth\JWT;
 use Siro\Core\Env;
+use Siro\Core\Logger;
 
 class RefreshTokenService
 {
@@ -58,7 +59,26 @@ class RefreshTokenService
         if ($userId <= 0 || $jti === '') return null;
 
         $stored = $this->refreshTokenRepo->findActiveByJti($jti);
-        if ($stored === null) return null;
+        if ($stored === null) {
+            // Check for token theft: revoked token being reused
+            $revoked = $this->refreshTokenRepo->findRevokedByJti($jti);
+            if ($revoked !== null) {
+                $rawUserId = $revoked['user_id'] ?? 0;
+                /** @var int|string $rawUserId */
+                $theftUserId = (int) $rawUserId;
+                Logger::security('token.theft', [
+                    'jti' => $jti,
+                    'user_id' => $theftUserId,
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+                ]);
+                // Revoke all tokens for the affected user as a precaution
+                if ($theftUserId > 0) {
+                    $this->revokeAllForUser($theftUserId);
+                    $this->userService->incrementTokenVersion($theftUserId);
+                }
+            }
+            return null;
+        }
 
         $this->refreshTokenRepo->revokeByJti($jti);
 

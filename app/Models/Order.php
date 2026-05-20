@@ -32,8 +32,6 @@ final class Order extends Model
     protected array $fillable = [
         'customer_name',
         'customer_email',
-        'total',
-        'status',
         'items',
     ];
 }

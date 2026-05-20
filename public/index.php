@@ -83,6 +83,9 @@ try {
 
     $app->boot();
 
+    // Register event listeners
+    \App\Listeners\SendWelcomeEmailListener::register();
+
     // Apply log sanitization config from .env
     \Siro\Core\Logger::setSanitizeConfig([
         'headers' => array_map('trim', explode(',', (string) \Siro\Core\Env::get('LOG_SANITIZE_HEADERS', 'authorization,cookie,x-api-key,session-id'))),
