@@ -21,10 +21,23 @@
 ### 🖥 CLI & Developer Experience
 - **Tab completion**: `siro-completion.bash` + `siro-completion.zsh` for Bash and Zsh
 - **`php siro list --raw`**: Raw command list for completion scripts
+- **`php siro list --json`**: JSON format for tooling/IDE integration
+- **`sd()` helper**: Siro Dump — dump variables with name (`dd()` kept as alias)
+- **CLI colors**: Error in red, success in green, warning in yellow, info in blue (auto-detect terminal)
 - **`_ide_helper.php`**: Full `@method` annotations for Route, DB, Cache, Event, Logger, Hash, Encrypter, Storage, Session, Str facades
 - **`.phpstorm.meta.php`**: Container::make() returns correct types in PhpStorm
 - **JWT error detail**: Debug mode shows specific errors (expired, bad signature, revoked, algorithm mismatch). Production keeps generic "Invalid or expired token"
 - **DB connection error**: Custom exception with configuration troubleshooting hints
+- **Route 404 "Did you mean?"**: Suggests similar routes when debug mode enabled
+- **`make:observer`**: Generate model observer class
+- **`make:request`**: Generate FormRequest class with validation rules
+- **`make:rule`**: Generate custom validation rule class
+- **Auto timestamps**: Model `$timestamps = true` auto-sets `created_at`/`updated_at` on save
+
+### 📝 REST API Quality
+- **Error format**: Errors moved from `meta.errors` to top-level `errors` — standard REST API convention
+- **`.env.example`**: Template shipped with project
+- **`favicon.ico` + `robots.txt`**: Routes prevent 404 noise from browser requests
 
 ### 📦 Export (OpenAPI + Postman)
 - **operationId**: All 27 endpoints have auto-generated operationIds (`productList`, `authLogin`, ...)
