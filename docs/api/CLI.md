@@ -2,59 +2,65 @@
 
 ## Overview
 
-Siro ships with 72 CLI commands. Run `php siro list` or `php siro <command> --help` for details.
-
----
-
-## Getting Help
+Siro ships with **72 CLI commands**. Every task — from project creation to production debugging — is done from the terminal. No GUI tools needed.
 
 ```bash
 php siro                    # Core workflow overview
-php siro list               # List all 72 commands
-php siro <command> --help   # Detailed help
-php siro -h                 # Shorthand help
+php siro list               # All 72 commands grouped
+php siro <cmd> --help       # Details + options
 php siro --version          # Show version
+```
+
+---
+
+## Getting Started
+
+Turn a blank terminal into a running API in 2 commands:
+
+```bash
+composer create-project sirosoft/api my-app
+cd my-app && php siro key:generate && php siro serve
 ```
 
 ---
 
 ## make:* — Code Generators (23)
 
+Scaffold code instantly. No boilerplate.
+
 | Command | Description |
 |---------|-------------|
-| `make:auth` | Full auth system (JWT, register, login, forgot/reset) |
-| `make:crud <name>` | Full CRUD (controller, model, migration, routes, tests) |
+| `make:crud <name>` | **Full CRUD** — controller, model, migration, routes, tests (`--simple`, `--seed`) |
+| `make:auth` | **Auth system** — JWT register, login, refresh, logout, forgot/reset password |
+| `make:model <name>` | Model with fillable, casts, table name |
 | `make:controller <name>` | Controller class |
-| `make:model <name>` | Model class |
 | `make:migration <name>` | Migration file |
-| `make:service <name>` | Service class |
-| `make:repository <name>` | Repository class |
-| `make:middleware <name>` | Middleware class |
+| `make:service <name>` | Service class (business logic layer) |
+| `make:repository <name>` | Repository class (data access layer) |
 | `make:resource <name>` | API resource transformer |
-| `make:request <name>` | FormRequest class |
-| `make:listener <name>` | Event listener |
+| `make:request <name>` | FormRequest class (validation + authorization) |
+| `make:middleware <name>` | Middleware class |
 | `make:event <name>` | Event class |
+| `make:listener <name>` | Event listener |
 | `make:job <name>` | Queue job |
 | `make:mail <name>` | Mail class |
 | `make:test <name>` | PHPUnit test |
 | `make:factory <name>` | Model factory |
 | `make:seeder <name>` | Database seeder |
-| `make:openapi` | OpenAPI 3.0 spec |
-| `make:postman` | Postman collection |
-| `make:lang <locale> <file>` | Language file |
+| `make:openapi` | **OpenAPI 3.0.3 spec** — auto-generated from routes + validation + resources (`--with-swagger`) |
+| `make:postman` | **Postman collection** — folder structure, auto-login, response examples (`--flow=crud`) |
+| `make:lang <locale> <file>` | Language file for i18n |
 | `make:queue-table` | Jobs table migration |
 | `make:idempotency-table` | Idempotency table migration |
 | `make:apikey-table` | API keys table migration |
-| `make:apikey <name>` | Generate API key |
-
-### Examples
+| `make:apikey <name>` | Generate API key with scopes |
 
 ```bash
-php siro make:crud products              # Full CRUD
-php siro make:crud orders --simple       # Without relations
-php siro make:crud orders --seed         # With seeder
-php siro make:auth                        # Auth scaffolding
-php siro make:openapi --with-swagger      # Swagger UI
+php siro make:crud products              # 6 files, instantly working
+php siro make:crud orders --seed         # CRUD + database seeder
+php siro make:auth                        # Full auth scaffolding
+php siro make:openapi --with-swagger      # OpenAPI + Swagger UI
+php siro make:postman                     # Postman collection
 php siro make:apikey "Mobile App" read,write 365
 ```
 
@@ -62,154 +68,212 @@ php siro make:apikey "Mobile App" read,write 365
 
 ## db:* — Database (6)
 
+Manage schema and data without SQL clients.
+
 | Command | Description |
 |---------|-------------|
-| `migrate` | Run pending migrations |
+| `migrate` | Run all pending migrations |
 | `migrate:rollback` | Rollback last batch (`--step=N`) |
-| `migrate:status` | Migration status (`--pending`) |
-| `migrate:fresh` | Drop all + re-migrate (`--seed`) |
-| `db:seed` | Run seeders |
-| `db:show <table>` | Show table schema |
-
-### Examples
+| `migrate:status` | Show migration status (`--pending`) |
+| `migrate:fresh` | Drop all tables and re-migrate (`--seed`) |
+| `db:seed` | Run database seeders |
+| `db:show <table>` | Inspect table schema (`--schema`) |
 
 ```bash
-php siro migrate                          # Run all
+php siro migrate                          # Apply pending migrations
 php siro migrate:rollback --step=2        # Rollback 2 batches
-php siro migrate:status --pending         # Pending only
-php siro migrate:fresh --seed             # Reset DB + seed
-php siro db:show users                    # Inspect users table
+php siro migrate:status --pending         # Show only pending
+php siro migrate:fresh --seed             # Reset + seed data
+php siro db:show users                    # Table structure
 ```
 
 ---
 
-## cache:* — Cache & Config (5)
+## export:* — API Documentation (2)
+
+**Killer feature** — export full OpenAPI spec and Postman collection from code. Zero annotation, zero config.
 
 | Command | Description |
 |---------|-------------|
-| `config:cache` | Cache config (HMAC-signed) |
-| `config:clear` | Clear config cache |
-| `env:cache` | Cache environment |
-| `env:check` | Validate environment |
-| `optimize` | Full production optimization |
+| `make:openapi` | **OpenAPI 3.0.3** with operationId, request/response schemas, auth |
+| `make:postman` | **Postman collection** with folders, auto-login, response examples |
 
-### Examples
+### Cơ chế dynamic — thêm API là spec tự cập nhật
+
+| Export reads from | What gets generated |
+|------------------|-------------------|
+| `$app->router->getRoutes()` | All endpoints, methods, paths |
+| `Controller::validate([...])` | Request body schemas + examples |
+| `Resource::toArray()` | Response body schemas + examples |
+| Middleware `auth` detection | Bearer auth on protected routes |
+| Controller class names | Tags (Products, Orders, Users...) |
 
 ```bash
-php siro optimize                          # Full optimization
-php siro config:cache                      # Cache config
-php siro env:check                         # Validate .env
+# Code → spec trong 2 giây
+php siro make:openapi --with-swagger
+# → docs/openapi.json      (145KB, 27 endpoints, 45 operationIds)
+# → public/openapi.json     (public URL)
+# → public/docs.html        (Swagger UI at http://localhost:8080/docs.html)
+
+# Code → Postman trong 2 giây
+php siro make:postman
+# → docs/postman/collection.json
+# → public/postman_collection.json
+
+# Import vào Postman bằng URL:
+# http://localhost:8080/postman_collection.json
 ```
 
 ---
 
-## log:* — Debug & Logs (10)
+## test:* — Testing & Benchmarks (4)
+
+Test endpoints, run suites, benchmark performance — all from CLI.
 
 | Command | Description |
 |---------|-------------|
-| `log:tail` | Tail logs (`--type`, `--lines`) |
-| `log:slow` | Slow requests (`--limit`, `--min`) |
-| `log:stats` | Log statistics (`--days`) |
+| `test` | Run PHPUnit tests (`--filter`, `--suite`, `--coverage`) |
+| `api:test` (alias: `t`) | Quick API test from CLI (no Postman needed) |
+| `benchmark` | Run performance benchmarks (`--iterations=N`, `--json`) |
+
+### API test — no Postman
+
+```bash
+# Login + auto-save token
+php siro t POST /api/auth/login email=admin@test.com password=secret --as=admin
+
+# All subsequent requests auto-attach token
+php siro t GET /api/products --as=admin
+php siro t POST /api/products name=Laptop price=999 --as=admin
+
+# Load test
+php siro t GET /api/products --as=admin --loop=100
+
+# Run automated tests
+php siro test --filter=Product
+php siro test --coverage
+```
+
+---
+
+## log:* — Debug & Observability (10)
+
+**Killer feature** — trace every request, replay any failure.
+
+| Command | Description |
+|---------|-------------|
+| `log:trace <id>` | View full trace (headers, SQL, timing, N+1) |
+| `log:replay <id>` | **Replay exact request** (`--edit`, `--diff`, `--force`) |
+| `log:export <id>` | Export trace to JSON / Postman format |
+| `log:tail` | Tail logs in real-time (`--type`, `--lines`) |
+| `log:slow` | Show slow requests (`--limit`, `--min`) |
+| `log:stats` | Request statistics (`--days=N`) |
 | `log:top` | Top slowest endpoints |
-| `log:cleanup` | Clean old logs |
-| `log:trace <id>` | View trace (with search filters) |
-| `log:replay <id>` | Replay request |
-| `log:export <id>` | Export trace |
-| `log:search` | Search traces |
-| `why` | Last request analysis |
+| `log:cleanup` | Clean old logs (`--days=N`, `--dry-run`) |
+| `debug:last` (alias: `why`) | Why did the last request fail? |
+| `debug:health` | Debug system health |
 
-### Trace Search Filters
+### Trace search — find without trace ID
 
 ```bash
-php siro log:trace --path=/api/orders       # By endpoint
-php siro log:trace --status=500             # By status
-php siro log:trace --ip=203.0.113.42        # By IP
-php siro log:trace --error="SQL"            # By error text
-php siro log:trace --since=30m              # By time range
-php siro log:trace --method=POST            # By HTTP method
-php siro log:trace --slow                   # Only slow (>100ms)
-php siro log:trace --days=7                 # Last 7 days
-php siro log:trace --limit=20               # Max results
+php siro log:trace --path=/api/orders --status=500 --since=1h
+php siro log:trace --ip=203.0.113.42 --error="Division by zero"
+php siro log:trace --method=POST --slow --limit=10
 ```
 
-### Replay Options
+### Replay — the real moat
 
 ```bash
 php siro log:replay a1b2c3d4                # Dry-run (safe)
-php siro log:replay a1b2c3d4 --edit         # Interactive edit
-php siro log:replay a1b2c3d4 --diff         # Before/after diff
-php siro log:replay a1b2c3d4 --force        # Execute replay
+php siro log:replay a1b2c3d4 --edit         # Edit body before replay
+php siro log:replay a1b2c3d4 --diff         # Before/after comparison
+php siro log:replay a1b2c3d4 --force        # Execute (verify fix)
 php siro log:replay a1b2c3d4 --set user_id=42  # Override field
-php siro log:replay a1b2c3d4 --format=curl  # As curl command
+php siro log:replay a1b2c3d4 --format=curl  # Export as curl
 php siro log:replay a1b2c3d4 --https        # Use HTTPS
 ```
 
 ---
 
-## queue:* — Queue (4)
+## cache:* — Optimize (5)
+
+Prepare for production — cache everything, validate environment.
 
 | Command | Description |
 |---------|-------------|
-| `queue:work` | Process next job (`--daemon`, `--queue`) |
-| `queue:status` | Failed jobs list |
-| `queue:retry` | Retry failed (`--all`, `--id=N`) |
-| `queue:flush` | Clear all failed jobs |
-
----
-
-## serve:* — Server (3)
-
-| Command | Description |
-|---------|-------------|
-| `serve` | Dev server (`--port`, `--host`) |
-| `start` | Interactive onboarding |
-| `frankenphp:serve` | Production FrankenPHP |
-
----
-
-## test:* — Testing (3)
-
-| Command | Description |
-|---------|-------------|
-| `test` | Run all tests (`--coverage`, `--filter`) |
-| `t` | Quick API test from CLI |
-| `benchmark` | Performance benchmarks |
-
-### API Test Options
+| `optimize` | **Full optimization** — env + config + routes + autoloader |
+| `config:cache` | Cache config (HMAC-signed) |
+| `config:clear` | Clear config cache |
+| `env:cache` | Cache environment (sensitive keys excluded) |
+| `env:check` | Validate environment configuration |
 
 ```bash
-php siro t POST /api/auth/login email=admin@test.com password=secret --as=admin
-php siro t GET /api/products --as=admin
-php siro t POST /api/products name=Laptop price=999 --as=admin
-php siro t GET /api/products --as=admin --loop=100  # Load test
+php siro optimize                          # Production optimization
+php siro config:cache                      # Cache only config
+php siro env:check                         # Validate .env
 ```
 
 ---
 
-## system:* — System (16)
+## queue:* — Background Jobs (4)
+
+Process jobs, retry failures, monitor status.
 
 | Command | Description |
 |---------|-------------|
-| `key:generate` | Generate JWT secret |
-| `doctor` | System health check (`--prod`) |
-| `deploy` | Deploy application (`--init`) |
-| `route:list` | List all routes |
-| `route:search <term>` | Search routes |
-| `up` | Disable maintenance mode |
-| `down` | Enable maintenance mode |
+| `queue:work` | Process jobs (`--daemon`, `--queue`, `--workers=N`) |
+| `queue:status` | Show queue status and failed jobs |
+| `queue:retry <id\|all>` | Retry failed job(s) |
+| `queue:flush` | Clear all failed jobs |
 | `schedule:run` | Run scheduled tasks |
-| `tinker` | Interactive PHP REPL |
-| `api:test` | CLI API testing |
-| `make:openapi` | OpenAPI generation |
-| `make:postman` | Postman generation |
-| `env:check` | Environment validation |
-| `benchmark` | Performance benchmark |
-| `optimize` | Production optimization |
-| `storage:link` | Create storage symlink |
+
+---
+
+## serve:* — Server (4)
+
+Start dev or production server.
+
+| Command | Description |
+|---------|-------------|
+| `serve` | Dev server (`--port=8080`, `--host`) |
+| `live` | Dev server with auto-reload (`--port=9090`) |
+| `start` | Interactive onboarding wizard |
+| `frankenphp:serve` | Production FrankenPHP (`--docker`, `--port=80`) |
+
+---
+
+## system:* — System (14)
+
+| Command | Description |
+|---------|-------------|
+| `key:generate` | Generate JWT secret (32+ bytes) |
+| `doctor` | System health check (`--prod`) |
+| `route:list` | List all routes with middleware |
+| `route:search <keyword>` | Search routes by path or handler name |
+| `route:rules` | Extract validation rules from all routes |
+| `deploy` | Deploy application (`--init`) |
+| `down` | Enable maintenance mode (`--message`, `--retry`, `--allow=ip`) |
+| `up` | Disable maintenance mode |
+| `storage:link` | Create public storage symlink |
+| `tinker` | Interactive PHP REPL (like Laravel tinker) |
+| `fix` | Watch code changes and auto-replay |
+| `replay <trace_id>` | Quick replay shortcut |
+| `rate:status` | Rate limiter status dashboard |
+| `env:switch <env>` | Switch between environments |
+
+```bash
+php siro doctor --prod                     # Pre-deployment check
+php siro route:list                         # All routes
+php siro route:search user                  # Find user-related routes
+php siro key:generate                       # Fresh JWT secret
+php siro tinker                             # PHP REPL
+```
 
 ---
 
 ## Alias System
+
+Commands that you type every day get shorthands:
 
 | Alias | Full Command |
 |-------|-------------|
@@ -217,3 +281,40 @@ php siro t GET /api/products --as=admin --loop=100  # Load test
 | `php siro slow` | `php siro log:slow` |
 | `php siro t` | `php siro api:test` |
 | `php siro traces` | `php siro trace:list` |
+| `php siro replay` | `php siro log:replay` |
+
+---
+
+## CLI Workflow — From Zero to Production
+
+```bash
+# ── 1. Create ──────────────────────────────────────
+composer create-project sirosoft/api my-app
+cd my-app
+php siro key:generate
+php siro env:check
+
+# ── 2. Develop ─────────────────────────────────────
+php siro make:auth
+php siro make:crud Product
+php siro make:crud Order
+php siro migrate
+
+# ── 3. Test ─────────────────────────────────────────
+php siro t POST /api/auth/login ... --as=user
+php siro t GET /api/products --as=user
+php siro t POST /api/orders ... --as=user --loop=50
+
+# ── 4. Export docs ──────────────────────────────────
+php siro make:openapi --with-swagger
+php siro make:postman
+
+# ── 5. Deploy ───────────────────────────────────────
+php siro doctor --prod
+php siro optimize
+docker compose up -d
+```
+
+**Commands used: 0**
+**Third-party tools needed: 0**
+**Time to production-ready API: ~5 minutes**
