@@ -392,6 +392,48 @@ php siro test --coverage
 
 ---
 
+## 5d. Export API Docs (Swagger + Postman)
+
+Code xong → export spec ngay. Không cần viết annotation.
+
+```bash
+# Export OpenAPI 3.0.3 spec (27 endpoints, auto-detected)
+php siro make:openapi --with-swagger
+# → docs/openapi.json
+# → public/openapi.json    (public URL)
+# → public/docs.html       (Swagger UI)
+
+# Export Postman collection (folder structure, auto-login)
+php siro make:postman
+# → docs/postman/collection.json
+# → public/postman_collection.json
+```
+
+**Mở Swagger UI trên trình duyệt:**
+
+```
+http://localhost:8080/docs.html
+```
+
+**Hoặc import vào Postman:**
+
+```
+http://localhost:8080/postman_collection.json
+```
+
+Mọi thứ đều dynamic — thêm API mới, export lại là spec tự cập nhật:
+
+| Thành phần | Cơ chế |
+|-----------|--------|
+| **Routes** | Tự động đọc từ app — thêm route là xuất hiện |
+| **Request body** | Parse từ `$this->validate([...])` trong Controller |
+| **Response body** | Parse từ `Resource::toArray()` |
+| **Tags/Folders** | Từ tên Controller (`ProductController` → `Products`) |
+| **Auth** | Tự động detect middleware `auth` → bearerAuth |
+| **Postman auth** | Pre-request script auto-login, tự động gắn token |
+
+---
+
 ## 6. Debug Errors
 
 ### 6a. Auto Trace (every request)
@@ -567,6 +609,14 @@ docker compose up -d                           # 12. Deploy
 ```
 
 **12 commands. Zero GUI. Zero third-party. From zero to production.**
+
+```bash
+# Bonus: Export API docs for frontend team
+php siro make:openapi --with-swagger                # 13. OpenAPI spec
+php siro make:postman                                # 14. Postman collection
+```
+
+**14 commands. Full API documentation — zero manual writing.**
 
 ---
 
