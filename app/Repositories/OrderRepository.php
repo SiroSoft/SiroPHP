@@ -15,7 +15,7 @@ final class OrderRepository extends BaseRepository
     }
 
     /**
-     * @param array<string, string> $filters
+     * @param array<string, mixed> $filters
      * @return array{data: array<int, mixed>, meta: array<string, mixed>}
      */
     public function findAll(array $filters = [], int $page = 1, int $perPage = 20): array
@@ -23,6 +23,10 @@ final class OrderRepository extends BaseRepository
         $query = $this->model->query();
         if (isset($filters['status']) && $filters['status'] !== '') {
             $query->where('status', '=', $filters['status']);
+        }
+        $userId = $filters['user_id'] ?? 0;
+        if (is_numeric($userId) && (int) $userId > 0) {
+            $query->where('user_id', '=', (int) $userId);
         }
         return $query->orderBy('created_at', 'DESC')->paginate($perPage, $page);
     }

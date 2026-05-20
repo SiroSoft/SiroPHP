@@ -35,5 +35,6 @@ final class Post extends Model
         'image',
         'locale',
         'status',
+        'user_id',
     ];
 }
