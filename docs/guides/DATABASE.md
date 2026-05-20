@@ -143,6 +143,35 @@ $cursor = DB::table('users')->orderBy('id')->cursor();
 foreach ($cursor as $row) {
     // Process one row at a time (memory efficient)
 }
+
+### Joins with Table Aliases
+
+```php
+// Simple join with alias
+$data = DB::table('orders as o')
+    ->leftJoin('users as u', 'o.user_id', '=', 'u.id')
+    ->where('o.status', '=', 'active')
+    ->get(['o.*', 'u.name as customer']);
+```
+
+### Closure Joins (Complex Conditions)
+
+Use a Closure for joins with multiple conditions or WHERE clauses:
+
+```php
+DB::table('users')
+    ->leftJoin('orders', function (JoinClause $join) {
+        $join->on('users.id', '=', 'orders.user_id');
+        $join->where('orders.status', '=', 'active');
+        $join->orOn('orders.priority', '=', 'high');
+    })
+    ->get();
+```
+
+Supported methods inside the Closure:
+- `$join->on('a', '=', 'b')` — AND condition
+- `$join->orOn('a', '=', 'b')` — OR condition
+- `$join->where('col', '=', 'val')` — filtered join condition
 ```
 
 ## Model ORM
@@ -333,11 +362,20 @@ final class DatabaseSeeder
 }
 ```
 
-## Connection Management
+## Raw Queries
 
 ```php
+use Siro\Core\DB;
+
 // Get raw PDO connection
-$pdo = Database::connection();
+$pdo = DB::connection();              // or Database::connection()
+$pdo = DB::connection('mysql_read');  // named connection
+
+// Raw SELECT
+$users = DB::select('SELECT * FROM users WHERE id = ?', [1]);
+
+// Raw EXECUTE (INSERT/UPDATE/DELETE)
+$affected = DB::execute('UPDATE users SET name = ? WHERE id = ?', ['John', 1]);
 
 // Get driver name
 $driver = $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);

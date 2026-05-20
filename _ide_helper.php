@@ -53,6 +53,17 @@ namespace Siro\Core {
 
 namespace Siro\Core {
     /**
+     * @method static \PDO connection(?string $name = null)
+     * @method static \Siro\Core\DB\QueryBuilder table(string $table)
+     * @method static \Siro\Core\DB\RawExpression raw(string $value)
+     * @method static array<int, array<string, mixed>> select(string $sql, array $params, ?string $connection)
+     * @method static int execute(string $sql, array $params, ?string $connection)
+     */
+    class Database {}
+}
+
+namespace Siro\Core {
+    /**
      * @method static mixed get(string $key, mixed $default = null)
      * @method static void set(string $key, mixed $value, int $ttl = 3600)
      * @method static bool has(string $key)
