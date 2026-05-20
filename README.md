@@ -1,7 +1,7 @@
 <div align="center">
   <h1>⚡ Siro</h1>
   <p><strong>API-first PHP framework with built-in request replay.</strong><br>
-  Zero dependencies · Sub-millisecond boot · 19,496 tests · OWASP Top 10 mitigated</p>
+  Zero dependencies · ~1ms boot (Linux) · 19,496 tests · OWASP Top 10 mitigated</p>
 </div>
 
 <div align="center">
@@ -70,7 +70,7 @@ No other framework — PHP, Node, Go, Rust, Python, Ruby — has this flow.
 | Pain point | Siro |
 |-----------|------|
 | **Laravel/Symfony too heavy** | **Zero** runtime dependencies. Just PHP + PDO. |
-| **50-80ms boot per request** | **~1ms** cold boot. 50-80x faster. |
+| **50-80ms boot per request** | **~1ms** cold boot (Linux). Faster. |
 | **JWT auth takes hours** | **Built-in**. Algorithm pinning, key rotation, token revocation. |
 | **N+1 kills performance** | **Auto-detected** with `php siro why`. Identity map + eager loading. |
 | **Manual CRUD boilerplate** | **1 command**: `make:crud Product` → Controller + Service + Repository + Model + Migration + Test. |

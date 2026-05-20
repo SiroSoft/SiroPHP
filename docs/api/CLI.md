@@ -43,7 +43,13 @@ php siro log: + Tab → log:tail, log:trace, log:replay, ...
 
 ## Getting Started
 
-Turn a blank terminal into a running API in 2 commands:
+Turn a blank terminal into a running API in 1 command:
+
+```bash
+php siro new my-api && cd my-api && php siro serve
+```
+
+Or with Composer:
 
 ```bash
 composer create-project sirosoft/api my-app
@@ -68,6 +74,9 @@ Scaffold code instantly. No boilerplate.
 | `make:resource <name>` | API resource transformer |
 | `make:request <name>` | FormRequest class (validation + authorization) |
 | `make:middleware <name>` | Middleware class |
+| `make:observer <name>` | Model observer class (lifecycle hooks) |
+| `make:request <name>` | FormRequest class (validation + authorization) |
+| `make:rule <name>` | Custom validation rule class |
 | `make:event <name>` | Event class |
 | `make:listener <name>` | Event listener |
 | `make:job <name>` | Queue job |
