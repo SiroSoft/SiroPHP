@@ -10,6 +10,31 @@ SiroPHP is engineered for maximum performance. This guide covers benchmarking, o
 
 ### Cold Boot Performance
 
+Benchmarked on Linux 6.8, PHP 8.2, OPcache enabled:
+
+```
+App boot + dispatch:    0.87ms  (Linux, OPcache warm)
+App boot + dispatch:    1.10ms  (Linux, cold)
+App boot + dispatch:    7.85ms  (Windows, no OPcache)
+Memory overhead:        +16KB  (all platforms)
+```
+
+> Windows cold boot is slower due to filesystem I/O (directory creation, config file scanning).
+> Production should always use Linux + OPcache for optimal performance.
+
+### Warm Request Throughput
+
+```
+GET / (root):           522,459 ops/s
+GET /nonexistent:       831,214 ops/s
+POST /auth/login:       161 ops/s (with middleware)
+POST /auth/register:    147 ops/s (with validation)
+```
+
+### Router Performance
+
+```
+Static route match:     514,954 ops/s
 ```
 App boot + dispatch:    0.87ms
 Memory overhead:        +16KB
