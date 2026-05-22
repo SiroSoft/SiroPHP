@@ -1,5 +1,35 @@
 # Release Notes
 
+## v0.28.2 — Schema & Migration Enhancements (2026-05-22)
+
+### 🏗 Migration System
+- **`Blueprint::dropIndex()`, `dropUnique()`, `dropForeign()`**: Remove indexes, unique constraints, and foreign keys in ALTER TABLE
+- **`Blueprint::primary()` for composite keys**: Define composite PRIMARY KEY via `$table->primary(['order_id', 'product_id'])`
+- **`compileAlter()` full command support**: ALTER TABLE now handles `foreign`, `unique`, `index`, `dropIndex`, `dropForeign` in addition to `addColumn`/`dropColumn`
+- **`Schema::table()`**: Now executes multiple ALTER statements (not just first)
+
+### 🔧 Bug Fixes
+- **PRIMARY KEY not compiled**: `compileCreate()` silently dropped `primary` commands — fixed (skips duplicate when column type is `id`)
+- **DEFAULT false → invalid SQL**: `(string) false` produced empty string — now outputs `DEFAULT 0` / `DEFAULT 1`
+
+### 🧪 Testing
+- 28 Schema tests pass, PHPStan Level Max: 0 errors
+
+---
+
+## v0.28.0 — Model Enhancement (2026-05-22)
+
+### ✨ New Model Features
+- **Accessors & Mutators**: Transform attributes automatically when getting (`getNameAttribute()`) or setting (`setEmailAttribute()`)
+- **Virtual Attributes (Appends)**: Abstract computed fields like `full_name`, `initials` to JSON/array serialization via `$appends` property
+- **DateTime Auto-Formatting**: `datetime` and `date` casts now return formatted strings instead of DateTime objects, fixing JSON serialization errors
+- **Appends Getters/Setters**: `getAppends()`, `setAppends()` for runtime manipulation
+
+### 📚 Documentation
+- Updated `docs/api/Model.md` with comprehensive Accessors, Mutators, Appends, and DateTime formatting examples
+
+---
+
 ## v0.27.0 — Developer Experience Overhaul (2026-05-20)
 
 ### 🛡️ Security Audit Fixes
