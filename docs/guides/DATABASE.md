@@ -106,7 +106,24 @@ return new class {
 | `->default('pending')` | Default value (string, int, float, boolean) |
 | `->default(false)` | Boolean → `DEFAULT 0` / `DEFAULT 1` |
 | `->useCurrent()` | `DEFAULT CURRENT_TIMESTAMP` |
-| `->after('col')` | Position AFTER column (ALTER TABLE, MySQL) |
+| `->after('col')` | Position AFTER column (ALTER TABLE, MySQL/MariaDB) |
+
+#### Schema Inspection
+
+| Method | Returns | Description |
+|---|---|---|
+| `Schema::hasTable('users')` | `bool` | Check if a table exists |
+| `Schema::hasColumn('users', 'email')` | `bool` | Check if a column exists |
+| `Schema::getColumnListing('users')` | `string[]` | Get all column names in a table |
+
+```php
+$columns = Schema::getColumnListing('users');
+// ['id', 'name', 'email', ...]
+
+if (Schema::hasColumn('users', 'email')) {
+    echo 'email column exists';
+}
+```
 
 ```php
 $t->string('email')->unique();

@@ -1,5 +1,18 @@
 # Release Notes
 
+## v0.29.3 — Schema Inspection & Test Coverage (2026-05-22)
+
+### 🧪 Testing
+- Added integration tests for `Schema::hasColumn()` and `Schema::getColumnListing()` with SQLite in-memory
+- Added Blueprint tests for `->after()` modifier across all drivers (MySQL, MariaDB, SQLite, PostgreSQL)
+- 53 unit/integration tests pass in siro-core
+
+### 📚 Documentation
+- Added **Schema Inspection** section to DATABASE.md — documents `hasTable()`, `hasColumn()`, `getColumnListing()`
+- Clarified `->after()` modifier: MySQL/MariaDB only, ALTER TABLE only
+
+---
+
 ## v0.29.2 — Package Auto-Discovery (2026-05-22)
 
 ### 🚀 Package Ecosystem
