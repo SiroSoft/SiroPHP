@@ -20,7 +20,58 @@ Visit: http://localhost:8000
 
 ```bash
 composer require sirosoft/core
+```\n
+> **New in v0.29.2**: Packages auto-register CLI commands and service providers.
+> Just `composer require vendor/package` — no manual configuration needed.
+
+---
+
+## 🧩 Package Ecosystem
+
+SiroPHP **v0.29.2+** auto-discovers CLI commands and service providers from any installed Composer package.
+
+### How Package Registration Works
+
+When you run `composer require vendor/package`, if that package has an `extra.siro` section in its `composer.json`:
+
+**Commands** — automatically appear in `php siro list`:
+```json
+{
+    "extra": {
+        "siro": {
+            "commands": {
+                "my:command": {
+                    "handler": "Vendor\\Package\\MyCommand",
+                    "desc": "Description"
+                }
+            }
+        }
+    }
+}
 ```
+
+**Service providers** — automatically registered at boot time:
+```json
+{
+    "extra": {
+        "siro": {
+            "providers": [
+                "Vendor\\Package\\ServiceProvider"
+            ]
+        }
+    }
+}
+```
+
+### Example: Install a Package, Use Instantly
+
+```bash
+composer require vendor/siro-package
+php siro list               # New commands appear immediately
+php siro my:command          # Run package command
+```
+
+No files to edit, no cache to clear. Just `composer require` and go.
 
 ---
 
@@ -175,7 +226,56 @@ php siro queue:work
 
 ---
 
-## 📚 Essential Commands
+## 🧩 Package Ecosystem
+
+SiroPHP **v0.29.2+** auto-discovers CLI commands and service providers from any installed Composer package.
+
+### How Package Registration Works
+
+When you run `composer require vendor/package`, if that package has an `extra.siro` section in its `composer.json`:
+
+**Commands** — automatically appear in `php siro list`:
+```json
+{
+    "extra": {
+        "siro": {
+            "commands": {
+                "my:command": {
+                    "handler": "Vendor\\Package\\MyCommand",
+                    "desc": "Description"
+                }
+            }
+        }
+    }
+}
+```
+
+**Service providers** — automatically registered at boot time:
+```json
+{
+    "extra": {
+        "siro": {
+            "providers": [
+                "Vendor\\Package\\ServiceProvider"
+            ]
+        }
+    }
+}
+```
+
+### Example: Install a Package, Use Instantly
+
+```bash
+composer require vendor/siro-package
+php siro list               # New commands appear immediately
+php siro my:command          # Run package command
+```
+
+No files to edit, no cache to clear. Just `composer require` and go.
+
+---
+
+
 
 ### Development
 

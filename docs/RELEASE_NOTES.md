@@ -1,5 +1,32 @@
 # Release Notes
 
+## v0.29.2 — Package Auto-Discovery (2026-05-22)
+
+### 🚀 Package Ecosystem
+- **`composer require` = instant availability**: Siro-core `v0.29.2` now auto-discovers CLI commands and service providers from installed packages via `extra.siro` in `composer.json`
+- Packages can register commands (appear in `php siro list`) and HTTP providers (register routes, bindings, etc.) without manual configuration
+
+### 📋 Package Convention Example
+```json
+{
+    "extra": {
+        "siro": {
+            "commands": {
+                "my:command": {
+                    "handler": "Vendor\\Package\\MyCommand",
+                    "desc": "Description"
+                }
+            },
+            "providers": [
+                "Vendor\\Package\\ServiceProvider"
+            ]
+        }
+    }
+}
+```
+
+---
+
 ## v0.28.2 — Schema & Migration Enhancements (2026-05-22)
 
 ### 🏗 Migration System
