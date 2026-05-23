@@ -1,5 +1,25 @@
 # Release Notes
 
+## v0.29.5 — Bug Fixes (2026-05-22)
+
+### 🔧 Bug Fixes
+- **core v0.29.5**: Updated `sirosoft/core` constraint from `^0.28.1` to `^0.29.5`
+  - `ModelQueryBuilder::__call()` now proxies to parent `QueryBuilder` (e.g. `whereNull`, `whereRaw`, `whereIn`)
+  - `Response::getStatusCode()` alias for Laravel compatibility
+
+## v0.29.4 — MCP Server Package (2026-05-22)
+
+### 🤖 MCP Server
+- **New package**: `sirosoft/mcp-server` — AI Agent MCP server for SiroPHP
+- **9 MCP tools**: `analyze_project`, `read_documentation`, `execute_cli` (sandboxed), `write_file`, `patch_file` (diff mode), `scaffold_model`, `scaffold_controller`, `scaffold_migration`, `scaffold_resource`
+- **24 resources** across 3 providers: `siro://docs/*` (14 docs), `siro://app/*` (9 project data), `siro://debug/*` (traces & errors)
+- **CLI command**: `php siro mcp:serve` — starts JSON-RPC 2.0 server over stdio
+- **Sandbox security**: 31-command whitelist, blocklist (`tinker`, `shell`, `exec`), destructive gate with `--force`
+- **Auto-discovery** via `extra.siro.commands` in Composer
+- Full spec and docs at `docs/guides/MCP_SERVER.md`
+
+### 📚 Documentation
+- Added complete MCP Server implementation guide
 ## v0.29.3 — Schema Inspection & Test Coverage (2026-05-22)
 
 ### 🧪 Testing
