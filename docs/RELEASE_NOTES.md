@@ -1,5 +1,102 @@
 # Release Notes
 
+## v0.29.6 — MCP Server GitHub Release (2026-05-22)
+
+### 🤖 MCP Server
+- **MCP Server v0.1.0** published to GitHub: `SiroSoft/siro-mcp-server-`
+- Updated `sirosoft/mcp-server` constraint from `@dev` to `^0.1.0` with VCS repository
+- Local path repository replaced with GitHub VCS (`https://github.com/SiroSoft/siro-mcp-server-.git`)
+
+## v0.29.5 — Bug Fixes (2026-05-22)
+
+### 🔧 Bug Fixes
+- **core v0.29.5**: Updated `sirosoft/core` constraint from `^0.28.1` to `^0.29.5`
+  - `ModelQueryBuilder::__call()` now proxies to parent `QueryBuilder` (e.g. `whereNull`, `whereRaw`, `whereIn`)
+  - `Response::getStatusCode()` alias for Laravel compatibility
+
+## v0.29.4 — MCP Server Package (2026-05-22)
+
+### 🤖 MCP Server
+- **New package**: `sirosoft/mcp-server` — AI Agent MCP server for SiroPHP
+- **9 MCP tools**: `analyze_project`, `read_documentation`, `execute_cli` (sandboxed), `write_file`, `patch_file` (diff mode), `scaffold_model`, `scaffold_controller`, `scaffold_migration`, `scaffold_resource`
+- **24 resources** across 3 providers: `siro://docs/*` (14 docs), `siro://app/*` (9 project data), `siro://debug/*` (traces & errors)
+- **CLI command**: `php siro mcp:serve` — starts JSON-RPC 2.0 server over stdio
+- **Sandbox security**: 31-command whitelist, blocklist (`tinker`, `shell`, `exec`), destructive gate with `--force`
+- **Auto-discovery** via `extra.siro.commands` in Composer
+- Full spec and docs at `docs/guides/MCP_SERVER.md`
+
+### 📚 Documentation
+- Added complete MCP Server implementation guide
+## v0.29.3 — Schema Inspection & Test Coverage (2026-05-22)
+
+### 🧪 Testing
+- Added integration tests for `Schema::hasColumn()` and `Schema::getColumnListing()` with SQLite in-memory
+- Added Blueprint tests for `->after()` modifier across all drivers (MySQL, MariaDB, SQLite, PostgreSQL)
+- 53 unit/integration tests pass in siro-core
+
+### 📚 Documentation
+- Added **Schema Inspection** section to DATABASE.md — documents `hasTable()`, `hasColumn()`, `getColumnListing()`
+- Clarified `->after()` modifier: MySQL/MariaDB only, ALTER TABLE only
+
+---
+
+## v0.29.2 — Package Auto-Discovery (2026-05-22)
+
+### 🚀 Package Ecosystem
+- **`composer require` = instant availability**: Siro-core `v0.29.2` now auto-discovers CLI commands and service providers from installed packages via `extra.siro` in `composer.json`
+- Packages can register commands (appear in `php siro list`) and HTTP providers (register routes, bindings, etc.) without manual configuration
+
+### 📋 Package Convention Example
+```json
+{
+    "extra": {
+        "siro": {
+            "commands": {
+                "my:command": {
+                    "handler": "Vendor\\Package\\MyCommand",
+                    "desc": "Description"
+                }
+            },
+            "providers": [
+                "Vendor\\Package\\ServiceProvider"
+            ]
+        }
+    }
+}
+```
+
+---
+
+## v0.28.2 — Schema & Migration Enhancements (2026-05-22)
+
+### 🏗 Migration System
+- **`Blueprint::dropIndex()`, `dropUnique()`, `dropForeign()`**: Remove indexes, unique constraints, and foreign keys in ALTER TABLE
+- **`Blueprint::primary()` for composite keys**: Define composite PRIMARY KEY via `$table->primary(['order_id', 'product_id'])`
+- **`compileAlter()` full command support**: ALTER TABLE now handles `foreign`, `unique`, `index`, `dropIndex`, `dropForeign` in addition to `addColumn`/`dropColumn`
+- **`Schema::table()`**: Now executes multiple ALTER statements (not just first)
+
+### 🔧 Bug Fixes
+- **PRIMARY KEY not compiled**: `compileCreate()` silently dropped `primary` commands — fixed (skips duplicate when column type is `id`)
+- **DEFAULT false → invalid SQL**: `(string) false` produced empty string — now outputs `DEFAULT 0` / `DEFAULT 1`
+
+### 🧪 Testing
+- 28 Schema tests pass, PHPStan Level Max: 0 errors
+
+---
+
+## v0.28.0 — Model Enhancement (2026-05-22)
+
+### ✨ New Model Features
+- **Accessors & Mutators**: Transform attributes automatically when getting (`getNameAttribute()`) or setting (`setEmailAttribute()`)
+- **Virtual Attributes (Appends)**: Abstract computed fields like `full_name`, `initials` to JSON/array serialization via `$appends` property
+- **DateTime Auto-Formatting**: `datetime` and `date` casts now return formatted strings instead of DateTime objects, fixing JSON serialization errors
+- **Appends Getters/Setters**: `getAppends()`, `setAppends()` for runtime manipulation
+
+### 📚 Documentation
+- Updated `docs/api/Model.md` with comprehensive Accessors, Mutators, Appends, and DateTime formatting examples
+
+---
+
 ## v0.27.0 — Developer Experience Overhaul (2026-05-20)
 
 ### 🛡️ Security Audit Fixes

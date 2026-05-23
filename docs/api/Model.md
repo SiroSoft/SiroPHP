@@ -304,29 +304,186 @@ $user->published_at; // DateTime instance
 
 ---
 
-## Accessors & Mutators
+## Accessors & Mutators (v0.28+)
 
-Transform attributes when getting/setting:
+Transform attributes automatically when getting or setting values.
+
+### Accessors
+
+Accessors are called when you retrieve an attribute. Define a method with the pattern `get{AttributeName}Attribute`:
 
 ```php
-// Accessor (get attribute)
-public function getFullNameAttribute(): string
+class User extends Model
 {
-    return "{$this->first_name} {$this->last_name}";
+    // Accessor - automatically called when accessing $user->name
+    public function getNameAttribute(mixed $value): string
+    {
+        return ucfirst(strtolower((string) $value));
+    }
+    
+    // Virtual accessor (no database column)
+    public function getFullNameAttribute(): string
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
 }
 
-// Usage
-$user->full_name; // "John Doe"
-
-// Mutator (set attribute)
-public function setPasswordAttribute(string $value): void
-{
-    $this->attributes['password'] = bcrypt($value);
-}
-
-// Usage
-$user->password = 'secret'; // Automatically hashed
+$user = User::find(1);
+echo $user->name;      // Auto-formatted: "John Doe"
+echo $user->full_name; // Virtual: "John Doe"
 ```
+
+### Mutators
+
+Mutators are called when you set an attribute. Define a method with the pattern `set{AttributeName}Attribute`:
+
+```php
+class User extends Model
+{
+    // Mutator - automatically called when setting $user->email
+    public function setEmailAttribute(string $value): void
+    {
+        // IMPORTANT: Set directly to avoid infinite recursion
+        $reflection = new \ReflectionClass($this);
+        $property = $reflection->getProperty('attributes');
+        $property->setAccessible(true);
+        $attrs = $property->getValue($this);
+        $attrs['email'] = strtolower($value);
+        $property->setValue($this, $attrs);
+    }
+    
+    // Hash password automatically
+    public function setPasswordAttribute(string $value): void
+    {
+        $reflection = new \ReflectionClass($this);
+        $property = $reflection->getProperty('attributes');
+        $property->setAccessible(true);
+        $attrs = $property->getValue($this);
+        $attrs['password'] = password_hash($value, PASSWORD_BCRYPT);
+        $property->setValue($this, $attrs);
+    }
+}
+
+$user = new User();
+$user->email = 'TEST@EXAMPLE.COM';  // Stored as 'test@example.com'
+$user->password = 'secret123';       // Stored as hashed value
+```
+
+**⚠️ Important:** Mutators must NOT call `$this->setAttribute()` inside the mutator method, as this causes infinite recursion. Use reflection or a helper trait to set attributes directly.
+
+### Helper Trait for Cleaner Mutators
+
+Create a reusable trait to simplify mutator syntax:
+
+```php
+// app/Traits/MutatorHelper.php
+trait MutatorHelper
+{
+    protected function setRawAttribute(string $key, mixed $value): void
+    {
+        $reflection = new \ReflectionClass($this);
+        $property = $reflection->getProperty('attributes');
+        $property->setAccessible(true);
+        $attrs = $property->getValue($this);
+        $attrs[$key] = $value;
+        $property->setValue($this, $attrs);
+    }
+}
+
+// Usage in Model
+class User extends Model
+{
+    use MutatorHelper;
+    
+    public function setEmailAttribute(string $value): void
+    {
+        $this->setRawAttribute('email', strtolower($value));
+    }
+}
+```
+
+---
+
+## Virtual Attributes with Appends (v0.28+)
+
+Add computed/virtual attributes to JSON and array serialization using the `$appends` property:
+
+```php
+class User extends Model
+{
+    protected array $appends = ['full_name', 'initials', 'age'];
+    
+    // These accessors will be included in toArray() and json_encode()
+    public function getFullNameAttribute(): string
+    {
+        return ($this->first_name ?? '') . ' ' . ($this->last_name ?? '');
+    }
+    
+    public function getInitialsAttribute(): string
+    {
+        $first = $this->first_name ?? '';
+        $last = $this->last_name ?? '';
+        return strtoupper(substr($first, 0, 1) . substr($last, 0, 1));
+    }
+    
+    public function getAgeAttribute(): int
+    {
+        return \Carbon\Carbon::parse($this->birth_date)->age;
+    }
+}
+
+$user = User::find(1);
+$data = $user->toArray();
+// Includes: id, first_name, last_name, birth_date, full_name, initials, age
+
+$json = json_encode($user);
+// {"id":1,"first_name":"John","last_name":"Doe","full_name":"John Doe","initials":"JD","age":30}
+```
+
+**Note:** Appended attributes respect the `$hidden` property. If an appended attribute is in `$hidden`, it will not be included.
+
+```php
+class User extends Model
+{
+    protected array $hidden = ['secret_data'];
+    protected array $appends = ['secret_data']; // Will NOT appear in output
+}
+```
+
+---
+
+## DateTime Auto-Formatting (v0.28+)
+
+DateTime casts now automatically format to strings for JSON-safe serialization. This eliminates common JSON encoding errors with DateTime objects.
+
+```php
+class Post extends Model
+{
+    protected array $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'published_at' => 'date',
+    ];
+}
+
+$post = Post::find(1);
+
+// Before v0.28: Returns DateTime object (causes JSON errors)
+// After v0.28: Returns formatted string
+echo $post->created_at;   // "2024-01-15 10:30:00"
+echo $post->published_at; // "2024-01-15 00:00:00"
+
+// JSON serialization works perfectly - no more errors!
+$json = json_encode($post);
+// {"id":1,"created_at":"2024-01-15 10:30:00","published_at":"2024-01-15 00:00:00"}
+
+// In API responses
+return Response::success($post); // DateTime fields are strings, not objects
+```
+
+**Supported date cast types:**
+- `'datetime'` - Full datetime with time: `Y-m-d H:i:s`
+- `'date'` - Date only: `Y-m-d H:i:s`
 
 ---
 

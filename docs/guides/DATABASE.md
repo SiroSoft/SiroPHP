@@ -67,20 +67,70 @@ return new class {
 
 | Method | Description |
 |--------|-------------|
-| `$t->id()` | Auto-increment primary key |
+| `$t->id()` | Auto-increment BIGINT primary key |
+| `$t->increments('col')` | Auto-increment INT primary key |
+| `$t->foreignId('col')` | VARCHAR(36) column for UUID foreign keys |
 | `$t->string('col', length)` | VARCHAR column |
 | `$t->text('col')` | TEXT column |
 | `$t->integer('col')` | INT column |
-| `$t->smallint('col')` | SMALLINT column |
+| `$t->smallint('col')` | SMALLINT / TINYINT(1) column |
+| `$t->bigint('col')` | BIGINT column (unsigned by default) |
 | `$t->decimal('col', precision, scale)` | DECIMAL column |
+| `$t->float('col', precision)` | FLOAT column |
+| `$t->boolean('col')` | TINYINT(1) / BOOLEAN column |
+| `$t->date('col')` | DATE column |
+| `$t->datetime('col')` | DATETIME / TIMESTAMP column |
+| `$t->timestamp('col')` | TIMESTAMP column |
+| `$t->json('col')` | JSON / JSONB column |
 | `$t->timestamps()` | Adds created_at, updated_at |
+| `$t->softDeletes('col')` | Adds nullable deleted_at TIMESTAMP |
+| `$t->rememberToken()` | Adds nullable remember_token VARCHAR(100) |
+
+### Indexes & Constraints
+
+| Method | Description |
+|--------|-------------|
+| `$t->primary(['order_id', 'product_id'])` | Composite PRIMARY KEY |
+| `$t->index('email')` | Add index |
+| `$t->unique('slug')` | Add unique index |
+| `$t->foreign('user_id')->constrained('users')` | Foreign key constraint |
+| `$t->dropIndex('idx_email')` | Drop index (ALTER TABLE) |
+| `$t->dropUnique('uq_users_slug')` | Drop unique index (ALTER TABLE) |
+| `$t->dropForeign('fk_name')` | Drop foreign key (ALTER TABLE) |
 
 ### Column Modifiers
+
+| Modifier | Description |
+|----------|-------------|
+| `->nullable()` | Allow NULL values |
+| `->default('pending')` | Default value (string, int, float, boolean) |
+| `->default(false)` | Boolean → `DEFAULT 0` / `DEFAULT 1` |
+| `->useCurrent()` | `DEFAULT CURRENT_TIMESTAMP` |
+| `->after('col')` | Position AFTER column (ALTER TABLE, MySQL/MariaDB) |
+
+#### Schema Inspection
+
+| Method | Returns | Description |
+|---|---|---|
+| `Schema::hasTable('users')` | `bool` | Check if a table exists |
+| `Schema::hasColumn('users', 'email')` | `bool` | Check if a column exists |
+| `Schema::getColumnListing('users')` | `string[]` | Get all column names in a table |
+
+```php
+$columns = Schema::getColumnListing('users');
+// ['id', 'name', 'email', ...]
+
+if (Schema::hasColumn('users', 'email')) {
+    echo 'email column exists';
+}
+```
 
 ```php
 $t->string('email')->unique();
 $t->text('bio')->nullable();
 $t->integer('views')->default(0);
+$t->boolean('active')->default(false);
+$t->string('status', 20)->default('pending')->after('name');
 ```
 
 ### Running Migrations
