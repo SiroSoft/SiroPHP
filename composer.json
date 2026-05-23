@@ -24,17 +24,14 @@
     },
     "repositories": [
         {
-            "type": "path",
-            "url": "../siro-mcp-server",
-            "options": {
-                "symlink": false
-            }
+            "type": "vcs",
+            "url": "https://github.com/SiroSoft/siro-mcp-server-.git"
         }
     ],
     "require": {
         "php": ">=8.2",
         "sirosoft/core": "^0.29.5",
-        "sirosoft/mcp-server": "@dev",
+        "sirosoft/mcp-server": "^0.1.0",
         "ext-pdo": "*",
         "ext-json": "*",
         "ext-mbstring": "*"

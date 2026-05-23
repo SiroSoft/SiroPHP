@@ -1,5 +1,12 @@
 # Release Notes
 
+## v0.29.6 — MCP Server GitHub Release (2026-05-22)
+
+### 🤖 MCP Server
+- **MCP Server v0.1.0** published to GitHub: `SiroSoft/siro-mcp-server-`
+- Updated `sirosoft/mcp-server` constraint from `@dev` to `^0.1.0` with VCS repository
+- Local path repository replaced with GitHub VCS (`https://github.com/SiroSoft/siro-mcp-server-.git`)
+
 ## v0.29.5 — Bug Fixes (2026-05-22)
 
 ### 🔧 Bug Fixes
