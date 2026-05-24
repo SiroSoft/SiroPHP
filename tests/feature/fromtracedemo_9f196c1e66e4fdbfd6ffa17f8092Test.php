@@ -6,25 +6,28 @@ namespace App\Tests\Feature;
 
 use App\Tests\TestCase;
 
-final class fromtracedemo_9f196c1e66e4fdbfd6ffa17f8092Test extends TestCase
+final class FromTracedemo_9f196c1e66e4fdbfd6ffa17f8092Test extends TestCase
 {
-    public function testIndexReturns200(): void
+    public function test_post_api_orders(): void
     {
-        $this->get('/api/fromtracedemo_9f196c1e66e4fdbfd6ffa17f8092')->assertOk();
-    }
+        $headers = $this->authenticate();
+        $response = $this->post('/api/orders', array (
+          'product_id' => 10,
+          'quantity' => 2,
+          'shipping_address' => 
+          array (
+            'street' => '123 Main St',
+            'city' => 'Ho Chi Minh',
+            'country' => 'VN',
+          ),
+        ), $headers);
+        $response->assertStatus(500);
 
-    public function testShowReturns404ForInvalidId(): void
-    {
-        $this->get('/api/fromtracedemo_9f196c1e66e4fdbfd6ffa17f8092/999')->assertNotFound();
-    }
-
-    public function testStoreReturns201WithValidData(): void
-    {
-        $this->post('/api/fromtracedemo_9f196c1e66e4fdbfd6ffa17f8092', ['name' => 'Test'])->assertCreated();
-    }
-
-    public function testStoreReturns422WithoutRequiredFields(): void
-    {
-        $this->post('/api/fromtracedemo_9f196c1e66e4fdbfd6ffa17f8092', [])->assertValidationError();
+        // Verify JSON structure
+        $body = $response->json();
+        $this->assertArrayHasKey('success', $body);
+        $this->assertArrayHasKey('message', $body);
+        
+        $response->assertJsonPath('success', false);
     }
 }

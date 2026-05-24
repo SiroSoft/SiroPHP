@@ -269,6 +269,27 @@ php vendor/bin/phpunit tests/feature/ProductTest.php
 
 ```bash
 # Generate a PHPUnit test from a captured trace
+# The test reproduces the exact request and asserts the response
+php siro make:test --from-trace=<trace_id>
+
+# Ignore dynamic fields (id, token, timestamps) for stable assertions
+php siro make:test --from-trace=<trace_id> --ignore=id,created_at,token
+
+# Generated: tests/Feature/FromTrace_<id>Test.php
+# Contains: method, path, body, auth headers, status assertion, JSON structure check
+```
+
+The generated test:
+- Replays the exact HTTP request from the trace
+- Auto-fetches auth token via `authenticate()` if the trace had auth
+- Asserts the same HTTP status code
+- Verifies JSON structure with `assertArrayHasKey`
+- Supports `--ignore` for dynamic fields (id, created_at, token, etc.)
+
+This turns production incidents into automated regression tests.
+
+```bash
+# Generate a PHPUnit test from a captured trace
 php siro replay <trace_id> --test
 
 # Generated: tests/Feature/fromtrace_<id>Test.php
