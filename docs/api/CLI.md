@@ -2,11 +2,11 @@
 
 ## Overview
 
-Siro ships with **72 CLI commands**. Every task — from project creation to production debugging — is done from the terminal. No GUI tools needed.
+Siro ships with **80+ CLI commands**. Every task — from project creation to production debugging — is done from the terminal. No GUI tools needed.
 
 ```bash
 php siro                    # Core workflow overview
-php siro list               # All 72 commands grouped
+php siro list               # All 80+ commands grouped
 php siro list --raw         # Raw command list (for tab completion)
 php siro list --json        # JSON format (for tooling)
 php siro <cmd> --help       # Details + options

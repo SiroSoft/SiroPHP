@@ -265,6 +265,26 @@ php vendor/bin/phpunit --filter testCreateProduct
 php vendor/bin/phpunit tests/feature/ProductTest.php
 ```
 
+## Generate Tests from Real Traces
+
+```bash
+# Generate a PHPUnit test from a captured trace
+php siro replay <trace_id> --test
+
+# Generated: tests/Feature/fromtrace_<id>Test.php
+# Contains the exact request data from production
+```
+
+## Generate Test Stubs
+
+```bash
+# Generate a feature test (HTTP endpoint tests)
+php siro make:test OrderTest
+
+# Generate a unit test (isolated component test)
+php siro make:test PaymentService --unit
+```
+
 ## Best Practices
 
 - Use `$this->authenticate()` to obtain auth headers for protected endpoints.

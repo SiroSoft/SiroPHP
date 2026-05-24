@@ -24,13 +24,22 @@
     },
     "repositories": [
         {
+            "type": "path",
+            "url": "../siro-core",
+            "options": {
+                "canonical": false
+            }
+        },
+        {
             "type": "vcs",
             "url": "https://github.com/SiroSoft/siro-mcp-server-.git"
         }
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "php": ">=8.2",
-        "sirosoft/core": "^0.29.5",
+        "sirosoft/core": "dev-feature/cli-debug",
         "sirosoft/mcp-server": "^0.1.0",
         "ext-pdo": "*",
         "ext-json": "*",
@@ -68,7 +77,6 @@
             "App\\": "app/"
         }
     },
-    "minimum-stability": "stable",
     "prefer-stable": true,
     "require-dev": {
         "phpunit/phpunit": "11.5.50",
