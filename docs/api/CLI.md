@@ -170,6 +170,7 @@ Test endpoints, run suites, benchmark performance — all from CLI.
 | Command | Description |
 |---------|-------------|
 | `test` | Run PHPUnit tests (`--filter`, `--suite`, `--coverage`) |
+| `test:regression` | Replay all traces, detect response changes | `php siro test:regression [--limit=N]` |
 | `api:test` (alias: `t`) | Quick API test from CLI (no Postman needed) |
 | `benchmark` | Run performance benchmarks (`--iterations=N`, `--json`) |
 
