@@ -1,7 +1,7 @@
 <div align="center">
   <h1>⚡ Siro</h1>
-  <p><strong>Production Debugging & Testing Framework for PHP APIs.</strong><br>
-  Debug a production bug in 4 commands · Zero dependencies</p>
+  <p><strong>Production-first API framework for PHP.</strong><br>
+  Zero dependencies. 60 seconds to auth + CRUD. Debug production from your terminal.</p>
 </div>
 
 <div align="center">
@@ -9,140 +9,163 @@
 [![PHP 8.2+](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
 [![Tests](https://img.shields.io/badge/tests-19.496%20pass-brightgreen)](tests/)
 [![PHPStan](https://img.shields.io/badge/PHPStan-Level%20Max-brightgreen)](https://phpstan.org)
-[![Psalm](https://img.shields.io/badge/Psalm-Level%201-brightgreen)](https://psalm.dev)
-[![Mutation](https://img.shields.io/badge/mutation-MSI%20≥80%25-brightgreen)](https://infection.github.io)
-[![Security](https://img.shields.io/badge/security-OWASP%20Top%2010-brightgreen)](docs/SECURITY.md)
-[![Packagist](https://img.shields.io/packagist/v/sirosoft/api)](https://packagist.org/packages/sirosoft/api)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![IDE Helper](https://img.shields.io/badge/IDE-autocomplete-brightgreen)](_ide_helper.php)
-[![Shell Completion](https://img.shields.io/badge/shell-bash%20%7C%20zsh-blue)](siro-completion.bash)
+[![Packagist](https://img.shields.io/packagist/v/sirosoft/api)](https://packagist.org/packages/sirosoft/api)
 
 </div>
 
+---
+
+## 60 seconds to a working API with auth
+
 ```bash
-# 5 commands → production API with auth
-composer create-project sirosoft/api my-api && cd my-api
+composer create-project sirosoft/api my-api
+cd my-api
 php siro key:generate && php siro make:auth && php siro migrate && php siro serve
-# 🚀 http://localhost:8080 — JWT auth + CRUD ready
+```
+
+That's it. Your API is live at `http://localhost:8080` with:
+
+```http
+POST /api/auth/register     {"name":"Demo","email":"demo@test.com","password":"secret123"}
+POST /api/auth/login        {"email":"demo@test.com","password":"secret123"}
+POST /api/auth/refresh      {"refresh_token":"..."}
+POST /api/auth/logout
+GET  /api/auth/me
+```
+
+No packages to install. No config files to write. No Postman setup.
+
+> Tip: `php siro t GET /api/auth/me` — shorthand for `api:test`, auto-auth.
+
+---
+
+## What you get out of the box
+
+```
+my-api/
+├── app/
+│   ├── Controllers/      # 7 pre-built (Auth + 6 CRUD)
+│   ├── Models/           # 6 pre-built (User, Product, Category, Tag, Order, Post)
+│   ├── Services/         # 8 pre-built (BaseService pattern)
+│   ├── Middleware/       # 2 custom middleware
+│   └── Exceptions/       # Exception handler
+├── database/
+│   ├── migrations/       # 13 migrations
+│   └── seeders/          # 2 seeders
+├── routes/
+│   └── api.php           # 20+ routes
+├── tests/                # 462 passing tests
+├── docker-compose.yml    # FrankenPHP + Nginx + Caddy
+├── Dockerfile            # Production build
+├── k8s/                  # Helm chart
+└── openapi.yaml          # OpenAPI 3.0 spec
+```
+
+Not an empty skeleton — a **production-grade API project**, ready to deploy.
+
+---
+
+## Debug a production bug in 4 commands
+
+```bash
+# 1. Search
+php siro log:trace --path=/api/orders --status=500 --since=30m
+
+# 2. Replay & diff — so sánh trước/sau fix
+php siro replay siro_a1b2c3d4 --diff
+```
+
+```
+  === BEFORE ===                    === AFTER ===
+  Status: 500                       Status: 200
+  Body: {"success":false}           Body: {"success":true,"data":{"id":100}}
+                                    ✅ Fixed!
+```
+
+```bash
+# 3. Generate test từ bug thật
+php siro make:test --from-trace=siro_a1b2c3d4
+```
+
+```
+Generated: tests/Feature/FromTraceDemo_...Test.php
+  php vendor/bin/phpunit --filter=FromTraceDemo_...
+  → OK (1 test, 6 assertions)
+```
+
+```bash
+# 4. Regression — verify không break
+php siro test:regression --fail
 ```
 
 ---
 
-## First-run experience that doesn't suck
+## What does `api:why` look like?
 
 ```bash
-# Tab completion works out-of-box
-php siro mak + Tab → make:crud
-
-# IDE autocomplete for all facades
-Route::get(), DB::table(), Cache::get(), Event::dispatch()
-
-# Errors that tell you what's wrong, not just "500"
-# "Token has expired" vs "Token signature is invalid"
+php siro api:why POST /api/orders
 ```
 
----
+```
+  Request
+  ────────────────────────────────────────────────────────
+  Route:    POST /api/orders
+  Status:   ✗ 500
+  Duration: 143ms
+  Trace ID: siro_a1b2c3d4
+  ────────────────────────────────────────────────────────
 
-Debug a production bug without a trace ID
+  Middleware Pipeline
+    ├ ✓ AuthMiddleware        2.1ms
+    ├ ✓ RateLimitMiddleware   0.8ms
+    ├ ✓ CSRFMiddleware        0.4ms
+    └ ✗ OrderMiddleware       35ms   ⚠ slow
 
-**Every framework logs errors. Siro lets you replay them.**
+  SQL Queries
+    ├ ▸ SELECT            products  12ms
+    ├ ▸ INSERT            orders    8ms
+    └ ⚠ UPDATE            inventory  102ms   ⚠ slow
+      Total SQL: 122ms
 
-```bash
-# 1. Search — customer chỉ nhớ "lúc đặt hàng bị lỗi", không có trace ID
-php siro log:trace --path=/api/orders --status=500 --since=1h
+  Exception
+    SQLSTATE[23000]: Deadlock found; try restarting transaction
 
-# 2. Inspect — xem full context: headers, body, SQL queries, timing
-php siro log:trace siro_a1b2c3d4
+  Possible Cause
+    • Concurrent transaction conflict
+    • Missing retry logic for deadlock scenarios
 
-# 3. Replay — dry-run mặc định, an toàn trên production
-php siro log:replay siro_a1b2c3d4
+  Suggested Fix
+    ▸ Wrap transaction in retry loop (max 3 attempts)
+    ▸ Reduce transaction scope
+    ▸ php siro replay siro_a1b2c3d4 --edit
 
-# 4. Edit + Diff — sửa body, test fix, so sánh kết quả
-php siro log:replay siro_a1b2c3d4 --edit --diff
+  Response Source
+    └ Controller::store
+
+  Replay
+    [r]  php siro replay siro_a1b2c3d4 --force
+    [e]  php siro replay siro_a1b2c3d4 --edit
+    [d]  php siro replay siro_a1b2c3d4 --diff
+    [t]  php siro make:test --from-trace=siro_a1b2c3d4
+
+  ────────────────────────────────────────────────────────
 ```
 
 No other framework — PHP, Node, Go, Rust, Python, Ruby — has this flow.
 
 ---
 
-## Why Siro?
+## Killer features
 
-| Pain point | Siro |
-|-----------|------|
-| **Laravel/Symfony too heavy** | **Zero** runtime dependencies. Just PHP + PDO. |
-| **50-80ms boot per request** | **~1ms** cold boot (Linux). Faster. |
-| **JWT auth takes hours** | **Built-in**. Algorithm pinning, key rotation, token revocation. |
-| **N+1 kills performance** | **Auto-detected** with `php siro why`. Identity map + eager loading. |
-| **Manual CRUD boilerplate** | **1 command**: `make:crud Product` → Controller + Service + Repository + Model + Migration + Test. |
-| **Security audits find issues** | **9 Critical fixes** applied from world-class audit. OWASP Top 10 mitigated. |
-| **Testing takes too long** | **462 app tests in 34s** + 19,034 core tests. PHPStan level max. |
-| **Dependency vulnerabilities** | **Zero** transitive dependencies. `composer audit` = 0 issues. |
-
----
-
-## Quick start
-
-```bash
-# 1. Create project
-composer create-project sirosoft/api my-api
-cd my-api
-
-# 2. Generate keys + auth
-php siro key:generate
-php siro make:auth
-
-# 3. Create your first resource
-php siro make:crud Product
-
-# 4. Migrate + serve
-php siro migrate
-php siro serve --port=8080
-```
-
-```http
-POST /api/auth/register   {"name":"Demo","email":"demo@test.com","password":"secret123"}
-POST /api/auth/login      {"email":"demo@test.com","password":"secret123"}
-GET  /api/products        [Authorization: Bearer <token>]
-POST /api/products        {"name":"Laptop","price":999}
-```
-
----
-
-## Built-in features (zero packages needed)
-
-| Category | What you get |
-|----------|-------------|
-| **Auth** | JWT access+refresh tokens, algorithm pinning (HS256/RS256), key rotation, JTI blacklist, API keys |
-| **CLI** | 72 commands: `make:crud`, `make:auth`, `migrate`, `log:replay`, `api:test`, `benchmark`... |
-| **ORM** | Active Record, HasOne/HasMany/BelongsTo/BelongsToMany, eager loading, soft deletes, identity map |
-| **Security** | CSP, CORS, CSRF, rate limiting, audit log, SQLi prevention (100% prepared statements), XSS protection |
-| **Debug** | Request replay, trace search by IP/path/error, `php siro why`, N+1 detection, log sanitization |
-| **Database** | Query Builder, migrations, SQLite/MySQL/PostgreSQL, pagination, row locking |
-| **Cache** | File + Redis drivers, auto-prefix, query/route/config caching |
-| **Queue** | DB-based jobs, exponential backoff, timeout, priority, retry |
-| **Mail** | SMTP (STARTTLS), sendmail, async queuing, attachments |
-| **Validation** | 15+ rules: required, email, unique, exists, min, max, regex, file, image... |
-| **Events** | Pub/sub, wildcards, one-time listeners, model lifecycle hooks |
-| **Storage** | Local filesystem, S3-compatible (AWS Signature V4) |
-| **API Tools** | OpenAPI spec generation, Postman collection, Prometheus metrics, API versioning |
-| **Testing** | PHPUnit base test case, in-memory SQLite, HTTP test helpers, transaction rollback |
-
----
-
-## Performance
-
-```
-Benchmark                        Result
-─────────────────────────────────────────────────────
-  Cold boot                      ~1ms
-  Route dispatch (static)        0.002ms  (488K ops/sec)
-  Route dispatch (1000 routes)   0.002ms  (O(1))
-  Middleware (10 layers)         0.012ms
-  Memory per request             ~2KB
-  Full lifecycle                 0.29ms   (3,447 req/sec)
-```
-
-Compare: Laravel ~50K ops/sec → **Siro ~864K ops/sec** (17x faster).
+| Feature | What it does | Why it matters |
+|---------|-------------|----------------|
+| **`api:why`** | Debug any request by method + path | Instant root cause — no log diving |
+| **`replay`** | Replay exact production request locally | Reproduce bugs in 5 seconds |
+| **`make:test --from-trace`** | Generate PHPUnit test from real trace | Every bug becomes a permanent regression test |
+| **`test:regression`** | Replay all traces, detect regressions | System gets stronger over time |
+| **`make:crud`** | Full CRUD in 2 seconds | Model + Controller + Migration + Routes + Tests |
+| **`fix`** | Watch mode — auto re-test on save | Fix and verify in one loop |
 
 ---
 
@@ -158,14 +181,47 @@ Compare: Laravel ~50K ops/sec → **Siro ~864K ops/sec** (17x faster).
 | PHPStan | **Level Max — 0 errors** |
 | Psalm | **Level 1 — 0 errors** |
 | Composer audit | **0 vulnerabilities** |
-| Supply chain | SLSA + SBOM (CycloneDX) |
+
+---
+
+## Built-in features (zero packages needed)
+
+| Category | What you get |
+|----------|-------------|
+| **Auth** | JWT access+refresh, algorithm pinning (HS256/RS256), key rotation, API keys |
+| **CLI** | 80 commands: `make:crud`, `make:auth`, `migrate`, `log:replay`, `api:test`... |
+| **ORM** | Active Record, all relation types, eager loading, soft deletes, identity map |
+| **Security** | CSP, CORS, CSRF, rate limiting, audit log, SQLi prevention (prepared statements) |
+| **Debug** | Request replay, trace search, `api:why`, `db:why`, N+1 detection |
+| **Database** | Query Builder, migrations, SQLite/MySQL/PostgreSQL |
+| **Cache** | File + Redis drivers |
+| **Queue** | DB-based jobs, exponential backoff, priority, retry |
+| **Mail** | SMTP (STARTTLS), sendmail, async queuing, attachments |
+| **Validation** | 15+ rules, FormRequest |
+| **Events** | Pub/sub, wildcards, model lifecycle hooks |
+| **Storage** | Local filesystem, S3-compatible |
+| **API Tools** | OpenAPI spec generation, Postman collection, Prometheus metrics |
+
+---
+
+## Performance
+
+```
+Cold boot (Linux + OPcache):     ~0.5 ms
+Cold boot (Windows, no OPcache): ~2.4 ms
+Route dispatch static O(1):      ~0.003 ms (~300K ops/sec)
+Full-stack (warm route+response): ~0.003 ms (~360K ops/sec)
+Memory (framework baseline):      ~4 MB
+```
+
+Detailed benchmarks: [BENCHMARK.md](https://github.com/SiroSoft/siro-core/blob/main/BENCHMARK.md)
 
 ---
 
 ## Deployment
 
 ```bash
-# Production (FrankenPHP — multi-worker, HTTP/2, HTTP/3, auto HTTPS)
+# Production — FrankenPHP, multi-worker, auto HTTPS
 docker compose up -d
 
 # Or build yourself
@@ -173,11 +229,26 @@ docker build -f Dockerfile.frankenphp -t my-api .
 docker run -p 80:80 -p 443:443 my-api
 ```
 
+FrankenPHP + Docker + Kubernetes (Helm chart) included.
+
+---
+
+## Philosophy
+
+Traditional frameworks focus on **writing code**.
+
+Siro focuses on **operating APIs in production**.
+
+```bash
+# Most frameworks: → log file → guess → add logging → redeploy → wait → repeat
+# Siro:            → log:trace → replay → fix → test:regression → done
+```
+
 ---
 
 ## Requirements
 
-PHP 8.2+ with `ext-pdo`, `ext-json`, `ext-mbstring`. Optional: `ext-redis`, `ext-openssl`.
+PHP 8.2+ with `ext-pdo`, `ext-json`, `ext-mbstring`.
 
 ---
 
@@ -186,7 +257,7 @@ PHP 8.2+ with `ext-pdo`, `ext-json`, `ext-mbstring`. Optional: `ext-redis`, `ext
 | ✅ Good fit | ❌ Not a fit |
 |------------|-------------|
 | REST API / microservices | Full-stack web apps (Blade, Livewire) |
-| High-throughput (10K+ req/s) | Need large ecosystem packages |
+| High-throughput APIs | Need large ecosystem packages |
 | Startup MVP (fast iteration) | Team already deep in Laravel |
 | SPA backend (React, Vue) | Need admin panel out-of-box |
 | Serverless (Lambda, CF) | — |
