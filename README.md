@@ -68,16 +68,19 @@ Your API is live. JWT auth ready. No config files. No Postman.
 
 ---
 
-## Workflow
+## Build → Ship → Why → Replay → Fix → Test → Regression
 
 ```bash
-# 1. CRUD in 2 seconds
+# 1. Build — CRUD in 2 seconds
 php siro make:crud Product
 
-# 2. Debug — why shows root cause instantly
+# 2. Ship — deploy
+php siro deploy
+
+# 3. Why — debug production failure
 php siro why
 
-# 3. Replay & diff — so sánh trước/sau fix
+# 4. Replay & diff — so sánh trước/sau fix
 php siro replay siro_a1b2c3d4 --diff
 ```
 
@@ -89,10 +92,13 @@ php siro replay siro_a1b2c3d4 --diff
 ```
 
 ```bash
-# 4. Generate test từ bug thật
+# 5. Fix — watch mode, auto re-test
+php siro fix
+
+# 6. Test — generate from real trace
 php siro make:test --from-trace=siro_a1b2c3d4
 
-# 5. Regression suite — verify không break
+# 7. Regression — verify không break
 php siro test:regression --fail
 ```
 
