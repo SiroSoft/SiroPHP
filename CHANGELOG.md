@@ -1,5 +1,34 @@
 # Changelog
 
+## v0.30.1 (2026-05-25) — README UI, Packagist metadata
+
+### 🧹 Chore
+- Rewrote README — cinematic restructure, production-first positioning, workflow pipeline
+- Fixed orphaned content in workflow section
+- Shortened Packagist description
+- Changed `sirosoft/core` dependency from `dev-feature/cli-debug` → `^0.30`
+
+---
+
+## v0.30.0 (2026-05-25) — Feature: CLI Debug Workflow
+
+### 🔥 Features
+- `make:crud Product` — full CRUD in 2 seconds
+- `api:why` / `db:why` — instant root cause debugging
+- `replay --diff` — before/after comparison
+- `make:test --from-trace` — generate PHPUnit test from real trace
+- `test:regression --fail` — regression suite
+- `fix` — watch mode, auto re-test on save
+- `deploy` — one-command deploy
+
+### 📦 Skeleton
+- 7 pre-built controllers
+- 462 passing tests
+- docker-compose.yml (FrankenPHP + Nginx + Caddy)
+- Kubernetes Helm chart
+
+---
+
 ## v0.28.1 (2026-05-19) — Migration Fixes + QueryBuilder Enhancements
 
 ### 🏗 Migration System
