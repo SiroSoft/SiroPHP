@@ -39,7 +39,7 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.2",
-        "sirosoft/core": "dev-feature/cli-debug",
+        "sirosoft/core": "^0.30",
         "sirosoft/mcp-server": "^0.1.0",
         "ext-pdo": "*",
         "ext-json": "*",
