@@ -52,9 +52,16 @@ php siro api:why POST /api/orders
 
 One command. Full context. No other framework — PHP, Node, Go, Rust, Python, Ruby — has this flow.
 
----
+# 2. Replay & diff — so sánh trước/sau fix
+php siro replay siro_a1b2c3d4 --diff
+```
 
-## Quick start
+```
+  === BEFORE ===                    === AFTER ===
+  Status: 500                       Status: 200
+  Body: {"success":false}           Body: {"success":true,"data":{"id":100}}
+                                    ✅ Fixed!
+```
 
 ```bash
 composer create-project sirosoft/api my-api
