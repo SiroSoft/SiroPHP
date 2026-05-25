@@ -1,7 +1,7 @@
 <div align="center">
   <h1>⚡ Siro</h1>
   <p><strong>Production Debugging & Testing Framework for PHP APIs.</strong><br>
-  Debug a production bug in 4 commands · ~1ms boot · Zero dependencies</p>
+  Debug a production bug in 4 commands · Zero dependencies</p>
 </div>
 
 <div align="center">

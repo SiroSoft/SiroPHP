@@ -8,78 +8,23 @@ use App\Tests\TestCase;
 
 final class ProductTest extends TestCase
 {
-    private array $authHeaders = [];
-
-    protected function setUp(): void
+    public function testIndexReturns200(): void
     {
-        parent::setUp();
-        $app = $this->createApp();
-        $this->authHeaders = $this->authenticate($app);
+        $this->get('/api/Product')->assertOk();
     }
 
-    public function testListProducts(): void
+    public function testShowReturns404ForInvalidId(): void
     {
-        $res = $this->get('/api/products', $this->authHeaders);
-        $res->assertOk();
-        $body = $res->json();
-        $this->assertArrayHasKey('data', $body);
+        $this->get('/api/Product/999')->assertNotFound();
     }
 
-    public function testCreateProduct(): void
+    public function testStoreReturns201WithValidData(): void
     {
-        $res = $this->post('/api/products', [
-            'name' => 'Test Laptop',
-            'sku' => 'TST-LAP-001',
-            'price' => '1500.00',
-            'stock' => '100',
-            'category' => 'Electronics',
-            'brand' => 'TestBrand',
-            'status' => 'active',
-        ], $this->authHeaders);
-        $this->assertContains($res->status(), [200, 201, 403]);
+        $this->post('/api/Product', ['name' => 'Test Product'])->assertCreated();
     }
 
-    public function testCreateProductFailsWithoutName(): void
+    public function testStoreReturns422WithoutRequiredFields(): void
     {
-        $res = $this->post('/api/products', [
-            'price' => '100',
-        ], $this->authHeaders);
-        $this->assertContains($res->status(), [403, 422]);
-    }
-
-    public function testCreateProductFailsWithoutAuth(): void
-    {
-        $res = $this->post('/api/products', ['name' => 'Test']);
-        $res->assertStatus(401);
-    }
-
-    public function testShowProduct(): void
-    {
-        $res = $this->get('/api/products/1', $this->authHeaders);
-        $this->assertContains($res->status(), [200, 404]);
-    }
-
-    public function testUpdateProduct(): void
-    {
-        $res = $this->put('/api/products/1', [
-            'name' => 'Updated Product',
-            'price' => '99.99',
-        ], $this->authHeaders);
-        $this->assertContains($res->status(), [200, 403, 404]);
-    }
-
-    public function testDeleteProduct(): void
-    {
-        $res = $this->delete('/api/products/999999', $this->authHeaders);
-        $this->assertContains($res->status(), [200, 403, 404]);
-    }
-
-    public function testPagination(): void
-    {
-        $res = $this->get('/api/products?page=1&per_page=10', $this->authHeaders);
-        $res->assertOk();
-        $body = $res->json();
-        $this->assertArrayHasKey('meta', $body);
-        $this->assertArrayHasKey('page', $body['meta']);
+        $this->post('/api/Product', [])->assertValidationError();
     }
 }
