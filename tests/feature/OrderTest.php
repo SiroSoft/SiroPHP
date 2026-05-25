@@ -6,25 +6,25 @@ namespace App\Tests\Feature;
 
 use App\Tests\TestCase;
 
-final class ProductTest extends TestCase
+final class OrderTest extends TestCase
 {
     public function testIndexReturns200(): void
     {
-        $this->get('/api/Product')->assertOk();
+        $this->get('/api/order')->assertOk();
     }
 
     public function testShowReturns404ForInvalidId(): void
     {
-        $this->get('/api/Product/999')->assertNotFound();
+        $this->get('/api/order/999')->assertNotFound();
     }
 
     public function testStoreReturns201WithValidData(): void
     {
-        $this->post('/api/Product', ['name' => 'Test Product'])->assertCreated();
+        $this->post('/api/order', ['name' => 'Test'])->assertCreated();
     }
 
     public function testStoreReturns422WithoutRequiredFields(): void
     {
-        $this->post('/api/Product', [])->assertValidationError();
+        $this->post('/api/order', [])->assertValidationError();
     }
 }

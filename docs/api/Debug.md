@@ -6,8 +6,11 @@ Siro's debug system provides request tracing, replay, and production debugging t
 
 ```bash
 php siro why                     # Last request analysis
+php siro api:why POST /orders    # Trace specific request by method+path
 php siro log:trace <id>          # View full trace
 php siro log:replay <id>         # Replay request
+php siro fix <id>                # Replay + verify fix
+php siro log:replay <id> --test  # Generate regression test from trace
 ```
 
 ---
