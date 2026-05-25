@@ -16,6 +16,24 @@
 
 ---
 
+## Quick start
+
+```bash
+composer create-project sirosoft/api my-api
+cd my-api
+php siro key:generate && php siro make:auth && php siro migrate && php siro serve
+```
+
+Your API is live — JWT auth, user CRUD, migrations ran. No config files. No Postman.
+
+```
+> Tip: `php siro t GET /api/auth/me` — shorthand for `api:test`, auto-auth.
+```
+
+---
+
+## Debug production in 1 command
+
 ```bash
 php siro api:why POST /api/orders
 ```
@@ -50,28 +68,7 @@ php siro api:why POST /api/orders
     [t] php siro make:test --from-trace=siro_a1b2c3d4
 ```
 
-One command. Full context. No other framework — PHP, Node, Go, Rust, Python, Ruby — has this flow.
-
-# 2. Replay & diff — so sánh trước/sau fix
-php siro replay siro_a1b2c3d4 --diff
-```
-
-```
-  === BEFORE ===                    === AFTER ===
-  Status: 500                       Status: 200
-  Body: {"success":false}           Body: {"success":true,"data":{"id":100}}
-                                    ✅ Fixed!
-```
-
-```bash
-composer create-project sirosoft/api my-api
-cd my-api
-php siro key:generate && php siro make:auth && php siro migrate && php siro serve
-```
-
-Your API is live. JWT auth ready. No config files. No Postman.
-
-> Tip: `php siro t GET /api/auth/me` — shorthand for `api:test`, auto-auth.
+**No other framework — PHP, Node, Go, Rust, Python, Ruby — has this flow.**
 
 ---
 
@@ -109,6 +106,8 @@ php siro make:test --from-trace=siro_a1b2c3d4
 php siro test:regression --fail
 ```
 
+---
+
 ## Killer features
 
 | Command | What it does | Why it matters |
@@ -136,7 +135,7 @@ my-api/
 └── k8s/                # Helm chart
 ```
 
-Not an empty skeleton — **production-grade, ready to deploy**.
+**Not an empty skeleton — production-grade, ready to deploy.**
 
 ---
 
