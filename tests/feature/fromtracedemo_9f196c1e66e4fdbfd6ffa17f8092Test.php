@@ -21,9 +21,8 @@ final class FromTracedemo_9f196c1e66e4fdbfd6ffa17f8092Test extends TestCase
             'country' => 'VN',
           ),
         ), $headers);
-        $response->assertStatus(500);
+        $response->assertStatus(422);
 
-        // Verify JSON structure
         $body = $response->json();
         $this->assertArrayHasKey('success', $body);
         $this->assertArrayHasKey('message', $body);

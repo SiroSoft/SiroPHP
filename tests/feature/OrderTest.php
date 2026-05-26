@@ -10,21 +10,29 @@ final class OrderTest extends TestCase
 {
     public function testIndexReturns200(): void
     {
-        $this->get('/api/order')->assertOk();
+        $headers = $this->authenticate();
+        $this->get('/api/orders', $headers)->assertOk();
     }
 
     public function testShowReturns404ForInvalidId(): void
     {
-        $this->get('/api/order/999')->assertNotFound();
+        $headers = $this->authenticate();
+        $this->get('/api/orders/999', $headers)->assertNotFound();
     }
 
     public function testStoreReturns201WithValidData(): void
     {
-        $this->post('/api/order', ['name' => 'Test'])->assertCreated();
+        $headers = $this->authenticate();
+        $this->post('/api/orders', [
+            'customer_name' => 'Test User',
+            'customer_email' => 'test@example.com',
+            'items' => [['name' => 'Item', 'price' => 10, 'quantity' => 1]],
+        ], $headers)->assertCreated();
     }
 
     public function testStoreReturns422WithoutRequiredFields(): void
     {
-        $this->post('/api/order', [])->assertValidationError();
+        $headers = $this->authenticate();
+        $this->post('/api/orders', [], $headers)->assertValidationError();
     }
 }

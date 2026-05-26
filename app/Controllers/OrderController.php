@@ -75,15 +75,7 @@ final class OrderController extends Controller
         $validated = $this->validate([
             'customer_name' => 'required|min:2|max:200',
             'customer_email' => 'required|email',
-            'items' => 'required',
         ]);
-
-        $currentUser = $request->user();
-        $currentUserId = 0;
-        if (is_array($currentUser)) {
-            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-        }
-        $validated['user_id'] = $currentUserId;
 
         $items = $request->input('items');
         if (!is_array($items)) {
@@ -92,6 +84,14 @@ final class OrderController extends Controller
             ]);
         }
         $validated['items'] = $items;
+
+        $currentUser = $request->user();
+        $currentUserId = 0;
+        if (is_array($currentUser)) {
+            $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+        }
+        $validated['user_id'] = $currentUserId;
+
         $validated['total'] = $this->calculateTotal($items);
         $validated['status'] = 'pending';
 

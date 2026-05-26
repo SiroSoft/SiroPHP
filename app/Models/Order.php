@@ -34,5 +34,7 @@ final class Order extends Model
         'customer_email',
         'items',
         'user_id',
+        'total',
+        'status',
     ];
 }

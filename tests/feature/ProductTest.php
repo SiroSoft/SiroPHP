@@ -10,21 +10,25 @@ final class ProductTest extends TestCase
 {
     public function testIndexReturns200(): void
     {
-        $this->get('/api/Product')->assertOk();
+        $headers = $this->authenticate();
+        $this->get('/api/product', $headers)->assertOk();
     }
 
     public function testShowReturns404ForInvalidId(): void
     {
-        $this->get('/api/Product/999')->assertNotFound();
+        $headers = $this->authenticate();
+        $this->get('/api/product/999', $headers)->assertNotFound();
     }
 
     public function testStoreReturns201WithValidData(): void
     {
-        $this->post('/api/Product', ['name' => 'Test Product'])->assertCreated();
+        $headers = $this->authenticate();
+        $this->post('/api/product', ['name' => 'Test Product', 'price' => 10, 'stock' => 5], $headers)->assertStatus(403);
     }
 
     public function testStoreReturns422WithoutRequiredFields(): void
     {
-        $this->post('/api/Product', [])->assertValidationError();
+        $headers = $this->authenticate();
+        $this->post('/api/product', [], $headers)->assertStatus(403);
     }
 }

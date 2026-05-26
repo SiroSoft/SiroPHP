@@ -1,5 +1,26 @@
 # Changelog
 
+## v0.31.0 (2026-05-26) — Workflow Continuity, Auto-Auth Replay
+
+### 🔥 Feature
+- `replay` auto-auth: expired token → tự động refresh → replay lại
+- `fix` replay: same auto-auth support
+- `why` / `api:why` / `replay` / `test:regression` / `fix`: trace sorting fixed (filemtime)
+- All replay modes verified: `--dry-run`, `--safe`, `--force`, `--edit`, `--diff`, `--test`
+
+### 🐛 Bug Fixes
+- ProductTest path `/api/Product` → `/api/product`
+- OrderTest path `/api/order` → `/api/orders`
+- Order model `$fillable` thêm `total`, `status`
+- OrderController `items` validation (validator rejects arrays)
+- GeneralIntegrationTest undefined array key `data`
+
+### 📝 Docs
+- `WORKFLOW_TEST_REPORT.md` — comprehensive workflow test report
+- `DEMO_REPLAY_500.md` — step-by-step 500 error → why → replay → fix demo
+
+---
+
 ## v0.30.1 (2026-05-25) — README UI, Packagist metadata
 
 ### 🧹 Chore
