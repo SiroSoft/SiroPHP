@@ -39,7 +39,7 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.2",
-        "sirosoft/core": "^0.30",
+        "sirosoft/core": "^0.31.0",
         "sirosoft/mcp-server": "^0.1.0",
         "ext-pdo": "*",
         "ext-json": "*",

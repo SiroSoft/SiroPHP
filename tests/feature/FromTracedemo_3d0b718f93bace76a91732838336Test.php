@@ -15,9 +15,8 @@ final class FromTracedemo_3d0b718f93bace76a91732838336Test extends TestCase
           'product_id' => 10,
           'quantity' => 2,
         ), $headers);
-        $response->assertStatus(500);
+        $response->assertStatus(422);
 
-        // Verify JSON structure
         $body = $response->json();
         $this->assertArrayHasKey('success', $body);
         $this->assertArrayHasKey('message', $body);

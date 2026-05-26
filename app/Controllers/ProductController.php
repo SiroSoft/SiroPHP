@@ -124,3 +124,5 @@ final class ProductController extends Controller
             : $this->error('Product not found', 404);
     }
 }
+
+ // TRIGGER 500 TEST - se xoa sau

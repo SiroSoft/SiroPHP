@@ -181,6 +181,97 @@ if ($post->tags()->has($tagId)) {
 }
 ```
 
+#### Pivot Data (Extra Columns)
+
+Retrieve extra pivot columns using `withPivot()`:
+
+```php
+// Define relationship with pivot columns
+public function orders(): BelongsToMany
+{
+    return $this->belongsToMany(Product::class, 'order_product')
+        ->withPivot(['quantity', 'price']);
+}
+
+// Pivot columns are included in query results
+$order->products; // Each product has quantity and price from pivot
+
+// Attach with pivot data
+$user->roles()->attach($roleId, ['assigned_by' => $userId]);
+
+// Sync with pivot data (associative array)
+$user->roles()->sync([
+    $roleId1 => ['assigned_by' => $userId],
+    $roleId2 => ['assigned_by' => $userId],
+]);
+```
+
+### MorphMany (Polymorphic One-to-Many)
+
+One model can belong to multiple other models on a single association.
+
+```php
+// Comment belongs to Post OR Product OR Article
+// Table: comments (id, body, commentable_type, commentable_id)
+
+class Comment extends Model
+{
+    // Inverse polymorphic: which model owns this comment?
+    public function commentable(): MorphTo
+    {
+        return $this->morphTo('commentable');
+    }
+}
+
+class Post extends Model
+{
+    // A post has many comments
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+}
+
+class Product extends Model
+{
+    // A product also has many comments
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+}
+
+// Usage: get comments on any model
+$post->comments;     // All comments on this post
+$product->comments;  // All comments on this product
+
+// Usage: get the parent of a comment
+$comment->commentable; // Returns Post or Product or Article
+
+// Create via polymorphic relationship
+$post->comments()->create(['body' => 'Great post!']);
+$product->comments()->create(['body' => 'Nice product!']);
+```
+
+### MorphTo (Inverse Polymorphic)
+
+Defined automatically by `morphTo()` inside the child model:
+
+```php
+$comment = Comment::find(1);
+$owner = $comment->commentable; // Post, Product, or Article
+```
+
+Eager loading works for both directions:
+
+```php
+// Eager load morphMany
+$post = Post::with('comments')->find(1);
+
+// Eager load morphTo (inverse)
+$comment = Comment::with('commentable')->find(1);
+```
+
 ---
 
 ## Eager Loading

@@ -115,7 +115,7 @@ final class GeneralIntegrationTest extends TestCase
         $p = $r->payload();
         $this->assertFalse($p['success']);
         $this->assertSame('Not found', $p['message']);
-        $this->assertNull($p['data']);
+        $this->assertArrayNotHasKey('data', $p);
     }
 
     public function testResponsePaginatedStructure(): void
