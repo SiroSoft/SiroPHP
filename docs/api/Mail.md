@@ -1,3 +1,10 @@
+---
+title: M ai l
+description: SiroPHP M ai l reference
+sidebar_position: 15
+sidebar_label: M ai l
+---
+
 # Mail API Reference
 
 ## Overview

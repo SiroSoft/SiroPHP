@@ -1,3 +1,10 @@
+---
+title: S tr
+description: SiroPHP S tr reference
+sidebar_position: 30
+sidebar_label: S tr
+---
+
 # Str API Reference
 
 ## Overview

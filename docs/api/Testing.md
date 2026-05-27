@@ -1,3 +1,10 @@
+---
+title: T es ti ng
+description: SiroPHP T es ti ng reference
+sidebar_position: 31
+sidebar_label: T es ti ng
+---
+
 # Testing API Reference
 
 ## Overview

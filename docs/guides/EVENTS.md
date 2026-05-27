@@ -1,3 +1,10 @@
+---
+title: E VE NT S
+description: SiroPHP E VE NT S reference
+sidebar_position: 6
+sidebar_label: E VE NT S
+---
+
 # Event System Guide
 
 ## Basics

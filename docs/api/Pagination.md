@@ -1,3 +1,10 @@
+---
+title: P ag in at io n
+description: SiroPHP P ag in at io n reference
+sidebar_position: 20
+sidebar_label: P ag in at io n
+---
+
 # Pagination Reference
 
 ## Overview

@@ -1,3 +1,10 @@
+---
+title: S EC UR IT Y
+description: SiroPHP S EC UR IT Y reference
+sidebar_position: 7
+sidebar_label: S EC UR IT Y
+---
+
 # Security Guide
 
 ## Overview

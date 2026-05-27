@@ -1,3 +1,10 @@
+---
+title: B EN CH MA RK
+description: SiroPHP B EN CH MA RK reference
+sidebar_position: 2
+sidebar_label: B EN CH MA RK
+---
+
 # Performance Benchmarks
 
 **SiroPHP**: 864K ops/sec (avg) | ~1ms cold boot (Linux) | ~2KB memory per request

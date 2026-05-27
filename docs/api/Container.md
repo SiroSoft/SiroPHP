@@ -1,3 +1,10 @@
+---
+title: C on ta in er
+description: SiroPHP C on ta in er reference
+sidebar_position: 5
+sidebar_label: C on ta in er
+---
+
 # Container API Reference
 
 ## Overview

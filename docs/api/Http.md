@@ -1,3 +1,10 @@
+---
+title: H tt p
+description: SiroPHP H tt p reference
+sidebar_position: 12
+sidebar_label: H tt p
+---
+
 # Http API Reference
 
 ## Overview

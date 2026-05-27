@@ -1,3 +1,10 @@
+---
+title: L an g
+description: SiroPHP L an g reference
+sidebar_position: 13
+sidebar_label: L an g
+---
+
 # Lang API Reference
 
 ## Overview

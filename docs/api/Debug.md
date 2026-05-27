@@ -1,3 +1,10 @@
+---
+title: D eb ug
+description: SiroPHP D eb ug reference
+sidebar_position: 6
+sidebar_label: D eb ug
+---
+
 # Debug API Reference
 
 ## Overview

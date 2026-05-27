@@ -1,3 +1,10 @@
+---
+title: H as h
+description: SiroPHP H as h reference
+sidebar_position: 10
+sidebar_label: H as h
+---
+
 # Hash API Reference
 
 ## Overview

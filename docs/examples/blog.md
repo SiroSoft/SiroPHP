@@ -1,3 +1,10 @@
+---
+title: b lo g
+description: SiroPHP b lo g reference
+sidebar_position: 1
+sidebar_label: b lo g
+---
+
 # Blog API Example
 
 A complete blog API built with SiroPHP demonstrating CRUD operations, authentication, pagination, sorting, and filtering.

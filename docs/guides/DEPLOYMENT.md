@@ -1,3 +1,10 @@
+---
+title: D EP LO YM EN T
+description: SiroPHP D EP LO YM EN T reference
+sidebar_position: 5
+sidebar_label: D EP LO YM EN T
+---
+
 # SiroPHP Deployment Guide
 
 **Deploy your API to production with confidence**
@@ -687,8 +694,8 @@ sudo systemctl restart php8.2-fpm
 
 ## 📚 Additional Resources
 
-- **[Performance Guide](PERFORMANCE.md)** - Optimization tips
-- **[Security Guide](SECURITY.md)** - Security best practices
+- **[Performance Guide](../PERFORMANCE.md)** - Optimization tips
+- **[Security Guide](../SECURITY.md)** - Security best practices
 - **[Nginx Documentation](https://nginx.org/en/docs/)**
 - **[PHP-FPM Tuning](https://www.php.net/manual/en/install.fpm.configuration.php)**
 

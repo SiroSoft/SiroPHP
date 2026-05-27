@@ -1,3 +1,10 @@
+---
+title: R EL EA SE N OT ES
+description: SiroPHP R EL EA SE N OT ES reference
+sidebar_position: 6
+sidebar_label: R EL EA SE N OT ES
+---
+
 # Release Notes
 
 ## v0.29.6 — MCP Server GitHub Release (2026-05-22)

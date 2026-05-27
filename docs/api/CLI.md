@@ -1,12 +1,19 @@
+---
+title: CLI
+description: SiroPHP CLI Command Reference
+sidebar_position: 1
+sidebar_label: CLI
+---
+
 # CLI Command Reference
 
 ## Overview
 
-Siro ships with **80+ CLI commands**. Every task — from project creation to production debugging — is done from the terminal. No GUI tools needed.
+Siro ships with **72+ CLI commands**. Every task — from project creation to production debugging — is done from the terminal. No GUI tools needed.
 
 ```bash
 php siro                    # Core workflow overview
-php siro list               # All 80+ commands grouped
+php siro list               # All commands grouped
 php siro list --raw         # Raw command list (for tab completion)
 php siro list --json        # JSON format (for tooling)
 php siro <cmd> --help       # Details + options
@@ -58,7 +65,7 @@ cd my-app && php siro key:generate && php siro serve
 
 ---
 
-## make:* — Code Generators (23)
+## make:* — Code Generators (26)
 
 Scaffold code instantly. No boilerplate.
 
@@ -75,7 +82,6 @@ Scaffold code instantly. No boilerplate.
 | `make:request <name>` | FormRequest class (validation + authorization) |
 | `make:middleware <name>` | Middleware class |
 | `make:observer <name>` | Model observer class (lifecycle hooks) |
-| `make:request <name>` | FormRequest class (validation + authorization) |
 | `make:rule <name>` | Custom validation rule class |
 | `make:event <name>` | Event class |
 | `make:listener <name>` | Event listener |
@@ -99,6 +105,13 @@ php siro make:auth                        # Full auth scaffolding
 php siro make:openapi --with-swagger      # OpenAPI + Swagger UI
 php siro make:postman                     # Postman collection
 php siro make:apikey "Mobile App" read,write 365
+```
+
+> **Killer feature**: `make:openapi` and `make:postman` read your code dynamically — routes, validation rules, resources, auth middleware — and export full OpenAPI 3.0.3 spec / Postman collection. Zero annotation, zero config.
+
+```bash
+php siro make:openapi --with-swagger   # → docs/openapi.json + public/docs.html
+php siro make:postman                  # → public/postman_collection.json
 ```
 
 ---
@@ -126,53 +139,16 @@ php siro db:show users                    # Table structure
 
 ---
 
-## export:* — API Documentation (2)
+## test:* — Testing (5)
 
-**Killer feature** — export full OpenAPI spec and Postman collection from code. Zero annotation, zero config.
-
-| Command | Description |
-|---------|-------------|
-| `make:openapi` | **OpenAPI 3.0.3** with operationId, request/response schemas, auth |
-| `make:postman` | **Postman collection** with folders, auto-login, response examples |
-
-### Cơ chế dynamic — thêm API là spec tự cập nhật
-
-| Export reads from | What gets generated |
-|------------------|-------------------|
-| `$app->router->getRoutes()` | All endpoints, methods, paths |
-| `Controller::validate([...])` | Request body schemas + examples |
-| `Resource::toArray()` | Response body schemas + examples |
-| Middleware `auth` detection | Bearer auth on protected routes |
-| Controller class names | Tags (Products, Orders, Users...) |
-
-```bash
-# Code → spec trong 2 giây
-php siro make:openapi --with-swagger
-# → docs/openapi.json      (145KB, 27 endpoints, 45 operationIds)
-# → public/openapi.json     (public URL)
-# → public/docs.html        (Swagger UI at http://localhost:8080/docs.html)
-
-# Code → Postman trong 2 giây
-php siro make:postman
-# → docs/postman/collection.json
-# → public/postman_collection.json
-
-# Import vào Postman bằng URL:
-# http://localhost:8080/postman_collection.json
-```
-
----
-
-## test:* — Testing & Benchmarks (4)
-
-Test endpoints, run suites, benchmark performance — all from CLI.
+Test endpoints, run suites, regression tests — all from CLI.
 
 | Command | Description |
 |---------|-------------|
 | `test` | Run PHPUnit tests (`--filter`, `--suite`, `--coverage`) |
-| `test:regression` | Replay all traces, detect response changes | `php siro test:regression [--limit=N]` |
+| `test:run` | Run test with detailed output (`--watch`, `--stop-on-failure`) |
+| `test:regression` | Replay all traces, detect response changes (`--limit=N`) |
 | `api:test` (alias: `t`) | Quick API test from CLI (no Postman needed) |
-| `benchmark` | Run performance benchmarks (`--iterations=N`, `--json`) |
 
 ### API test — no Postman
 
@@ -194,22 +170,24 @@ php siro test --coverage
 
 ---
 
-## log:* — Debug & Observability (10)
+## log:* — Debug & Observability (12)
 
 **Killer feature** — trace every request, replay any failure.
 
 | Command | Description |
 |---------|-------------|
 | `log:trace <id>` | View full trace (headers, SQL, timing, N+1) |
-| `log:replay <id>` | **Replay exact request** (`--edit`, `--diff`, `--force`) |
-| `log:export <id>` | Export trace to JSON / Postman format |
+| `trace:list` | List all traces with filters (`--status`, `--method`, `--ip`, `--path`, `--since`, `--slow`) |
+| `log:replay <id>` | **Replay exact request** (`--edit`, `--diff`, `--force`, `--test`) |
+| `replay <id>` | Quick replay shortcut |
+| `log:export <id>` | Export trace to JSON / Postman format (`--status=500`, `--format=json`) |
 | `log:tail` | Tail logs in real-time (`--type`, `--lines`) |
 | `log:slow` | Show slow requests (`--limit`, `--min`) |
 | `log:stats` | Request statistics (`--days=N`) |
 | `log:top` | Top slowest endpoints |
 | `log:cleanup` | Clean old logs (`--days=N`, `--dry-run`) |
-| `debug:last` (alias: `why`) | Why did the last request fail? |
-| `debug:health` | Debug system health |
+| `api:why <method> <path>` | **Why did a request fail?** — trace any API call (`--id`, `--edit`, `--fix`, `--diff`, `--force`) |
+| `db:why <table> <id>` | Why is this DB row in this state? — trace all queries affecting a row |
 
 ### Trace search — find without trace ID
 
@@ -233,23 +211,16 @@ php siro log:replay a1b2c3d4 --https        # Use HTTPS
 
 ---
 
-## cache:* — Optimize (5)
+## cache:* — Optimize (4)
 
-Prepare for production — cache everything, validate environment.
+Prepare for production — cache everything.
 
 | Command | Description |
 |---------|-------------|
-| `optimize` | **Full optimization** — env + config + routes + autoloader |
+| `optimize` | **Full optimization** — config + routes + autoloader |
 | `config:cache` | Cache config (HMAC-signed) |
 | `config:clear` | Clear config cache |
 | `env:cache` | Cache environment (sensitive keys excluded) |
-| `env:check` | Validate environment configuration |
-
-```bash
-php siro optimize                          # Production optimization
-php siro config:cache                      # Cache only config
-php siro env:check                         # Validate .env
-```
 
 ---
 
@@ -263,7 +234,6 @@ Process jobs, retry failures, monitor status.
 | `queue:status` | Show queue status and failed jobs |
 | `queue:retry <id\|all>` | Retry failed job(s) |
 | `queue:flush` | Clear all failed jobs |
-| `schedule:run` | Run scheduled tasks |
 
 ---
 
@@ -280,7 +250,7 @@ Start dev or production server.
 
 ---
 
-## system:* — System (14)
+## system:* — System (17)
 
 | Command | Description |
 |---------|-------------|
@@ -295,9 +265,12 @@ Start dev or production server.
 | `storage:link` | Create public storage symlink |
 | `tinker` | Interactive PHP REPL (like Laravel tinker) |
 | `fix` | Watch code changes and auto-replay |
-| `replay <trace_id>` | Quick replay shortcut |
 | `rate:status` | Rate limiter status dashboard |
+| `env:check` | Validate environment configuration |
 | `env:switch <env>` | Switch between environments |
+| `benchmark` | Run performance benchmarks (`--iterations=N`, `--json`) |
+| `schedule:run` | Run scheduled tasks |
+| `new:project <name>` | Scaffold a new Siro project from template |
 
 ```bash
 php siro doctor --prod                     # Pre-deployment check

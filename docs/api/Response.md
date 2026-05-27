@@ -1,3 +1,10 @@
+---
+title: R es po ns e
+description: SiroPHP R es po ns e reference
+sidebar_position: 24
+sidebar_label: R es po ns e
+---
+
 # Response API Reference
 
 ## Overview

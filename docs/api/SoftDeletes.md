@@ -1,3 +1,10 @@
+---
+title: S of tD el et es
+description: SiroPHP S of tD el et es reference
+sidebar_position: 28
+sidebar_label: S of tD el et es
+---
+
 # SoftDeletes Reference
 
 ## Overview

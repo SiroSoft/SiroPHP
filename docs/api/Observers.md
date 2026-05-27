@@ -1,3 +1,10 @@
+---
+title: O bs er ve rs
+description: SiroPHP O bs er ve rs reference
+sidebar_position: 19
+sidebar_label: O bs er ve rs
+---
+
 # Observers API Reference
 
 ## Overview

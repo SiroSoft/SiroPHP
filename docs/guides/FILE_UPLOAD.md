@@ -1,3 +1,10 @@
+---
+title: F IL E U PL OA D
+description: SiroPHP F IL E U PL OA D reference
+sidebar_position: 7
+sidebar_label: F IL E U PL OA D
+---
+
 # File Upload Guide
 
 ## Receiving Files

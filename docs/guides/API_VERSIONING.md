@@ -1,3 +1,10 @@
+---
+title: A PI V ER SI ON IN G
+description: SiroPHP A PI V ER SI ON IN G reference
+sidebar_position: 1
+sidebar_label: A PI V ER SI ON IN G
+---
+
 # API Versioning Guide
 
 ## Overview

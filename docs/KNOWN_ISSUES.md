@@ -1,3 +1,10 @@
+---
+title: K NO WN I SS UE S
+description: SiroPHP K NO WN I SS UE S reference
+sidebar_position: 3
+sidebar_label: K NO WN I SS UE S
+---
+
 # Known Issues & Limitations
 
 ## v0.28 Known Issues

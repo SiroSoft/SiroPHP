@@ -34,6 +34,7 @@ final class OrderController extends Controller
             $params['user_id'] = $currentUserId;
         }
 
+        /** @var array<string, mixed> $params */
         $result = $this->service->getAll($params, $page, $perPage);
         /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
         return $this->paginated(
