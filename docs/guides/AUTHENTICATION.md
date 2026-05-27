@@ -1,3 +1,10 @@
+---
+title: A UT HE NT IC AT IO N
+description: SiroPHP A UT HE NT IC AT IO N reference
+sidebar_position: 2
+sidebar_label: A UT HE NT IC AT IO N
+---
+
 # Authentication Guide
 
 ## JWT Authentication Flow

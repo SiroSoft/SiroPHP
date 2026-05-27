@@ -1,3 +1,10 @@
+---
+title: R es ou rc e
+description: SiroPHP R es ou rc e reference
+sidebar_position: 23
+sidebar_label: R es ou rc e
+---
+
 # Resource API Reference
 
 ## Overview

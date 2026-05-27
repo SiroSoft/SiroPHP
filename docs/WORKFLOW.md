@@ -1,3 +1,10 @@
+---
+title: W OR KF LO W
+description: SiroPHP W OR KF LO W reference
+sidebar_position: 8
+sidebar_label: W OR KF LO W
+---
+
 # Developer Workflow
 
 > From installation to production — one continuous flow, no breaks.

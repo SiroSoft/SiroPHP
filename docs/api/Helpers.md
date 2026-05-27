@@ -1,3 +1,10 @@
+---
+title: H el pe rs
+description: SiroPHP H el pe rs reference
+sidebar_position: 11
+sidebar_label: H el pe rs
+---
+
 # Helpers Reference
 
 ## Overview

@@ -1,3 +1,10 @@
+---
+title: V al id at io n
+description: SiroPHP V al id at io n reference
+sidebar_position: 34
+sidebar_label: V al id at io n
+---
+
 # Validation API Reference
 
 ## Overview

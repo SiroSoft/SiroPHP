@@ -1,3 +1,10 @@
+---
+title: M IG RA TI ON
+description: SiroPHP M IG RA TI ON reference
+sidebar_position: 9
+sidebar_label: M IG RA TI ON
+---
+
 # Migration Guide
 
 **No breaking changes.** All v0.x versions are backward compatible.

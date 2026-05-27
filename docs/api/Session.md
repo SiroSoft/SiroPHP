@@ -1,3 +1,10 @@
+---
+title: S es si on
+description: SiroPHP S es si on reference
+sidebar_position: 27
+sidebar_label: S es si on
+---
+
 # Session API Reference
 
 ## Overview

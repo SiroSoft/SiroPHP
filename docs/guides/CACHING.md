@@ -1,3 +1,10 @@
+---
+title: C AC HI NG
+description: SiroPHP C AC HI NG reference
+sidebar_position: 3
+sidebar_label: C AC HI NG
+---
+
 # Caching Guide
 
 ## Configuration

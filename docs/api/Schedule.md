@@ -1,3 +1,10 @@
+---
+title: S ch ed ul e
+description: SiroPHP S ch ed ul e reference
+sidebar_position: 26
+sidebar_label: S ch ed ul e
+---
+
 # Schedule API Reference
 
 ## Overview

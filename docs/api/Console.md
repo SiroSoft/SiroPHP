@@ -1,3 +1,10 @@
+---
+title: C on so le
+description: SiroPHP C on so le reference
+sidebar_position: 4
+sidebar_label: C on so le
+---
+
 # Console & Custom Commands Reference
 
 ## Overview

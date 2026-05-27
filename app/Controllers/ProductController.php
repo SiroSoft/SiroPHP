@@ -21,7 +21,9 @@ final class ProductController extends Controller
         $perPage = min($request->queryInt('per_page', 20), 100);
         $page = max($request->queryInt('page', 1), 1);
 
-        $result = $this->service->getAll($request->all(), $page, $perPage);
+        /** @var array<string, mixed> $params */
+        $params = $request->all();
+        $result = $this->service->getAll($params, $page, $perPage);
         /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
 
         return $this->paginated(

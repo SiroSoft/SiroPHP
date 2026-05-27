@@ -1,3 +1,10 @@
+---
+title: M id dl ew ar e
+description: SiroPHP M id dl ew ar e reference
+sidebar_position: 17
+sidebar_label: M id dl ew ar e
+---
+
 # Middleware API Reference
 
 ## Overview

@@ -1,3 +1,10 @@
+---
+title: R EF ER EN CE
+description: SiroPHP R EF ER EN CE reference
+sidebar_position: 5
+sidebar_label: R EF ER EN CE
+---
+
 # SiroPHP Reference Documentation
 
 > Detailed API reference for all Siro components.

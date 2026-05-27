@@ -35,7 +35,7 @@
             "url": "https://github.com/SiroSoft/siro-mcp-server-.git"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
         "php": ">=8.2",

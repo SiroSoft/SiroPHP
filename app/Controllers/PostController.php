@@ -36,6 +36,7 @@ final class PostController extends Controller
             $params['user_id'] = $currentUserId;
         }
 
+        /** @var array<string, mixed> $params */
         $result = $this->service->getAll(
             $params,
             (int) $rawPage,

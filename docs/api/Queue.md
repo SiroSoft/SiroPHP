@@ -1,3 +1,10 @@
+---
+title: Q ue ue
+description: SiroPHP Q ue ue reference
+sidebar_position: 21
+sidebar_label: Q ue ue
+---
+
 # Queue API Reference
 
 ## Overview

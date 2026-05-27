@@ -1,3 +1,10 @@
+---
+title: C on fi g
+description: SiroPHP C on fi g reference
+sidebar_position: 3
+sidebar_label: C on fi g
+---
+
 # Config API Reference
 
 ## Overview

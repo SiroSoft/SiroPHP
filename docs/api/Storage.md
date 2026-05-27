@@ -1,3 +1,10 @@
+---
+title: S to ra ge
+description: SiroPHP S to ra ge reference
+sidebar_position: 29
+sidebar_label: S to ra ge
+---
+
 # Storage API Reference
 
 ## Overview

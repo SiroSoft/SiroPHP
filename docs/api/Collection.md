@@ -1,3 +1,10 @@
+---
+title: C ol le ct io n
+description: SiroPHP C ol le ct io n reference
+sidebar_position: 2
+sidebar_label: C ol le ct io n
+---
+
 # Collection API Reference
 
 ## Overview

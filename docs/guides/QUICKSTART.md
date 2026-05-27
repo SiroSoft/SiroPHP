@@ -1,3 +1,10 @@
+---
+title: Q UI CK ST AR T
+description: SiroPHP Q UI CK ST AR T reference
+sidebar_position: 11
+sidebar_label: Q UI CK ST AR T
+---
+
 # SiroPHP Quick Start Guide
 
 **Build a production-ready API in 5 minutes**
@@ -14,7 +21,7 @@ cd my-api
 php siro serve
 ```
 
-Visit: http://localhost:8000
+Visit: http://localhost:8080
 
 ### Option 2: Add to Existing Project
 
@@ -154,7 +161,7 @@ php siro api:test GET /api/products --as=user
 php siro make:openapi --with-swagger
 ```
 
-Visit Swagger UI: http://localhost:8000/docs/swagger/
+Visit Swagger UI: http://localhost:8080/docs.html
 
 **Done!** You now have a production-ready API with:
 - ✅ JWT authentication
@@ -441,11 +448,11 @@ rm storage/cache/routes.php
 
 ## 📖 Learn More
 
-- **[Architecture Guide](ARCHITECTURE.md)** - Understand design decisions
-- **[Security Guide](SECURITY.md)** - Security best practices
-- **[Performance Guide](PERFORMANCE.md)** - Optimization tips
-- **[API Reference](api/)** - Detailed API documentation
-- **[Examples](examples/)** - Real-world code samples
+- **[Architecture Guide](../ARCHITECTURE.md)** - Understand design decisions
+- **[Security Guide](../SECURITY.md)** - Security best practices
+- **[Performance Guide](../PERFORMANCE.md)** - Optimization tips
+- **[API Reference](../api/)** - Detailed API documentation
+- **[Examples](../examples/)** - Real-world code samples
 
 ---
 
