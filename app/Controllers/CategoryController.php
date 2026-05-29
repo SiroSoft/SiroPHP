@@ -44,7 +44,12 @@ final class CategoryController extends Controller
             return $this->error('Forbidden', 403);
         }
 
-        $item = $this->service->create($this->validate(['name' => 'required|min:2|max:100']));
+        $validated = $this->validate(['name' => 'required|min:2|max:100']);
+        $rawBody = $request->all();
+        if (isset($rawBody['is_active'])) {
+            $validated['is_active'] = $rawBody['is_active'] ? 1 : 0;
+        }
+        $item = $this->service->create($validated);
         /** @var array<string, mixed> $item */
         return $this->created(CategoryResource::make($item), 'Category created');
     }
@@ -61,7 +66,23 @@ final class CategoryController extends Controller
         /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
-        $item = $this->service->update($id, $this->validate(['name' => 'min:2|max:100']));
+        $validated = $this->validate([
+            'name' => 'min:2|max:100',
+        ]);
+        $rawBody = $request->all();
+        if (isset($rawBody['is_active'])) {
+            $validated['is_active'] = $rawBody['is_active'] ? 1 : 0;
+        }
+        if (isset($rawBody['color'])) {
+            $validated['color'] = $rawBody['color'];
+        }
+        if (isset($rawBody['description'])) {
+            $validated['description'] = $rawBody['description'];
+        }
+        if (isset($rawBody['sort_order'])) {
+            $validated['sort_order'] = (int) $rawBody['sort_order'];
+        }
+        $item = $this->service->update($id, $validated);
         /** @var array<string, mixed>|null $item */
         if ($item === null) return $this->error('Category not found', 404);
         return $this->success(CategoryResource::make($item), 'Category updated');

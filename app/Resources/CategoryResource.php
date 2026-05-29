@@ -25,7 +25,7 @@ final class CategoryResource extends Resource
             'icon' => null,
             'parent_id' => null,
             'sort_order' => 0,
-            'is_active' => true,
+            'is_active' => isset($this->data['is_active']) ? (bool) $this->data['is_active'] : true,
             'created_at' => $this->data['created_at'] ?? null,
             'updated_at' => is_string($this->data['updated_at'] ?? null) ? htmlspecialchars($this->data['updated_at'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['updated_at'] ?? null),
         ];
