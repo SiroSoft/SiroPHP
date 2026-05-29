@@ -62,4 +62,10 @@ abstract class BaseRepository
         if ($item === null) return false;
         return (bool) $item->delete();
     }
+
+    public function count(): int
+    {
+        $result = \Siro\Core\Database::select("SELECT COUNT(*) as count FROM {$this->model->getTable()}");
+        return (int) ($result[0]['count'] ?? 0);
+    }
 }

@@ -8,6 +8,7 @@ use App\Events\UserCreatedEvent;
 use App\Exceptions\DuplicateEmailException;
 use App\Exceptions\NoFieldsToUpdateException;
 use App\Models\User;
+use App\Role;
 use App\Repositories\RefreshTokenRepository;
 use App\Repositories\UserRepository;
 
@@ -133,11 +134,13 @@ final class UserService
         /** @var string $rawPassword */
         $verificationToken = hash('sha256', bin2hex(random_bytes(32)));
         /** @var User $user */
+        $isFirst = $this->repo->count() === 0;
         $user = $this->repo->create([
             'name' => $data['name'],
             'email' => $email,
             'password' => self::hashPassword($rawPassword),
             'status' => 1,
+            'role' => $isFirst ? Role::ADMIN : Role::USER,
             'verification_token' => $verificationToken,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
