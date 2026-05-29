@@ -20,6 +20,7 @@ final class CategoryResource extends Resource
             'id' => $this->data['id'] ?? null,
             'name' => is_string($this->data['name'] ?? null) ? htmlspecialchars($this->data['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['name'] ?? null),
             'created_at' => $this->data['created_at'] ?? null,
+            'updated_at' => is_string($this->data['updated_at'] ?? null) ? htmlspecialchars($this->data['updated_at'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['updated_at'] ?? null),
         ];
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Resources\ProductResource;
+use App\Role;
 use App\Services\ProductService;
 use Siro\Core\Controller;
 use Siro\Core\Request;
@@ -24,8 +25,8 @@ final class ProductController extends Controller
         /** @var array<string, mixed> $params */
         $params = $request->all();
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             unset($params['user_id']);
         }
         $result = $this->service->getAll($params, $page, $perPage);
@@ -59,8 +60,8 @@ final class ProductController extends Controller
     public function store(Request $request): Response
     {
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -84,8 +85,8 @@ final class ProductController extends Controller
     public function update(Request $request): Response
     {
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -117,8 +118,8 @@ final class ProductController extends Controller
     public function delete(Request $request): Response
     {
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 

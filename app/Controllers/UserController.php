@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Exceptions\DuplicateEmailException;
 use App\Exceptions\NoFieldsToUpdateException;
 use App\Resources\UserResource;
+use App\Role;
 use App\Services\UserService;
 use Siro\Core\Controller;
 use Siro\Core\Request;
@@ -21,8 +22,8 @@ final class UserController extends Controller
     public function index(Request $request): Response
     {
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -48,12 +49,12 @@ final class UserController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
-        if ($currentUserId !== $id && $currentUserRole !== 'admin') {
+        if ($currentUserId !== $id && $currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -70,8 +71,8 @@ final class UserController extends Controller
     public function store(Request $request): Response
     {
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -100,12 +101,12 @@ final class UserController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
-        if ($currentUserId !== $id && $currentUserRole !== 'admin') {
+        if ($currentUserId !== $id && $currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -152,12 +153,12 @@ final class UserController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
-        if ($currentUserId !== $id && $currentUserRole !== 'admin') {
+        if ($currentUserId !== $id && $currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 

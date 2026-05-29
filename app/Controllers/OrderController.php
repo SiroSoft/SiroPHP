@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Resources\OrderResource;
+use App\Role;
 use App\Services\OrderService;
 use Siro\Core\Controller;
 use Siro\Core\Request;
@@ -23,14 +24,14 @@ final class OrderController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
 
         $params = $request->all();
-        if ($currentUserRole !== 'admin') {
+        if ($currentUserRole !== Role::ADMIN) {
             $allowed = ['status', 'user_id'];
             $params = array_intersect_key($params, array_flip($allowed));
             $params['user_id'] = $currentUserId;
@@ -55,10 +56,10 @@ final class OrderController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
 
         $order = $this->service->getById($id);
@@ -66,7 +67,7 @@ final class OrderController extends Controller
         if ($order === null) return $this->error('Order not found', 404);
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
-        if ($currentUserRole !== 'admin' && $currentUserId !== $orderUserId) {
+        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -137,10 +138,10 @@ final class OrderController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
 
         $order = $this->service->getById($id);
@@ -148,7 +149,7 @@ final class OrderController extends Controller
         if ($order === null) return $this->error('Order not found', 404);
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
-        if ($currentUserRole !== 'admin' && $currentUserId !== $orderUserId) {
+        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -173,10 +174,10 @@ final class OrderController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
 
         $order = $this->service->getById($id);
@@ -184,7 +185,7 @@ final class OrderController extends Controller
         if ($order === null) return $this->error('Order not found', 404);
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
-        if ($currentUserRole !== 'admin' && $currentUserId !== $orderUserId) {
+        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {
             return $this->error('Forbidden', 403);
         }
 

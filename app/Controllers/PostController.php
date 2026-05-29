@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Resources\PostResource;
+use App\Role;
 use App\Services\PostService;
 use Siro\Core\Controller;
 use Siro\Core\Request;
@@ -25,14 +26,14 @@ final class PostController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
 
         $params = $request->all();
-        if ($currentUserRole !== 'admin') {
+        if ($currentUserRole !== Role::ADMIN) {
             $params['user_id'] = $currentUserId;
         }
 
@@ -60,10 +61,10 @@ final class PostController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
 
         $post = $this->service->getById($id);
@@ -74,7 +75,7 @@ final class PostController extends Controller
 
         $postData = $post->toArray();
         $postUserId = is_numeric($postData['user_id'] ?? null) ? (int) $postData['user_id'] : 0;
-        if ($currentUserRole !== 'admin' && $currentUserId !== $postUserId) {
+        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $postUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -132,14 +133,14 @@ final class PostController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
         $existingData = $existing instanceof \Siro\Core\Model ? $existing->toArray() : (array) $existing;
         $postUserId = is_numeric($existingData['user_id'] ?? null) ? (int) $existingData['user_id'] : 0;
-        if ($currentUserRole !== 'admin' && $currentUserId !== $postUserId) {
+        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $postUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -168,16 +169,16 @@ final class PostController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
         $existing = $this->service->getById($id);
         if ($existing !== null) {
             $existingData = $existing instanceof \Siro\Core\Model ? $existing->toArray() : (array) $existing;
             $postUserId = is_numeric($existingData['user_id'] ?? null) ? (int) $existingData['user_id'] : 0;
-            if ($currentUserRole !== 'admin' && $currentUserId !== $postUserId) {
+            if ($currentUserRole !== Role::ADMIN && $currentUserId !== $postUserId) {
                 return $this->error('Forbidden', 403);
             }
         }
