@@ -12,4 +12,5 @@ return [
     'fallback_locale' => Env::get('APP_FALLBACK_LOCALE', 'en'),
     'trusted_proxies' => Env::get('APP_TRUSTED_PROXIES', ''),
     'url' => Env::get('APP_URL', 'http://localhost:8080'),
+    'timezone' => Env::get('APP_TIMEZONE', 'UTC'),
 ];

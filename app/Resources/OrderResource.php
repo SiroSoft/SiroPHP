@@ -19,27 +19,20 @@ final class OrderResource extends Resource
             $items = [];
         }
 
-        $id = $d['id'] ?? 0;
-        $customerName = $d['customer_name'] ?? '';
-        $customerEmail = $d['customer_email'] ?? '';
-        $total = $d['total'] ?? 0;
-        $status = $d['status'] ?? 'pending';
-        $createdAt = $d['created_at'] ?? '';
-        $updatedAt = $d['updated_at'] ?? '';
-        /** @var int|string $id */
-        /** @var string $customerName */
-        /** @var string $customerEmail */
-        /** @var float|int|string $total */
-        /** @var string $status */
-        /** @var string $createdAt */
-        /** @var string $updatedAt */
+        $id = $d['id'] ?? null;
+        $customerName = $d['customer_name'] ?? null;
+        $customerEmail = $d['customer_email'] ?? null;
+        $total = $d['total'] ?? null;
+        $status = $d['status'] ?? null;
+        $createdAt = $d['created_at'] ?? null;
+        $updatedAt = $d['updated_at'] ?? null;
 
         return [
-            'id' => (int) $id,
-            'customer_name' => htmlspecialchars($customerName, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
-            'customer_email' => htmlspecialchars($customerEmail, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
-            'total' => (float) $total,
-            'status' => htmlspecialchars($status, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+            'id' => $id !== null ? (int) $id : null,
+            'customer_name' => is_string($customerName) ? htmlspecialchars($customerName, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $customerName,
+            'customer_email' => is_string($customerEmail) ? htmlspecialchars($customerEmail, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $customerEmail,
+            'total' => $total !== null ? (float) $total : null,
+            'status' => is_string($status) ? htmlspecialchars($status, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $status,
             'items' => $items,
             'created_at' => $createdAt,
             'updated_at' => $updatedAt,

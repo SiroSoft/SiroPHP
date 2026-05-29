@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Models\User;
+use App\Role;
 use Siro\Core\Auth\JWT;
 use Siro\Core\DB;
 use Siro\Core\Env;
@@ -122,7 +123,7 @@ final class AuthMiddleware implements MiddlewareInterface
         $rawId = $row['id'] ?? $userId;
         $rawName = $row['name'] ?? '';
         $rawEmail = $row['email'] ?? '';
-        $rawRole = $row['role'] ?? 'user';
+        $rawRole = $row['role'] ?? Role::USER;
         $rawCreatedAt = $row['created_at'] ?? '';
         /** @var int|string $rawId */
         /** @var string $rawName */
