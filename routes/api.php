@@ -137,7 +137,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     $router->resource('posts', \App\Controllers\PostController::class, ['auth', 'throttle:60,1']);
     $router->resource('users', \App\Controllers\UserController::class, ['auth', 'throttle:60,1']);
 
-    // Upload & Lang demo routes
+    // Upload
     $router->post('/upload/avatar', function (Request $req): Response {
         $file = $req->file('avatar');
         if ($file === null || !$file->isValid()) {
@@ -151,6 +151,21 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             'size' => $file->getSize(),
             'mime' => $file->getMimeType(),
         ], 'Avatar uploaded');
+    })->middleware([JsonMiddleware::class, 'auth', 'throttle:10,1']);
+
+    $router->post('/upload', function (Request $req): Response {
+        $file = $req->file('file');
+        if ($file === null || !$file->isValid()) {
+            return Response::error('No file uploaded', 422);
+        }
+        $path = $file->store('uploads');
+        return Response::success([
+            'path' => $path,
+            'url' => $path,
+            'original_name' => $file->getClientOriginalName(),
+            'size' => $file->getSize(),
+            'mime' => $file->getMimeType(),
+        ], 'File uploaded', 201);
     })->middleware([JsonMiddleware::class, 'auth', 'throttle:10,1']);
 
     // L8: GET /profile performs locale state changes. Consider POST for mutations.
@@ -174,6 +189,102 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
                 'available_locales' => ['en', 'vi'],
             ],
         ];
+    })->middleware(['auth']);
+
+    $router->put('/profile', [\App\Controllers\UserController::class, 'updateProfile'])
+        ->middleware(['auth', JsonMiddleware::class]);
+
+    $router->put('/profile/password', function (Request $req): Response {
+        $data = $req->all();
+        $currentPassword = $data['current_password'] ?? '';
+        $newPassword = $data['new_password'] ?? '';
+        $user = $req->user();
+        $userId = is_numeric($user['id'] ?? null) ? (int) $user['id'] : 0;
+        if ($userId <= 0) {
+            return Response::error('Unauthorized', 401);
+        }
+        if ($currentPassword === '' || $newPassword === '') {
+            return Response::error('Validation failed', 422, [
+                'current_password' => ['Current password is required'],
+                'new_password' => ['New password is required'],
+            ]);
+        }
+        $existingUser = \App\Models\User::find($userId);
+        if ($existingUser === null) {
+            return Response::error('User not found', 404);
+        }
+        $existingPassword = $existingUser->getAttribute('password');
+        if (!is_string($existingPassword) || !password_verify($currentPassword, $existingPassword)) {
+            return Response::error('Current password is incorrect', 400);
+        }
+        $existingUser->update(['password' => password_hash($newPassword, PASSWORD_BCRYPT)]);
+        return Response::success(null, 'Password changed');
+    })->middleware(['auth', JsonMiddleware::class]);
+
+    $router->get('/settings', function (): Response {
+        try {
+            $rows = \Siro\Core\Database::select("SELECT `key`, `value` FROM settings");
+            $settings = [];
+            foreach ($rows as $row) {
+                $settings[$row['key']] = $row['value'];
+            }
+            return Response::success($settings ?: [
+                'app_name' => 'SiroPHP',
+                'locale' => 'en',
+                'timezone' => 'UTC',
+            ], 'Settings retrieved');
+        } catch (\Throwable) {
+            return Response::success([
+                'app_name' => 'SiroPHP',
+                'locale' => 'en',
+                'timezone' => 'UTC',
+            ], 'Settings retrieved (defaults)');
+        }
+    })->middleware(['auth', JsonMiddleware::class]);
+
+    $router->put('/settings', function (Request $req): Response {
+        $data = $req->all();
+        if (!is_array($data) || $data === []) {
+            return Response::error('No settings provided', 422);
+        }
+        try {
+            foreach ($data as $key => $value) {
+                $existing = \Siro\Core\Database::first("SELECT id FROM settings WHERE `key` = ?", [(string) $key]);
+                if ($existing !== null) {
+                    \Siro\Core\Database::execute("UPDATE settings SET `value` = ? WHERE `key` = ?", [(string) $value, (string) $key]);
+                } else {
+                    \Siro\Core\Database::execute("INSERT INTO settings (`key`, `value`) VALUES (?, ?)", [(string) $key, (string) $value]);
+                }
+            }
+            return Response::success($data, 'Settings updated');
+        } catch (\Throwable $e) {
+            return Response::error('Settings update failed: ' . $e->getMessage(), 500);
+        }
+    })->middleware(['auth', JsonMiddleware::class]);
+
+    $router->patch('/orders/{id}/status', [\App\Controllers\OrderController::class, 'updateStatus'])
+        ->middleware(['auth', JsonMiddleware::class, 'throttle:60,1']);
+
+    $router->get('/dashboard/stats', function (): Response {
+        try {
+            $userCount = (int) (\Siro\Core\Database::first("SELECT COUNT(*) as count FROM users")['count'] ?? 0);
+            $orderCount = (int) (\Siro\Core\Database::first("SELECT COUNT(*) as count FROM orders")['count'] ?? 0);
+            $productCount = (int) (\Siro\Core\Database::first("SELECT COUNT(*) as count FROM products")['count'] ?? 0);
+            $recentOrders = \Siro\Core\Database::select("SELECT id, status, total, created_at FROM orders ORDER BY id DESC LIMIT 5");
+        } catch (\Throwable) {
+            $userCount = 0;
+            $orderCount = 0;
+            $productCount = 0;
+            $recentOrders = [];
+        }
+        return Response::success([
+            'stats' => [
+                'total_users' => $userCount,
+                'total_orders' => $orderCount,
+                'total_products' => $productCount,
+            ],
+            'recent_orders' => $recentOrders,
+        ], 'Dashboard stats');
     })->middleware(['auth']);
 
 });

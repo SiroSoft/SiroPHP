@@ -68,6 +68,49 @@ final class UserController extends Controller
         return $this->success(UserResource::make($user), 'User retrieved');
     }
 
+    public function updateProfile(Request $request): Response
+    {
+        $user = $request->user();
+        $userId = is_numeric($user['id'] ?? null) ? (int) $user['id'] : 0;
+        if ($userId <= 0) {
+            return $this->error('Unauthorized', 401);
+        }
+
+        $data = $this->validate([
+            'name' => 'min:2|max:255',
+            'email' => 'email|max:255',
+        ]);
+
+        if ($data === []) {
+            return $this->error('No fields to update', 400);
+        }
+
+        if (isset($data['email'])) {
+            $existing = $this->service->getByEmail($data['email']);
+            if ($existing !== null && (int) ($existing['id'] ?? 0) !== $userId) {
+                return $this->error('Validation failed', 422, [
+                    'email' => ['Email has already been taken'],
+                ]);
+            }
+        }
+
+        try {
+            $updated = $this->service->update($userId, $data);
+        } catch (\App\Exceptions\DuplicateEmailException) {
+            return $this->error('Validation failed', 422, [
+                'email' => ['Email has already been taken'],
+            ]);
+        } catch (\App\Exceptions\NoFieldsToUpdateException) {
+            return $this->error('No fields to update', 400);
+        }
+
+        if ($updated === null) {
+            return $this->error('Update failed', 400);
+        }
+
+        return $this->success(\App\Resources\UserResource::make($updated), 'Profile updated');
+    }
+
     public function store(Request $request): Response
     {
         $currentUser = $request->user();

@@ -165,6 +165,40 @@ final class OrderController extends Controller
         return $this->success(OrderResource::make($order), 'Order updated');
     }
 
+    public function updateStatus(Request $request): Response
+    {
+        $rawId = $request->param('id');
+        $id = (int) $rawId;
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
+
+        $validated = $this->validate([
+            'status' => 'required|in:pending,processing,shipped,delivered,cancelled',
+        ]);
+
+        $currentUser = $request->user();
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+
+        $order = $this->service->getById($id);
+        if ($order === null) {
+            return $this->error('Order not found', 404);
+        }
+
+        $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
+        $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
+        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {
+            return $this->error('Forbidden', 403);
+        }
+
+        $updated = $this->service->update($id, ['status' => $validated['status']]);
+        if ($updated === null) {
+            return $this->error('Order not found', 404);
+        }
+
+        return $this->success(\App\Resources\OrderResource::make($updated), 'Order status updated');
+    }
+
     public function delete(Request $request): Response
     {
         $rawId = $request->param('id');
