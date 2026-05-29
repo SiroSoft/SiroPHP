@@ -1,3 +1,10 @@
+---
+title: e co mm er ce
+description: SiroPHP e co mm er ce reference
+sidebar_position: 2
+sidebar_label: e co mm er ce
+---
+
 # E-Commerce API Example
 
 A complete e-commerce API built with SiroPHP demonstrating cart management, checkout flow, payment processing, and webhooks.

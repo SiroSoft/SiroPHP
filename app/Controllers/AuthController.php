@@ -38,7 +38,7 @@ final class AuthController
             ]);
         } catch (DuplicateEmailException) {
             return Response::error('Validation failed', 422, [
-                'email' => ['Email has already been taken'],
+                'email' => ['The provided data is invalid'],
             ]);
         }
 
@@ -70,7 +70,7 @@ final class AuthController
 
         if ($userData === null || !isset($userData['password']) || !is_string($userData['password'])) {
             // Normalize timing to prevent user enumeration
-            password_verify('dummy', '$2y$12$012345678901234567890123456789012345678901234567890123456789');
+            password_verify('dummy', '$2y$12$dummyhashdummyhashdummyhashdummyhashdummyhashdummyhashdummyhashdu');
             return Response::error('Invalid credentials', 401);
         }
 
@@ -78,23 +78,21 @@ final class AuthController
         $status = $userData['status'] ?? 0;
         /** @var int|string $status */
         if ((int) $status !== 1) {
-            return Response::error('Account is inactive', 403);
+            return Response::error('Invalid credentials', 401);
         }
 
         $lockedUntil = $userData['locked_until'] ?? null;
         /** @var string|null $lockedUntil */
         if ($lockedUntil !== null && $lockedUntil !== '' && strtotime($lockedUntil) > time()) {
-            return Response::error('Account is temporarily locked. Try again later.', 429);
+            return Response::error('Invalid credentials', 401);
         }
 
         $hash = $userData['password'];
         /** @var string $hash */
         if (!password_verify($request->string('password'), $hash)) {
             $userId = $userData['id'];
-            $loginAttempts = $userData['login_attempts'] ?? 0;
             /** @var int|string $userId */
-            /** @var int|string $loginAttempts */
-            $this->userService->incrementLoginAttempts((int) $userId, (int) $loginAttempts);
+            $this->userService->incrementLoginAttempts((int) $userId);
             return Response::error('Invalid credentials', 401);
         }
 

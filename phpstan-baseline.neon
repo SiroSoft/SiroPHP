@@ -1,24 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Parameter \#1 \$queryParams of method App\\Services\\OrderService\:\:getAll\(\) expects array\<string, mixed\>, array\<int\|string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/OrderController.php
-
-		-
-			message: '#^Parameter \#1 \$queryParams of method App\\Services\\PostService\:\:getAll\(\) expects array\<string, mixed\>, array\<int\|string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/PostController.php
-
-		-
-			message: '#^Parameter \#1 \$queryParams of method App\\Services\\ProductService\:\:getAll\(\) expects array\<string, mixed\>, array\<int\|string, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/ProductController.php
-
-		-
 			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1

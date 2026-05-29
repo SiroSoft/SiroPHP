@@ -1,3 +1,10 @@
+---
+title: T ES TI NG
+description: SiroPHP T ES TI NG reference
+sidebar_position: 12
+sidebar_label: T ES TI NG
+---
+
 # Testing Guide
 
 ## Test Structure

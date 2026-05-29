@@ -1,3 +1,10 @@
+---
+title: E ve nt s
+description: SiroPHP E ve nt s reference
+sidebar_position: 8
+sidebar_label: E ve nt s
+---
+
 # Events API Reference
 
 ## Overview

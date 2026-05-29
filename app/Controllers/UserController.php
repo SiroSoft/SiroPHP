@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Exceptions\DuplicateEmailException;
 use App\Exceptions\NoFieldsToUpdateException;
 use App\Resources\UserResource;
+use App\Role;
 use App\Services\UserService;
 use Siro\Core\Controller;
 use Siro\Core\Request;
@@ -21,13 +22,13 @@ final class UserController extends Controller
     public function index(Request $request): Response
     {
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
         $page = max(1, $request->queryInt('page', 1));
-        $perPage = min(100, max(1, $request->queryInt('per_page', 15)));
+        $perPage = min(100, max(1, $request->queryInt('per_page', 20)));
 
         $result = $this->service->getAll($page, $perPage);
         /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
@@ -48,12 +49,12 @@ final class UserController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
-        if ($currentUserId !== $id && $currentUserRole !== 'admin') {
+        if ($currentUserId !== $id && $currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -70,8 +71,8 @@ final class UserController extends Controller
     public function store(Request $request): Response
     {
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -100,12 +101,12 @@ final class UserController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
-        if ($currentUserId !== $id && $currentUserRole !== 'admin') {
+        if ($currentUserId !== $id && $currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -113,7 +114,18 @@ final class UserController extends Controller
             'name' => 'min:3|max:120',
             'email' => 'email|max:255',
             'password' => 'min:8|max:255',
+            'current_password' => 'required_with:password',
         ]);
+
+        if (isset($data['password'])) {
+            $existingUser = $this->service->getById($id);
+            $existingPassword = is_array($existingUser) ? ($existingUser['password'] ?? '') : '';
+            if (!is_string($existingPassword) || $existingPassword === '' || !password_verify(strval($data['current_password'] ?? ''), $existingPassword)) {
+                return $this->error('Validation failed', 422, [
+                    'current_password' => ['Current password is incorrect'],
+                ]);
+            }
+        }
 
         try {
             $userData = $this->service->update($id, $data);
@@ -141,13 +153,17 @@ final class UserController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
-        if ($currentUserId !== $id && $currentUserRole !== 'admin') {
+        if ($currentUserId !== $id && $currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
+        }
+
+        if ($currentUserId === $id) {
+            return $this->error('Self-deletion is not allowed. Contact an administrator.', 403);
         }
 
         return $this->service->delete($id)

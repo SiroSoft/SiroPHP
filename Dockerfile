@@ -1,7 +1,12 @@
+FROM composer:2 AS composer
+
 FROM dunglas/frankenphp:1-php8.2
 
 # Install PHP extensions
 RUN install-php-extensions pdo pdo_mysql pdo_sqlite
+
+# Copy Composer from official image
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 
 # Production OPcache config
 RUN { \
@@ -21,8 +26,7 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Optimize for production
-RUN php siro key:generate --force \
-    && php siro config:cache
+RUN php siro config:cache
 
 # Permissions
 RUN chown -R www-data:www-data storage

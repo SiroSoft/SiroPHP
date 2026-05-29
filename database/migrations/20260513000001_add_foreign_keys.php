@@ -13,12 +13,10 @@ return new class {
         });
 
         Schema::table('orders', function (Blueprint $t) {
-            $t->integer('user_id');
             $t->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 
         Schema::table('posts', function (Blueprint $t) {
-            $t->integer('user_id');
             $t->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 
@@ -30,8 +28,20 @@ return new class {
 
     public function down(): void
     {
-        Schema::dropColumn('products', 'user_id');
-        Schema::dropColumn('posts', 'user_id');
-        Schema::dropColumn('orders', 'user_id');
+        Schema::table('refresh_tokens', function (Blueprint $t) {
+            $t->dropForeign(['user_id']);
+        });
+        Schema::table('orders', function (Blueprint $t) {
+            $t->dropForeign(['user_id']);
+            $t->dropColumn('user_id');
+        });
+        Schema::table('posts', function (Blueprint $t) {
+            $t->dropForeign(['user_id']);
+            $t->dropColumn('user_id');
+        });
+        Schema::table('products', function (Blueprint $t) {
+            $t->dropForeign(['user_id']);
+            $t->dropColumn('user_id');
+        });
     }
 };

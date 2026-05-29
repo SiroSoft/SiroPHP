@@ -1,3 +1,10 @@
+---
+title: M od el
+description: SiroPHP M od el reference
+sidebar_position: 18
+sidebar_label: M od el
+---
+
 # Model API Reference
 
 ## Overview
@@ -907,6 +914,6 @@ $posts = Post::with('author', 'comments')->get();
 
 ## See Also
 
-- [Database API](Database.md) - Query builder reference
-- [Relationships Guide](../guides/RELATIONSHIPS.md) - Detailed relationship examples
-- [Eloquent vs SiroPHP Models](../guides/MIGRATION_FROM_LARAVEL.md) - Comparison guide
+- [Database Guide](../guides/DATABASE.md) - Query builder reference
+- [SoftDeletes API](SoftDeletes.md) - Soft delete support
+- [Pagination API](Pagination.md) - Pagination methods

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Resources\OrderResource;
+use App\Role;
 use App\Services\OrderService;
 use Siro\Core\Controller;
 use Siro\Core\Request;
@@ -23,17 +24,20 @@ final class OrderController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
 
         $params = $request->all();
-        if ($currentUserRole !== 'admin') {
+        if ($currentUserRole !== Role::ADMIN) {
+            $allowed = ['status', 'user_id'];
+            $params = array_intersect_key($params, array_flip($allowed));
             $params['user_id'] = $currentUserId;
         }
 
+        /** @var array<string, mixed> $params */
         $result = $this->service->getAll($params, $page, $perPage);
         /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
         return $this->paginated(
@@ -52,10 +56,10 @@ final class OrderController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
 
         $order = $this->service->getById($id);
@@ -63,7 +67,7 @@ final class OrderController extends Controller
         if ($order === null) return $this->error('Order not found', 404);
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
-        if ($currentUserRole !== 'admin' && $currentUserId !== $orderUserId) {
+        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -82,6 +86,31 @@ final class OrderController extends Controller
             return $this->error('Validation failed', 422, [
                 'items' => ['Items must be an array'],
             ]);
+        }
+        foreach ($items as $i => $item) {
+            if (!is_array($item) || !isset($item['product_id'], $item['price'], $item['quantity'])) {
+                return $this->error('Validation failed', 422, [
+                    "items.$i" => ['Each item must have product_id, price, and quantity'],
+                ]);
+            }
+            $price = $item['price'];
+            $quantity = $item['quantity'];
+            if (!is_numeric($price) || (float) $price <= 0) {
+                return $this->error('Validation failed', 422, [
+                    "items.$i.price" => ['Price must be greater than 0'],
+                ]);
+            }
+            if (!is_int($quantity) || $quantity <= 0) {
+                return $this->error('Validation failed', 422, [
+                    "items.$i.quantity" => ['Quantity must be a positive integer'],
+                ]);
+            }
+            $product = \App\Models\Product::find($item['product_id']);
+            if ($product === null) {
+                return $this->error('Validation failed', 422, [
+                    "items.$i.product_id" => ['Product not found'],
+                ]);
+            }
         }
         $validated['items'] = $items;
 
@@ -109,10 +138,10 @@ final class OrderController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
 
         $order = $this->service->getById($id);
@@ -120,7 +149,7 @@ final class OrderController extends Controller
         if ($order === null) return $this->error('Order not found', 404);
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
-        if ($currentUserRole !== 'admin' && $currentUserId !== $orderUserId) {
+        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -145,10 +174,10 @@ final class OrderController extends Controller
 
         $currentUser = $request->user();
         $currentUserId = 0;
-        $currentUserRole = 'user';
+        $currentUserRole = Role::USER;
         if (is_array($currentUser)) {
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
+            $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
 
         $order = $this->service->getById($id);
@@ -156,7 +185,7 @@ final class OrderController extends Controller
         if ($order === null) return $this->error('Order not found', 404);
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
-        if ($currentUserRole !== 'admin' && $currentUserId !== $orderUserId) {
+        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {
             return $this->error('Forbidden', 403);
         }
 

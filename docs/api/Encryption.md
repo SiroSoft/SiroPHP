@@ -1,3 +1,10 @@
+---
+title: E nc ry pt io n
+description: SiroPHP E nc ry pt io n reference
+sidebar_position: 7
+sidebar_label: E nc ry pt io n
+---
+
 # Encryption API Reference
 
 ## Overview

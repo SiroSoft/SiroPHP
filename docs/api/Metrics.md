@@ -1,3 +1,10 @@
+---
+title: M et ri cs
+description: SiroPHP M et ri cs reference
+sidebar_position: 16
+sidebar_label: M et ri cs
+---
+
 # Metrics API Reference
 
 ## Overview

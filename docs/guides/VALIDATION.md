@@ -1,3 +1,10 @@
+---
+title: V AL ID AT IO N
+description: SiroPHP V AL ID AT IO N reference
+sidebar_position: 13
+sidebar_label: V AL ID AT IO N
+---
+
 # Validation Guide
 
 ## Available Validation Rules

@@ -1,3 +1,10 @@
+---
+title: i nd ex
+description: SiroPHP i nd ex reference
+sidebar_position: 0
+sidebar_label: Overview
+---
+
 # SiroPHP Documentation
 
 **Complete guide to building production-ready APIs with SiroPHP**
@@ -54,11 +61,9 @@
 - **[Container](api/Container.md)** - DI container, autowiring
 - **[Middleware](api/Middleware.md)** - Pipeline, built-in middleware
 - **[Validation](api/Validation.md)** - Rules, FormRequest, custom rules
-- **[Controller](api/Controller.md)** - Request handling
+- **[Controller](api/Router.md)** - Route handling
 - **[Response](api/Response.md)** - Response building
-- **[Request](api/Request.md)** - Input handling
 - **[Request](api/Request.md)** - Input, validation, auth
-- **[Response](api/Response.md)** - Success/error factories
 - **[Container](api/Container.md)** - DI container, autowiring
 - **[Middleware](api/Middleware.md)** - Pipeline, built-in middleware
 

@@ -1,3 +1,10 @@
+---
+title: U pl oa de dF il e
+description: SiroPHP U pl oa de dF il e reference
+sidebar_position: 32
+sidebar_label: U pl oa de dF il e
+---
+
 # UploadedFile API Reference
 
 ## Overview

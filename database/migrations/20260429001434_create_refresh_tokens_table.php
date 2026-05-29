@@ -12,6 +12,7 @@ return new class {
             $t->id();
             $t->string('jti', 64)->unique();
             $t->bigint('user_id');
+            $t->index('user_id');
             $t->smallint('revoked')->default(0);
             $t->timestamp('expires_at');
             $t->timestamp('created_at')->useCurrent();

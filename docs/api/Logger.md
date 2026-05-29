@@ -1,3 +1,10 @@
+---
+title: L og ge r
+description: SiroPHP L og ge r reference
+sidebar_position: 14
+sidebar_label: L og ge r
+---
+
 # Logger API Reference
 
 ## Overview

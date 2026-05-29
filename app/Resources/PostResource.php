@@ -16,7 +16,7 @@ final class PostResource extends Resource
             'body' => is_string($this->data['body'] ?? null) ? htmlspecialchars($this->data['body'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['body'] ?? null),
             'locale' => $this->data['locale'] ?? null,
             'status' => $this->data['status'] ?? null,
-            'image' => $this->data['image'] ?? null,
+            'image' => is_string($this->data['image'] ?? null) ? htmlspecialchars($this->data['image'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['image'] ?? null),
             'created_at' => $this->data['created_at'] ?? null,
             'updated_at' => $this->data['updated_at'] ?? null,
         ];

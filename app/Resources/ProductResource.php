@@ -25,6 +25,7 @@ final class ProductResource extends Resource
             'category' => is_string($this->data['category'] ?? null) ? htmlspecialchars($this->data['category'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['category'] ?? null),
             'status' => is_string($this->data['status'] ?? null) ? htmlspecialchars($this->data['status'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['status'] ?? null),
             'created_at' => $this->data['created_at'] ?? null,
+            'updated_at' => is_string($this->data['updated_at'] ?? null) ? htmlspecialchars($this->data['updated_at'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['updated_at'] ?? null),
         ];
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Resources\ProductResource;
+use App\Role;
 use App\Services\ProductService;
 use Siro\Core\Controller;
 use Siro\Core\Request;
@@ -21,7 +22,14 @@ final class ProductController extends Controller
         $perPage = min($request->queryInt('per_page', 20), 100);
         $page = max($request->queryInt('page', 1), 1);
 
-        $result = $this->service->getAll($request->all(), $page, $perPage);
+        /** @var array<string, mixed> $params */
+        $params = $request->all();
+        $currentUser = $request->user();
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
+            unset($params['user_id']);
+        }
+        $result = $this->service->getAll($params, $page, $perPage);
         /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
 
         return $this->paginated(
@@ -52,8 +60,8 @@ final class ProductController extends Controller
     public function store(Request $request): Response
     {
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -66,6 +74,9 @@ final class ProductController extends Controller
             'status' => 'max:20',
         ]);
 
+        $currentUserId = is_array($currentUser) && isset($currentUser['id']) ? (int) $currentUser['id'] : 0;
+        $validated['user_id'] = $currentUserId;
+
         $item = $this->service->create($validated);
         /** @var array<string, mixed> $item */
         return $this->created(ProductResource::make($item), 'Product created');
@@ -74,8 +85,8 @@ final class ProductController extends Controller
     public function update(Request $request): Response
     {
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -107,8 +118,8 @@ final class ProductController extends Controller
     public function delete(Request $request): Response
     {
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -124,5 +135,3 @@ final class ProductController extends Controller
             : $this->error('Product not found', 404);
     }
 }
-
- // TRIGGER 500 TEST - se xoa sau

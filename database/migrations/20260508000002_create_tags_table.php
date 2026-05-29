@@ -10,7 +10,7 @@ return new class {
     {
         Schema::create('tags', function (Blueprint $t) {
             $t->id();
-            $t->string('name');
+            $t->string('name')->unique();
             $t->timestamps();
         });
     }

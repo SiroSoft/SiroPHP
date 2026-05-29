@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Siro\Core\Env;
 
 return [
-    'driver' => Env::get('MAIL_DRIVER', 'sendmail'),
+    'driver' => Env::get('MAIL_DRIVER', 'log'),
     'from_address' => Env::get('MAIL_FROM_ADDRESS', 'noreply@localhost'),
     'from_name' => Env::get('MAIL_FROM_NAME', 'Siro API'),
     'smtp' => [

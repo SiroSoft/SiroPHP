@@ -19,8 +19,8 @@ use Siro\Core\Model;
  * @property string|null $verification_token
  * @property string|null $password_reset_token
  * @property string|null $password_reset_expires_at
- * @property string $created_at
- * @property string|null $updated_at
+ * @property \DateTimeInterface $created_at
+ * @property \DateTimeInterface|null $updated_at
  *
  * @package App\Models
  */
@@ -40,7 +40,12 @@ final class User extends Model
         'locked_until' => 'datetime',
         'email_verified_at' => 'datetime',
         'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'password_reset_expires_at' => 'datetime',
     ];
+
+    /** @var array<int, string> */
+    protected array $guarded = ['role', 'status'];
 
     /** @var array<int, string> */
     protected array $fillable = [

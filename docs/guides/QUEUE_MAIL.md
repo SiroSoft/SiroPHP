@@ -1,3 +1,10 @@
+---
+title: Q UE UE M AI L
+description: SiroPHP Q UE UE M AI L reference
+sidebar_position: 10
+sidebar_label: Q UE UE M AI L
+---
+
 # Queue & Mail Guide
 
 ## Queue System

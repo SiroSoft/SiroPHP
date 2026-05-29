@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Resources\CategoryResource;
+use App\Role;
 use App\Services\CategoryService;
 use Siro\Core\Controller;
 use Siro\Core\Request;
@@ -38,8 +39,8 @@ final class CategoryController extends Controller
     public function store(Request $request): Response
     {
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -51,8 +52,8 @@ final class CategoryController extends Controller
     public function update(Request $request): Response
     {
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 
@@ -69,8 +70,8 @@ final class CategoryController extends Controller
     public function delete(Request $request): Response
     {
         $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
-        if ($currentUserRole !== 'admin') {
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
+        if ($currentUserRole !== Role::ADMIN) {
             return $this->error('Forbidden', 403);
         }
 

@@ -1,3 +1,10 @@
+---
+title: D AT AB AS E
+description: SiroPHP D AT AB AS E reference
+sidebar_position: 4
+sidebar_label: D AT AB AS E
+---
+
 # Database Guide
 
 ## Configuration
