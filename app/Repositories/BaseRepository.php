@@ -24,6 +24,9 @@ abstract class BaseRepository
     public function findAll(array $filters = [], int $page = 1, int $perPage = 20): array
     {
         $query = $this->model->query()->orderBy('id', 'DESC');
+        foreach ($filters as $key => $value) {
+            $query = $query->where($key, $value);
+        }
         return $query->paginate($perPage, $page);
     }
 

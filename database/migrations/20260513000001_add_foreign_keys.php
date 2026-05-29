@@ -13,12 +13,10 @@ return new class {
         });
 
         Schema::table('orders', function (Blueprint $t) {
-            $t->integer('user_id');
             $t->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 
         Schema::table('posts', function (Blueprint $t) {
-            $t->integer('user_id');
             $t->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 

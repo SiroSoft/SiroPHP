@@ -23,6 +23,11 @@ final class ProductController extends Controller
 
         /** @var array<string, mixed> $params */
         $params = $request->all();
+        $currentUser = $request->user();
+        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : 'user';
+        if ($currentUserRole !== 'admin') {
+            unset($params['user_id']);
+        }
         $result = $this->service->getAll($params, $page, $perPage);
         /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
 
@@ -67,6 +72,9 @@ final class ProductController extends Controller
             'category' => 'max:100',
             'status' => 'max:20',
         ]);
+
+        $currentUserId = is_array($currentUser) && isset($currentUser['id']) ? (int) $currentUser['id'] : 0;
+        $validated['user_id'] = $currentUserId;
 
         $item = $this->service->create($validated);
         /** @var array<string, mixed> $item */

@@ -31,6 +31,8 @@ final class OrderController extends Controller
 
         $params = $request->all();
         if ($currentUserRole !== 'admin') {
+            $allowed = ['status', 'user_id'];
+            $params = array_intersect_key($params, array_flip($allowed));
             $params['user_id'] = $currentUserId;
         }
 
@@ -83,6 +85,13 @@ final class OrderController extends Controller
             return $this->error('Validation failed', 422, [
                 'items' => ['Items must be an array'],
             ]);
+        }
+        foreach ($items as $i => $item) {
+            if (!is_array($item) || !isset($item['product_id'], $item['price'], $item['quantity'])) {
+                return $this->error('Validation failed', 422, [
+                    "items.$i" => ['Each item must have product_id, price, and quantity'],
+                ]);
+            }
         }
         $validated['items'] = $items;
 
