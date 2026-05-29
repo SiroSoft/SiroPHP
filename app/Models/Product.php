@@ -29,6 +29,7 @@ final class Product extends Model
         'id' => 'int',
         'price' => 'float',
         'stock' => 'int',
+        'user_id' => 'int',
     ];
 
     protected array $fillable = [
@@ -38,5 +39,6 @@ final class Product extends Model
         'stock',
         'category',
         'status',
+        'user_id',
     ];
 }

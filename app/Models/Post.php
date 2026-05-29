@@ -27,6 +27,7 @@ final class Post extends Model
 
     protected array $casts = [
         'id' => 'int',
+        'user_id' => 'int',
     ];
 
     protected array $fillable = [

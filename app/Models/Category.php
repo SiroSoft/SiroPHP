@@ -24,6 +24,9 @@ final class Category extends Model
 
     protected array $casts = [
         'id' => 'int',
+        'is_active' => 'int',
+        'sort_order' => 'int',
+        'parent_id' => 'int',
     ];
 
     protected array $fillable = [

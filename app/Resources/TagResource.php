@@ -13,14 +13,16 @@ final class TagResource extends Resource
 {
     public function toArray(): array
     {
+        $d = $this->data;
         return [
-            'id' => $this->data['id'] ?? null,
-            'name' => is_string($this->data['name'] ?? null) ? htmlspecialchars($this->data['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['name'] ?? null),
+            'id' => $d['id'] ?? null,
+            'name' => is_string($d['name'] ?? null) ? htmlspecialchars($d['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($d['name'] ?? null),
             'slug' => null,
-            'color' => null,
-            'is_active' => true,
-            'created_at' => $this->data['created_at'] ?? null,
-            'updated_at' => $this->data['updated_at'] ?? null,
+            'color' => is_string($d['color'] ?? null) ? htmlspecialchars($d['color'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($d['color'] ?? null),
+            'description' => is_string($d['description'] ?? null) ? htmlspecialchars($d['description'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($d['description'] ?? null),
+            'is_active' => isset($d['is_active']) ? (bool) $d['is_active'] : true,
+            'created_at' => $d['created_at'] ?? null,
+            'updated_at' => $d['updated_at'] ?? null,
         ];
     }
 }
