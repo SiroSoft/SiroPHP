@@ -74,6 +74,18 @@ final class ProductController extends Controller
             'status' => 'max:20',
         ]);
 
+        // Map frontend fields to DB columns
+        $rawBody = $request->all();
+        if (isset($rawBody['is_active'])) {
+            $validated['status'] = $rawBody['is_active'] ? 'active' : 'inactive';
+        }
+        if (isset($rawBody['category_name'])) {
+            $validated['category'] = $rawBody['category_name'];
+        }
+        if (isset($rawBody['category_id'])) {
+            // category_id from frontend select — resolve name or skip
+        }
+
         $currentUserId = is_array($currentUser) && isset($currentUser['id']) ? (int) $currentUser['id'] : 0;
         $validated['user_id'] = $currentUserId;
 
@@ -105,6 +117,14 @@ final class ProductController extends Controller
             'category' => 'max:100',
             'status' => 'max:20',
         ]);
+
+        $rawBody = $request->all();
+        if (isset($rawBody['is_active'])) {
+            $validated['status'] = $rawBody['is_active'] ? 'active' : 'inactive';
+        }
+        if (isset($rawBody['category_name'])) {
+            $validated['category'] = $rawBody['category_name'];
+        }
 
         $item = $this->service->update($id, $validated);
         /** @var array<string, mixed>|null $item */
