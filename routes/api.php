@@ -13,7 +13,7 @@ use Siro\Core\Response;
 
 /** @var \Siro\Core\App $app */
 
-Metrics::init('siro', true);
+Metrics::init('siro', \Siro\Core\Env::get('APP_DEBUG', 'false') === 'true');
 Metrics::registerRoute($app->router);
 
 // Prevent 404 noise from browser requests
@@ -149,10 +149,11 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             'size' => $file->getSize(),
             'mime' => $file->getMimeType(),
         ], 'Avatar uploaded');
-    })->middleware([JsonMiddleware::class, 'throttle:10,1']);
+    })->middleware([JsonMiddleware::class, 'auth', 'throttle:10,1']);
 
     $router->get('/profile', function (Request $req): array {
         $locale = $req->queryString('locale', 'en');
+        if (!in_array($locale, ['en', 'vi'])) $locale = 'en';
         Lang::setLocale($locale);
 
         $name = $req->query('name', 'Guest');
@@ -170,6 +171,6 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
                 'available_locales' => ['en', 'vi'],
             ],
         ];
-    });
+    })->middleware(['auth']);
 
 });

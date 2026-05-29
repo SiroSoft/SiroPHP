@@ -86,12 +86,14 @@ final class UserService
             return false;
         }
         $passwordHash = self::hashPassword($newPassword);
-        $this->repo->updateWhere('id', $user['id'], [
+        $affected = $this->repo->updateWhere('id', $user['id'], [
             'password' => $passwordHash,
             'password_reset_token' => null,
             'password_reset_expires_at' => null,
             'token_version' => (int) $tokenVersion + 1,
         ]);
+        if ($affected === 0) return false;
+        // M2: Session regeneration required after password reset (API context)
         return true;
     }
 
@@ -182,12 +184,12 @@ final class UserService
         return $this->repo->findById($id);
     }
 
-    public function incrementLoginAttempts(int $userId, int $currentAttempts): void
+    public function incrementLoginAttempts(int $userId): void
     {
         $this->repo->atomicIncrement('id', $userId, 'login_attempts', 1);
 
-        $newAttempts = $currentAttempts + 1;
-        if ($newAttempts >= 5) {
+        $user = $this->repo->findById($userId);
+        if ($user && ($user['login_attempts'] ?? 0) >= 5) {
             $this->repo->updateWhere('id', $userId, [
                 'locked_until' => date('Y-m-d H:i:s', time() + 900),
             ]);

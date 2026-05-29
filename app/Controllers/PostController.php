@@ -109,6 +109,12 @@ final class PostController extends Controller
         $rawId = $request->param('id');
         /** @var int|string $rawId */
         $id = (int) $rawId;
+        if ($id <= 0) return $this->error('Invalid id', 422);
+
+        $existing = $this->service->getById($id);
+        if ($existing === null) {
+            return $this->error('Post not found', 404);
+        }
 
         $currentUser = $request->user();
         $currentUserId = 0;
@@ -117,13 +123,10 @@ final class PostController extends Controller
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
             $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : 'user';
         }
-        $existing = $this->service->getById($id);
-        if ($existing !== null) {
-            $existingData = $existing instanceof \Siro\Core\Model ? $existing->toArray() : (array) $existing;
-            $postUserId = is_numeric($existingData['user_id'] ?? null) ? (int) $existingData['user_id'] : 0;
-            if ($currentUserRole !== 'admin' && $currentUserId !== $postUserId) {
-                return $this->error('Forbidden', 403);
-            }
+        $existingData = $existing instanceof \Siro\Core\Model ? $existing->toArray() : (array) $existing;
+        $postUserId = is_numeric($existingData['user_id'] ?? null) ? (int) $existingData['user_id'] : 0;
+        if ($currentUserRole !== 'admin' && $currentUserId !== $postUserId) {
+            return $this->error('Forbidden', 403);
         }
 
         $validated = $this->validate([
@@ -147,6 +150,7 @@ final class PostController extends Controller
         $rawId = $request->param('id');
         /** @var int|string $rawId */
         $id = (int) $rawId;
+        if ($id <= 0) return $this->error('Invalid id', 422);
 
         $currentUser = $request->user();
         $currentUserId = 0;

@@ -14,7 +14,7 @@ services:
       DB_CONNECTION: sqlite
       DB_DATABASE: /app/storage/app.db
       SERVER_NAME: ":80"
-      JWT_SECRET: "${JWT_SECRET:-change-this-in-production-please-use-32-char}"
+      JWT_SECRET: "${JWT_SECRET:-}"
     volumes:
       - storage_data:/app/storage
     restart: unless-stopped

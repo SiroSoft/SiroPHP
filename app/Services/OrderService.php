@@ -51,6 +51,9 @@ final class OrderService
         $data = $validated;
 
         if (isset($data['items']) && is_array($data['items'])) {
+            if (count($data['items']) > 50) {
+                throw new \InvalidArgumentException('Max 50 items per order');
+            }
             $data['items'] = json_encode($data['items']);
         }
 
