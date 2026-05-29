@@ -13,10 +13,12 @@ final class PostResource extends Resource
         return [
             'id' => $this->data['id'] ?? null,
             'title' => is_string($this->data['title'] ?? null) ? htmlspecialchars($this->data['title'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['title'] ?? null),
-            'body' => is_string($this->data['body'] ?? null) ? htmlspecialchars($this->data['body'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['body'] ?? null),
+            'content' => is_string($this->data['body'] ?? null) ? htmlspecialchars($this->data['body'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['body'] ?? null),
+            'excerpt' => null,
             'locale' => $this->data['locale'] ?? null,
             'status' => $this->data['status'] ?? null,
-            'image' => is_string($this->data['image'] ?? null) ? htmlspecialchars($this->data['image'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['image'] ?? null),
+            'featured' => false,
+            'cover_image' => is_string($this->data['image'] ?? null) ? htmlspecialchars($this->data['image'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['image'] ?? null),
             'created_at' => $this->data['created_at'] ?? null,
             'updated_at' => $this->data['updated_at'] ?? null,
         ];
