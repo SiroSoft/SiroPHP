@@ -20,6 +20,8 @@ final class UserResource extends Resource
             'id' => $d['id'] ?? null,
             'name' => $name !== null ? htmlspecialchars($name, ENT_QUOTES | ENT_HTML5, 'UTF-8') : null,
             'email' => $email !== null ? htmlspecialchars($email, ENT_QUOTES | ENT_HTML5, 'UTF-8') : null,
+            'avatar' => null,
+            'phone' => null,
             'role' => $d['role'] ?? 'user',
             'status' => isset($d['status']) ? (int) $d['status'] : 1,
             'created_at' => $d['created_at'] ?? null,
