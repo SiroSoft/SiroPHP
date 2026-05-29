@@ -183,7 +183,7 @@ final class PostController extends Controller
         }
 
         return $this->service->delete($id)
-            ? $this->success(null, 'Post deleted')
+            ? $this->noContent()
             : $this->error('Post not found', 404);
     }
 }

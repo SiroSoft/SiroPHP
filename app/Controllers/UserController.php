@@ -27,7 +27,7 @@ final class UserController extends Controller
         }
 
         $page = max(1, $request->queryInt('page', 1));
-        $perPage = min(100, max(1, $request->queryInt('per_page', 15)));
+        $perPage = min(100, max(1, $request->queryInt('per_page', 20)));
 
         $result = $this->service->getAll($page, $perPage);
         /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
