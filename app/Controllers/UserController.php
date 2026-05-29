@@ -113,7 +113,18 @@ final class UserController extends Controller
             'name' => 'min:3|max:120',
             'email' => 'email|max:255',
             'password' => 'min:8|max:255',
+            'current_password' => 'required_with:password',
         ]);
+
+        if (isset($data['password'])) {
+            $existingUser = $this->service->getById($id);
+            $existingPassword = is_array($existingUser) ? ($existingUser['password'] ?? '') : '';
+            if (!is_string($existingPassword) || $existingPassword === '' || !password_verify(strval($data['current_password'] ?? ''), $existingPassword)) {
+                return $this->error('Validation failed', 422, [
+                    'current_password' => ['Current password is incorrect'],
+                ]);
+            }
+        }
 
         try {
             $userData = $this->service->update($id, $data);
@@ -148,6 +159,10 @@ final class UserController extends Controller
         }
         if ($currentUserId !== $id && $currentUserRole !== 'admin') {
             return $this->error('Forbidden', 403);
+        }
+
+        if ($currentUserId === $id) {
+            return $this->error('Self-deletion is not allowed. Contact an administrator.', 403);
         }
 
         return $this->service->delete($id)

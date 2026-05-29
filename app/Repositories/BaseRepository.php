@@ -10,6 +10,9 @@ abstract class BaseRepository
 {
     protected Model $model;
 
+    /** @var array<int, string> */
+    protected array $allowedFilters = ['status', 'user_id'];
+
     public function __construct()
     {
         $this->model = $this->createModel();
@@ -25,6 +28,9 @@ abstract class BaseRepository
     {
         $query = $this->model->query()->orderBy('id', 'DESC');
         foreach ($filters as $key => $value) {
+            if (!in_array($key, $this->allowedFilters, true)) {
+                continue;
+            }
             $query = $query->where($key, $value);
         }
         return $query->paginate($perPage, $page);

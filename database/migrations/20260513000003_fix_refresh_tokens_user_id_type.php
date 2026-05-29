@@ -18,7 +18,10 @@ return new class {
                 'pgsql', 'postgres', 'postgresql' => 'ALTER TABLE refresh_tokens ALTER COLUMN user_id TYPE INTEGER USING user_id::integer',
                 default => 'ALTER TABLE refresh_tokens MODIFY COLUMN user_id INTEGER NOT NULL',
             };
-            Database::execute($sql);
+            try {
+                Database::execute($sql);
+            } catch (\Throwable) {
+            }
         }
     }
 
@@ -35,7 +38,10 @@ return new class {
                 'pgsql', 'postgres', 'postgresql' => 'ALTER TABLE refresh_tokens ALTER COLUMN user_id TYPE BIGINT USING user_id::bigint',
                 default => 'ALTER TABLE refresh_tokens MODIFY COLUMN user_id BIGINT NOT NULL',
             };
-            Database::execute($sql);
+            try {
+                Database::execute($sql);
+            } catch (\Throwable) {
+            }
         }
     }
 };

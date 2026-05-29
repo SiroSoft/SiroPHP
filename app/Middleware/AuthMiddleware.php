@@ -67,7 +67,6 @@ final class AuthMiddleware implements MiddlewareInterface
                 'status' => $userData['status'],
                 'token_version' => $userData['token_version'],
                 'created_at' => $userData['created_at'],
-                'claims' => $claims,
             ]);
 
             if ($roles !== []) {
@@ -85,22 +84,11 @@ final class AuthMiddleware implements MiddlewareInterface
                 }
             }
         } catch (Throwable $e) {
-            $debug = Env::bool('APP_DEBUG', false);
             Logger::warning('JWT auth failed: ' . $e->getMessage() . ' (token: ' . substr($token, 0, 10) . '...)');
 
-            $errors = ['token' => ['Invalid or expired token']];
-            if ($debug) {
-                $message = match (true) {
-                    str_contains($e->getMessage(), 'expired') => 'Token has expired',
-                    str_contains($e->getMessage(), 'signature') => 'Token signature is invalid',
-                    str_contains($e->getMessage(), 'revoked') => 'Token has been revoked',
-                    str_contains($e->getMessage(), 'Algorithm') => 'Token algorithm mismatch',
-                    default => $e->getMessage(),
-                };
-                $errors = ['token' => [$message]];
-            }
-
-            return Response::error('Unauthorized', 401, $errors);
+            return Response::error('Unauthorized', 401, [
+                'token' => ['Invalid or expired token'],
+            ]);
         }
 
         return $next($request);
