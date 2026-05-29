@@ -21,8 +21,7 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Optimize for production
-RUN php siro key:generate --force \
-    && php siro config:cache
+RUN php siro config:cache
 
 # Permissions
 RUN chown -R www-data:www-data storage

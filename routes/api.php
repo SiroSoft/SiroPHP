@@ -88,16 +88,18 @@ $app->router->get('/health', function (): array {
         $dbOk = true;
     } catch (\Throwable) {
     }
+    $data = [
+        'status' => 'healthy',
+        'database' => $dbOk ? 'connected' : 'unreachable',
+        'time' => date('c'),
+    ];
+    if (\Siro\Core\Env::bool('APP_DEBUG', false)) {
+        $data['app_env'] = \Siro\Core\Env::get('APP_ENV', 'local');
+    }
     return [
         'success' => true,
         'message' => 'OK',
-        'data' => [
-            'status' => 'healthy',
-            'database' => $dbOk ? 'connected' : 'unreachable',
-            'php' => PHP_VERSION,
-            'app_env' => \Siro\Core\Env::get('APP_ENV', 'local'),
-            'time' => date('c'),
-        ],
+        'data' => $data,
     ];
 })->middleware('throttle:30,1');
 
@@ -151,6 +153,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
         ], 'Avatar uploaded');
     })->middleware([JsonMiddleware::class, 'auth', 'throttle:10,1']);
 
+    // L8: GET /profile performs locale state changes. Consider POST for mutations.
     $router->get('/profile', function (Request $req): array {
         $locale = $req->queryString('locale', 'en');
         if (!in_array($locale, ['en', 'vi'])) $locale = 'en';

@@ -78,13 +78,13 @@ final class AuthController
         $status = $userData['status'] ?? 0;
         /** @var int|string $status */
         if ((int) $status !== 1) {
-            return Response::error('Account is inactive', 403);
+            return Response::error('Invalid credentials', 401);
         }
 
         $lockedUntil = $userData['locked_until'] ?? null;
         /** @var string|null $lockedUntil */
         if ($lockedUntil !== null && $lockedUntil !== '' && strtotime($lockedUntil) > time()) {
-            return Response::error('Account is temporarily locked. Try again later.', 429);
+            return Response::error('Invalid credentials', 401);
         }
 
         $hash = $userData['password'];

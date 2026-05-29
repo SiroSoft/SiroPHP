@@ -50,6 +50,7 @@ Thumbs.db
 
 # API test history (runtime data)
 /storage/api-test-history.json
+/storage/api-test-auth.json
 
 .phpunit.cache
 .phpdoc/

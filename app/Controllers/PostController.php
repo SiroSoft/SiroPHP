@@ -98,6 +98,20 @@ final class PostController extends Controller
         $validated['user_id'] = $currentUserId;
 
         $file = $request->file('image');
+        if ($file !== null && $file->isValid()) {
+            $filePath = $file->getPathname();
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime = finfo_file($finfo, $filePath);
+            finfo_close($finfo);
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!in_array($mime, $allowedMimes, true)) {
+                return $this->error('Invalid file type', 422);
+            }
+            $maxSize = 5 * 1024 * 1024;
+            if ($file->getSize() > $maxSize) {
+                return $this->error('File too large. Maximum 5MB allowed.', 422);
+            }
+        }
         $post = $this->service->create($validated, $file);
 
         /** @var \Siro\Core\Model $post */

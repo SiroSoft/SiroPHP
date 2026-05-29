@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Events\UserCreatedEvent;
 use App\Exceptions\DuplicateEmailException;
 use App\Exceptions\NoFieldsToUpdateException;
 use App\Models\User;
+use App\Repositories\RefreshTokenRepository;
 use App\Repositories\UserRepository;
 
 final class UserService
 {
-    public function __construct(private readonly UserRepository $repo)
-    {
+    public function __construct(
+        private readonly UserRepository $repo,
+        private readonly RefreshTokenRepository $refreshTokenRepo,
+    ) {
     }
 
     public function incrementTokenVersion(int $userId): bool
@@ -93,6 +97,7 @@ final class UserService
             'token_version' => (int) $tokenVersion + 1,
         ]);
         if ($affected === 0) return false;
+        $this->refreshTokenRepo->revokeAllByUserId($user['id']);
         // M2: Session regeneration required after password reset (API context)
         return true;
     }
@@ -126,14 +131,17 @@ final class UserService
 
         $rawPassword = $data['password'] ?? '';
         /** @var string $rawPassword */
+        $verificationToken = hash('sha256', bin2hex(random_bytes(32)));
         /** @var User $user */
         $user = $this->repo->create([
             'name' => $data['name'],
             'email' => $email,
             'password' => self::hashPassword($rawPassword),
             'status' => 1,
+            'verification_token' => $verificationToken,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
+        UserCreatedEvent::dispatch(['id' => $user->id, 'email' => $email, 'name' => $data['name']]);
         return $user;
     }
 
@@ -186,14 +194,12 @@ final class UserService
 
     public function incrementLoginAttempts(int $userId): void
     {
-        $this->repo->atomicIncrement('id', $userId, 'login_attempts', 1);
-
-        $user = $this->repo->findById($userId);
-        if ($user && ($user['login_attempts'] ?? 0) >= 5) {
-            $this->repo->updateWhere('id', $userId, [
-                'locked_until' => date('Y-m-d H:i:s', time() + 900),
-            ]);
-        }
+        $table = (new \App\Models\User())->getTable();
+        $lockedUntil = date('Y-m-d H:i:s', time() + 900);
+        \Siro\Core\Database::execute(
+            "UPDATE {$table} SET login_attempts = login_attempts + 1, locked_until = CASE WHEN (login_attempts + 1 >= 5) THEN ? ELSE locked_until END WHERE id = ?",
+            [$lockedUntil, $userId]
+        );
     }
 
     public function resetLoginAttempts(int $userId): void

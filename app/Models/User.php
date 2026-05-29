@@ -43,6 +43,9 @@ final class User extends Model
     ];
 
     /** @var array<int, string> */
+    protected array $guarded = ['role', 'status'];
+
+    /** @var array<int, string> */
     protected array $fillable = [
         'name',
         'email',

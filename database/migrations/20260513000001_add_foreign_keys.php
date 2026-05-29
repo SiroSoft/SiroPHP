@@ -28,8 +28,20 @@ return new class {
 
     public function down(): void
     {
-        Schema::dropColumn('products', 'user_id');
-        Schema::dropColumn('posts', 'user_id');
-        Schema::dropColumn('orders', 'user_id');
+        Schema::table('refresh_tokens', function (Blueprint $t) {
+            $t->dropForeign(['user_id']);
+        });
+        Schema::table('orders', function (Blueprint $t) {
+            $t->dropForeign(['user_id']);
+            $t->dropColumn('user_id');
+        });
+        Schema::table('posts', function (Blueprint $t) {
+            $t->dropForeign(['user_id']);
+            $t->dropColumn('user_id');
+        });
+        Schema::table('products', function (Blueprint $t) {
+            $t->dropForeign(['user_id']);
+            $t->dropColumn('user_id');
+        });
     }
 };
