@@ -1,0 +1,2026 @@
+{
+    "info": {
+        "name": "Siro API",
+        "description": "Auto-generated Postman collection for Siro API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8080",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "General",
+            "item": [
+                {
+                    "name": "GET /",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                ""
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET /.well-known/security.txt",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/.well-known/security.txt",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                ".well-known",
+                                "security.txt"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET /api/profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/profile",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "profile"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST /api/upload/avatar",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/upload/avatar",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "upload",
+                                "avatar"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET /favicon.ico",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/favicon.ico",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "favicon.ico"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET /health",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/health",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "health"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET /health/live",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/health/live",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "health",
+                                "live"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET /health/ready",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/health/ready",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "health",
+                                "ready"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET /metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/metrics",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "metrics"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET /robots.txt",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/robots.txt",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "robots.txt"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "POST /api/auth/forgot-password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/forgot-password",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "forgot-password"
+                            ],
+                            "variable": []
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"user@example.com\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST /api/auth/login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ],
+                            "variable": []
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"secret123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST /api/auth/logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/logout",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "logout"
+                            ],
+                            "variable": []
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"token\": \"string\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET /api/auth/me",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/me",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "me"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST /api/auth/refresh",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/refresh",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "refresh"
+                            ],
+                            "variable": []
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"refresh_token\": \"string\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST /api/auth/register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/register",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "register"
+                            ],
+                            "variable": []
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"user@example.com\",\n    \"password\": \"secret123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST /api/auth/reset-password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/reset-password",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "reset-password"
+                            ],
+                            "variable": []
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"token\": \"string\",\n    \"password\": \"secret123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "POST /api/auth/verify-email",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/verify-email",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "verify-email"
+                            ],
+                            "variable": []
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"token\": \"string\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Category",
+            "item": [
+                {
+                    "name": "GET /api/categories",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "categories"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "POST /api/categories",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "categories"
+                            ],
+                            "variable": []
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/categories/{id}",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "categories",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/categories/{id}",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "categories",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/categories/{id}",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "categories",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Order",
+            "item": [
+                {
+                    "name": "GET /api/orders",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/orders",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "orders"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": [],\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "POST /api/orders",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/orders",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "orders"
+                            ],
+                            "variable": []
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": [],\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/orders/{id}",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/orders/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "orders",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": [],\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/orders/{id}",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/orders/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "orders",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": [],\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/orders/{id}",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/orders/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "orders",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": [],\n    \"meta\": null\n}"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Post",
+            "item": [
+                {
+                    "name": "GET /api/posts",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/posts",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "posts"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"title\": \"string\",\n        \"body\": \"string\",\n        \"locale\": \"string\",\n        \"status\": \"string\",\n        \"image\": \"string\",\n        \"created_at\": \"string\",\n        \"updated_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "POST /api/posts",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/posts",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "posts"
+                            ],
+                            "variable": []
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"title\": \"string\",\n        \"body\": \"string\",\n        \"locale\": \"string\",\n        \"status\": \"string\",\n        \"image\": \"string\",\n        \"created_at\": \"string\",\n        \"updated_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/posts/{id}",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/posts/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "posts",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"title\": \"string\",\n        \"body\": \"string\",\n        \"locale\": \"string\",\n        \"status\": \"string\",\n        \"image\": \"string\",\n        \"created_at\": \"string\",\n        \"updated_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/posts/{id}",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/posts/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "posts",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"title\": \"string\",\n        \"body\": \"string\",\n        \"locale\": \"string\",\n        \"status\": \"string\",\n        \"image\": \"string\",\n        \"created_at\": \"string\",\n        \"updated_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/posts/{id}",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/posts/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "posts",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"title\": \"string\",\n        \"body\": \"string\",\n        \"locale\": \"string\",\n        \"status\": \"string\",\n        \"image\": \"string\",\n        \"created_at\": \"string\",\n        \"updated_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Product",
+            "item": [
+                {
+                    "name": "GET /api/products",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/products",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"description\": \"string\",\n        \"price\": \"string\",\n        \"stock\": \"string\",\n        \"category\": \"string\",\n        \"status\": \"string\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "POST /api/products",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/products",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products"
+                            ],
+                            "variable": []
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"description\": \"string\",\n        \"price\": \"string\",\n        \"stock\": \"string\",\n        \"category\": \"string\",\n        \"status\": \"string\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/products/{id}",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/products/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"description\": \"string\",\n        \"price\": \"string\",\n        \"stock\": \"string\",\n        \"category\": \"string\",\n        \"status\": \"string\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/products/{id}",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/products/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"description\": \"string\",\n        \"price\": \"string\",\n        \"stock\": \"string\",\n        \"category\": \"string\",\n        \"status\": \"string\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/products/{id}",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/products/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"description\": \"string\",\n        \"price\": \"string\",\n        \"stock\": \"string\",\n        \"category\": \"string\",\n        \"status\": \"string\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Tag",
+            "item": [
+                {
+                    "name": "GET /api/tags",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/tags",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tags"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "POST /api/tags",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/tags",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tags"
+                            ],
+                            "variable": []
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/tags/{id}",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/tags/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tags",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/tags/{id}",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/tags/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tags",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/tags/{id}",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/tags/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tags",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "User",
+            "item": [
+                {
+                    "name": "GET /api/users",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/users",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users"
+                            ],
+                            "variable": []
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"email\": \"string\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "POST /api/users",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/users",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users"
+                            ],
+                            "variable": []
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"email\": \"string\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/users/{id}",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/users/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"email\": \"string\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "GET /api/users/{id}",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/users/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"email\": \"string\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT /api/users/{id}",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/users/{{$1}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "{id}"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "id"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"example\": \"field\",\n    \"value\": \"value\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Success (200)",
+                            "code": 200,
+                            "body": "{\n    \"success\": true,\n    \"message\": \"Updated\",\n    \"data\": {\n        \"id\": \"string\",\n        \"name\": \"John Doe\",\n        \"email\": \"string\",\n        \"created_at\": \"string\"\n    },\n    \"meta\": null\n}"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "// Auto-login to get bearer token",
+                    "if (!pm.variables.get(\"token\") && pm.request.url.toString().includes(\"/auth/\")) {",
+                    "    return; // Skip auth for auth endpoints",
+                    "}",
+                    "",
+                    "const loginUrl = pm.variables.get(\"base_url\") + \"/api/auth/login\";",
+                    "const loginData = {",
+                    "    email: \"admin@example.com\",",
+                    "    password: \"password\",",
+                    "};",
+                    "",
+                    "pm.sendRequest({",
+                    "    url: loginUrl,",
+                    "    method: \"POST\",",
+                    "    header: { \"Content-Type\": \"application/json\" },",
+                    "    body: { mode: \"raw\", raw: JSON.stringify(loginData) }",
+                    "}, function (err, res) {",
+                    "    if (!err) {",
+                    "        const json = res.json();",
+                    "        if (json.data && json.data.token) {",
+                    "            pm.variables.set(\"token\", json.data.token);",
+                    "        }",
+                    "    }",
+                    "});"
+                ]
+            }
+        }
+    ]
+}
