@@ -9,7 +9,7 @@ use Siro\Core\Auth\JWT;
 use Siro\Core\Env;
 use Siro\Core\Logger;
 
-class RefreshTokenService
+final class RefreshTokenService
 {
     public function __construct(
         private readonly RefreshTokenRepository $refreshTokenRepo,

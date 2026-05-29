@@ -1,4 +1,4 @@
-.PHONY: help test test-coverage analyse audit sbom loadtest health docs check production-check clean
+.PHONY: help test test-coverage analyse audit sbom health docs check production-check clean
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -18,9 +18,6 @@ audit: ## Composer security audit
 sbom: ## Generate CycloneDX SBOM
 	@php scripts/generate-sbom.php
 
-loadtest: ## Run basic load test (requires Apache Bench)
-	@php scripts/loadtest.php
-
 health: ## Run health check
 	@php scripts/health-check.php
 
@@ -29,7 +26,7 @@ docs: ## Generate API documentation
 
 check: analyse test audit sbom ## Run all code quality checks
 
-production-check: analyse test test-coverage sbom audit loadtest ## Full production readiness check
+production-check: analyse test test-coverage sbom audit ## Full production readiness check
 
 clean: ## Clean cache and coverage
 	@rm -rf coverage/ .phpunit.cache storage/framework/routes.php storage/framework/config.php

@@ -4,8 +4,8 @@
 !app/
 !cache/
 !framework/
-!lang/*
 !lang/**
 !logs/
 !public/
 !rate_limit/
+!sessions/
