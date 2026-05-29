@@ -28,5 +28,10 @@ final class Category extends Model
 
     protected array $fillable = [
         'name',
+        'is_active',
+        'color',
+        'description',
+        'sort_order',
+        'parent_id',
     ];
 }
