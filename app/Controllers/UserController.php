@@ -168,6 +168,20 @@ final class UserController extends Controller
             'current_password' => 'required_with:password',
         ]);
 
+        $rawBody = $request->all();
+        if (isset($rawBody['role'])) {
+            $data['role'] = $rawBody['role'];
+        }
+        if (isset($rawBody['status'])) {
+            $data['status'] = (int) $rawBody['status'];
+        }
+        if (isset($rawBody['avatar'])) {
+            $data['avatar'] = $rawBody['avatar'];
+        }
+        if (isset($rawBody['phone'])) {
+            $data['phone'] = $rawBody['phone'];
+        }
+
         if (isset($data['password'])) {
             $existingUser = $this->service->getById($id);
             $existingPassword = is_array($existingUser) ? ($existingUser['password'] ?? '') : '';
