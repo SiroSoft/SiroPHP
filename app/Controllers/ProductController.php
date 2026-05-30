@@ -82,8 +82,11 @@ final class ProductController extends Controller
         if (isset($rawBody['category_name'])) {
             $validated['category'] = $rawBody['category_name'];
         }
-        if (isset($rawBody['category_id'])) {
-            // category_id from frontend select — resolve name or skip
+        if (isset($rawBody['cover_image'])) {
+            $validated['cover_image'] = $rawBody['cover_image'];
+        }
+        if (isset($rawBody['short_description'])) {
+            $validated['short_description'] = $rawBody['short_description'];
         }
 
         $currentUserId = is_array($currentUser) && isset($currentUser['id']) ? (int) $currentUser['id'] : 0;
@@ -124,6 +127,12 @@ final class ProductController extends Controller
         }
         if (isset($rawBody['category_name'])) {
             $validated['category'] = $rawBody['category_name'];
+        }
+        if (isset($rawBody['cover_image'])) {
+            $validated['cover_image'] = $rawBody['cover_image'];
+        }
+        if (isset($rawBody['short_description'])) {
+            $validated['short_description'] = $rawBody['short_description'];
         }
 
         $item = $this->service->update($id, $validated);

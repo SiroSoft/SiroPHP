@@ -24,6 +24,8 @@ final class ProductResource extends Resource
             'description' => is_string($this->data['description'] ?? null) ? htmlspecialchars($this->data['description'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['description'] ?? null),
             'price' => $this->data['price'] ?? null,
             'stock' => $this->data['stock'] ?? null,
+            'cover_image' => $this->data['cover_image'] ?? null,
+            'short_description' => $this->data['short_description'] ?? null,
             'sku' => null,
             'slug' => null,
             'category_name' => is_string($dbCategory) ? htmlspecialchars($dbCategory, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $dbCategory,

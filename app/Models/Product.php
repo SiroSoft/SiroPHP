@@ -40,5 +40,7 @@ final class Product extends Model
         'category',
         'status',
         'user_id',
+        'cover_image',
+        'short_description',
     ];
 }
