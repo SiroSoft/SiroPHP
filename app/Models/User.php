@@ -52,6 +52,10 @@ final class User extends Model
         'name',
         'email',
         'password',
+        'role',
+        'status',
+        'avatar',
+        'phone',
     ];
 
     // Example relationships (uncomment and adjust as needed):

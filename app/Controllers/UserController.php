@@ -81,6 +81,14 @@ final class UserController extends Controller
             'email' => 'email|max:255',
         ]);
 
+        $rawBody = $request->all();
+        if (isset($rawBody['avatar'])) {
+            $data['avatar'] = $rawBody['avatar'];
+        }
+        if (isset($rawBody['phone'])) {
+            $data['phone'] = $rawBody['phone'];
+        }
+
         if ($data === []) {
             return $this->error('No fields to update', 400);
         }
