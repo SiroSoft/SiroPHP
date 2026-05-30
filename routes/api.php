@@ -152,7 +152,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             'size' => $file->getSize(),
             'mime' => $file->getMimeType(),
         ], 'Avatar uploaded');
-    })->middleware([JsonMiddleware::class, 'auth', 'throttle:10,1']);
+    })->middleware(['auth', 'throttle:10,1']);
 
     $router->post('/upload', function (Request $req): Response {
         $file = $req->file('file');
@@ -168,7 +168,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             'size' => $file->getSize(),
             'mime' => $file->getMimeType(),
         ], 'File uploaded', 201);
-    })->middleware([JsonMiddleware::class, 'auth', 'throttle:10,1']);
+    })->middleware(['auth', 'throttle:10,1']);
 
     // L8: GET /profile performs locale state changes. Consider POST for mutations.
     $router->get('/profile', function (Request $req): array {
