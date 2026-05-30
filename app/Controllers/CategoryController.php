@@ -30,7 +30,11 @@ final class CategoryController extends Controller
     public function index(Request $request): Response
     {
         $result = $this->service->getAll(page: max(1, $request->queryInt('page', 1)), perPage: min(100, max(1, $request->queryInt('per_page', 20))));
-        return $this->paginated(CategoryResource::collection($result['data']), $result['meta'], 'Category list');
+        $data = [];
+        foreach ($result['data'] as $item) {
+            $data[] = $item->toArray();
+        }
+        return $this->paginated(CategoryResource::collection($data), $result['meta'], 'Category list');
     }
 
     /**
@@ -44,7 +48,7 @@ final class CategoryController extends Controller
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
         $item = $this->service->getById($id);
         if ($item === null) return $this->error('Category not found', 404);
@@ -79,10 +83,10 @@ final class CategoryController extends Controller
             $validated['description'] = $rawBody['description'];
         }
         if (isset($rawBody['sort_order'])) {
-            $validated['sort_order'] = (int) $rawBody['sort_order'];
+            $validated['sort_order'] = is_numeric($rawBody['sort_order']) ? (int) $rawBody['sort_order'] : 0;
         }
         if (isset($rawBody['parent_id'])) {
-            $validated['parent_id'] = (int) $rawBody['parent_id'];
+            $validated['parent_id'] = is_numeric($rawBody['parent_id']) ? (int) $rawBody['parent_id'] : null;
         }
         $item = $this->service->create($validated);
         return $this->created(CategoryResource::make($item), 'Category created');
@@ -105,7 +109,7 @@ final class CategoryController extends Controller
         if ($forbidden !== null) return $forbidden;
 
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
         $validated = $this->validate([
             'name' => 'min:2|max:100',
@@ -121,10 +125,10 @@ final class CategoryController extends Controller
             $validated['description'] = $rawBody['description'];
         }
         if (isset($rawBody['sort_order'])) {
-            $validated['sort_order'] = (int) $rawBody['sort_order'];
+            $validated['sort_order'] = is_numeric($rawBody['sort_order']) ? (int) $rawBody['sort_order'] : 0;
         }
         if (isset($rawBody['parent_id'])) {
-            $validated['parent_id'] = (int) $rawBody['parent_id'];
+            $validated['parent_id'] = is_numeric($rawBody['parent_id']) ? (int) $rawBody['parent_id'] : null;
         }
         $item = $this->service->update($id, $validated);
         if ($item === null) return $this->error('Category not found', 404);
@@ -147,7 +151,7 @@ final class CategoryController extends Controller
         if ($forbidden !== null) return $forbidden;
 
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
         return $this->service->delete($id)
             ? $this->noContent()

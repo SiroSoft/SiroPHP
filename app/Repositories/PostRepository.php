@@ -16,7 +16,7 @@ final class PostRepository extends BaseRepository
 
     /**
      * @param array<string, mixed> $filters
-     * @return array{data: array<int, mixed>, meta: array<string, mixed>}
+     * @return array{data: \Siro\Core\Model[], meta: array{page: int, per_page: int, total: int, last_page: int}}
      */
     public function findAll(array $filters = [], int $page = 1, int $perPage = 20): array
     {

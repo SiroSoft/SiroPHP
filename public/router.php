@@ -50,10 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // ──────────────────────────────────────────────
 // 2. Serve uploaded files from storage/public/
 // ──────────────────────────────────────────────
-$requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-if ($requestUri !== null && str_starts_with($requestUri, '/storage/')) {
+$rawUri = is_string($_SERVER['REQUEST_URI'] ?? null) ? $_SERVER['REQUEST_URI'] : '/';
+$requestUri = parse_url($rawUri, PHP_URL_PATH);
+if (is_string($requestUri) && str_starts_with($requestUri, '/storage/')) {
     // Allow cross-origin access from admin panels
-    $origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
+    $origin = is_string($_SERVER['HTTP_ORIGIN'] ?? null) ? $_SERVER['HTTP_ORIGIN'] : '*';
     header('Access-Control-Allow-Origin: ' . $origin);
     header('Access-Control-Allow-Credentials: true');
     header('Vary: Origin');

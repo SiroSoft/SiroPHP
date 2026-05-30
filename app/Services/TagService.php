@@ -16,7 +16,7 @@ final class TagService implements BaseService
      * Get paginated list of tags.
      *
      * @param array<string, mixed> $filters Optional filtering criteria
-     * @return array<string, mixed> Paginated result with 'data' and 'meta'
+     * @return array{data: \Siro\Core\Model[], meta: array{page: int, per_page: int, total: int, last_page: int}}
      */
     public function getAll(array $filters = [], int $page = 1, int $perPage = 20): array
     {
@@ -24,21 +24,23 @@ final class TagService implements BaseService
     }
 
     /** Find a tag by ID. Returns null if not found. */
-    public function getById(int $id): mixed
+    public function getById(int $id): ?array
     {
-        return $this->repo->findById($id);
+        $result = $this->repo->findById($id);
+        return $result !== null ? $result->toArray() : null;
     }
 
     /** Create a new tag. Returns the created model. */
-    public function create(array $data): mixed
+    public function create(array $data): array
     {
-        return $this->repo->store($data);
+        return $this->repo->store($data)->toArray();
     }
 
     /** Update a tag. Returns null if not found. */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?array
     {
-        return $this->repo->update($id, $data);
+        $result = $this->repo->update($id, $data);
+        return $result !== null ? $result->toArray() : null;
     }
 
     /** Delete a tag. Returns true if deleted, false if not found. */

@@ -73,9 +73,9 @@ final class Uploader
         }
 
         // Verify MIME matches extension
-        $expectedMime = self::MIME_MAP[$ext] ?? null;
+        $expectedMime = self::MIME_MAP[$ext];
         $actualMime = $file->getMimeType();
-        if ($expectedMime !== null && $actualMime !== null && !str_starts_with($actualMime, $expectedMime)) {
+        if (!str_starts_with($actualMime, $expectedMime)) {
             return [
                 'error' => true,
                 'response' => Response::error("File content does not match extension. Expected {$expectedMime}, got {$actualMime}", 422),
@@ -99,7 +99,7 @@ final class Uploader
                     'url' => $baseUrl . $cleanPath,
                     'original_name' => $file->getClientOriginalName(),
                     'size' => $file->getSize(),
-                    'mime' => $actualMime ?: $expectedMime ?: 'application/octet-stream',
+                    'mime' => $actualMime,
                 ], 'File uploaded', 201),
             ];
         } catch (\Throwable $e) {
@@ -118,6 +118,6 @@ final class Uploader
     public static function response(Request $request, string $field = 'file', string $type = 'uploads'): Response
     {
         $result = self::handle($request, $field, $type);
-        return $result['response'];
+        return $result['response'] ?? Response::error('Upload failed', 500);
     }
 }

@@ -24,7 +24,7 @@ final class CategorySeeder
         foreach ($categories as $cat) {
             DB::table('categories')->insert([
                 'name' => $cat['name'],
-                'is_active' => $cat['is_active'] ?? 1,
+                'is_active' => $cat['is_active'],
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);

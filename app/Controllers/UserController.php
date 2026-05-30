@@ -40,18 +40,21 @@ final class UserController extends Controller
 
         $filters = [];
         $status = $request->query('status');
-        if ($status !== null && $status !== '') {
-            $filters['status'] = match ((string) $status) { 'inactive' => 0, 'suspended' => 2, default => 1 };
+        if (is_string($status) && $status !== '') {
+            $filters['status'] = match ($status) { 'inactive' => 0, 'suspended' => 2, default => 1 };
         }
         $role = $request->query('role');
-        if ($role !== null && $role !== '') {
-            $filters['role'] = (string) $role;
+        if (is_string($role) && $role !== '') {
+            $filters['role'] = $role;
         }
 
         $result = $this->service->getAll($page, $perPage, $filters);
-
+        $data = [];
+        foreach ($result['data'] as $item) {
+            $data[] = $item->toArray();
+        }
         return $this->paginated(
-            UserResource::collection($result['data']),
+            UserResource::collection($data),
             $result['meta'],
             'Users retrieved',
         );
@@ -70,7 +73,7 @@ final class UserController extends Controller
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         $currentUser = $request->user();
@@ -129,9 +132,9 @@ final class UserController extends Controller
             return $this->error('No fields to update', 400);
         }
 
-        if (isset($data['email'])) {
+        if (isset($data['email']) && is_string($data['email'])) {
             $existing = $this->service->getByEmail($data['email']);
-            if ($existing !== null && (int) ($existing['id'] ?? 0) !== $userId) {
+            if ($existing !== null && isset($existing['id']) && is_numeric($existing['id']) && (int) $existing['id'] !== $userId) {
                 return $this->error('Validation failed', 422, [
                     'email' => ['Email has already been taken'],
                 ]);
@@ -181,8 +184,8 @@ final class UserController extends Controller
         if (isset($rawBody['role'])) {
             $data['role'] = $rawBody['role'];
         }
-        if (isset($rawBody['status'])) {
-            $data['status'] = match ((string) $rawBody['status']) { 'inactive' => 0, 'suspended' => 2, default => 1 };
+        if (isset($rawBody['status']) && is_string($rawBody['status'])) {
+            $data['status'] = match ($rawBody['status']) { 'inactive' => 0, 'suspended' => 2, default => 1 };
         }
         if (isset($rawBody['avatar'])) {
             $data['avatar'] = $rawBody['avatar'];
@@ -217,7 +220,7 @@ final class UserController extends Controller
     public function update(Request $request): Response
     {
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
 
         $currentUser = $request->user();
         $currentUserId = 0;
@@ -241,8 +244,8 @@ final class UserController extends Controller
         if (isset($rawBody['role'])) {
             $data['role'] = $rawBody['role'];
         }
-        if (isset($rawBody['status'])) {
-            $data['status'] = match ((string) $rawBody['status']) { 'inactive' => 0, 'suspended' => 2, default => 1 };
+        if (isset($rawBody['status']) && is_string($rawBody['status'])) {
+            $data['status'] = match ($rawBody['status']) { 'inactive' => 0, 'suspended' => 2, default => 1 };
         }
         if (isset($rawBody['avatar'])) {
             $data['avatar'] = $rawBody['avatar'];
@@ -256,8 +259,9 @@ final class UserController extends Controller
 
         if (isset($data['password'])) {
             $existingUser = $this->service->getById($id);
-            $existingPassword = is_array($existingUser) ? ($existingUser['password'] ?? '') : '';
-            if (!is_string($existingPassword) || $existingPassword === '' || !password_verify(strval($data['current_password'] ?? ''), $existingPassword)) {
+            $currentPassword = is_string($data['current_password'] ?? null) ? $data['current_password'] : '';
+            $existingPassword = $existingUser !== null ? $existingUser->getAttribute('password') : '';
+            if (!is_string($existingPassword) || $existingPassword === '' || !password_verify($currentPassword, $existingPassword)) {
                 return $this->error('Validation failed', 422, [
                     'current_password' => ['Current password is incorrect'],
                 ]);
@@ -295,7 +299,7 @@ final class UserController extends Controller
     public function delete(Request $request): Response
     {
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
 
         $currentUser = $request->user();
         $currentUserId = 0;

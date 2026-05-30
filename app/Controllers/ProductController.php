@@ -39,9 +39,12 @@ final class ProductController extends Controller
             unset($params['user_id']);
         }
         $result = $this->service->getAll($params, $page, $perPage);
-
+        $data = [];
+        foreach ($result['data'] as $item) {
+            $data[] = $item->toArray();
+        }
         return $this->paginated(
-            ProductResource::collection($result['data']),
+            ProductResource::collection($data),
             $result['meta'],
             'Products list',
         );
@@ -58,7 +61,7 @@ final class ProductController extends Controller
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) {
             return $this->error('Invalid id', 422);
         }
@@ -107,7 +110,7 @@ final class ProductController extends Controller
             $validated['category'] = $rawBody['category_name'];
         }
 
-        if (isset($rawBody['category_id'])) {
+        if (isset($rawBody['category_id']) && is_numeric($rawBody['category_id'])) {
             try {
                 $cat = \Siro\Core\Database::first("SELECT name FROM categories WHERE id = ? LIMIT 1", [(int) $rawBody['category_id']]);
                 if ($cat) $validated['category'] = $cat['name'];
@@ -115,7 +118,7 @@ final class ProductController extends Controller
         }
 
         $currentUser = $request->user();
-        $currentUserId = is_array($currentUser) && isset($currentUser['id']) ? (int) $currentUser['id'] : 0;
+        $currentUserId = is_array($currentUser) && isset($currentUser['id']) && is_numeric($currentUser['id']) ? (int) $currentUser['id'] : 0;
         $validated['user_id'] = $currentUserId;
 
         $item = $this->service->create($validated);
@@ -139,7 +142,7 @@ final class ProductController extends Controller
         if ($forbidden !== null) return $forbidden;
 
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) {
             return $this->error('Invalid id', 422);
         }
@@ -162,7 +165,7 @@ final class ProductController extends Controller
         if (isset($rawBody['category_name'])) {
             $validated['category'] = $rawBody['category_name'];
         }
-        if (isset($rawBody['category_id'])) {
+        if (isset($rawBody['category_id']) && is_numeric($rawBody['category_id'])) {
             try {
                 $cat = \Siro\Core\Database::first("SELECT name FROM categories WHERE id = ? LIMIT 1", [(int) $rawBody['category_id']]);
                 if ($cat) $validated['category'] = $cat['name'];
@@ -193,7 +196,7 @@ final class ProductController extends Controller
         if ($forbidden !== null) return $forbidden;
 
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) {
             return $this->error('Invalid id', 422);
         }

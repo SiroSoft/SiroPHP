@@ -137,29 +137,30 @@ final class UserService
             'token_version' => (int) $tokenVersion + 1,
         ]);
         if ($affected === 0) return false;
-        $this->refreshTokenRepo->revokeAllByUserId($user['id']);
+        $this->refreshTokenRepo->revokeAllByUserId(isset($user['id']) && is_numeric($user['id']) ? (int) $user['id'] : 0);
         // M2: Session regeneration required after password reset (API context)
         return true;
     }
 
     /** @param array<string, mixed> $filters
-     * @return array<string, mixed> */
+     * @return array{data: \Siro\Core\Model[], meta: array{page: int, per_page: int, total: int, last_page: int}} */
     public function getAll(int $page = 1, int $perPage = 15, array $filters = []): array
     {
         return $this->repo->findAll($filters, $page, $perPage);
     }
 
-    public function getById(int $id): mixed
+    /** @return \Siro\Core\Model|null */
+    public function getById(int $id): ?\Siro\Core\Model
     {
         return $this->repo->findById($id);
     }
 
     /**
      * @param array<string, mixed> $data
-     * @return User
+     * @return \Siro\Core\Model
      * @throws DuplicateEmailException
      */
-    public function create(array $data): User
+    public function create(array $data): \Siro\Core\Model
     {
         $rawEmail = $data['email'] ?? '';
         /** @var string $rawEmail */
@@ -173,7 +174,6 @@ final class UserService
         $rawPassword = $data['password'] ?? '';
         /** @var string $rawPassword */
         $verificationToken = hash('sha256', bin2hex(random_bytes(32)));
-        /** @var User $user */
         $isFirst = $this->repo->count() === 0;
         $user = $this->repo->create([
             'name' => $data['name'],
@@ -190,11 +190,11 @@ final class UserService
 
     /**
      * @param array<string, mixed> $data
-     * @return array<string, mixed>|null
+     * @return \Siro\Core\Model|null
      * @throws DuplicateEmailException
      * @throws NoFieldsToUpdateException
      */
-    public function update(int $id, array $data): ?array
+    public function update(int $id, array $data): ?\Siro\Core\Model
     {
         $user = $this->repo->findById($id);
         if ($user === null) return null;

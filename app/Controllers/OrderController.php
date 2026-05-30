@@ -49,8 +49,12 @@ final class OrderController extends Controller
         }
 
         $result = $this->service->getAll($params, $page, $perPage);
+        $data = [];
+        foreach ($result['data'] as $item) {
+            $data[] = $item->toArray();
+        }
         return $this->paginated(
-            OrderResource::collection($result['data']),
+            OrderResource::collection($data),
             $result['meta'],
             'Orders list'
         );
@@ -69,7 +73,7 @@ final class OrderController extends Controller
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         $currentUser = $request->user();
@@ -134,7 +138,8 @@ final class OrderController extends Controller
                     "items.$i.quantity" => ['Quantity must be a positive integer'],
                 ]);
             }
-            $product = \App\Models\Product::find($item['product_id']);
+            $productId = is_numeric($item['product_id']) ? (int) $item['product_id'] : 0;
+            $product = \App\Models\Product::find($productId);
             if ($product === null) {
                 return $this->error('Validation failed', 422, [
                     "items.$i.product_id" => ['Product not found'],
@@ -171,7 +176,7 @@ final class OrderController extends Controller
     public function update(Request $request): Response
     {
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         $currentUser = $request->user();
@@ -217,7 +222,7 @@ final class OrderController extends Controller
     public function updateStatus(Request $request): Response
     {
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) {
             return $this->error('Invalid id', 422);
         }
@@ -261,7 +266,7 @@ final class OrderController extends Controller
     public function delete(Request $request): Response
     {
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         $currentUser = $request->user();

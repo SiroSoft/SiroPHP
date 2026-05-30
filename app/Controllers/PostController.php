@@ -47,9 +47,12 @@ final class PostController extends Controller
         }
 
         $result = $this->service->getAll($params, $page, $perPage);
-
+        $data = [];
+        foreach ($result['data'] as $item) {
+            $data[] = $item->toArray();
+        }
         return $this->paginated(
-            PostResource::collection($result['data']),
+            PostResource::collection($data),
             $result['meta'],
             'Posts list'
         );
@@ -68,7 +71,7 @@ final class PostController extends Controller
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         $currentUser = $request->user();
@@ -84,13 +87,12 @@ final class PostController extends Controller
             return $this->error('Post not found', 404);
         }
 
-        $postData = $post instanceof \Siro\Core\Model ? $post->toArray() : (array) $post;
-        $postUserId = is_numeric($postData['user_id'] ?? null) ? (int) $postData['user_id'] : 0;
+        $postUserId = is_numeric($post['user_id'] ?? null) ? (int) $post['user_id'] : 0;
         if ($currentUserRole !== Role::ADMIN && $currentUserId !== $postUserId) {
             return $this->error('Forbidden', 403);
         }
 
-        return $this->success(PostResource::make($postData), 'Post detail');
+        return $this->success(PostResource::make($post), 'Post detail');
     }
 
     /**
@@ -126,7 +128,7 @@ final class PostController extends Controller
         if (isset($rawBody['cover_image'])) {
             $validated['image'] = $rawBody['cover_image'];
         }
-        if (isset($rawBody['category_id'])) {
+        if (isset($rawBody['category_id']) && is_numeric($rawBody['category_id'])) {
             $validated['category_id'] = (int) $rawBody['category_id'];
         }
         if (isset($rawBody['excerpt'])) {
@@ -137,6 +139,9 @@ final class PostController extends Controller
         if ($file !== null && $file->isValid()) {
             $filePath = $file->getPathname();
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            if ($finfo === false) {
+                return $this->error('Unable to detect file type', 500);
+            }
             $mime = finfo_file($finfo, $filePath);
             finfo_close($finfo);
             $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -151,7 +156,7 @@ final class PostController extends Controller
         }
         $post = $this->service->create($validated, $file);
 
-        return $this->created(PostResource::make($post instanceof \Siro\Core\Model ? $post->toArray() : (array) $post), 'Post created');
+        return $this->created(PostResource::make($post), 'Post created');
     }
 
     /**
@@ -168,7 +173,7 @@ final class PostController extends Controller
     public function update(Request $request): Response
     {
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         $existing = $this->service->getById($id);
@@ -183,8 +188,7 @@ final class PostController extends Controller
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
             $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
-        $existingData = $existing instanceof \Siro\Core\Model ? $existing->toArray() : (array) $existing;
-        $postUserId = is_numeric($existingData['user_id'] ?? null) ? (int) $existingData['user_id'] : 0;
+        $postUserId = is_numeric($existing['user_id'] ?? null) ? (int) $existing['user_id'] : 0;
         if ($currentUserRole !== Role::ADMIN && $currentUserId !== $postUserId) {
             return $this->error('Forbidden', 403);
         }
@@ -201,7 +205,7 @@ final class PostController extends Controller
             $validated['image'] = $rawBody['cover_image'];
         }
         if (isset($rawBody['category_id'])) {
-            $validated['category_id'] = (int) $rawBody['category_id'];
+            $validated['category_id'] = is_numeric($rawBody['category_id']) ? (int) $rawBody['category_id'] : 0;
         }
         if (isset($rawBody['excerpt'])) {
             $validated['excerpt'] = $rawBody['excerpt'];
@@ -229,7 +233,7 @@ final class PostController extends Controller
     public function delete(Request $request): Response
     {
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         $currentUser = $request->user();
@@ -241,8 +245,7 @@ final class PostController extends Controller
         }
         $existing = $this->service->getById($id);
         if ($existing !== null) {
-            $existingData = $existing instanceof \Siro\Core\Model ? $existing->toArray() : (array) $existing;
-            $postUserId = is_numeric($existingData['user_id'] ?? null) ? (int) $existingData['user_id'] : 0;
+            $postUserId = is_numeric($existing['user_id'] ?? null) ? (int) $existing['user_id'] : 0;
             if ($currentUserRole !== Role::ADMIN && $currentUserId !== $postUserId) {
                 return $this->error('Forbidden', 403);
             }

@@ -225,8 +225,8 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
 
     $router->put('/profile/password', function (Request $req): Response {
         $data = $req->all();
-        $currentPassword = $data['current_password'] ?? '';
-        $newPassword = $data['new_password'] ?? '';
+        $currentPassword = is_string($data['current_password'] ?? null) ? $data['current_password'] : '';
+        $newPassword = is_string($data['new_password'] ?? null) ? $data['new_password'] : '';
         $user = $req->user();
         $userId = is_numeric($user['id'] ?? null) ? (int) $user['id'] : 0;
         if ($userId <= 0) {
@@ -256,7 +256,11 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             $rows = \Siro\Core\Database::select("SELECT `key`, `value` FROM settings");
             $settings = [];
             foreach ($rows as $row) {
-                $settings[$row['key']] = $row['value'];
+                $key = isset($row['key']) && is_string($row['key']) ? $row['key'] : '';
+                $value = isset($row['value']) ? $row['value'] : '';
+                if ($key !== '') {
+                    $settings[$key] = $value;
+                }
             }
             return Response::success($settings ?: [
                 'app_name' => 'SiroPHP',
@@ -274,16 +278,19 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
 
     $router->put('/settings', function (Request $req): Response {
         $data = $req->all();
-        if (!is_array($data) || $data === []) {
+        if ($data === []) {
             return Response::error('No settings provided', 422);
         }
         try {
             foreach ($data as $key => $value) {
-                $existing = \Siro\Core\Database::first("SELECT id FROM settings WHERE `key` = ?", [(string) $key]);
+                $strKey = (string) $key;
+                $strValue = is_scalar($value) ? (string) $value : '';
+                if ($strKey === '') continue;
+                $existing = \Siro\Core\Database::first("SELECT id FROM settings WHERE `key` = ?", [$strKey]);
                 if ($existing !== null) {
-                    \Siro\Core\Database::execute("UPDATE settings SET `value` = ? WHERE `key` = ?", [(string) $value, (string) $key]);
+                    \Siro\Core\Database::execute("UPDATE settings SET `value` = ? WHERE `key` = ?", [$strValue, $strKey]);
                 } else {
-                    \Siro\Core\Database::execute("INSERT INTO settings (`key`, `value`) VALUES (?, ?)", [(string) $key, (string) $value]);
+                    \Siro\Core\Database::execute("INSERT INTO settings (`key`, `value`) VALUES (?, ?)", [$strKey, $strValue]);
                 }
             }
             return Response::success($data, 'Settings updated');
@@ -299,9 +306,12 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     // -- Dashboard --
     $router->get('/dashboard/stats', function (): Response {
         try {
-            $userCount = (int) (\Siro\Core\Database::first("SELECT COUNT(*) as count FROM users")['count'] ?? 0);
-            $orderCount = (int) (\Siro\Core\Database::first("SELECT COUNT(*) as count FROM orders")['count'] ?? 0);
-            $productCount = (int) (\Siro\Core\Database::first("SELECT COUNT(*) as count FROM products")['count'] ?? 0);
+            $countRow = \Siro\Core\Database::first("SELECT COUNT(*) as count FROM users");
+            $userCount = is_array($countRow) && isset($countRow['count']) && is_numeric($countRow['count']) ? (int) $countRow['count'] : 0;
+            $orderRow = \Siro\Core\Database::first("SELECT COUNT(*) as count FROM orders");
+            $orderCount = is_array($orderRow) && isset($orderRow['count']) && is_numeric($orderRow['count']) ? (int) $orderRow['count'] : 0;
+            $productRow = \Siro\Core\Database::first("SELECT COUNT(*) as count FROM products");
+            $productCount = is_array($productRow) && isset($productRow['count']) && is_numeric($productRow['count']) ? (int) $productRow['count'] : 0;
             $recentUsers = \Siro\Core\Database::select("SELECT id, name, email, created_at FROM users ORDER BY id DESC LIMIT 5");
         } catch (\Throwable) {
             $userCount = 0;
@@ -316,11 +326,11 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             'total_products' => $productCount,
             'total_revenue' => 0.0,
             'recent_activity' => array_map(fn($u) => [
-                'id' => $u['id'],
+                'id' => isset($u['id']) ? $u['id'] : null,
                 'action' => 'User registered',
-                'description' => $u['name'] . ' joined',
-                'user' => $u['name'],
-                'created_at' => $u['created_at'],
+                'description' => (isset($u['name']) && is_string($u['name']) ? $u['name'] : '') . ' joined',
+                'user' => isset($u['name']) ? $u['name'] : null,
+                'created_at' => isset($u['created_at']) ? $u['created_at'] : null,
             ], $recentUsers),
             'api_status' => [
                 'status' => 'healthy',

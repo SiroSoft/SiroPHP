@@ -54,7 +54,7 @@ final class AuthController
             ]);
         }
 
-        $userId = (int) $user->id;
+        $userId = isset($user->id) && is_numeric($user->id) ? (int) $user->id : 0;
         $tokens = $this->tokenPair($userId);
 
         return Response::created([
@@ -99,29 +99,29 @@ final class AuthController
             return Response::error('Invalid credentials', 401);
         }
 
-        $status = $userData['status'] ?? 0;
-        if ((int) $status !== 1) {
+        $status = isset($userData['status']) && is_numeric($userData['status']) ? (int) $userData['status'] : 0;
+        if ($status !== 1) {
             return Response::error('Invalid credentials', 401);
         }
 
-        $lockedUntil = $userData['locked_until'] ?? null;
+        $lockedUntil = isset($userData['locked_until']) && is_string($userData['locked_until']) ? $userData['locked_until'] : null;
         if ($lockedUntil !== null && $lockedUntil !== '' && strtotime($lockedUntil) > time()) {
             return Response::error('Invalid credentials', 401);
         }
 
         $hash = $userData['password'];
         if (!password_verify($request->string('password'), $hash)) {
-            $userId = $userData['id'];
-            $this->userService->incrementLoginAttempts((int) $userId);
+            $userId = isset($userData['id']) && is_numeric($userData['id']) ? (int) $userData['id'] : 0;
+            $this->userService->incrementLoginAttempts($userId);
             return Response::error('Invalid credentials', 401);
         }
 
-        $userId = $userData['id'];
-        $this->userService->resetLoginAttempts((int) $userId);
+        $userId = isset($userData['id']) && is_numeric($userData['id']) ? (int) $userData['id'] : 0;
+        $this->userService->resetLoginAttempts($userId);
 
         Session::instance()->regenerate();
 
-        $tokens = $this->tokenPair((int) $userId);
+        $tokens = $this->tokenPair($userId);
 
         return Response::success([
             'token' => $tokens['token'],
@@ -129,9 +129,9 @@ final class AuthController
             'token_type' => 'Bearer',
             'expires_in' => $tokens['ttl'],
             'user' => [
-                'id' => (int) $userId,
-                'name' => $userData['name'] ?? '',
-                'email' => $userData['email'] ?? '',
+                'id' => $userId,
+                'name' => is_string($userData['name'] ?? null) ? $userData['name'] : '',
+                'email' => is_string($userData['email'] ?? null) ? $userData['email'] : '',
             ],
         ], 'Login successful');
     }
@@ -212,8 +212,7 @@ final class AuthController
     public function logout(Request $request): Response
     {
         $user = $request->user();
-        $rawId = $user['id'] ?? 0;
-        $userId = (int) $rawId;
+        $userId = is_array($user) && isset($user['id']) && is_numeric($user['id']) ? (int) $user['id'] : 0;
 
         if ($userId <= 0) {
             return Response::error('Unauthorized', 401);

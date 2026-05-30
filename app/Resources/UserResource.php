@@ -16,12 +16,12 @@ final class UserResource extends Resource
         $email = $d['email'] ?? null;
         return [
             'id' => $d['id'] ?? null,
-            'name' => $name !== null ? htmlspecialchars($name, ENT_QUOTES | ENT_HTML5, 'UTF-8') : null,
-            'email' => $email !== null ? htmlspecialchars($email, ENT_QUOTES | ENT_HTML5, 'UTF-8') : null,
+            'name' => is_string($name) ? htmlspecialchars($name, ENT_QUOTES | ENT_HTML5, 'UTF-8') : null,
+            'email' => is_string($email) ? htmlspecialchars($email, ENT_QUOTES | ENT_HTML5, 'UTF-8') : null,
             'avatar' => $d['avatar'] ?? null,
             'phone' => $d['phone'] ?? null,
             'role' => $d['role'] ?? 'user',
-            'status' => match ((int) ($d['status'] ?? 1)) { 0 => 'inactive', 2 => 'suspended', default => 'active' },
+            'status' => match (isset($d['status']) && is_numeric($d['status']) ? (int) $d['status'] : 1) { 0 => 'inactive', 2 => 'suspended', default => 'active' },
             'created_at' => $d['created_at'] ?? null,
             'updated_at' => $d['updated_at'] ?? null,
         ];

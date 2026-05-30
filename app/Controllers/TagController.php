@@ -30,7 +30,11 @@ final class TagController extends Controller
     public function index(Request $request): Response
     {
         $result = $this->service->getAll(page: max(1, $request->queryInt('page', 1)), perPage: min(100, max(1, $request->queryInt('per_page', 20))));
-        return $this->paginated(TagResource::collection($result['data']), $result['meta'], 'Tag list');
+        $data = [];
+        foreach ($result['data'] as $item) {
+            $data[] = $item->toArray();
+        }
+        return $this->paginated(TagResource::collection($data), $result['meta'], 'Tag list');
     }
 
     /**
@@ -44,7 +48,7 @@ final class TagController extends Controller
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
         $item = $this->service->getById($id);
         if ($item === null) return $this->error('Tag not found', 404);
@@ -88,7 +92,7 @@ final class TagController extends Controller
         if ($forbidden !== null) return $forbidden;
 
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
         $item = $this->service->update($id, $this->validate(['name' => 'min:1|max:100']));
         if ($item === null) return $this->error('Tag not found', 404);
@@ -111,7 +115,7 @@ final class TagController extends Controller
         if ($forbidden !== null) return $forbidden;
 
         $rawId = $request->param('id');
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
         return $this->service->delete($id)
             ? $this->noContent()

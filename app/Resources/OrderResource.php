@@ -26,10 +26,10 @@ final class OrderResource extends Resource
         $status = $d['status'] ?? null;
 
         return [
-            'id' => $id !== null ? (int) $id : null,
+            'id' => $id !== null && is_numeric($id) ? (int) $id : null,
             'user_name' => is_string($customerName) ? htmlspecialchars($customerName, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $customerName,
             'customer_email' => is_string($customerEmail) ? htmlspecialchars($customerEmail, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $customerEmail,
-            'total' => $total !== null ? (float) $total : null,
+            'total' => $total !== null && is_numeric($total) ? (float) $total : null,
             'status' => is_string($status) ? htmlspecialchars($status, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $status,
             'items' => $items,
             'payment_status' => is_string($status) ? htmlspecialchars($status, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $status,

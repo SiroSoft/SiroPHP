@@ -20,8 +20,8 @@ final class OrderService
     /**
      * Get paginated orders with optional status/user_id filter.
      *
-     * @param array<string, mixed> $queryParams Query parameters (status, user_id)
-     * @return array<string, mixed> Paginated result with 'data' and 'meta'
+     * @param array<array-key, mixed> $queryParams Query parameters (status, user_id)
+     * @return array{data: \Siro\Core\Model[], meta: array{page: int, per_page: int, total: int, last_page: int}}
      */
     public function getAll(array $queryParams = [], int $page = 1, int $perPage = 20): array
     {
@@ -39,10 +39,15 @@ final class OrderService
         return $this->repo->findAll($filters, $page, $perPage);
     }
 
-    /** Find an order by ID. Returns null if not found. */
-    public function getById(int $id): mixed
+    /**
+     * Find an order by ID. Returns null if not found.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getById(int $id): ?array
     {
-        return $this->repo->findById($id);
+        $result = $this->repo->findById($id);
+        return $result !== null ? $result->toArray() : null;
     }
 
     /**
@@ -50,10 +55,10 @@ final class OrderService
      * Maximum 50 items per order.
      *
      * @param array<string, mixed> $validated Validated order data including 'items' array
-     * @return mixed Created order model
+     * @return \Siro\Core\Model Created order model
      * @throws \InvalidArgumentException If more than 50 items
      */
-    public function create(array $validated): mixed
+    public function create(array $validated): \Siro\Core\Model
     {
         $data = $validated;
 
@@ -71,8 +76,9 @@ final class OrderService
      * Update an order. Returns null if not found.
      *
      * @param array<string, mixed> $validated Validated order data
+     * @return \Siro\Core\Model|null
      */
-    public function update(int $id, array $validated): mixed
+    public function update(int $id, array $validated): ?\Siro\Core\Model
     {
         $data = $validated;
         if (isset($data['items']) && is_array($data['items'])) {
