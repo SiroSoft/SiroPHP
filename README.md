@@ -19,7 +19,12 @@
 ## Quick start
 
 ```bash
-composer create-project sirosoft/api my-api
+# Windows
+iwr https://sirophp.com/downloads/install.ps1 -UseBasicParsing | iex
+
+# Linux/macOS
+curl -sS https://sirophp.com/downloads/install.sh | bash
+
 cd my-api
 php siro key:generate && php siro make:auth && php siro migrate && php siro serve
 ```
