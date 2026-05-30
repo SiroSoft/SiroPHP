@@ -324,6 +324,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     });
 
     // -- Dashboard --
+    $router->get('/dashboard/stats', function (): Response {
         try {
             $countRow = \Siro\Core\Database::first("SELECT COUNT(*) as count FROM users");
             $userCount = is_array($countRow) && isset($countRow['count']) && is_numeric($countRow['count']) ? (int) $countRow['count'] : 0;
