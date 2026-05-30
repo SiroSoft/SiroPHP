@@ -146,9 +146,10 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             }
             $path = $file->store('avatars');
             $baseUrl = rtrim((string) \Siro\Core\Env::get('APP_URL', 'http://localhost:8080'), '/');
+            $cleanPath = '/' . ltrim($path, '/');
             return Response::success([
-                'path' => $path,
-                'url' => $baseUrl . '/storage/' . $path,
+                'path' => $cleanPath,
+                'url' => $baseUrl . $cleanPath,
                 'original_name' => $file->getClientOriginalName(),
                 'size' => $file->getSize(),
                 'mime' => $file->getMimeType(),
@@ -166,9 +167,10 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             }
             $path = $file->store('uploads');
             $baseUrl = rtrim((string) \Siro\Core\Env::get('APP_URL', 'http://localhost:8080'), '/');
+            $cleanPath = '/' . ltrim($path, '/');
             return Response::success([
-                'path' => $path,
-                'url' => $baseUrl . '/storage/' . $path,
+                'path' => $cleanPath,
+                'url' => $baseUrl . $cleanPath,
                 'original_name' => $file->getClientOriginalName(),
                 'size' => $file->getSize(),
                 'mime' => $file->getMimeType(),
