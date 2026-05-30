@@ -165,15 +165,15 @@ button{font-family:inherit;cursor:pointer}
 </div>
 
 <div class="flow">
-  <div class="flow-step s1"><span class="num">1</span><span class="label">php siro t</span><span class="sub">Test endpoint</span></div>
+  <div class="flow-step s1"><span class="num">⚡</span><span class="label">php siro make:crud</span><span class="sub">Build &amp; Ship</span></div>
   <span class="arrow">→</span>
-  <div class="flow-step s2"><span class="num">2</span><span class="label">php siro why</span><span class="sub">Debug failure</span></div>
+  <div class="flow-step s2"><span class="num">🔍</span><span class="label">php siro api:why</span><span class="sub">Why?</span></div>
   <span class="arrow">→</span>
-  <div class="flow-step s3"><span class="num">3</span><span class="label">php siro replay</span><span class="sub">Inspect trace</span></div>
+  <div class="flow-step s3"><span class="num">🔄</span><span class="label">php siro replay --test</span><span class="sub">Replay</span></div>
   <span class="arrow">→</span>
-  <div class="flow-step s4"><span class="num">4</span><span class="label">php siro fix</span><span class="sub">Auto-fix</span></div>
+  <div class="flow-step s4"><span class="num">✏️</span><span class="label">make:test --from-trace</span><span class="sub">Fix &amp; Test</span></div>
   <span class="arrow">→</span>
-  <div class="flow-step s5"><span class="num">5</span><span class="label">php siro replay --diff</span><span class="sub">Verify fix</span></div>
+  <div class="flow-step s5"><span class="num">📊</span><span class="label">php siro test:regression</span><span class="sub">Regression</span></div>
 </div>
 
 <div class="bar" id="statusBar">
@@ -237,7 +237,13 @@ button{font-family:inherit;cursor:pointer}
     <h2>💻 Project Info</h2>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px">
       <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border)">
+        <span style="color:var(--text3)">Framework</span><span id="infoFramework" style="color:var(--text);font-weight:500">SiroPHP <span class="spin"></span></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border)">
         <span style="color:var(--text3)">PHP</span><span id="infoPhp" style="color:var(--text);font-weight:500"><span class="skel" style="width:60px">&nbsp;</span></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border)">
+        <span style="color:var(--text3)">Server</span><span id="infoServer" style="color:var(--text);font-weight:500"><span class="skel" style="width:70px">&nbsp;</span></span>
       </div>
       <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border)">
         <span style="color:var(--text3)">Database</span><span id="infoDb" style="color:var(--text);font-weight:500"><span class="skel" style="width:70px">&nbsp;</span></span>
@@ -247,6 +253,9 @@ button{font-family:inherit;cursor:pointer}
       </div>
       <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border)">
         <span style="color:var(--text3)">Migrations</span><span id="infoMigrate" style="color:var(--text);font-weight:500"><span class="skel" style="width:40px">&nbsp;</span></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border)">
+        <span style="color:var(--text3)">Environment</span><span id="infoEnv" style="color:var(--text);font-weight:500"><span class="skel" style="width:50px">&nbsp;</span></span>
       </div>
     </div>
   </div>
@@ -302,14 +311,40 @@ async function sendReq(btn){
 function testPath(p){document.getElementById('path').value=p;document.getElementById('body').value='';document.getElementById('method').value='GET';sendReq(document.querySelector('.btn-send'))}
 async function refreshStatus(){
   try{
-    var r=await fetch('/health');var d=await r.json();
-    var info=d.data||{};
-    document.getElementById('infoPhp').textContent=info.php||info.version||'—';
-    var db=info.database||'—';document.getElementById('infoDb').textContent=db;
-    document.getElementById('dbVal').textContent=db==='connected'?'connected':'disconnected';
-    document.getElementById('dbDot').className='dot '+(db==='connected'?'ok':'warn');
-    fetch('/api/auth/me').then(function(r2){var ok=r2.status!==404&&r2.status!==500;document.getElementById('infoAuth').textContent=ok?'active':'not configured';document.getElementById('authVal').textContent=ok?'active':'missing';document.getElementById('authDot').className='dot '+(ok?'ok':'warn')}).catch(function(){});
-    fetch('/api/products?per_page=1').then(function(r3){var ok=r3.status!==500;document.getElementById('infoMigrate').textContent=ok?'run':'pending';document.getElementById('migrateVal').textContent=ok?'run':'pending';document.getElementById('migrateDot').className='dot '+(ok?'ok':'warn')}).catch(function(){});
+    // Get framework version + PHP + DB from health/ready
+    var r=await fetch('/health/ready');var d=await r.json();
+    if(d.data){
+      document.getElementById('infoFramework').textContent='SiroPHP v'+d.data.version;
+      document.getElementById('infoDb').textContent=d.data.database||'—';
+      document.getElementById('dbVal').textContent=d.data.database==='connected'?'connected':'disconnected';
+      document.getElementById('dbDot').className='dot '+(d.data.database==='connected'?'ok':'warn');
+    }
+  }catch(e){}
+
+  // Get PHP + server info from /api/server/info
+  try{
+    var r=await fetch('/api/server/info');var d=await r.json();
+    if(d.data){
+      document.getElementById('infoPhp').textContent=d.data.php||'—';
+      document.getElementById('infoServer').textContent=d.data.server||'—';
+      document.getElementById('infoEnv').textContent=d.data.env||'—';
+    }
+  }catch(e){}
+
+  try{
+    var r=await fetch('/api/auth/me');
+    var ok=r.status!==404&&r.status!==500;
+    document.getElementById('infoAuth').textContent=ok?'active':'not configured';
+    document.getElementById('authVal').textContent=ok?'active':'missing';
+    document.getElementById('authDot').className='dot '+(ok?'ok':'warn');
+  }catch(e){}
+
+  try{
+    var r=await fetch('/api/products?per_page=1');
+    var ok2=r.status!==500;
+    document.getElementById('infoMigrate').textContent=ok2?'run':'pending';
+    document.getElementById('migrateVal').textContent=ok2?'run':'pending';
+    document.getElementById('migrateDot').className='dot '+(ok2?'ok':'warn');
   }catch(e){}
 }
 refreshStatus();setInterval(refreshStatus,15000);
