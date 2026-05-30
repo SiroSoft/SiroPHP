@@ -35,12 +35,15 @@ final class Uploader
     /**
      * Handle a file upload from a request.
      *
+     * Files are organized by date: {type}/YYYY/MM/{uuid}.{ext}
+     * This prevents directory bloat and enables easy cleanup of old files.
+     *
      * @param Request $request The current request
      * @param string $field The form field name (e.g. 'file', 'avatar', 'image')
-     * @param string $directory Subdirectory in storage/public/ (e.g. 'avatars', 'products', 'posts')
+     * @param string $type Subdirectory type (e.g. 'uploads', 'avatars', 'products', 'posts')
      * @return array{error: bool, response?: Response, url?: string, path?: string}
      */
-    public static function handle(Request $request, string $field = 'file', string $directory = 'uploads'): array
+    public static function handle(Request $request, string $field = 'file', string $type = 'uploads'): array
     {
         $file = $request->file($field);
 
@@ -80,7 +83,10 @@ final class Uploader
         }
 
         try {
-            $path = $file->store($directory);
+            // Enterprise directory structure: {type}/YYYY/MM/
+            $dateDir = date('Y') . '/' . date('m');
+            $fullDir = $type . '/' . $dateDir;
+            $path = $file->store($fullDir);
             $baseUrl = rtrim((string) Env::get('APP_URL', 'http://localhost:8080'), '/');
             $cleanPath = '/' . ltrim($path, '/');
 
@@ -105,16 +111,13 @@ final class Uploader
     }
 
     /**
-     * Quick upload handler for route closures.
+     * Quick upload handler for route closures. One-liner.
      *
-     * Usage in routes/api.php:
-     *   $router->post('/upload', function (Request $req) {
-     *       return Uploader::response($req, 'file', 'uploads');
-     *   })->middleware(['auth']);
+     * Usage: $router->post('/upload', fn(Request $r) => Uploader::response($r, 'file', 'uploads'));
      */
-    public static function response(Request $request, string $field = 'file', string $directory = 'uploads'): Response
+    public static function response(Request $request, string $field = 'file', string $type = 'uploads'): Response
     {
-        $result = self::handle($request, $field, $directory);
+        $result = self::handle($request, $field, $type);
         return $result['response'];
     }
 }
