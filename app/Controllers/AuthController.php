@@ -54,7 +54,7 @@ final class AuthController
             ]);
         }
 
-        $userId = isset($user->id) && is_numeric($user->id) ? (int) $user->id : 0;
+        $userId = $user->id;
         $tokens = $this->tokenPair($userId);
 
         return Response::created([
