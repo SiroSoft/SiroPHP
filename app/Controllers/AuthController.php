@@ -147,6 +147,14 @@ final class AuthController
             return Response::error('Unauthorized', 401);
         }
 
+        $userId = isset($user['id']) && is_numeric($user['id']) ? (int) $user['id'] : 0;
+        if ($userId > 0) {
+            $freshUser = $this->userService->getById($userId);
+            if ($freshUser !== null) {
+                return Response::success(\App\Resources\UserResource::make($freshUser), 'Authenticated user');
+            }
+        }
+
         unset($user['claims']);
         return Response::success($user, 'Authenticated user');
     }
