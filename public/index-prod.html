@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SiroPHP API</title>
+<style>
+:root{--bg:#080c14;--surface:#0f1520;--border:#1e293b;--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--accent:#2563eb}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:Inter,'Segoe UI',system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.6;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.card{background:linear-gradient(135deg,var(--surface),var(--bg));border:1px solid var(--border);border-radius:16px;padding:40px;max-width:480px;width:100%;text-align:center}
+.logo{width:48px;height:48px;margin-bottom:16px}
+h1{font-size:24px;font-weight:700;color:#fff;margin-bottom:4px}
+.desc{color:var(--text3);font-size:13px;margin-bottom:24px;line-height:1.5}
+.links{display:flex;flex-direction:column;gap:8px}
+.links a{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border-radius:8px;font-size:13px;font-weight:500;transition:all .15s;text-decoration:none}
+.links a.primary{background:var(--accent);color:#fff}
+.links a.primary:hover{opacity:.9}
+.links a.secondary{background:var(--surface);border:1px solid var(--border);color:var(--text2)}
+.links a.secondary:hover{border-color:var(--accent);color:var(--text)}
+.version{margin-top:24px;font-size:11px;color:var(--text3)}
+</style>
+</head>
+<body>
+<div class="card">
+  <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#2563eb"/><path d="M12 5h10l-4 10h4l-6 14 2-12h-4l2-12z" fill="white"/></svg>
+  <h1>SiroPHP API</h1>
+  <p class="desc">Production-first PHP API framework.<br>Zero-dependency, zero-config.</p>
+  <div class="links">
+    <a href="/health" class="secondary">Health Check</a>
+    <a href="https://sirophp.com" target="_blank" class="primary">sirophp.com →</a>
+    <a href="https://github.com/SiroSoft/SiroPHP" target="_blank" class="secondary">GitHub</a>
+  </div>
+  <div class="version">v0.32.0 · MIT</div>
+</div>
+</body>
+</html>

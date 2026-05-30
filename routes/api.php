@@ -133,7 +133,12 @@ $app->router->get('/', function (Request $req): mixed {
     $accept = strval($req->header('accept', ''));
     $isBrowser = str_contains($accept, 'text/html') && !str_contains($accept, 'application/json');
     if ($isBrowser) {
-        $file = __DIR__ . '/../public/index.html';
+        $isDebug = \Siro\Core\Env::bool('APP_DEBUG', false);
+        $env = \Siro\Core\Env::get('APP_ENV', 'local');
+        $showDevDashboard = $isDebug && $env === 'local';
+
+        $fileName = $showDevDashboard ? 'index.html' : 'index-prod.html';
+        $file = __DIR__ . '/../public/' . $fileName;
         if (file_exists($file)) {
             $html = file_get_contents($file);
             return Response::raw($html !== false ? $html : '', 'text/html; charset=utf-8');
