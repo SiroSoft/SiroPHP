@@ -139,35 +139,43 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
 
     // Upload
     $router->post('/upload/avatar', function (Request $req): Response {
-        $file = $req->file('avatar');
-        if ($file === null || !$file->isValid()) {
-            return Response::error('No file uploaded', 422);
+        try {
+            $file = $req->file('avatar');
+            if ($file === null || !$file->isValid()) {
+                return Response::error('No file uploaded', 422);
+            }
+            $path = $file->store('avatars');
+            $baseUrl = rtrim((string) \Siro\Core\Env::get('APP_URL', 'http://localhost:8080'), '/');
+            return Response::success([
+                'path' => $path,
+                'url' => $baseUrl . '/storage/' . $path,
+                'original_name' => $file->getClientOriginalName(),
+                'size' => $file->getSize(),
+                'mime' => $file->getMimeType(),
+            ], 'Avatar uploaded');
+        } catch (\Throwable $e) {
+            return Response::error($e->getMessage(), 500);
         }
-        $path = $file->store('avatars');
-        $baseUrl = rtrim((string) \Siro\Core\Env::get('APP_URL', 'http://localhost:8080'), '/');
-        return Response::success([
-            'path' => $path,
-            'url' => $baseUrl . '/storage/' . $path,
-            'original_name' => $file->getClientOriginalName(),
-            'size' => $file->getSize(),
-            'mime' => $file->getMimeType(),
-        ], 'Avatar uploaded');
     })->middleware(['auth', 'throttle:10,1']);
 
     $router->post('/upload', function (Request $req): Response {
-        $file = $req->file('file');
-        if ($file === null || !$file->isValid()) {
-            return Response::error('No file uploaded', 422);
+        try {
+            $file = $req->file('file');
+            if ($file === null || !$file->isValid()) {
+                return Response::error('No file uploaded', 422);
+            }
+            $path = $file->store('uploads');
+            $baseUrl = rtrim((string) \Siro\Core\Env::get('APP_URL', 'http://localhost:8080'), '/');
+            return Response::success([
+                'path' => $path,
+                'url' => $baseUrl . '/storage/' . $path,
+                'original_name' => $file->getClientOriginalName(),
+                'size' => $file->getSize(),
+                'mime' => $file->getMimeType(),
+            ], 'File uploaded', 201);
+        } catch (\Throwable $e) {
+            return Response::error($e->getMessage(), 500);
         }
-        $path = $file->store('uploads');
-        $baseUrl = rtrim((string) \Siro\Core\Env::get('APP_URL', 'http://localhost:8080'), '/');
-        return Response::success([
-            'path' => $path,
-            'url' => $baseUrl . '/storage/' . $path,
-            'original_name' => $file->getClientOriginalName(),
-            'size' => $file->getSize(),
-            'mime' => $file->getMimeType(),
-        ], 'File uploaded', 201);
     })->middleware(['auth', 'throttle:10,1']);
 
     // L8: GET /profile performs locale state changes. Consider POST for mutations.
