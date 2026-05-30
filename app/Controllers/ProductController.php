@@ -89,6 +89,12 @@ final class ProductController extends Controller
             $validated['short_description'] = $rawBody['short_description'];
         }
 
+        if (isset($rawBody['category_id'])) {
+            try {
+                $cat = \Siro\Core\Database::first("SELECT name FROM categories WHERE id = ? LIMIT 1", [(int) $rawBody['category_id']]);
+                if ($cat) $validated['category'] = $cat['name'];
+            } catch (\Throwable) {}
+        }
         $currentUserId = is_array($currentUser) && isset($currentUser['id']) ? (int) $currentUser['id'] : 0;
         $validated['user_id'] = $currentUserId;
 
@@ -127,6 +133,12 @@ final class ProductController extends Controller
         }
         if (isset($rawBody['category_name'])) {
             $validated['category'] = $rawBody['category_name'];
+        }
+        if (isset($rawBody['category_id'])) {
+            try {
+                $cat = \Siro\Core\Database::first("SELECT name FROM categories WHERE id = ? LIMIT 1", [(int) $rawBody['category_id']]);
+                if ($cat) $validated['category'] = $cat['name'];
+            } catch (\Throwable) {}
         }
         if (isset($rawBody['cover_image'])) {
             $validated['cover_image'] = $rawBody['cover_image'];
