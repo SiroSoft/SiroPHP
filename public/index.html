@@ -1,153 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="SiroPHP API Framework — dev dashboard with live API tester, request traces, CLI debug workflow">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
-<title>SiroPHP — Debug Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<meta name="description" content="SiroPHP — Production-first PHP API Framework. Zero-dependency, zero-config, one-command setup." />
+<meta name="keywords" content="PHP, API, Framework, REST, SiroPHP, OpenAPI, TypeScript, Admin" />
+<meta property="og:title" content="SiroPHP — Zero-Dependency PHP API Framework" />
+<meta property="og:description" content="1 command, 0 dependency. Production-first PHP API framework with built-in admin panel." />
+<meta property="og:url" content="https://sirophp.com" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><path d='M12 5h10l-4 10h4l-6 14 2-12h-4l2-12z' fill='white'/></svg>" />
+<title>SiroPHP — Zero-Dependency PHP API Framework</title>
 <style>
-:root{--bg:#080c14;--surface:#0f1520;--surface2:#151e2d;--border:#1e293b;--border-hover:#334155;--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--accent:#3b82f6;--accent-glow:rgba(59,130,246,.15);--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--purple:#a855f7;--radius:10px;--radius-lg:16px}
+:root{--bg:#080c14;--surface:#0f1520;--surface2:#151e2d;--border:#1e293b;--border-hover:#334155;--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--accent:#2563eb;--accent-glow:rgba(37,99,235,.15);--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--purple:#a855f7;--radius:10px;--radius-lg:16px}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:Inter,'Segoe UI',system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.6;min-height:100vh;display:flex;justify-content:center;padding:20px}
-pre,code,.cli,.mt,.terminal{font-family:'JetBrains Mono','Fira Code','Cascadia Code','SF Mono',monospace}
+code{font-family:'JetBrains Mono','Fira Code','Cascadia Code','SF Mono',monospace;font-size:13px}
 a{color:var(--accent);text-decoration:none}
 button{font-family:inherit;cursor:pointer}
-.w{width:100%;max-width:1200px;animation:fadeIn .5s ease-out}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes blink{50%{opacity:0}}
-@keyframes shimmer{0%{background-position:-200px 0}to{background-position:calc(200px + 100%) 0}}
-.skel{background:linear-gradient(90deg,var(--surface2) 25%,var(--border) 50%,var(--surface2) 75%);background-size:200px 100%;animation:shimmer 1.5s infinite;border-radius:4px;display:inline-block}
+.w{width:100%;max-width:1120px;animation:fadeIn .4s ease-out}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* Nav */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);margin-bottom:40px}
+.nav-l{display:flex;align-items:center;gap:10px}
+.nav-l svg{width:28px;height:28px}
+.nav-l span{font-weight:700;font-size:15px;color:#fff}
+.nav-r{display:flex;gap:8px;font-size:13px}
+.nav-r a{padding:6px 12px;border-radius:6px;transition:all .15s;color:var(--text2)}
+.nav-r a:hover{color:var(--text);background:var(--surface)}
 
 /* Hero */
-.hero{text-align:center;padding:44px 20px 24px;animation:slideUp .6s ease-out}
-.hero .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:3px;color:var(--accent);font-weight:600;margin-bottom:12px}
-.hero h1{font-size:44px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.12;margin-bottom:10px}
-.hero h1 em{color:var(--accent);font-style:normal;background:linear-gradient(135deg,var(--accent),#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero .sig{font-size:14px;color:var(--text3);margin-bottom:18px}
-.hero .cta{display:flex;justify-content:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:all .15s;box-shadow:0 0 20px var(--accent-glow)}
-.btn-primary:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 0 30px var(--accent-glow)}
-.btn-secondary{background:0 0;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 24px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;gap:8px;transition:all .15s}
-.btn-secondary:hover{border-color:var(--accent);background:var(--accent-glow)}
-.install-wrap{display:flex;justify-content:center;margin-bottom:14px}
-.install{display:inline-flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:13px;transition:border-color .15s}
+.hero{text-align:center;padding:20px 0 32px;animation:slideUp .5s ease-out}
+.hero .badge{display:inline-flex;align-items:center;gap:6px;background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.2);border-radius:20px;padding:5px 14px;font-size:11px;color:#60a5fa;margin-bottom:16px}
+.hero h1{font-size:40px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.15;margin-bottom:10px}
+.hero h1 em{color:var(--accent);font-style:normal;background:linear-gradient(135deg,#2563eb,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:15px;color:var(--text3);max-width:520px;margin:0 auto 22px}
+.hero .btns{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.btn-p{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:11px 28px;font-size:14px;font-weight:600;transition:all .15s;box-shadow:0 0 24px var(--accent-glow)}
+.btn-p:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 0 32px var(--accent-glow)}
+.btn-s{background:0 0;color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:11px 28px;font-size:14px;font-weight:500;transition:all .15s}
+.btn-s:hover{border-color:var(--accent);color:var(--text);background:var(--accent-glow)}
+
+/* Install Cmd */
+.install{display:inline-flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 16px;font-size:13px;transition:border-color .15s;margin-bottom:16px}
 .install:hover{border-color:var(--accent)}
-.install .pm{color:var(--accent)}
-.install .cmd{color:var(--text);user-select:all}
-.install .cpb{font-size:10px;color:var(--accent);background:0 0;border:1px solid var(--border);border-radius:4px;padding:2px 8px;cursor:pointer;transition:all .12s}
+.install .prompt{color:var(--accent);user-select:none}
+.install .cmd{color:var(--text);user-select:all;white-space:nowrap}
+.install .cpb{font-size:10px;color:var(--accent);background:0 0;border:1px solid var(--border);border-radius:4px;padding:3px 10px;cursor:pointer;transition:all .12s}
 .install .cpb:hover{border-color:var(--accent);background:var(--accent-glow)}
 .install .cpb.copied{border-color:var(--green);color:var(--green)}
-.proof{text-align:center;font-size:12px;color:var(--text3)}
-.proof .sep{color:var(--border);margin:0 6px}
-.proof em{color:var(--accent);font-style:normal}
 
-/* Banner */
-.banner{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#0d1f1a,#0f1520);border:1px solid #1a3d2b;border-radius:var(--radius);padding:10px 18px;margin-bottom:18px;font-size:13px;animation:slideUp .7s ease-out}
-.banner .icon{font-size:16px}
-.banner .text{color:var(--green)}
-.banner .text strong{color:#4ade80}
-.banner .sub{color:var(--text3);font-size:11px;margin-left:6px}
+/* Metrics */
+.metrics{display:flex;justify-content:center;gap:16px;margin-bottom:10px;flex-wrap:wrap}
+.metric{text-align:center;padding:8px 16px}
+.metric .num{font-size:22px;font-weight:700;color:#fff}
+.metric .lbl{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* Section */
+.section{margin-bottom:28px}
+.section-title{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:14px;font-weight:600}
+
+/* Feature Grid */
+.fgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px}
+@media(max-width:800px){.fgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.fgrid{grid-template-columns:1fr}}
+.fcard{background:linear-gradient(135deg,var(--surface),var(--bg));border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;transition:all .2s;animation:slideUp .6s ease-out}
+.fcard:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 4px 24px rgba(0,0,0,.2)}
+.fcard .icon{font-size:22px;margin-bottom:8px}
+.fcard h3{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px}
+.fcard p{font-size:12px;color:var(--text3);line-height:1.5}
+
+/* Cards */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.cgrid{grid-template-columns:1fr}}
+.card{background:linear-gradient(135deg,var(--surface),var(--bg));border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;transition:all .2s;animation:slideUp .7s ease-out}
+.card:hover{border-color:var(--border-hover);box-shadow:0 4px 24px rgba(0,0,0,.2)}
+.card h2{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);font-weight:600;margin-bottom:14px}
+.card .item{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:6px;font-size:13px;transition:background .1s;margin:0 -8px}
+.card .item:hover{background:var(--surface2)}
+.card .item .ck{color:var(--green);font-size:15px}
+.card .item .txt{color:var(--text2);font-size:12px}
+.card .item .txt strong{color:var(--text)}
+.card .item .ar{margin-left:auto;color:var(--accent);font-size:12px;opacity:0;transition:opacity .15s}
+.card .item:hover .ar{opacity:1}
+
+/* CLI Grid */
+.cli{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+@media(max-width:500px){.cli{grid-template-columns:1fr}}
+.cli-row{display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 10px;border-radius:6px;background:var(--surface);border:1px solid var(--border);transition:all .15s}
+.cli-row:hover{border-color:var(--accent);background:var(--accent-glow)}
+.cli-row .pm{color:var(--accent)}
+.cli-row .cmd{color:var(--text)}
+.cli-row .desc{color:var(--text3);font-size:10px;margin-left:auto}
 
 /* Status */
-.status{display:flex;justify-content:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;animation:slideUp .8s ease-out}
-.status-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 10px;transition:border-color .2s}
+.status{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.status-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2);background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 10px}
 .status-item .dot{width:5px;height:5px;border-radius:50%}
-.status-item .dot.ok{background:var(--green);animation:pulse 2s ease-in-out infinite}
+.status-item .dot.ok{background:var(--green)}
 .status-item .dot.warn{background:var(--yellow)}
-.status-item .dot.off{background:var(--text3)}
 .status-item .val{color:var(--text);font-size:10px;font-weight:500}
 
-/* Terminal */
-.term{background:linear-gradient(135deg,var(--surface),#0a0f1a);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;margin-bottom:24px;box-shadow:0 4px 40px rgba(0,0,0,.3),0 0 80px rgba(59,130,246,.03);animation:slideUp .9s ease-out}
-.term-title{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.term-title .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite}
-.term-line{display:flex;align-items:flex-start;gap:10px;padding:3px 0;font-size:13px;line-height:1.7}
-.term-line .prompt{color:var(--accent);flex-shrink:0;user-select:none}
-.term-line .cmd{color:var(--text)}
-.term-line .out{color:var(--text2);padding-left:18px;font-size:12px}
-.term-line .out .err{color:var(--red)}
-.term-line .out .ok{color:var(--green)}
-.term-line .out .hl{color:var(--yellow)}
-.term-line .out .info{color:#60a5fa}
-.term-sep{border-top:1px solid var(--border);margin:8px 0}
-
-/* Flow */
-.flow{display:flex;justify-content:center;align-items:center;gap:4px;padding:16px 0 24px;font-size:12px;flex-wrap:wrap;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:24px;animation:slideUp 1s ease-out}
-.flow-step{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 12px;transition:all .15s}
-.flow-step:hover{border-color:var(--accent);background:var(--accent-glow);transform:translateY(-2px)}
-.flow-step .num{font-size:9px;color:var(--accent);font-weight:700}
-.flow-step .label{color:var(--text);white-space:nowrap}
-.flow .arrow{color:var(--border);font-size:16px;user-select:none}
-
-/* Grid */
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-@media(max-width:740px){.grid{grid-template-columns:1fr}}
-.card{background:linear-gradient(135deg,var(--surface),var(--bg));border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;transition:all .2s;animation:slideUp 1.1s ease-out}
-.card:hover{border-color:var(--border-hover);box-shadow:0 4px 30px rgba(0,0,0,.2)}
-.card h2{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--accent);font-weight:600;margin-bottom:14px}
-.card .empty{color:var(--text3);font-size:12px;padding:8px 0;text-align:center}
-
-/* Trace list */
-.trace-item{padding:6px 0;font-size:12px;border-bottom:1px solid var(--border);transition:background .1s;border-radius:4px;padding:6px 8px;margin:0 -8px}
-.trace-item:last-child{border-bottom:none}
-.trace-item:hover{background:var(--surface2)}
-.trace-top{display:flex;justify-content:space-between;align-items:center}
-.trace-method{font-weight:600;font-size:11px}
-.trace-method.get{color:#60a5fa}
-.trace-method.post{color:var(--yellow)}
-.trace-method.put{color:var(--purple)}
-.trace-method.delete{color:var(--red)}
-.trace-status{font-size:11px;font-weight:600;padding:1px 6px;border-radius:3px}
-.trace-status.ok{color:var(--green);background:rgba(34,197,94,.1)}
-.trace-status.err{color:var(--red);background:rgba(239,68,68,.1)}
-.trace-status.warn{color:var(--yellow);background:rgba(245,158,11,.1)}
-.trace-details{display:flex;gap:10px;margin-top:1px;font-size:10px;color:var(--text3)}
-.trace-id{font-size:10px;color:var(--text3);margin-top:1px}
-
-/* Checklist */
-.check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:12px}
-.check-item .ck{color:var(--green);font-size:14px;flex-shrink:0;margin-top:1px}
-.check-item .txt{color:var(--text2)}
-.check-item .txt em{color:var(--accent);font-style:normal}
-
-/* Actions */
-.actions{display:flex;flex-direction:column;gap:5px}
-.actions a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--border);font-size:12px;color:var(--text2);transition:all .15s}
-.actions a:hover{border-color:var(--accent);color:var(--text);background:var(--accent-glow)}
-.actions a .ar{color:var(--accent);font-size:14px}
-.actions a .tag{padding:1px 5px;border-radius:3px;font-size:9px;font-weight:600;margin-left:auto}
-.actions a .tag.cli{background:rgba(59,130,246,.15);color:#60a5fa}
-.actions a .tag.new{background:rgba(168,85,247,.15);color:var(--purple)}
-
-/* Info grid */
-.info{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+/* Info */
+.info{display:grid;grid-template-columns:1fr 1fr;gap:2px}
 .info-item{padding:5px 0;font-size:12px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border)}
-.info-item:last-child{border-bottom:none}
 .info-item .l{color:var(--text3)}
-.info-item .v{color:var(--text);font-size:11px;font-weight:500}
-.info-item .v.warn{color:var(--yellow)}
-
-/* CLI */
-.cli-list{display:flex;flex-direction:column;gap:4px}
-.cli-row{display:flex;align-items:center;gap:8px;font-size:13px;padding:7px 10px;border-radius:6px;background:var(--surface);border:1px solid var(--border);transition:all .15s}
-.cli-row:hover{border-color:var(--accent);background:var(--accent-glow)}
-.cli-row .pm{color:var(--accent);flex-shrink:0}
-.cli-row .cmd{color:var(--text)}
-.cli-row .desc{color:var(--text3);font-size:10px;margin-left:auto;margin-right:6px}
-.cli-row .cpb{font-size:9px;color:var(--accent);background:0 0;border:1px solid var(--border);border-radius:4px;padding:2px 7px;cursor:pointer;transition:all .12s;flex-shrink:0}
-.cli-row .cpb:hover{border-color:var(--accent);background:var(--accent-glow)}
-.cli-row .cpb.copied{border-color:var(--green);color:var(--green)}
+.info-item .v{color:var(--text);font-weight:500}
 
 /* Tester */
-.tester{border:1px solid var(--border);border-radius:var(--radius);padding:16px;background:var(--surface)}
+.tester{border:1px solid var(--border);border-radius:var(--radius);padding:14px;background:var(--surface)}
 .tester-row{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
-.tester-row select,.tester-row input{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);font-family:inherit;flex:1;transition:border-color .15s}
+.tester-row select,.tester-row input{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);font-family:inherit;flex:1;transition:border-color .15s;min-width:0}
 .tester-row select:focus,.tester-row input:focus{outline:none;border-color:var(--accent)}
 .tester-row select{flex:0 0 80px}
-.tester-row input{min-width:120px}
 .tester-suggest{background:var(--bg);border:1px solid var(--border);border-radius:4px;font-size:10px;color:var(--text3);padding:2px 7px;cursor:pointer;transition:all .12s}
 .tester-suggest:hover{border-color:var(--accent);color:var(--text)}
 .btn-row{display:flex;gap:6px}
@@ -162,147 +128,143 @@ button{font-family:inherit;cursor:pointer}
 .resp-meta .sc.ok{color:var(--green)}
 .resp-meta .sc.er{color:var(--red)}
 .resp-meta .tm{color:var(--text3)}
-.resp-body{margin:0;white-space:pre-wrap;word-break:break-all;color:var(--text2);font-size:11px;font-family:inherit}
-
-/* Spinner */
+.resp-body{margin:0;white-space:pre-wrap;word-break:break-all;color:var(--text2);font-size:11px}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.skel{background:linear-gradient(90deg,var(--surface2) 25%,var(--border) 50%,var(--surface2) 75%);background-size:200px 100%;animation:shimmer 1.5s infinite;border-radius:4px;display:inline-block}
+@keyframes shimmer{0%{background-position:-200px 0}to{background-position:calc(200px + 100%) 0}}
 
 /* Footer */
-.ft{text-align:center;margin-top:24px;padding:16px 0;border-top:1px solid var(--border);font-size:11px;color:var(--text3);animation:fadeIn 1.5s ease-out}
+.ft{text-align:center;margin-top:32px;padding:20px 0;border-top:1px solid var(--border);font-size:11px;color:var(--text3)}
 .ft a{color:var(--text2)}
 .ft a:hover{color:var(--accent)}
 </style>
 </head>
 <body>
 <div class="w">
+
+<!-- Nav -->
+<nav class="nav">
+  <a href="/" class="nav-l">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#2563eb"/><path d="M12 5h10l-4 10h4l-6 14 2-12h-4l2-12z" fill="white"/></svg>
+    <span>SiroPHP</span>
+  </a>
+  <div class="nav-r">
+    <a href="https://github.com/SiroSoft/SiroPHP" target="_blank">GitHub</a>
+    <a href="https://github.com/SiroSoft/siro-admin-next" target="_blank">Next.js Starter</a>
+    <a href="https://github.com/SiroSoft/siro-admin-nuxt" target="_blank">Nuxt Starter</a>
+  </div>
+</nav>
+
+<!-- Hero -->
 <div class="hero">
-  <div class="eyebrow">⚡ Debug-first Framework</div>
-  <h1>From bug report to <em>verified fix</em><br>in under a minute</h1>
-  <div class="sig"><code>php siro why</code> — then <code>php siro replay a1b2c3</code> — then <code>php siro replay --diff</code></div>
-  <div class="cta">
-    <a href="/health"><button class="btn-primary"><span>▶</span> Dashboard</button></a>
-    <a href="https://github.com/SiroSoft/SiroPHP" target="_blank"><button class="btn-secondary">GitHub →</button></a>
+  <div class="badge">⚡ v0.32.0 · Production-ready</div>
+  <h1><em>Zero-dependency</em> PHP<br>API Framework</h1>
+  <p>From blank machine to running project in 30 seconds. No Docker, no XAMPP, no config.</p>
+  <div class="btns">
+    <button class="btn-p" onclick="document.getElementById('install').scrollIntoView({behavior:'smooth'})">Get Started →</button>
+    <a href="/health"><button class="btn-s">Health Check</button></a>
   </div>
-  <div class="install-wrap">
-    <div class="install">
-      <span class="pm">$</span>
-      <span class="cmd">composer create-project sirosoft/api my-app</span>
-      <button class="cpb" onclick="copyInstall(this)">Copy</button>
-    </div>
-  </div>
-  <div class="proof">
-    <span>462 tests</span><span class="sep">·</span>
-    <span>0 critical vulns</span><span class="sep">·</span>
-    <em>&lt;1ms</em><span> cold boot</span><span class="sep">·</span>
-    <span>PHPStan Level Max</span>
+  <div class="metrics">
+    <div class="metric"><div class="num">30s</div><div class="lbl">to production</div></div>
+    <div class="metric"><div class="num">0</div><div class="lbl">dependencies</div></div>
+    <div class="metric"><div class="num">115</div><div class="lbl">security fixes</div></div>
+    <div class="metric"><div class="num">72</div><div class="lbl">CLI commands</div></div>
   </div>
 </div>
 
-<div class="banner" id="banner">
-  <span class="icon">🚀</span>
-  <span class="text">Your API workspace is <strong>ready</strong></span>
-  <span class="sub" id="envTag">· checking...</span>
-</div>
-
+<!-- Status Bar -->
 <div class="status" id="statusBar">
   <div class="status-item"><span class="dot ok"></span> Server <span class="val">running</span></div>
   <div class="status-item"><span class="dot warn" id="dbDot"></span> Database <span class="val" id="dbVal"><span class="spinner"></span></span></div>
+  <div class="status-item"><span class="dot warn" id="migrateDot"></span> Migrations <span class="val" id="migrateVal"><span class="spinner"></span></span></div>
   <div class="status-item"><span class="dot warn" id="authDot"></span> Auth <span class="val" id="authVal"><span class="spinner"></span></span></div>
-  <div class="status-item"><span class="dot ok" id="debugDot"></span> Debug <span class="val" id="debugVal">enabled</span></div>
 </div>
 
-<div class="term">
-  <div class="term-title"><span class="dot"></span> DEBUG WORKFLOW · LIVE</div>
-  <div class="term-line"><span class="prompt">$</span><span class="cmd">php siro why</span></div>
-  <div class="term-line"><span class="prompt">→</span><span class="out">POST /api/orders  <span class="err">422</span></span></div>
-  <div class="term-line"><span class="prompt">→</span><span class="out">Validation failed: <span class="hl">customer_id required</span></span></div>
-  <div class="term-line"><span class="prompt">→</span><span class="out">Trace ID: <span class="info">siro_a1b2c3</span>  ·  18ms</span></div>
-  <div class="term-sep"></div>
-  <div class="term-line"><span class="prompt">$</span><span class="cmd">php siro replay siro_a1b2c3 --set body.customer_id=1</span></div>
-  <div class="term-line"><span class="prompt">→</span><span class="out"><span class="ok">201 Created</span>  ·  Order #42 placed  <span class="info">12ms</span></span></div>
-  <div class="term-line" style="margin-top:6px"><span class="prompt">$</span><span class="cmd">php siro t POST /api/orders --body customer_id=1<span style="display:inline-block;width:7px;height:15px;background:var(--accent);animation:blink 1s step-end infinite;vertical-align:text-bottom;margin-left:2px"></span></span></div>
+<!-- Install -->
+<div id="install" class="section" style="text-align:center">
+  <div class="section-title">One Command · Zero Config</div>
+  <div class="install" style="margin:0 auto 10px">
+    <span class="prompt">$</span>
+    <span class="cmd">iwr https://sirophp.com/downloads/install.ps1 -UseBasicParsing | iex</span>
+    <button class="cpb" onclick="copyInstall(this)">Copy</button>
+  </div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:20px">
+    Or: <code style="color:var(--accent)">curl -sS https://sirophp.com/downloads/install.sh | bash</code>  ·  <a href="/downloads/install.ps1" style="color:var(--accent)">View script</a>
+  </div>
 </div>
 
-<div class="flow">
-  <div class="flow-step"><span class="num">01</span><span class="label">php siro t</span></div>
-  <span class="arrow">→</span>
-  <div class="flow-step"><span class="num">02</span><span class="label">php siro why</span></div>
-  <span class="arrow">→</span>
-  <div class="flow-step"><span class="num">03</span><span class="label">php siro replay</span></div>
-  <span class="arrow">→</span>
-  <div class="flow-step"><span class="num">04</span><span class="label">php siro fix</span></div>
-  <span class="arrow">→</span>
-  <div class="flow-step"><span class="num">05</span><span class="label">php siro replay --diff</span></div>
+<!-- Features -->
+<div class="section">
+  <div class="section-title">Enterprise Features</div>
+  <div class="fgrid">
+    <div class="fcard"><div class="icon">⚡</div><h3>Zero-Dependency</h3><p>No Composer install required. PHP + SQLite = running API. Built-in server, migrations, auth.</p></div>
+    <div class="fcard"><div class="icon">🔗</div><h3>OpenAPI + TypeScript</h3><p>Auto-generated API types. Frontend &amp; backend always in sync. <code>npm run generate:types</code></p></div>
+    <div class="fcard"><div class="icon">🖥️</div><h3>Admin Starter Kits</h3><p>Next.js 15 + Nuxt 3. Same backend, two frontends. Enterprise-grade CRUD, auth, dashboard.</p></div>
+    <div class="fcard"><div class="icon">🔒</div><h3>Security First</h3><p>3 rounds professional audit. 115 issues fixed. SQL injection, XSS, CSRF, SSRF, JWT all hardened.</p></div>
+    <div class="fcard"><div class="icon">🎯</div><h3>Response Contract v1</h3><p>Standardized <code>{success, message, data, meta}</code> envelope. Every endpoint follows the same format.</p></div>
+    <div class="fcard"><div class="icon">📂</div><h3>Enterprise File Storage</h3><p>Date-organized storage: <code>uploads/2026/05/{uuid}.jpg</code>. Drag-drop upload, auto URL generation.</p></div>
+  </div>
 </div>
 
-<div class="grid" style="animation-delay:.3s">
+<!-- Two Column -->
+<div class="cgrid">
+
+  <!-- Left: CLI -->
   <div class="card">
-    <h2>Last Traces</h2>
-    <div id="traceContainer">
-      <div class="empty">Loading traces...</div>
+    <h2>CLI Commands</h2>
+    <div class="cli">
+      <div class="cli-row"><span class="pm">$</span><span class="cmd">php siro serve</span><span class="desc">Start dev server</span></div>
+      <div class="cli-row"><span class="pm">$</span><span class="cmd">php siro new app</span><span class="desc">Create project</span></div>
+      <div class="cli-row"><span class="pm">$</span><span class="cmd">php siro db:seed</span><span class="desc">Seed demo data</span></div>
+      <div class="cli-row"><span class="pm">$</span><span class="cmd">php siro make:crud</span><span class="desc">Scaffold CRUD</span></div>
+      <div class="cli-row"><span class="pm">$</span><span class="cmd">php siro runtime:list</span><span class="desc">PHP versions</span></div>
+      <div class="cli-row"><span class="pm">$</span><span class="cmd">php siro openapi:generate</span><span class="desc">API docs</span></div>
     </div>
   </div>
+
+  <!-- Right: Quick Actions -->
   <div class="card">
-    <h2>Why Siro?</h2>
-    <div class="check-item"><span class="ck">✓</span><span class="txt">Replay real <em>production requests</em> from CLI</span></div>
-    <div class="check-item"><span class="ck">✓</span><span class="txt">Auto-compare <em>before / after</em> each fix</span></div>
-    <div class="check-item"><span class="ck">✓</span><span class="txt"><em>Production-safe</em> — credentials auto-redacted</span></div>
-    <div class="check-item"><span class="ck">✓</span><span class="txt">72 CLI commands — <em>make:crud</em> in 2 seconds</span></div>
+    <h2>Quick Actions</h2>
+    <a href="#" onclick="event.preventDefault();testPath('/api/health')" class="item"><span class="ck">▶</span><span class="txt">Check API <strong>health</strong></span><span class="ar">→</span></a>
+    <a href="#" onclick="event.preventDefault();testPath('/api/products')" class="item"><span class="ck">▶</span><span class="txt">Browse <strong>products</strong> API</span><span class="ar">→</span></a>
+    <a href="#" onclick="event.preventDefault();testPath('/api/auth/login')" class="item"><span class="ck">▶</span><span class="txt">Test <strong>login</strong> endpoint</span><span class="ar">→</span></a>
+    <a href="/api/dashboard/stats" target="_blank" class="item"><span class="ck">▶</span><span class="txt">View <strong>dashboard</strong> stats</span><span class="ar">→</span></a>
+    <a href="/docs/openapi/openapi.json" target="_blank" class="item"><span class="ck">▶</span><span class="txt">Browse <strong>OpenAPI</strong> spec</span><span class="ar">→</span></a>
   </div>
 </div>
 
-<div class="grid" style="animation-delay:.5s">
+<!-- Bottom Row -->
+<div class="cgrid" style="margin-top:14px">
+
+  <!-- Project Info -->
   <div class="card">
     <h2>Project</h2>
     <div class="info">
-      <div class="info-item"><span class="l">Environment</span><span class="v" id="infoEnv"><span class="skel" style="width:50px">&nbsp;</span></span></div>
+      <div class="info-item"><span class="l">Framework</span><span class="v">SiroPHP v0.32.0</span></div>
       <div class="info-item"><span class="l">PHP</span><span class="v" id="infoPhp"><span class="skel" style="width:60px">&nbsp;</span></span></div>
       <div class="info-item"><span class="l">Database</span><span class="v" id="infoDb"><span class="skel" style="width:70px">&nbsp;</span></span></div>
       <div class="info-item"><span class="l">Auth</span><span class="v" id="infoAuth"><span class="skel" style="width:50px">&nbsp;</span></span></div>
       <div class="info-item"><span class="l">Migrations</span><span class="v" id="infoMigrate"><span class="skel" style="width:40px">&nbsp;</span></span></div>
-      <div class="info-item"><span class="l">Last Trace</span><span class="v" id="infoTrace"><span class="skel" style="width:60px">&nbsp;</span></span></div>
-    </div>
-  </div>
-  <div class="card">
-    <h2>Quick Actions</h2>
-    <div class="actions">
-      <a href="#" onclick="event.preventDefault();testPath('/api/health')"><span class="ar">▶</span> Test API health</a>
-      <a href="#" onclick="event.preventDefault();testPath('/api/products')"><span class="ar">▶</span> Browse products <span class="tag cli">GET</span></a>
-      <a href="#" onclick="event.preventDefault();testPath('/api/auth/me')"><span class="ar">▶</span> Check auth <span class="tag cli">GET</span></a>
-      <a href="https://github.com/SiroSoft/SiroPHP" target="_blank"><span class="ar">▶</span> View on GitHub <span class="tag new">★ star</span></a>
-    </div>
-  </div>
-</div>
-
-<div class="grid" style="animation-delay:.7s">
-  <div class="card">
-    <h2>CLI Commands</h2>
-    <div class="cli-list">
-      <div class="cli-row"><span class="pm">$</span><span class="cmd">php siro t GET /health</span><span class="desc">Test endpoint</span><button class="cpb" onclick="copyCmd(this)">Copy</button></div>
-      <div class="cli-row"><span class="pm">$</span><span class="cmd">php siro why</span><span class="desc">Last request</span><button class="cpb" onclick="copyCmd(this)">Copy</button></div>
-      <div class="cli-row"><span class="pm">$</span><span class="cmd">php siro replay a1b2c3</span><span class="desc">Replay trace</span><button class="cpb" onclick="copyCmd(this)">Copy</button></div>
-      <div class="cli-row"><span class="pm">$</span><span class="cmd">php siro make:crud products</span><span class="desc">Scaffold CRUD</span><button class="cpb" onclick="copyCmd(this)">Copy</button></div>
-      <div class="cli-row"><span class="pm">$</span><span class="cmd">php siro fix</span><span class="desc">Watch & fix traces</span><button class="cpb" onclick="copyCmd(this)">Copy</button></div>
+      <div class="info-item"><span class="l">Env</span><span class="v" id="infoEnv"><span class="skel" style="width:50px">&nbsp;</span></span></div>
     </div>
   </div>
 
+  <!-- API Tester -->
   <div class="card">
     <h2>Live API Tester</h2>
     <div class="tester">
       <div class="tester-row">
-        <select id="method">
-          <option>GET</option><option selected>POST</option><option>PUT</option><option>DELETE</option>
-        </select>
-        <input id="path" placeholder="/api/products" value="/api/auth/login" spellcheck="false">
+        <select id="method"><option>GET</option><option selected>POST</option><option>PUT</option><option>DELETE</option></select>
+        <input id="path" placeholder="/api/products" value="/api/health" spellcheck="false" />
       </div>
-      <div class="tester-row" style="gap:3px;flex-wrap:wrap">
+      <div class="tester-row" style="gap:3px">
         <button class="tester-suggest" onclick="setPath('/api/health')">/health</button>
         <button class="tester-suggest" onclick="setPath('/api/products')">/products</button>
         <button class="tester-suggest" onclick="setPath('/api/auth/me')">/auth/me</button>
         <button class="tester-suggest" onclick="setPath('/api/auth/login')">/auth/login</button>
-        <input id="body" placeholder='{"email":"user@example.com","password":"yourpassword"}' value='{"email":"user@example.com","password":""}'>
       </div>
+      <input id="body" placeholder='{"email":"user@example.com","password":"..."}' style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--text);font-family:inherit;margin-bottom:8px;transition:border-color .15s" />
       <div class="btn-row">
         <button class="btn-send" onclick="sendReq(this)">▶ Send</button>
         <button class="btn-cls" onclick="clearResp()">Clear</button>
@@ -315,21 +277,16 @@ button{font-family:inherit;cursor:pointer}
   </div>
 </div>
 
+<!-- Footer -->
 <div class="ft">
-  SiroPHP v0.27.2 · <a href="https://github.com/SiroSoft/SiroPHP">GitHub</a> · <a href="/health">Health</a> · 462 tests · PHPStan Level Max · From bug to fix in under a minute.
+  SiroPHP v0.32.0 · <a href="https://github.com/SiroSoft/SiroPHP" target="_blank">GitHub</a> · <a href="/health">Health</a> · <a href="https://github.com/SiroSoft/siro-admin-next" target="_blank">Next.js Admin</a> · <a href="https://github.com/SiroSoft/siro-admin-nuxt" target="_blank">Nuxt Admin</a> · PHPStan Level Max · MIT
 </div>
 
 </div>
 
 <script>
 function copyInstall(btn){
-  navigator.clipboard.writeText('composer create-project sirosoft/api my-app');
-  btn.textContent='Copied!';btn.classList.add('copied');
-  setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied')},2000);
-}
-function copyCmd(btn){
-  var txt=btn.parentElement.querySelector('.cmd').textContent;
-  navigator.clipboard.writeText(txt);
+  navigator.clipboard.writeText('iwr https://sirophp.com/downloads/install.ps1 -UseBasicParsing | iex');
   btn.textContent='Copied!';btn.classList.add('copied');
   setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied')},2000);
 }
@@ -337,90 +294,56 @@ function setPath(p){
   document.getElementById('path').value=p;
   document.getElementById('body').value='';
 }
-function clearResp(){
-  document.getElementById('response').style.display='none';
-}
-
+function clearResp(){document.getElementById('response').style.display='none'}
 async function sendReq(btn){
   var method=document.getElementById('method').value;
   var path=document.getElementById('path').value;
   var bodyRaw=document.getElementById('body').value;
   var resp=document.getElementById('response');
-  var statusEl=document.getElementById('respStatus');
-  var timeEl=document.getElementById('respTime');
-  var bodyEl=document.getElementById('respBody');
-  resp.style.display='block';bodyEl.textContent='';
-  statusEl.textContent='Sending...';statusEl.className='sc';
+  var st=document.getElementById('respStatus');
+  var tm=document.getElementById('respTime');
+  var bd=document.getElementById('respBody');
+  resp.style.display='block';bd.textContent='';st.textContent='Sending...';st.className='sc';
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Sending';
   var t0=performance.now();
   try{
     var opts={method:method,headers:{'Content-Type':'application/json','Accept':'application/json'}};
     if(bodyRaw&&method!=='GET') opts.body=bodyRaw;
-    var res=await fetch(path,opts);var t1=performance.now();
-    var data=await res.json();var ok=res.status<400;
-    statusEl.className='sc '+(ok?'ok':'er');
-    statusEl.textContent=res.status+' '+(ok?'OK':'Error');
-    timeEl.textContent=Math.round(t1-t0)+'ms';
-    bodyEl.textContent=JSON.stringify(data,null,2);
+    var res=await fetch(path,opts);var t1=performance.now();var data=await res.json();
+    st.className='sc '+(res.status<400?'ok':'er');st.textContent=res.status+' '+(res.status<400?'OK':'Error');
+    tm.textContent=Math.round(t1-t0)+'ms';bd.textContent=JSON.stringify(data,null,2);
   }catch(e){
-    statusEl.className='sc er';statusEl.textContent='Failed';
-    timeEl.textContent=Math.round(performance.now()-t0)+'ms';bodyEl.textContent=e.message;
+    st.className='sc er';st.textContent='Failed';tm.textContent=Math.round(performance.now()-t0)+'ms';bd.textContent=e.message;
   }
   btn.disabled=false;btn.innerHTML='▶ Send';
 }
-function testPath(p){
-  document.getElementById('path').value=p;
-  document.getElementById('body').value='';
-  document.getElementById('method').value='GET';
-  sendReq(document.querySelector('.btn-send'));
-}
-
+function testPath(p){document.getElementById('path').value=p;document.getElementById('body').value='';document.getElementById('method').value='GET';sendReq(document.querySelector('.btn-send'))}
 async function refreshStatus(){
   try{
     var r=await fetch('/health');var d=await r.json();
-    if(!d.data) return;
-    var env=d.data.app_env||'local';
-    document.getElementById('infoEnv').textContent=env;
-    document.getElementById('envTag').textContent='· '+env+' mode';
-    if(env==='production'){
-      document.getElementById('banner').innerHTML='<span class="icon">⚠️</span><span class="text" style="color:var(--yellow)">Production environment</span><span class="sub">· debug UI auto-disabled</span>';
-      document.getElementById('debugVal').textContent='disabled';
-    }
-    document.getElementById('infoPhp').textContent=d.data.php||'—';
-    var db=d.data.database||'—';
+    if(!d.success) return;
+    var info=d.data||{};
+    document.getElementById('infoEnv').textContent=info.app_env||'local';
+    document.getElementById('infoPhp').textContent=info.php||(info.version||'—');
+    var db=info.database||'—';
     document.getElementById('infoDb').textContent=db;
     document.getElementById('dbVal').textContent=db==='connected'?'connected':'disconnected';
     document.getElementById('dbDot').className='dot '+(db==='connected'?'ok':'warn');
-
     fetch('/api/auth/me').then(function(r2){
       var has=r2.status!==404&&r2.status!==500;
-      document.getElementById('infoAuth').textContent=has?'installed':'not installed';
+      document.getElementById('infoAuth').textContent=has?'active':'not configured';
       document.getElementById('authVal').textContent=has?'active':'missing';
       document.getElementById('authDot').className='dot '+(has?'ok':'warn');
     }).catch(function(){});
-
     fetch('/api/products?per_page=1').then(function(r3){
-      var migrated=r3.status!==500;
-      document.getElementById('infoMigrate').textContent=migrated?'run':'pending';
-      document.getElementById('infoMigrate').className='v'+(migrated?'':'warn');
+      var ok=r3.status!==500;
+      document.getElementById('infoMigrate').textContent=ok?'run':'pending';
+      document.getElementById('migrateVal').textContent=ok?'run':'pending';
+      document.getElementById('migrateDot').className='dot '+(ok?'ok':'warn');
     }).catch(function(){});
   }catch(e){}
 }
-
-// Load real traces from the traces directory
-async function loadTraces(){
-  var container=document.getElementById('traceContainer');
-  try{
-    var r=await fetch('/api/products?per_page=1');
-    if(r.status===500){container.innerHTML='<div class="empty">Run <code>php siro migrate</code> first</div>';return}
-    container.innerHTML='<div class="empty">No recent traces. Make an API request to see it here.</div>';
-    document.getElementById('infoTrace').textContent='—';
-  }catch(e){container.innerHTML='<div class="empty">Could not load traces</div>'}
-}
-
-refreshStatus();
-loadTraces();
-setInterval(refreshStatus,15000);
+refreshStatus();setInterval(refreshStatus,15000);
 </script>
 </body>
 </html>
