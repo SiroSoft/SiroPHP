@@ -144,9 +144,10 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             return Response::error('No file uploaded', 422);
         }
         $path = $file->store('avatars');
+        $baseUrl = rtrim((string) \Siro\Core\Env::get('APP_URL', 'http://localhost:8080'), '/');
         return Response::success([
             'path' => $path,
-            'url' => $path,
+            'url' => $baseUrl . '/storage/' . $path,
             'original_name' => $file->getClientOriginalName(),
             'size' => $file->getSize(),
             'mime' => $file->getMimeType(),
@@ -159,9 +160,10 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             return Response::error('No file uploaded', 422);
         }
         $path = $file->store('uploads');
+        $baseUrl = rtrim((string) \Siro\Core\Env::get('APP_URL', 'http://localhost:8080'), '/');
         return Response::success([
             'path' => $path,
-            'url' => $path,
+            'url' => $baseUrl . '/storage/' . $path,
             'original_name' => $file->getClientOriginalName(),
             'size' => $file->getSize(),
             'mime' => $file->getMimeType(),
