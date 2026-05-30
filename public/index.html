@@ -70,6 +70,26 @@ button{font-family:inherit;cursor:pointer}
 .feat-i .t strong{color:var(--text)}
 .feat-i .t code{font-size:11px;color:var(--accent)}
 
+/* Workflow Flow */
+.flow{display:flex;justify-content:center;align-items:center;gap:4px;padding:16px 10px;font-size:12px;flex-wrap:wrap;background:linear-gradient(135deg,var(--surface),var(--bg));border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:16px}
+.flow-step{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;transition:all .15s;position:relative}
+.flow-step:hover{transform:translateY(-2px)}
+.flow-step .num{font-size:9px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.flow-step .label{white-space:nowrap;font-size:12px;font-weight:500}
+.flow-step .sub{font-size:9px;color:var(--text3);margin-left:4px;display:none}
+@media(min-width:900px){.flow-step .sub{display:inline}}
+.flow .arrow{color:var(--border);font-size:18px;user-select:none;flex-shrink:0}
+.flow-step.s1 .num{background:rgba(37,99,235,.2);color:#60a5fa}
+.flow-step.s1 .label{color:#60a5fa}
+.flow-step.s2 .num{background:rgba(245,158,11,.2);color:var(--yellow)}
+.flow-step.s2 .label{color:var(--yellow)}
+.flow-step.s3 .num{background:rgba(168,85,247,.2);color:var(--purple)}
+.flow-step.s3 .label{color:var(--purple)}
+.flow-step.s4 .num{background:rgba(34,197,94,.2);color:var(--green)}
+.flow-step.s4 .label{color:var(--green)}
+.flow-step.s5 .num{background:rgba(59,130,246,.2);color:var(--accent)}
+.flow-step.s5 .label{color:var(--accent)}
+
 /* Trace List */
 .trace-list{display:flex;flex-direction:column;gap:2px}
 .trace-i{padding:6px 8px;border-radius:4px;font-size:12px;border-bottom:1px solid var(--border);transition:background .1s}
@@ -142,6 +162,18 @@ button{font-family:inherit;cursor:pointer}
 <div class="hero">
   <h1>Dev Dashboard</h1>
   <p>Your API is running. Use the tools below to explore, test, and debug.</p>
+</div>
+
+<div class="flow">
+  <div class="flow-step s1"><span class="num">1</span><span class="label">php siro t</span><span class="sub">Test endpoint</span></div>
+  <span class="arrow">→</span>
+  <div class="flow-step s2"><span class="num">2</span><span class="label">php siro why</span><span class="sub">Debug failure</span></div>
+  <span class="arrow">→</span>
+  <div class="flow-step s3"><span class="num">3</span><span class="label">php siro replay</span><span class="sub">Inspect trace</span></div>
+  <span class="arrow">→</span>
+  <div class="flow-step s4"><span class="num">4</span><span class="label">php siro fix</span><span class="sub">Auto-fix</span></div>
+  <span class="arrow">→</span>
+  <div class="flow-step s5"><span class="num">5</span><span class="label">php siro replay --diff</span><span class="sub">Verify fix</span></div>
 </div>
 
 <div class="bar" id="statusBar">
