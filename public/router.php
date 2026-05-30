@@ -58,7 +58,8 @@ if ($requestUri !== null && str_starts_with($requestUri, '/storage/')) {
     header('Access-Control-Allow-Credentials: true');
     header('Vary: Origin');
 
-    $storageFile = __DIR__ . '/..' . $requestUri;
+    $relativePath = substr($requestUri, 9); // Remove '/storage/'
+    $storageFile = __DIR__ . '/../storage/public/' . $relativePath;
     $realFile = realpath($storageFile);
     $storagePublic = realpath(__DIR__ . '/../storage/public');
     if ($realFile !== false && $storagePublic !== false && str_starts_with($realFile, $storagePublic) && is_file($realFile)) {
