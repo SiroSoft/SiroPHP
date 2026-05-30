@@ -305,18 +305,37 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
 
     // -- Server Info (public, used by dev dashboard) --
     $router->get('/server/info', function (): Response {
-        $phpVersion = PHP_VERSION;
         $sapi = php_sapi_name();
         $serverName = match (true) {
             str_contains($sapi, 'frankenphp') => 'FrankenPHP ' . PHP_VERSION,
             $sapi === 'cli-server' => 'PHP Dev Server ' . PHP_VERSION,
             default => 'PHP ' . PHP_VERSION . ' (' . $sapi . ')',
         };
+
+        // Detect database driver + version
+        $dbDriver = 'unknown';
+        $dbVersion = '—';
+        try {
+            $conn = \Siro\Core\Database::connection();
+            $pdo = (function () use ($conn) {
+                $ref = new \ReflectionClass($conn);
+                $prop = $ref->getProperty('pdo');
+                $prop->setAccessible(true);
+                return $prop->getValue($conn);
+            })();
+            if ($pdo instanceof \PDO) {
+                $dbDriver = $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
+                $dbVersion = $pdo->getAttribute(\PDO::ATTR_SERVER_VERSION);
+            }
+        } catch (\Throwable) {}
+
         return Response::success([
             'php' => PHP_VERSION,
             'server' => $serverName,
             'sapi' => $sapi,
             'os' => PHP_OS_FAMILY,
+            'db' => $dbDriver,
+            'db_version' => $dbVersion,
             'env' => \Siro\Core\Env::get('APP_ENV', 'local'),
             'debug' => \Siro\Core\Env::bool('APP_DEBUG', false),
             'time' => date('c'),

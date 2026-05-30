@@ -246,7 +246,7 @@ button{font-family:inherit;cursor:pointer}
         <span style="color:var(--text3)">Server</span><span id="infoServer" style="color:var(--text);font-weight:500"><span class="skel" style="width:70px">&nbsp;</span></span>
       </div>
       <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border)">
-        <span style="color:var(--text3)">Database</span><span id="infoDb" style="color:var(--text);font-weight:500"><span class="skel" style="width:70px">&nbsp;</span></span>
+        <span style="color:var(--text3)">Database</span><span id="infoDb" style="color:var(--text);font-weight:500"><span class="skel" style="width:90px">&nbsp;</span></span>
       </div>
       <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border)">
         <span style="color:var(--text3)">Auth</span><span id="infoAuth" style="color:var(--text);font-weight:500"><span class="skel" style="width:50px">&nbsp;</span></span>
@@ -321,13 +321,15 @@ async function refreshStatus(){
     }
   }catch(e){}
 
-  // Get PHP + server info from /api/server/info
+  // Get PHP + server + database info from /api/server/info
   try{
     var r=await fetch('/api/server/info');var d=await r.json();
     if(d.data){
       document.getElementById('infoPhp').textContent=d.data.php||'—';
       document.getElementById('infoServer').textContent=d.data.server||'—';
       document.getElementById('infoEnv').textContent=d.data.env||'—';
+      var db=d.data.db||'—';var dbv=d.data.db_version||'';
+      document.getElementById('infoDb').textContent=db+(dbv?' v'+dbv:'');
     }
   }catch(e){}
 
