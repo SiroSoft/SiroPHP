@@ -20,16 +20,22 @@ final class CategorySeeder
         ];
 
         $now = date('Y-m-d H:i:s');
+        $inserted = 0;
 
         foreach ($categories as $cat) {
+            $existing = DB::table('categories')->where('name', $cat['name'])->first();
+            if ($existing) {
+                continue;
+            }
             DB::table('categories')->insert([
                 'name' => $cat['name'],
                 'is_active' => $cat['is_active'],
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
+            $inserted++;
         }
 
-        echo '  Created ' . count($categories) . " categories\n";
+        echo "  Created {$inserted} categories (" . (count($categories) - $inserted) . " skipped)\n";
     }
 }
