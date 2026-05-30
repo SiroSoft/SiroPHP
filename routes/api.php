@@ -140,48 +140,12 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     $router->resource('posts', \App\Controllers\PostController::class, ['auth', 'throttle:60,1']);
     $router->resource('users', \App\Controllers\UserController::class, ['auth', 'throttle:60,1']);
 
-    // -- File Upload --
-    $router->post('/upload/avatar', function (Request $req): Response {
-        try {
-            $file = $req->file('avatar');
-            if ($file === null || !$file->isValid()) {
-                return Response::error('No file uploaded', 422);
-            }
-            $path = $file->store('avatars');
-            $baseUrl = rtrim((string) \Siro\Core\Env::get('APP_URL', 'http://localhost:8080'), '/');
-            $cleanPath = '/' . ltrim($path, '/');
-            return Response::success([
-                'path' => $cleanPath,
-                'url' => $baseUrl . $cleanPath,
-                'original_name' => $file->getClientOriginalName(),
-                'size' => $file->getSize(),
-                'mime' => $file->getMimeType(),
-            ], 'Avatar uploaded');
-        } catch (\Throwable $e) {
-            return Response::error($e->getMessage(), 500);
-        }
-    })->middleware(['auth', 'throttle:10,1']);
+    // -- File Upload (using App\Support\Uploader) --
+    $router->post('/upload/avatar', fn(Request $req): Response => \App\Support\Uploader::response($req, 'avatar', 'avatars'))
+        ->middleware(['auth', 'throttle:10,1']);
 
-    $router->post('/upload', function (Request $req): Response {
-        try {
-            $file = $req->file('file');
-            if ($file === null || !$file->isValid()) {
-                return Response::error('No file uploaded', 422);
-            }
-            $path = $file->store('uploads');
-            $baseUrl = rtrim((string) \Siro\Core\Env::get('APP_URL', 'http://localhost:8080'), '/');
-            $cleanPath = '/' . ltrim($path, '/');
-            return Response::success([
-                'path' => $cleanPath,
-                'url' => $baseUrl . $cleanPath,
-                'original_name' => $file->getClientOriginalName(),
-                'size' => $file->getSize(),
-                'mime' => $file->getMimeType(),
-            ], 'File uploaded', 201);
-        } catch (\Throwable $e) {
-            return Response::error($e->getMessage(), 500);
-        }
-    })->middleware(['auth', 'throttle:10,1']);
+    $router->post('/upload', fn(Request $req): Response => \App\Support\Uploader::response($req, 'file', 'uploads'))
+        ->middleware(['auth', 'throttle:10,1']);
 
     // -- Profile --
     $router->get('/profile', function (Request $req): array {
