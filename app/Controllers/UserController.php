@@ -133,6 +133,20 @@ final class UserController extends Controller
             'password' => 'required|min:8|max:255',
         ]);
 
+        $rawBody = $request->all();
+        if (isset($rawBody['role'])) {
+            $data['role'] = $rawBody['role'];
+        }
+        if (isset($rawBody['status'])) {
+            $data['status'] = match ((string) $rawBody['status']) { 'inactive' => 0, 'suspended' => 2, default => 1 };
+        }
+        if (isset($rawBody['avatar'])) {
+            $data['avatar'] = $rawBody['avatar'];
+        }
+        if (isset($rawBody['phone'])) {
+            $data['phone'] = $rawBody['phone'];
+        }
+
         try {
             $user = $this->service->create($data);
         } catch (DuplicateEmailException) {
@@ -173,7 +187,7 @@ final class UserController extends Controller
             $data['role'] = $rawBody['role'];
         }
         if (isset($rawBody['status'])) {
-            $data['status'] = (int) $rawBody['status'];
+            $data['status'] = match ((string) $rawBody['status']) { 'inactive' => 0, 'suspended' => 2, default => 1 };
         }
         if (isset($rawBody['avatar'])) {
             $data['avatar'] = $rawBody['avatar'];
