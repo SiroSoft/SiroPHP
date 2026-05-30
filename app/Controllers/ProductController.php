@@ -17,7 +17,17 @@ final class ProductController extends Controller
     {
     }
 
-    // Rate limited: 60 requests per minute. Non-admin users see only their products.
+    /**
+     * List all products with filtering, sorting, and pagination.
+     *
+     * Supports search (name), category, status, price_min/max, sort (id/name/price/stock/created_at), order (asc/desc).
+     * Rate limited: 60 requests per minute.
+     *
+     * GET /api/products?page=1&per_page=20&search=...&category=...&price_min=0&price_max=1000&sort=price&order=asc
+     *
+     * @param Request $request Incoming HTTP request with optional query params
+     * @return Response Paginated list of products
+     */
     public function index(Request $request): Response
     {
         $perPage = min($request->queryInt('per_page', 20), 100);
@@ -37,6 +47,14 @@ final class ProductController extends Controller
         );
     }
 
+    /**
+     * Get a single product by ID.
+     *
+     * GET /api/products/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response Product detail (200) or error (404/422)
+     */
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
@@ -53,7 +71,18 @@ final class ProductController extends Controller
         return $this->success(ProductResource::make($item), 'Product fetched');
     }
 
-    // Admin only.
+    /**
+     * Create a new product.
+     *
+     * Admin only. Accepts name, description, price, stock, category, status, cover_image, short_description.
+     * Optionally resolves category_id to category name.
+     *
+     * POST /api/products
+     * Body: { name: string, price: float, stock: int, description?: string, is_active?: bool, category_name?: string, category_id?: int, cover_image?: string, short_description?: string }
+     *
+     * @param Request $request Incoming HTTP request with product data
+     * @return Response Created product (201) or error (403/422)
+     */
     public function store(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
@@ -93,7 +122,17 @@ final class ProductController extends Controller
         return $this->created(ProductResource::make($item), 'Product created');
     }
 
-    // Admin only.
+    /**
+     * Update an existing product.
+     *
+     * Admin only. Partial updates supported.
+     *
+     * PUT /api/products/{id}
+     * Body: { name?: string, price?: float, stock?: int, description?: string, is_active?: bool, category_name?: string, category_id?: int, cover_image?: string, short_description?: string }
+     *
+     * @param Request $request Incoming HTTP request with product updates
+     * @return Response Updated product (200) or error (403/404/422)
+     */
     public function update(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
@@ -138,7 +177,16 @@ final class ProductController extends Controller
         return $this->success(ProductResource::make($item), 'Product updated');
     }
 
-    // Admin only.
+    /**
+     * Delete a product by ID.
+     *
+     * Admin only.
+     *
+     * DELETE /api/products/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response Empty (204) or error (403/404/422)
+     */
     public function delete(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);

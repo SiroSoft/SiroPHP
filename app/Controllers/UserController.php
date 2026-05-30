@@ -19,7 +19,17 @@ final class UserController extends Controller
     {
     }
 
-    // Rate limited: 60 requests per minute. Admin only.
+    /**
+     * List all users with pagination and optional status/role filtering.
+     *
+     * Admin only. Supports status (active/inactive/suspended) and role filters.
+     * Rate limited: 60 requests per minute.
+     *
+     * GET /api/users?page=1&per_page=20&status=active&role=admin
+     *
+     * @param Request $request Incoming HTTP request with optional query params
+     * @return Response Paginated list of users
+     */
     public function index(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
@@ -47,6 +57,16 @@ final class UserController extends Controller
         );
     }
 
+    /**
+     * Get a single user by ID.
+     *
+     * Users can view their own profile; admins can view any user.
+     *
+     * GET /api/users/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response User detail (200) or error (403/404/422)
+     */
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
@@ -73,6 +93,17 @@ final class UserController extends Controller
         return $this->success(UserResource::make($user), 'User retrieved');
     }
 
+    /**
+     * Update the authenticated user's profile (name, email, avatar, phone).
+     *
+     * Handles duplicate email detection.
+     *
+     * PUT /api/profile
+     * Body: { name?: string, email?: string, avatar?: string, phone?: string }
+     *
+     * @param Request $request Incoming HTTP request with profile updates
+     * @return Response Updated user (200) or error (400/401/422)
+     */
     public function updateProfile(Request $request): Response
     {
         $user = $request->user();
@@ -124,7 +155,17 @@ final class UserController extends Controller
         return $this->success(UserResource::make($updated), 'Profile updated');
     }
 
-    // Admin only.
+    /**
+     * Create a new user (admin panel).
+     *
+     * Admin only. Accepts name, email, password, plus optional role, status, avatar, phone.
+     *
+     * POST /api/users
+     * Body: { name: string, email: string, password: string, role?: string, status?: string, avatar?: string, phone?: string }
+     *
+     * @param Request $request Incoming HTTP request with user data
+     * @return Response Created user (201) or error (403/422)
+     */
     public function store(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
@@ -161,6 +202,18 @@ final class UserController extends Controller
         return $this->created(UserResource::make($user), 'User created');
     }
 
+    /**
+     * Update a user (name, email, password, role, status, avatar, phone).
+     *
+     * Users can update their own profile; admins can update any user.
+     * Requires current_password when changing password.
+     *
+     * PUT /api/users/{id}
+     * Body: { name?: string, email?: string, password?: string, current_password?: string, role?: string, status?: string, avatar?: string, phone?: string }
+     *
+     * @param Request $request Incoming HTTP request with user updates
+     * @return Response Updated user (200) or error (400/403/404/422)
+     */
     public function update(Request $request): Response
     {
         $rawId = $request->param('id');
@@ -228,6 +281,17 @@ final class UserController extends Controller
         return $this->success(UserResource::make($userData), 'User updated');
     }
 
+    /**
+     * Delete a user by ID.
+     *
+     * Users can delete their own account; admins can delete any user.
+     * Self-deletion is not allowed (must contact an admin).
+     *
+     * DELETE /api/users/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response Empty (204) or error (403/404/422)
+     */
     public function delete(Request $request): Response
     {
         $rawId = $request->param('id');

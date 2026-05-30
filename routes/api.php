@@ -16,6 +16,56 @@ use Siro\Core\Response;
 Metrics::init('siro', \Siro\Core\Env::get('APP_DEBUG', 'false') === 'true');
 Metrics::registerRoute($app->router);
 
+// ─── API Route Reference ─────────────────────────────────────────
+//
+// Base URL: http://localhost:8080/api/
+//
+// Standard CRUD pattern:
+//   GET    /api/{resource}          List all (paginated)
+//   POST   /api/{resource}          Create new
+//   GET    /api/{resource}/{id}     Get one
+//   PUT    /api/{resource}/{id}     Update one
+//   DELETE /api/{resource}/{id}     Delete one
+//
+// Auth (public):
+//   POST   /api/auth/register          Register new account
+//   POST   /api/auth/login             Login (returns JWT)
+//   POST   /api/auth/refresh           Refresh expired JWT
+//   POST   /api/auth/forgot-password   Request password reset
+//   POST   /api/auth/reset-password    Complete password reset
+//   POST   /api/auth/verify-email      Verify email address
+//
+// Auth (protected — requires JWT):
+//   GET    /api/auth/me                Current user profile
+//   POST   /api/auth/logout            Logout (revoke tokens)
+//
+// CRUD Resources (protected):
+//   /api/users           User management
+//   /api/products        Product catalog
+//   /api/orders          Order management
+//   /api/categories      Category management
+//   /api/tags            Tag management
+//   /api/posts           Blog posts
+//
+// Profile & Settings (protected):
+//   GET    /api/profile                User profile (with i18n greeting)
+//   PUT    /api/profile                Update profile
+//   PUT    /api/profile/password       Change password
+//   GET    /api/settings               App settings
+//   PUT    /api/settings               Update app settings
+//
+// Other (protected):
+//   PATCH  /api/orders/{id}/status     Update order status
+//   GET    /api/dashboard/stats        Dashboard statistics
+//   POST   /api/upload                 File upload
+//   POST   /api/upload/avatar          Avatar upload
+//
+// System (no auth):
+//   GET    /                           Welcome page
+//   GET    /health                     Health check (combined)
+//   GET    /health/live                Liveness probe
+//   GET    /health/ready               Readiness probe (checks DB)
+//
 // ---------------------------------------------------------------------------
 // System / Utility Routes (no auth)
 // ---------------------------------------------------------------------------

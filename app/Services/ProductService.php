@@ -20,9 +20,14 @@ final class ProductService
     {
     }
 
-    /** Get paginated products with optional filters and sorting.
-     * @param array<string, mixed> $queryParams
-     * @return array<string, mixed>
+    /**
+     * Get paginated products with optional filters and sorting.
+     *
+     * Supports filtering by: category, status, price_min, price_max, search (name LIKE).
+     * Supports sorting by: id, name, price, stock, created_at (asc/desc).
+     *
+     * @param array<string, mixed> $queryParams Query parameters (sort, order, category, status, price_min, price_max, search)
+     * @return array<string, mixed> Paginated result with 'data' and 'meta'
      */
     public function getAll(array $queryParams = [], int $page = 1, int $perPage = 20): array
     {
@@ -62,14 +67,18 @@ final class ProductService
         return $this->repo->findAll($filters, $page, $perPage);
     }
 
-    /** Find a product by ID or null if not found. */
+    /** Find a product by ID. Returns null if not found. */
     public function getById(int $id): mixed
     {
         return $this->repo->findById($id);
     }
 
-    /** Create a new product with defaults for missing fields.
-     * @param array<string, mixed> $data
+    /**
+     * Create a new product with defaults for missing fields.
+     * Defaults: price=0, stock=0, status='active'.
+     *
+     * @param array<string, mixed> $data Validated product data
+     * @return mixed Created product model
      */
     public function create(array $data): mixed
     {
@@ -84,8 +93,11 @@ final class ProductService
         return $this->repo->store($data);
     }
 
-    /** Update a product. Returns null if not found.
-     * @param array<string, mixed> $data
+    /**
+     * Update a product. Returns null if not found.
+     *
+     * @param array<string, mixed> $data Validated product data
+     * @return mixed Updated product model, or null if not found
      */
     public function update(int $id, array $data): mixed
     {

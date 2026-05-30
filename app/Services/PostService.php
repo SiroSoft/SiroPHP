@@ -19,9 +19,11 @@ final class PostService
     {
     }
 
-    /** Get paginated posts with optional locale/user_id filter.
-     * @param array<string, mixed> $queryParams
-     * @return array<string, mixed>
+    /**
+     * Get paginated posts with optional locale/user_id filter.
+     *
+     * @param array<string, mixed> $queryParams Query parameters (locale, user_id)
+     * @return array<string, mixed> Paginated result with 'data' and 'meta'
      */
     public function getAll(array $queryParams = [], int $page = 1, int $perPage = 20): array
     {
@@ -39,14 +41,18 @@ final class PostService
         return $this->repo->findAll($filters, $page, $perPage);
     }
 
-    /** Find a post by ID or null if not found. */
+    /** Find a post by ID. Returns null if not found. */
     public function getById(int $id): mixed
     {
         return $this->repo->findById($id);
     }
 
-    /** Create a new post with optional image upload.
-     * @param array<string, mixed> $validated
+    /**
+     * Create a new post with optional image upload.
+     *
+     * @param array<string, mixed> $validated Validated post data (title, body, locale, status, user_id, image)
+     * @param mixed $uploadedFile Optional uploaded file for cover image
+     * @return mixed Created post model
      */
     public function create(array $validated, mixed $uploadedFile = null): mixed
     {
@@ -67,9 +73,11 @@ final class PostService
         return $this->repo->store($data);
     }
 
-    /** Update a post. Returns null if not found.
-     * @param array<string, mixed> $validated
-     * @return array<string, mixed>|null
+    /**
+     * Update a post. Returns null if not found.
+     *
+     * @param array<string, mixed> $validated Validated post data
+     * @return array<string, mixed>|null Updated post as array, or null if not found
      */
     public function update(int $id, array $validated): ?array
     {

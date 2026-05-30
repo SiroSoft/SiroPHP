@@ -17,13 +17,30 @@ final class TagController extends Controller
     {
     }
 
-    // Rate limited: 60 requests per minute
+    /**
+     * List all tags with pagination.
+     *
+     * Rate limited: 60 requests per minute.
+     *
+     * GET /api/tags?page=1&per_page=20
+     *
+     * @param Request $request Incoming HTTP request with optional query params
+     * @return Response Paginated list of tags
+     */
     public function index(Request $request): Response
     {
         $result = $this->service->getAll(page: max(1, $request->queryInt('page', 1)), perPage: min(100, max(1, $request->queryInt('per_page', 20))));
         return $this->paginated(TagResource::collection($result['data']), $result['meta'], 'Tag list');
     }
 
+    /**
+     * Get a single tag by ID.
+     *
+     * GET /api/tags/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response Tag detail (200) or error (404/422)
+     */
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
@@ -34,7 +51,17 @@ final class TagController extends Controller
         return $this->success(TagResource::make($item), 'Tag detail');
     }
 
-    // Admin only.
+    /**
+     * Create a new tag.
+     *
+     * Admin only.
+     *
+     * POST /api/tags
+     * Body: { name: string }
+     *
+     * @param Request $request Incoming HTTP request with tag name
+     * @return Response Created tag (201) or error (403/422)
+     */
     public function store(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
@@ -44,7 +71,17 @@ final class TagController extends Controller
         return $this->created(TagResource::make($item), 'Tag created');
     }
 
-    // Admin only.
+    /**
+     * Update an existing tag.
+     *
+     * Admin only.
+     *
+     * PUT /api/tags/{id}
+     * Body: { name: string }
+     *
+     * @param Request $request Incoming HTTP request with updated tag name
+     * @return Response Updated tag (200) or error (403/404/422)
+     */
     public function update(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
@@ -58,7 +95,16 @@ final class TagController extends Controller
         return $this->success(TagResource::make($item), 'Tag updated');
     }
 
-    // Admin only.
+    /**
+     * Delete a tag by ID.
+     *
+     * Admin only.
+     *
+     * DELETE /api/tags/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response Empty (204) or error (403/404/422)
+     */
     public function delete(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);

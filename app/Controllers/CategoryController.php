@@ -17,13 +17,30 @@ final class CategoryController extends Controller
     {
     }
 
-    // Rate limited: 60 requests per minute
+    /**
+     * List all categories with pagination.
+     *
+     * Rate limited: 60 requests per minute.
+     *
+     * GET /api/categories?page=1&per_page=20
+     *
+     * @param Request $request Incoming HTTP request with optional query params
+     * @return Response Paginated list of categories
+     */
     public function index(Request $request): Response
     {
         $result = $this->service->getAll(page: max(1, $request->queryInt('page', 1)), perPage: min(100, max(1, $request->queryInt('per_page', 20))));
         return $this->paginated(CategoryResource::collection($result['data']), $result['meta'], 'Category list');
     }
 
+    /**
+     * Get a single category by ID.
+     *
+     * GET /api/categories/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response Category detail (200) or error (404)
+     */
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
@@ -34,7 +51,17 @@ final class CategoryController extends Controller
         return $this->success(CategoryResource::make($item), 'Category detail');
     }
 
-    // Admin only.
+    /**
+     * Create a new category.
+     *
+     * Admin only. Accepts name, is_active, color, description, sort_order, parent_id.
+     *
+     * POST /api/categories
+     * Body: { name: string, is_active?: bool, color?: string, description?: string, sort_order?: int, parent_id?: int }
+     *
+     * @param Request $request Incoming HTTP request with validated category data
+     * @return Response Created category (201) or error (403/422)
+     */
     public function store(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
@@ -61,7 +88,17 @@ final class CategoryController extends Controller
         return $this->created(CategoryResource::make($item), 'Category created');
     }
 
-    // Admin only.
+    /**
+     * Update an existing category.
+     *
+     * Admin only. Partial updates supported.
+     *
+     * PUT /api/categories/{id}
+     * Body: { name?: string, is_active?: bool, color?: string, description?: string, sort_order?: int, parent_id?: int }
+     *
+     * @param Request $request Incoming HTTP request with category updates
+     * @return Response Updated category (200) or error (403/404/422)
+     */
     public function update(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
@@ -94,7 +131,16 @@ final class CategoryController extends Controller
         return $this->success(CategoryResource::make($item), 'Category updated');
     }
 
-    // Admin only.
+    /**
+     * Delete a category by ID.
+     *
+     * Admin only.
+     *
+     * DELETE /api/categories/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response Empty (204) or error (403/404/422)
+     */
     public function delete(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);

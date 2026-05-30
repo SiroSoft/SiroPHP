@@ -17,7 +17,17 @@ final class PostController extends Controller
     {
     }
 
-    // Rate limited: 60 requests per minute. Non-admin users see only their posts.
+    /**
+     * List all blog posts with pagination and optional locale/user_id filtering.
+     *
+     * Non-admin users see only their own posts.
+     * Rate limited: 60 requests per minute.
+     *
+     * GET /api/posts?page=1&per_page=20&locale=en
+     *
+     * @param Request $request Incoming HTTP request with optional query params
+     * @return Response Paginated list of posts
+     */
     public function index(Request $request): Response
     {
         $page = max(1, $request->queryInt('page', 1));
@@ -45,6 +55,16 @@ final class PostController extends Controller
         );
     }
 
+    /**
+     * Get a single blog post by ID.
+     *
+     * Non-admin users can only view their own posts.
+     *
+     * GET /api/posts/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response Post detail (200) or error (403/404/422)
+     */
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
@@ -73,7 +93,19 @@ final class PostController extends Controller
         return $this->success(PostResource::make($postData), 'Post detail');
     }
 
-    // Authenticated users can create posts.
+    /**
+     * Create a new blog post.
+     *
+     * Accepts title, body, locale (en/vi), status (draft/published).
+     * Optionally accepts a file upload for cover image (max 5MB, jpg/png/gif/webp).
+     *
+     * POST /api/posts
+     * Body: { title: string, body: string, locale: string, status?: string, cover_image?: string, category_id?: int, excerpt?: string }
+     * Multipart: image file
+     *
+     * @param Request $request Incoming HTTP request with post data and optional file
+     * @return Response Created post (201) or error (422)
+     */
     public function store(Request $request): Response
     {
         $validated = $this->validate([
@@ -122,6 +154,17 @@ final class PostController extends Controller
         return $this->created(PostResource::make($post instanceof \Siro\Core\Model ? $post->toArray() : (array) $post), 'Post created');
     }
 
+    /**
+     * Update an existing blog post.
+     *
+     * Non-admin users can only update their own posts. Partial updates supported.
+     *
+     * PUT /api/posts/{id}
+     * Body: { title?: string, body?: string, locale?: string, status?: string, cover_image?: string, category_id?: int, excerpt?: string }
+     *
+     * @param Request $request Incoming HTTP request with post updates
+     * @return Response Updated post (200) or error (403/404/422)
+     */
     public function update(Request $request): Response
     {
         $rawId = $request->param('id');
@@ -172,6 +215,17 @@ final class PostController extends Controller
         return $this->success(PostResource::make($post), 'Post updated');
     }
 
+    /**
+     * Delete a blog post by ID.
+     *
+     * Also deletes the associated cover image from storage.
+     * Non-admin users can only delete their own posts.
+     *
+     * DELETE /api/posts/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response Empty (204) or error (403/404/422)
+     */
     public function delete(Request $request): Response
     {
         $rawId = $request->param('id');

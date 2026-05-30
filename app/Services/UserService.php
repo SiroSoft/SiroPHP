@@ -20,6 +20,13 @@ final class UserService
     ) {
     }
 
+    /**
+     * Increment the token version for a user, invalidating all existing JWTs.
+     * Used on logout to revoke all active sessions.
+     *
+     * @param int $userId User ID
+     * @return bool True if successful, false if user not found
+     */
     public function incrementTokenVersion(int $userId): bool
     {
         if ($userId <= 0) {
@@ -37,12 +44,23 @@ final class UserService
         return true;
     }
 
-    /** @return array<string, mixed>|null */
+    /**
+     * Find a user by email address. Includes password hash in result.
+     *
+     * @return array<string, mixed>|null User data array with password, or null if not found
+     */
     public function getByEmail(string $email): ?array
     {
         return $this->repo->findByEmail($email);
     }
 
+    /**
+     * Get the current token version for a user.
+     * Used when encoding JWT to enforce token invalidation.
+     *
+     * @param int $userId User ID
+     * @return int Token version (minimum 1)
+     */
     public function getTokenVersion(int $userId): int
     {
         $user = $this->repo->findById($userId);
@@ -52,6 +70,12 @@ final class UserService
         return $rawVersion > 0 ? $rawVersion : 1;
     }
 
+    /**
+     * Verify a user's email using a verification token.
+     *
+     * @param string $token Raw verification token (hashed before lookup)
+     * @return bool True if verified, false if token invalid
+     */
     public function verifyEmail(string $token): bool
     {
         $hashedToken = hash('sha256', $token);
@@ -66,6 +90,13 @@ final class UserService
         return true;
     }
 
+    /**
+     * Initiate a password reset for the given email.
+     * Stores a hashed reset token with 1-hour expiry.
+     * Always succeeds silently to prevent email enumeration.
+     *
+     * @param string $email User's email address
+     */
     public function initiatePasswordReset(string $email): void
     {
         $resetToken = bin2hex(random_bytes(32));
@@ -76,6 +107,14 @@ final class UserService
         ]);
     }
 
+    /**
+     * Reset a user's password using a reset token.
+     * Revokes all refresh tokens and increments token_version on success.
+     *
+     * @param string $token Raw password reset token
+     * @param string $newPassword New plaintext password
+     * @return bool True if reset successful, false if token invalid/expired
+     */
     public function resetPassword(string $token, string $newPassword): bool
     {
         $hashedToken = hash('sha256', $token);
@@ -196,6 +235,11 @@ final class UserService
         return $this->repo->findById($id);
     }
 
+    /**
+     * Increment login attempts and lock the account for 15 minutes if >= 5 attempts.
+     *
+     * @param int $userId User ID
+     */
     public function incrementLoginAttempts(int $userId): void
     {
         $table = (new \App\Models\User())->getTable();
@@ -206,6 +250,11 @@ final class UserService
         );
     }
 
+    /**
+     * Reset login attempts counter and unlock the account.
+     *
+     * @param int $userId User ID
+     */
     public function resetLoginAttempts(int $userId): void
     {
         $this->repo->updateWhere('id', $userId, [
@@ -214,11 +263,18 @@ final class UserService
         ]);
     }
 
+    /**
+     * Hash a password using bcrypt with cost factor 12.
+     *
+     * @param string $password Plaintext password
+     * @return string Bcrypt hash
+     */
     private static function hashPassword(string $password): string
     {
         return password_hash($password, \PASSWORD_BCRYPT, ['cost' => 12]);
     }
 
+    /** Delete a user. Returns true if deleted, false if not found. */
     public function delete(int $id): bool
     {
         return $this->repo->destroy($id);

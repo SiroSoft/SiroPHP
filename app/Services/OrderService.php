@@ -17,9 +17,11 @@ final class OrderService
     {
     }
 
-    /** Get paginated orders with optional status/user_id filter.
-     * @param array<string, mixed> $queryParams
-     * @return array<string, mixed>
+    /**
+     * Get paginated orders with optional status/user_id filter.
+     *
+     * @param array<string, mixed> $queryParams Query parameters (status, user_id)
+     * @return array<string, mixed> Paginated result with 'data' and 'meta'
      */
     public function getAll(array $queryParams = [], int $page = 1, int $perPage = 20): array
     {
@@ -37,14 +39,19 @@ final class OrderService
         return $this->repo->findAll($filters, $page, $perPage);
     }
 
-    /** Find an order by ID or null if not found. */
+    /** Find an order by ID. Returns null if not found. */
     public function getById(int $id): mixed
     {
         return $this->repo->findById($id);
     }
 
-    /** Create a new order. Items array is JSON-encoded for storage.
-     * @param array<string, mixed> $validated
+    /**
+     * Create a new order. Items array is JSON-encoded for storage.
+     * Maximum 50 items per order.
+     *
+     * @param array<string, mixed> $validated Validated order data including 'items' array
+     * @return mixed Created order model
+     * @throws \InvalidArgumentException If more than 50 items
      */
     public function create(array $validated): mixed
     {
@@ -60,8 +67,10 @@ final class OrderService
         return $this->repo->store($data);
     }
 
-    /** Update an order. Returns null if not found.
-     * @param array<string, mixed> $validated
+    /**
+     * Update an order. Returns null if not found.
+     *
+     * @param array<string, mixed> $validated Validated order data
      */
     public function update(int $id, array $validated): mixed
     {

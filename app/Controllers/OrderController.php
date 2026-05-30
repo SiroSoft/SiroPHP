@@ -17,7 +17,17 @@ final class OrderController extends Controller
     {
     }
 
-    // Rate limited: 60 requests per minute. Non-admin users see only their orders.
+    /**
+     * List all orders with pagination and optional status/user_id filtering.
+     *
+     * Non-admin users see only their own orders.
+     * Rate limited: 60 requests per minute.
+     *
+     * GET /api/orders?page=1&per_page=20&status=pending
+     *
+     * @param Request $request Incoming HTTP request with optional query params
+     * @return Response Paginated list of orders
+     */
     public function index(Request $request): Response
     {
         $page = max(1, $request->queryInt('page', 1));
@@ -46,6 +56,16 @@ final class OrderController extends Controller
         );
     }
 
+    /**
+     * Get a single order by ID.
+     *
+     * Non-admin users can only view their own orders.
+     *
+     * GET /api/orders/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response Order detail (200) or error (403/404/422)
+     */
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
@@ -71,7 +91,18 @@ final class OrderController extends Controller
         return $this->success(OrderResource::make($order), 'Order detail');
     }
 
-    // Authenticated users can create orders.
+    /**
+     * Create a new order with line items.
+     *
+     * Validates customer info, items (product existence, price > 0, quantity > 0),
+     * calculates total, and sets status to 'pending'.
+     *
+     * POST /api/orders
+     * Body: { customer_name: string, customer_email: string, items: array<{product_id: int, price: float, quantity: int}> }
+     *
+     * @param Request $request Incoming HTTP request with order data
+     * @return Response Created order (201) or error (422)
+     */
     public function store(Request $request): Response
     {
         $validated = $this->validate([
@@ -126,6 +157,17 @@ final class OrderController extends Controller
         return $this->created(OrderResource::make($order), 'Order created');
     }
 
+    /**
+     * Update customer info on an existing order.
+     *
+     * Non-admin users can only update their own orders. Partial updates supported.
+     *
+     * PUT /api/orders/{id}
+     * Body: { customer_name?: string, customer_email?: string }
+     *
+     * @param Request $request Incoming HTTP request with order updates
+     * @return Response Updated order (200) or error (403/404/422)
+     */
     public function update(Request $request): Response
     {
         $rawId = $request->param('id');
@@ -159,7 +201,19 @@ final class OrderController extends Controller
         return $this->success(OrderResource::make($order), 'Order updated');
     }
 
-    // Rate limited: 60 requests per minute
+    /**
+     * Update the status of an order (e.g. pending -> processing -> shipped -> delivered).
+     *
+     * Non-admin users can only update their own orders.
+     * Allowed statuses: pending, processing, shipped, delivered, cancelled.
+     * Rate limited: 60 requests per minute.
+     *
+     * PATCH /api/orders/{id}/status
+     * Body: { status: string }
+     *
+     * @param Request $request Incoming HTTP request with new status
+     * @return Response Updated order (200) or error (403/404/422)
+     */
     public function updateStatus(Request $request): Response
     {
         $rawId = $request->param('id');
@@ -194,6 +248,16 @@ final class OrderController extends Controller
         return $this->success(OrderResource::make($updated), 'Order status updated');
     }
 
+    /**
+     * Delete an order by ID.
+     *
+     * Non-admin users can only delete their own orders.
+     *
+     * DELETE /api/orders/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response Empty (204) or error (403/404/422)
+     */
     public function delete(Request $request): Response
     {
         $rawId = $request->param('id');
