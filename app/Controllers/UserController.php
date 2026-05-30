@@ -19,19 +19,26 @@ final class UserController extends Controller
     {
     }
 
+    // Rate limited: 60 requests per minute. Admin only.
     public function index(Request $request): Response
     {
-        $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
-        if ($currentUserRole !== Role::ADMIN) {
-            return $this->error('Forbidden', 403);
-        }
+        $forbidden = $this->requireAdmin($request);
+        if ($forbidden !== null) return $forbidden;
 
         $page = max(1, $request->queryInt('page', 1));
         $perPage = min(100, max(1, $request->queryInt('per_page', 20)));
 
-        $result = $this->service->getAll($page, $perPage);
-        /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
+        $filters = [];
+        $status = $request->query('status');
+        if ($status !== null && $status !== '') {
+            $filters['status'] = match ((string) $status) { 'inactive' => 0, 'suspended' => 2, default => 1 };
+        }
+        $role = $request->query('role');
+        if ($role !== null && $role !== '') {
+            $filters['role'] = (string) $role;
+        }
+
+        $result = $this->service->getAll($page, $perPage, $filters);
 
         return $this->paginated(
             UserResource::collection($result['data']),
@@ -43,7 +50,6 @@ final class UserController extends Controller
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
@@ -59,7 +65,6 @@ final class UserController extends Controller
         }
 
         $user = $this->service->getById($id);
-        /** @var array<string, mixed>|null $user */
 
         if ($user === null) {
             return $this->error('User not found', 404);
@@ -104,11 +109,11 @@ final class UserController extends Controller
 
         try {
             $updated = $this->service->update($userId, $data);
-        } catch (\App\Exceptions\DuplicateEmailException) {
+        } catch (DuplicateEmailException) {
             return $this->error('Validation failed', 422, [
                 'email' => ['Email has already been taken'],
             ]);
-        } catch (\App\Exceptions\NoFieldsToUpdateException) {
+        } catch (NoFieldsToUpdateException) {
             return $this->error('No fields to update', 400);
         }
 
@@ -116,16 +121,14 @@ final class UserController extends Controller
             return $this->error('Update failed', 400);
         }
 
-        return $this->success(\App\Resources\UserResource::make($updated), 'Profile updated');
+        return $this->success(UserResource::make($updated), 'Profile updated');
     }
 
+    // Admin only.
     public function store(Request $request): Response
     {
-        $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
-        if ($currentUserRole !== Role::ADMIN) {
-            return $this->error('Forbidden', 403);
-        }
+        $forbidden = $this->requireAdmin($request);
+        if ($forbidden !== null) return $forbidden;
 
         $data = $this->validate([
             'name' => 'required|min:3|max:120',
@@ -161,7 +164,6 @@ final class UserController extends Controller
     public function update(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
 
         $currentUser = $request->user();
@@ -195,6 +197,9 @@ final class UserController extends Controller
         if (isset($rawBody['phone'])) {
             $data['phone'] = $rawBody['phone'];
         }
+        if (isset($rawBody['cover_image'])) {
+            $data['cover_image'] = $rawBody['cover_image'];
+        }
 
         if (isset($data['password'])) {
             $existingUser = $this->service->getById($id);
@@ -208,7 +213,6 @@ final class UserController extends Controller
 
         try {
             $userData = $this->service->update($id, $data);
-            /** @var array<string, mixed>|null $userData */
         } catch (DuplicateEmailException) {
             return $this->error('Validation failed', 422, [
                 'email' => ['Email has already been taken'],
@@ -227,7 +231,6 @@ final class UserController extends Controller
     public function delete(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
 
         $currentUser = $request->user();
@@ -248,5 +251,15 @@ final class UserController extends Controller
         return $this->service->delete($id)
             ? $this->noContent()
             : $this->error('User not found', 404);
+    }
+
+    private function requireAdmin(Request $request): ?Response
+    {
+        $user = $request->user();
+        $role = is_array($user) && isset($user['role']) && is_string($user['role']) ? $user['role'] : Role::USER;
+        if ($role !== Role::ADMIN) {
+            return Response::error('Forbidden', 403);
+        }
+        return null;
     }
 }

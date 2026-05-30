@@ -42,7 +42,14 @@ final class UserRepository extends BaseRepository
      */
     public function findAll(array $filters = [], int $page = 1, int $perPage = 15): array
     {
-        return $this->model->query()->orderBy('id', 'DESC')->paginate($perPage, $page);
+        $query = $this->model->query()->orderBy('id', 'DESC');
+        if (isset($filters['status'])) {
+            $query->where('status', '=', $filters['status']);
+        }
+        if (isset($filters['role'])) {
+            $query->where('role', '=', $filters['role']);
+        }
+        return $query->paginate($perPage, $page);
     }
 
     /** @param array<string, mixed> $data */

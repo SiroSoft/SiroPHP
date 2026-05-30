@@ -17,53 +17,57 @@ final class CategoryController extends Controller
     {
     }
 
+    // Rate limited: 60 requests per minute
     public function index(Request $request): Response
     {
-        $result = $this->service->getAll(page: $request->queryInt('page', 1), perPage: $request->queryInt('per_page', 20));
-        /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
+        $result = $this->service->getAll(page: max(1, $request->queryInt('page', 1)), perPage: min(100, max(1, $request->queryInt('per_page', 20))));
         return $this->paginated(CategoryResource::collection($result['data']), $result['meta'], 'Category list');
     }
 
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
         $item = $this->service->getById($id);
-        /** @var array<string, mixed>|null $item */
         if ($item === null) return $this->error('Category not found', 404);
         return $this->success(CategoryResource::make($item), 'Category detail');
     }
 
+    // Admin only.
     public function store(Request $request): Response
     {
-        $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
-        if ($currentUserRole !== Role::ADMIN) {
-            return $this->error('Forbidden', 403);
-        }
+        $forbidden = $this->requireAdmin($request);
+        if ($forbidden !== null) return $forbidden;
 
         $validated = $this->validate(['name' => 'required|min:2|max:100']);
         $rawBody = $request->all();
         if (isset($rawBody['is_active'])) {
             $validated['is_active'] = $rawBody['is_active'] ? 1 : 0;
         }
+        if (isset($rawBody['color'])) {
+            $validated['color'] = $rawBody['color'];
+        }
+        if (isset($rawBody['description'])) {
+            $validated['description'] = $rawBody['description'];
+        }
+        if (isset($rawBody['sort_order'])) {
+            $validated['sort_order'] = (int) $rawBody['sort_order'];
+        }
+        if (isset($rawBody['parent_id'])) {
+            $validated['parent_id'] = (int) $rawBody['parent_id'];
+        }
         $item = $this->service->create($validated);
-        /** @var array<string, mixed> $item */
         return $this->created(CategoryResource::make($item), 'Category created');
     }
 
+    // Admin only.
     public function update(Request $request): Response
     {
-        $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
-        if ($currentUserRole !== Role::ADMIN) {
-            return $this->error('Forbidden', 403);
-        }
+        $forbidden = $this->requireAdmin($request);
+        if ($forbidden !== null) return $forbidden;
 
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
         $validated = $this->validate([
@@ -82,26 +86,35 @@ final class CategoryController extends Controller
         if (isset($rawBody['sort_order'])) {
             $validated['sort_order'] = (int) $rawBody['sort_order'];
         }
+        if (isset($rawBody['parent_id'])) {
+            $validated['parent_id'] = (int) $rawBody['parent_id'];
+        }
         $item = $this->service->update($id, $validated);
-        /** @var array<string, mixed>|null $item */
         if ($item === null) return $this->error('Category not found', 404);
         return $this->success(CategoryResource::make($item), 'Category updated');
     }
 
+    // Admin only.
     public function delete(Request $request): Response
     {
-        $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
-        if ($currentUserRole !== Role::ADMIN) {
-            return $this->error('Forbidden', 403);
-        }
+        $forbidden = $this->requireAdmin($request);
+        if ($forbidden !== null) return $forbidden;
 
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
         return $this->service->delete($id)
             ? $this->noContent()
             : $this->error('Category not found', 404);
+    }
+
+    private function requireAdmin(Request $request): ?Response
+    {
+        $user = $request->user();
+        $role = is_array($user) && isset($user['role']) && is_string($user['role']) ? $user['role'] : Role::USER;
+        if ($role !== Role::ADMIN) {
+            return Response::error('Forbidden', 403);
+        }
+        return null;
     }
 }

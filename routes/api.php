@@ -16,11 +16,14 @@ use Siro\Core\Response;
 Metrics::init('siro', \Siro\Core\Env::get('APP_DEBUG', 'false') === 'true');
 Metrics::registerRoute($app->router);
 
-// Prevent 404 noise from browser requests
+// ---------------------------------------------------------------------------
+// System / Utility Routes (no auth)
+// ---------------------------------------------------------------------------
 $app->router->get('/favicon.ico', fn () => Response::noContent());
 $app->router->get('/robots.txt', fn () => Response::raw("User-agent: *\nDisallow: /", 'text/plain'));
 $app->router->get('/.well-known/security.txt', fn () => Response::raw("Contact: https://github.com/SiroSoft/SiroPHP/issues\nPolicy: https://github.com/SiroSoft/siro-core/blob/main/docs/SECURITY.md", 'text/plain'));
 
+// Liveness probe (no DB dependency)
 $app->router->get('/health/live', function (): array {
     return [
         'success' => true,
@@ -32,6 +35,7 @@ $app->router->get('/health/live', function (): array {
     ];
 })->middleware('throttle:30,1');
 
+// Readiness probe (checks DB)
 $app->router->get('/health/ready', function (): array {
     $dbOk = false;
     try {
@@ -51,36 +55,7 @@ $app->router->get('/health/ready', function (): array {
     ];
 });
 
-// API Versioning registration (currently disabled — routes mounted at /api without version prefix)
-// \Siro\Core\Middleware\VersionMiddleware::register(1, '/api/v1');
-// \Siro\Core\Middleware\VersionMiddleware::register(2, '/api/v2');
-
-$app->router->get('/', function (Request $req): mixed {
-    $accept = strval($req->header('accept', ''));
-
-    $isBrowser = str_contains($accept, 'text/html') && !str_contains($accept, 'application/json');
-
-    if ($isBrowser) {
-        $file = __DIR__ . '/../public/index.html';
-        if (file_exists($file)) {
-            $html = file_get_contents($file);
-            return Response::raw($html !== false ? $html : '', 'text/html; charset=utf-8');
-        }
-    }
-
-    // Default: Return JSON API response
-    return [
-        'success' => true,
-        'message' => Lang::get('messages.welcome'),
-        'data' => [
-            'name' => 'Siro API Framework',
-            'version' => \Siro\Core\Console::getVersion(),
-            'locale' => Lang::locale(),
-        ],
-        'meta' => [],
-    ];
-});
-
+// Combined health endpoint (throttled)
 $app->router->get('/health', function (): array {
     $dbOk = false;
     try {
@@ -103,8 +78,35 @@ $app->router->get('/health', function (): array {
     ];
 })->middleware('throttle:30,1');
 
+// Root welcome
+$app->router->get('/', function (Request $req): mixed {
+    $accept = strval($req->header('accept', ''));
+    $isBrowser = str_contains($accept, 'text/html') && !str_contains($accept, 'application/json');
+    if ($isBrowser) {
+        $file = __DIR__ . '/../public/index.html';
+        if (file_exists($file)) {
+            $html = file_get_contents($file);
+            return Response::raw($html !== false ? $html : '', 'text/html; charset=utf-8');
+        }
+    }
+    return [
+        'success' => true,
+        'message' => Lang::get('messages.welcome'),
+        'data' => [
+            'name' => 'Siro API Framework',
+            'version' => \Siro\Core\Console::getVersion(),
+            'locale' => Lang::locale(),
+        ],
+        'meta' => [],
+    ];
+});
+
+// ---------------------------------------------------------------------------
+// API v1 — Authenticated routes
+// ---------------------------------------------------------------------------
 $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::class, 'version', 'etag', 'metrics', 'audit'], function (\Siro\Core\Router $router): void {
-    // Public auth routes
+
+    // -- Auth (public) --
     $router->post('/auth/register', [AuthController::class, 'register'])
         ->middleware([JsonMiddleware::class, 'throttle:30,1']);
 
@@ -123,13 +125,14 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     $router->post('/auth/verify-email', [AuthController::class, 'verifyEmail'])
         ->middleware([JsonMiddleware::class, 'throttle:10,1']);
 
-    // Protected auth routes
+    // -- Auth (protected) --
     $router->get('/auth/me', [AuthController::class, 'me'])
         ->middleware(['auth', 'throttle:120,1']);
 
     $router->post('/auth/logout', [AuthController::class, 'logout'])
         ->middleware(['auth', 'throttle:60,1']);
 
+    // -- CRUD Resources --
     $router->resource('products', \App\Controllers\ProductController::class, ['auth', 'throttle:60,1']);
     $router->resource('categories', \App\Controllers\CategoryController::class, ['auth', 'throttle:60,1']);
     $router->resource('tags', \App\Controllers\TagController::class, ['auth', 'throttle:60,1']);
@@ -137,7 +140,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     $router->resource('posts', \App\Controllers\PostController::class, ['auth', 'throttle:60,1']);
     $router->resource('users', \App\Controllers\UserController::class, ['auth', 'throttle:60,1']);
 
-    // Upload
+    // -- File Upload --
     $router->post('/upload/avatar', function (Request $req): Response {
         try {
             $file = $req->file('avatar');
@@ -180,7 +183,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
         }
     })->middleware(['auth', 'throttle:10,1']);
 
-    // L8: GET /profile performs locale state changes. Consider POST for mutations.
+    // -- Profile --
     $router->get('/profile', function (Request $req): array {
         $locale = $req->queryString('locale', 'en');
         if (!in_array($locale, ['en', 'vi'])) $locale = 'en';
@@ -233,6 +236,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
         return Response::success(null, 'Password changed');
     })->middleware(['auth', JsonMiddleware::class]);
 
+    // -- Settings --
     $router->get('/settings', function (): Response {
         try {
             $rows = \Siro\Core\Database::select("SELECT `key`, `value` FROM settings");
@@ -274,9 +278,11 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
         }
     })->middleware(['auth', JsonMiddleware::class]);
 
+    // -- Orders: status update --
     $router->patch('/orders/{id}/status', [\App\Controllers\OrderController::class, 'updateStatus'])
         ->middleware(['auth', JsonMiddleware::class, 'throttle:60,1']);
 
+    // -- Dashboard --
     $router->get('/dashboard/stats', function (): Response {
         try {
             $userCount = (int) (\Siro\Core\Database::first("SELECT COUNT(*) as count FROM users")['count'] ?? 0);
@@ -316,5 +322,4 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             ],
         ], 'Dashboard stats');
     })->middleware(['auth']);
-
 });

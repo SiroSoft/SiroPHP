@@ -17,12 +17,11 @@ final class PostController extends Controller
     {
     }
 
+    // Rate limited: 60 requests per minute. Non-admin users see only their posts.
     public function index(Request $request): Response
     {
-        $rawPage = $request->query('page', 1);
-        $rawPerPage = $request->query('per_page', 20);
-        /** @var int|string $rawPage */
-        /** @var int|string $rawPerPage */
+        $page = max(1, $request->queryInt('page', 1));
+        $perPage = min(100, max(1, $request->queryInt('per_page', 20)));
 
         $currentUser = $request->user();
         $currentUserId = 0;
@@ -37,13 +36,7 @@ final class PostController extends Controller
             $params['user_id'] = $currentUserId;
         }
 
-        /** @var array<string, mixed> $params */
-        $result = $this->service->getAll(
-            $params,
-            (int) $rawPage,
-            (int) $rawPerPage
-        );
-        /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
+        $result = $this->service->getAll($params, $page, $perPage);
 
         return $this->paginated(
             PostResource::collection($result['data']),
@@ -55,7 +48,6 @@ final class PostController extends Controller
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
@@ -68,12 +60,11 @@ final class PostController extends Controller
         }
 
         $post = $this->service->getById($id);
-        /** @var \Siro\Core\Model|null $post */
         if ($post === null) {
             return $this->error('Post not found', 404);
         }
 
-        $postData = $post->toArray();
+        $postData = $post instanceof \Siro\Core\Model ? $post->toArray() : (array) $post;
         $postUserId = is_numeric($postData['user_id'] ?? null) ? (int) $postData['user_id'] : 0;
         if ($currentUserRole !== Role::ADMIN && $currentUserId !== $postUserId) {
             return $this->error('Forbidden', 403);
@@ -82,6 +73,7 @@ final class PostController extends Controller
         return $this->success(PostResource::make($postData), 'Post detail');
     }
 
+    // Authenticated users can create posts.
     public function store(Request $request): Response
     {
         $validated = $this->validate([
@@ -98,6 +90,17 @@ final class PostController extends Controller
         }
         $validated['user_id'] = $currentUserId;
 
+        $rawBody = $request->all();
+        if (isset($rawBody['cover_image'])) {
+            $validated['image'] = $rawBody['cover_image'];
+        }
+        if (isset($rawBody['category_id'])) {
+            $validated['category_id'] = (int) $rawBody['category_id'];
+        }
+        if (isset($rawBody['excerpt'])) {
+            $validated['excerpt'] = $rawBody['excerpt'];
+        }
+
         $file = $request->file('image');
         if ($file !== null && $file->isValid()) {
             $filePath = $file->getPathname();
@@ -112,17 +115,16 @@ final class PostController extends Controller
             if ($file->getSize() > $maxSize) {
                 return $this->error('File too large. Maximum 5MB allowed.', 422);
             }
+            $validated['image'] = $file->store('posts');
         }
         $post = $this->service->create($validated, $file);
 
-        /** @var \Siro\Core\Model $post */
-        return $this->created(PostResource::make($post->toArray()), 'Post created');
+        return $this->created(PostResource::make($post instanceof \Siro\Core\Model ? $post->toArray() : (array) $post), 'Post created');
     }
 
     public function update(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
@@ -151,8 +153,18 @@ final class PostController extends Controller
             'status' => 'in:draft,published',
         ]);
 
+        $rawBody = $request->all();
+        if (isset($rawBody['cover_image'])) {
+            $validated['image'] = $rawBody['cover_image'];
+        }
+        if (isset($rawBody['category_id'])) {
+            $validated['category_id'] = (int) $rawBody['category_id'];
+        }
+        if (isset($rawBody['excerpt'])) {
+            $validated['excerpt'] = $rawBody['excerpt'];
+        }
+
         $post = $this->service->update($id, $validated);
-        /** @var array<string, mixed>|null $post */
         if ($post === null) {
             return $this->error('Post not found', 404);
         }
@@ -163,7 +175,6 @@ final class PostController extends Controller
     public function delete(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
 

@@ -14,8 +14,6 @@ final class UserResource extends Resource
         $d = $this->data;
         $name = $d['name'] ?? null;
         $email = $d['email'] ?? null;
-        /** @var string|null $name */
-        /** @var string|null $email */
         return [
             'id' => $d['id'] ?? null,
             'name' => $name !== null ? htmlspecialchars($name, ENT_QUOTES | ENT_HTML5, 'UTF-8') : null,
@@ -25,7 +23,7 @@ final class UserResource extends Resource
             'role' => $d['role'] ?? 'user',
             'status' => match ((int) ($d['status'] ?? 1)) { 0 => 'inactive', 2 => 'suspended', default => 'active' },
             'created_at' => $d['created_at'] ?? null,
-            'updated_at' => is_string($d['updated_at'] ?? null) ? htmlspecialchars($d['updated_at'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($d['updated_at'] ?? null),
+            'updated_at' => $d['updated_at'] ?? null,
         ];
     }
 }

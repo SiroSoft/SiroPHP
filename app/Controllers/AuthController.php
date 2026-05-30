@@ -20,6 +20,7 @@ final class AuthController
     ) {
     }
 
+    // Rate limited: 30 requests per minute
     public function register(Request $request): Response
     {
         $request->validate([
@@ -38,7 +39,7 @@ final class AuthController
             ]);
         } catch (DuplicateEmailException) {
             return Response::error('Validation failed', 422, [
-                'email' => ['The provided data is invalid'],
+                'email' => ['The email has already been taken'],
             ]);
         }
 
@@ -58,6 +59,7 @@ final class AuthController
         ], 'Register successful');
     }
 
+    // Rate limited: 60 requests per minute. Constant-time credential check.
     public function login(Request $request): Response
     {
         $request->validate([
@@ -74,40 +76,29 @@ final class AuthController
             return Response::error('Invalid credentials', 401);
         }
 
-        /** @var array<string, mixed> $userData */
         $status = $userData['status'] ?? 0;
-        /** @var int|string $status */
         if ((int) $status !== 1) {
             return Response::error('Invalid credentials', 401);
         }
 
         $lockedUntil = $userData['locked_until'] ?? null;
-        /** @var string|null $lockedUntil */
         if ($lockedUntil !== null && $lockedUntil !== '' && strtotime($lockedUntil) > time()) {
             return Response::error('Invalid credentials', 401);
         }
 
         $hash = $userData['password'];
-        /** @var string $hash */
         if (!password_verify($request->string('password'), $hash)) {
             $userId = $userData['id'];
-            /** @var int|string $userId */
             $this->userService->incrementLoginAttempts((int) $userId);
             return Response::error('Invalid credentials', 401);
         }
 
         $userId = $userData['id'];
-        /** @var int|string $userId */
         $this->userService->resetLoginAttempts((int) $userId);
 
         Session::instance()->regenerate();
 
         $tokens = $this->tokenPair((int) $userId);
-
-        $name = $userData['name'] ?? '';
-        $emailField = $userData['email'] ?? '';
-        /** @var string $name */
-        /** @var string $emailField */
 
         return Response::success([
             'token' => $tokens['token'],
@@ -116,12 +107,13 @@ final class AuthController
             'expires_in' => $tokens['ttl'],
             'user' => [
                 'id' => (int) $userId,
-                'name' => $name,
-                'email' => $emailField,
+                'name' => $userData['name'] ?? '',
+                'email' => $userData['email'] ?? '',
             ],
         ], 'Login successful');
     }
 
+    // Rate limited: 30 requests per minute
     public function refresh(Request $request): Response
     {
         $request->validate(['refresh_token' => 'required']);
@@ -140,6 +132,7 @@ final class AuthController
         ], 'Token refreshed');
     }
 
+    // Protected: auth middleware
     public function me(Request $request): Response
     {
         $user = $request->user();
@@ -159,12 +152,11 @@ final class AuthController
         return Response::success($user, 'Authenticated user');
     }
 
+    // Protected: auth middleware
     public function logout(Request $request): Response
     {
         $user = $request->user();
-        /** @var array<string, mixed>|null $user */
         $rawId = $user['id'] ?? 0;
-        /** @var int|string $rawId */
         $userId = (int) $rawId;
 
         if ($userId <= 0) {
@@ -178,6 +170,7 @@ final class AuthController
         return Response::success(null, 'Logout successful. Token revoked.');
     }
 
+    // Rate limited: 10 requests per minute
     public function verifyEmail(Request $request): Response
     {
         $request->validate(['token' => 'required']);
@@ -192,6 +185,7 @@ final class AuthController
         return Response::success(null, 'Email verified successfully');
     }
 
+    // Rate limited: 10 requests per minute
     public function forgotPassword(Request $request): Response
     {
         $request->validate(['email' => 'required|email']);
@@ -202,6 +196,7 @@ final class AuthController
         return Response::success(null, 'If the email exists, a reset link has been sent.');
     }
 
+    // Rate limited: 10 requests per minute
     public function resetPassword(Request $request): Response
     {
         $request->validate([

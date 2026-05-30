@@ -103,10 +103,11 @@ final class UserService
         return true;
     }
 
-    /** @return array<string, mixed> */
-    public function getAll(int $page = 1, int $perPage = 15): array
+    /** @param array<string, mixed> $filters
+     * @return array<string, mixed> */
+    public function getAll(int $page = 1, int $perPage = 15, array $filters = []): array
     {
-        return $this->repo->findAll([], $page, $perPage);
+        return $this->repo->findAll($filters, $page, $perPage);
     }
 
     public function getById(int $id): mixed

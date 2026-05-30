@@ -17,20 +17,18 @@ final class ProductController extends Controller
     {
     }
 
+    // Rate limited: 60 requests per minute. Non-admin users see only their products.
     public function index(Request $request): Response
     {
         $perPage = min($request->queryInt('per_page', 20), 100);
         $page = max($request->queryInt('page', 1), 1);
 
-        /** @var array<string, mixed> $params */
         $params = $request->all();
-        $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
-        if ($currentUserRole !== Role::ADMIN) {
+        $forbidden = $this->requireAdmin($request);
+        if ($forbidden !== null) {
             unset($params['user_id']);
         }
         $result = $this->service->getAll($params, $page, $perPage);
-        /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
 
         return $this->paginated(
             ProductResource::collection($result['data']),
@@ -42,14 +40,12 @@ final class ProductController extends Controller
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) {
             return $this->error('Invalid id', 422);
         }
 
         $item = $this->service->getById($id);
-        /** @var array<string, mixed>|null $item */
         if ($item === null) {
             return $this->error('Product not found', 404);
         }
@@ -57,36 +53,29 @@ final class ProductController extends Controller
         return $this->success(ProductResource::make($item), 'Product fetched');
     }
 
+    // Admin only.
     public function store(Request $request): Response
     {
-        $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
-        if ($currentUserRole !== Role::ADMIN) {
-            return $this->error('Forbidden', 403);
-        }
+        $forbidden = $this->requireAdmin($request);
+        if ($forbidden !== null) return $forbidden;
 
         $validated = $this->validate([
             'name' => 'required|min:1|max:255',
             'description' => 'max:65535',
-            'price' => 'numeric|min:0',
-            'stock' => 'integer',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
             'category' => 'max:100',
             'status' => 'max:20',
+            'cover_image' => 'max:2048',
+            'short_description' => 'max:500',
         ]);
 
-        // Map frontend fields to DB columns
         $rawBody = $request->all();
         if (isset($rawBody['is_active'])) {
             $validated['status'] = $rawBody['is_active'] ? 'active' : 'inactive';
         }
         if (isset($rawBody['category_name'])) {
             $validated['category'] = $rawBody['category_name'];
-        }
-        if (isset($rawBody['cover_image'])) {
-            $validated['cover_image'] = $rawBody['cover_image'];
-        }
-        if (isset($rawBody['short_description'])) {
-            $validated['short_description'] = $rawBody['short_description'];
         }
 
         if (isset($rawBody['category_id'])) {
@@ -95,24 +84,22 @@ final class ProductController extends Controller
                 if ($cat) $validated['category'] = $cat['name'];
             } catch (\Throwable) {}
         }
+
+        $currentUser = $request->user();
         $currentUserId = is_array($currentUser) && isset($currentUser['id']) ? (int) $currentUser['id'] : 0;
         $validated['user_id'] = $currentUserId;
 
         $item = $this->service->create($validated);
-        /** @var array<string, mixed> $item */
         return $this->created(ProductResource::make($item), 'Product created');
     }
 
+    // Admin only.
     public function update(Request $request): Response
     {
-        $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
-        if ($currentUserRole !== Role::ADMIN) {
-            return $this->error('Forbidden', 403);
-        }
+        $forbidden = $this->requireAdmin($request);
+        if ($forbidden !== null) return $forbidden;
 
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) {
             return $this->error('Invalid id', 422);
@@ -121,10 +108,12 @@ final class ProductController extends Controller
         $validated = $this->validate([
             'name' => 'min:1|max:255',
             'description' => 'max:65535',
-            'price' => 'numeric',
-            'stock' => 'integer',
+            'price' => 'numeric|min:0',
+            'stock' => 'integer|min:0',
             'category' => 'max:100',
             'status' => 'max:20',
+            'cover_image' => 'max:2048',
+            'short_description' => 'max:500',
         ]);
 
         $rawBody = $request->all();
@@ -140,15 +129,8 @@ final class ProductController extends Controller
                 if ($cat) $validated['category'] = $cat['name'];
             } catch (\Throwable) {}
         }
-        if (isset($rawBody['cover_image'])) {
-            $validated['cover_image'] = $rawBody['cover_image'];
-        }
-        if (isset($rawBody['short_description'])) {
-            $validated['short_description'] = $rawBody['short_description'];
-        }
 
         $item = $this->service->update($id, $validated);
-        /** @var array<string, mixed>|null $item */
         if ($item === null) {
             return $this->error('Product not found', 404);
         }
@@ -156,16 +138,13 @@ final class ProductController extends Controller
         return $this->success(ProductResource::make($item), 'Product updated');
     }
 
+    // Admin only.
     public function delete(Request $request): Response
     {
-        $currentUser = $request->user();
-        $currentUserRole = is_array($currentUser) && isset($currentUser['role']) && is_string($currentUser['role']) ? $currentUser['role'] : Role::USER;
-        if ($currentUserRole !== Role::ADMIN) {
-            return $this->error('Forbidden', 403);
-        }
+        $forbidden = $this->requireAdmin($request);
+        if ($forbidden !== null) return $forbidden;
 
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) {
             return $this->error('Invalid id', 422);
@@ -174,5 +153,15 @@ final class ProductController extends Controller
         return $this->service->delete($id)
             ? $this->noContent()
             : $this->error('Product not found', 404);
+    }
+
+    private function requireAdmin(Request $request): ?Response
+    {
+        $user = $request->user();
+        $role = is_array($user) && isset($user['role']) && is_string($user['role']) ? $user['role'] : Role::USER;
+        if ($role !== Role::ADMIN) {
+            return Response::error('Forbidden', 403);
+        }
+        return null;
     }
 }

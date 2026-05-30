@@ -17,10 +17,11 @@ final class OrderController extends Controller
     {
     }
 
+    // Rate limited: 60 requests per minute. Non-admin users see only their orders.
     public function index(Request $request): Response
     {
-        $page = $request->queryInt('page', 1);
-        $perPage = $request->queryInt('per_page', 20);
+        $page = max(1, $request->queryInt('page', 1));
+        $perPage = min(100, max(1, $request->queryInt('per_page', 20)));
 
         $currentUser = $request->user();
         $currentUserId = 0;
@@ -37,9 +38,7 @@ final class OrderController extends Controller
             $params['user_id'] = $currentUserId;
         }
 
-        /** @var array<string, mixed> $params */
         $result = $this->service->getAll($params, $page, $perPage);
-        /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
         return $this->paginated(
             OrderResource::collection($result['data']),
             $result['meta'],
@@ -50,7 +49,6 @@ final class OrderController extends Controller
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
@@ -63,7 +61,6 @@ final class OrderController extends Controller
         }
 
         $order = $this->service->getById($id);
-        /** @var array<string, mixed>|null $order */
         if ($order === null) return $this->error('Order not found', 404);
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
@@ -74,6 +71,7 @@ final class OrderController extends Controller
         return $this->success(OrderResource::make($order), 'Order detail');
     }
 
+    // Authenticated users can create orders.
     public function store(Request $request): Response
     {
         $validated = $this->validate([
@@ -125,14 +123,12 @@ final class OrderController extends Controller
         $validated['status'] = 'pending';
 
         $order = $this->service->create($validated);
-        /** @var array<string, mixed> $order */
         return $this->created(OrderResource::make($order), 'Order created');
     }
 
     public function update(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
@@ -145,7 +141,6 @@ final class OrderController extends Controller
         }
 
         $order = $this->service->getById($id);
-        /** @var array<string, mixed>|null $order */
         if ($order === null) return $this->error('Order not found', 404);
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
@@ -159,12 +154,12 @@ final class OrderController extends Controller
         ]);
 
         $order = $this->service->update($id, $validated);
-        /** @var array<string, mixed>|null $order */
         if ($order === null) return $this->error('Order not found', 404);
 
         return $this->success(OrderResource::make($order), 'Order updated');
     }
 
+    // Rate limited: 60 requests per minute
     public function updateStatus(Request $request): Response
     {
         $rawId = $request->param('id');
@@ -196,13 +191,12 @@ final class OrderController extends Controller
             return $this->error('Order not found', 404);
         }
 
-        return $this->success(\App\Resources\OrderResource::make($updated), 'Order status updated');
+        return $this->success(OrderResource::make($updated), 'Order status updated');
     }
 
     public function delete(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
         $id = (int) $rawId;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
@@ -215,7 +209,6 @@ final class OrderController extends Controller
         }
 
         $order = $this->service->getById($id);
-        /** @var array<string, mixed>|null $order */
         if ($order === null) return $this->error('Order not found', 404);
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;

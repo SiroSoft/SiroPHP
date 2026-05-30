@@ -7,15 +7,16 @@ namespace App\Models;
 use Siro\Core\Model;
 
 /**
- * Category model.
- *
  * @property int $id
  * @property string $name
+ * @property string|null $color
+ * @property string|null $description
+ * @property int $is_active
+ * @property int $sort_order
+ * @property int|null $parent_id
  * @property string $created_at
- *
- * @package App\Models
+ * @property string|null $updated_at
  */
-
 final class Category extends Model
 {
     protected string $table = 'categories';
@@ -27,6 +28,8 @@ final class Category extends Model
         'is_active' => 'int',
         'sort_order' => 'int',
         'parent_id' => 'int',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     protected array $fillable = [
@@ -36,5 +39,6 @@ final class Category extends Model
         'description',
         'sort_order',
         'parent_id',
+        'created_at',
     ];
 }

@@ -10,17 +10,18 @@ final class PostResource extends Resource
 {
     public function toArray(): array
     {
+        $d = $this->data;
         return [
-            'id' => $this->data['id'] ?? null,
-            'title' => is_string($this->data['title'] ?? null) ? htmlspecialchars($this->data['title'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['title'] ?? null),
-            'content' => is_string($this->data['body'] ?? null) ? htmlspecialchars($this->data['body'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['body'] ?? null),
-            'excerpt' => null,
-            'locale' => $this->data['locale'] ?? null,
-            'status' => $this->data['status'] ?? null,
-            'featured' => false,
-            'cover_image' => is_string($this->data['image'] ?? null) ? htmlspecialchars($this->data['image'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($this->data['image'] ?? null),
-            'created_at' => $this->data['created_at'] ?? null,
-            'updated_at' => $this->data['updated_at'] ?? null,
+            'id' => $d['id'] ?? null,
+            'title' => is_string($d['title'] ?? null) ? htmlspecialchars($d['title'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($d['title'] ?? null),
+            'content' => is_string($d['body'] ?? null) ? htmlspecialchars($d['body'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($d['body'] ?? null),
+            'excerpt' => $d['excerpt'] ?? null,
+            'locale' => $d['locale'] ?? null,
+            'status' => $d['status'] ?? null,
+            'featured' => isset($d['featured']) ? (bool) $d['featured'] : false,
+            'cover_image' => is_string($d['image'] ?? null) ? htmlspecialchars($d['image'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : ($d['image'] ?? null),
+            'created_at' => $d['created_at'] ?? null,
+            'updated_at' => $d['updated_at'] ?? null,
         ];
     }
 }
