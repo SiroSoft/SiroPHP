@@ -91,3 +91,6 @@ _ide_helper.php
 
 
 /public/storage/uploads/
+
+# CLI test reports
+CLI_*.md
