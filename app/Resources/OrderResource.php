@@ -24,18 +24,17 @@ final class OrderResource extends Resource
         $customerEmail = $d['customer_email'] ?? null;
         $total = $d['total'] ?? null;
         $status = $d['status'] ?? null;
-        $createdAt = $d['created_at'] ?? null;
-        $updatedAt = $d['updated_at'] ?? null;
 
         return [
-            'id' => $id !== null ? (int) $id : null,
-            'customer_name' => is_string($customerName) ? htmlspecialchars($customerName, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $customerName,
+            'id' => $id !== null && is_numeric($id) ? (int) $id : null,
+            'user_name' => is_string($customerName) ? htmlspecialchars($customerName, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $customerName,
             'customer_email' => is_string($customerEmail) ? htmlspecialchars($customerEmail, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $customerEmail,
-            'total' => $total !== null ? (float) $total : null,
+            'total' => $total !== null && is_numeric($total) ? (float) $total : null,
             'status' => is_string($status) ? htmlspecialchars($status, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $status,
             'items' => $items,
-            'created_at' => $createdAt,
-            'updated_at' => $updatedAt,
+            'payment_status' => is_string($status) ? htmlspecialchars($status, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $status,
+            'created_at' => $d['created_at'] ?? null,
+            'updated_at' => $d['updated_at'] ?? null,
         ];
     }
 }

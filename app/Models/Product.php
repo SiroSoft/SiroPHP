@@ -7,8 +7,6 @@ namespace App\Models;
 use Siro\Core\Model;
 
 /**
- * Product model.
- *
  * @property int $id
  * @property string $name
  * @property string $description
@@ -16,6 +14,9 @@ use Siro\Core\Model;
  * @property int $stock
  * @property string $category
  * @property string $status
+ * @property int $user_id
+ * @property string|null $cover_image
+ * @property string|null $short_description
  * @property string $created_at
  * @property string|null $updated_at
  */
@@ -29,6 +30,9 @@ final class Product extends Model
         'id' => 'int',
         'price' => 'float',
         'stock' => 'int',
+        'user_id' => 'int',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     protected array $fillable = [
@@ -38,5 +42,8 @@ final class Product extends Model
         'stock',
         'category',
         'status',
+        'user_id',
+        'cover_image',
+        'short_description',
     ];
 }

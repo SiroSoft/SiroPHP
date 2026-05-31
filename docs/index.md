@@ -61,12 +61,6 @@ sidebar_label: Overview
 - **[Container](api/Container.md)** - DI container, autowiring
 - **[Middleware](api/Middleware.md)** - Pipeline, built-in middleware
 - **[Validation](api/Validation.md)** - Rules, FormRequest, custom rules
-- **[Controller](api/Router.md)** - Route handling
-- **[Response](api/Response.md)** - Response building
-- **[Request](api/Request.md)** - Input, validation, auth
-- **[Container](api/Container.md)** - DI container, autowiring
-- **[Middleware](api/Middleware.md)** - Pipeline, built-in middleware
-
 ### Services
 - **[Validation](api/Validation.md)** - Rules, FormRequest, custom rules
 - **[Logger](api/Logger.md)** - Logging, channels, sanitization
@@ -202,7 +196,7 @@ php siro env:switch staging      # Switch environment
 → Use `php siro make:crud posts`
 
 #### Add Authentication
-→ See Authentication Guide *(coming soon)*
+→ See Authentication Guide
 → Use `php siro make:auth`
 
 #### Deploy to Production
@@ -210,7 +204,7 @@ php siro env:switch staging      # Switch environment
 → Use `php siro deploy`
 
 #### Write Tests
-→ See Testing Guide *(coming soon)*
+→ See Testing Guide
 → Use `php siro make:test ProductApi`
 
 #### Optimize Performance
@@ -222,11 +216,11 @@ php siro env:switch staging      # Switch environment
 → Run `php siro env:check`
 
 #### Add File Upload
-→ See File Upload Guide *(coming soon)*
+→ See File Upload Guide
 → Use `$request->file('avatar')`
 
 #### Queue Heavy Operations
-→ See Queue Guide *(coming soon)*
+→ See Queue Guide
 → Use `Mail::to($user)->queue()`
 
 ---
@@ -311,7 +305,7 @@ A: Yes! MySQL, PostgreSQL, and SQLite are fully supported.
 A: Create class implementing middleware interface, add to route. See [Router API](api/Router.md).
 
 **Q: How do I handle file uploads?**  
-A: Use `$request->file()` method. See File Upload Guide *(coming soon)*.
+A: Use `$request->file()` method. See File Upload Guide.
 
 **Q: Can I use Redis?**  
 A: Yes! Configure in `.env`: `CACHE_DRIVER=redis`, `SESSION_DRIVER=redis`.
@@ -387,6 +381,6 @@ Want to improve documentation? We welcome contributions!
 
 ---
 
-*Last updated: May 19, 2026*  
-*Documentation version: 0.28.1*  
-*SiroPHP version: 0.28.1*
+*Last updated: May 30, 2026*  
+*Documentation version: 0.32.0*  
+*SiroPHP version: 0.32.0*

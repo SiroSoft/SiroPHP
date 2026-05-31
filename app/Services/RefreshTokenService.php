@@ -17,7 +17,14 @@ final class RefreshTokenService
     ) {
     }
 
-    /** @return array{token: string, refresh_token: string, ttl: int} */
+    /**
+     * Create a JWT access token + refresh token pair for a user.
+     *
+     * Stores the refresh token JTI in the database for later verification.
+     *
+     * @param int $userId User ID to encode in the tokens
+     * @return array{token: string, refresh_token: string, ttl: int} Token pair with TTL in seconds
+     */
     public function createPair(int $userId): array
     {
         $ttl = max(60, (int) Env::get('JWT_TTL', '3600'));
@@ -37,7 +44,14 @@ final class RefreshTokenService
         ];
     }
 
-    /** @return array{token: string, refresh_token: string, ttl: int}|null */
+    /**
+     * Verify a refresh token and issue a new token pair (rotation).
+     *
+     * Detects token theft: if a revoked token is reused, all tokens for that user are revoked.
+     *
+     * @param string $refreshToken The refresh token JWT to verify
+     * @return array{token: string, refresh_token: string, ttl: int}|null New token pair, or null if invalid/expired
+     */
     public function verifyAndRotate(string $refreshToken): ?array
     {
         try {

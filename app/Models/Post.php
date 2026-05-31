@@ -7,17 +7,17 @@ namespace App\Models;
 use Siro\Core\Model;
 
 /**
- * Post model for blog/demo API.
- *
  * @property int $id
  * @property string $title
  * @property string $body
  * @property string|null $image
  * @property string $locale
  * @property string $status
+ * @property int $user_id
+ * @property int|null $category_id
+ * @property string|null $excerpt
  * @property string $created_at
- *
- * @package App\Models
+ * @property string|null $updated_at
  */
 final class Post extends Model
 {
@@ -27,6 +27,10 @@ final class Post extends Model
 
     protected array $casts = [
         'id' => 'int',
+        'user_id' => 'int',
+        'category_id' => 'int',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     protected array $fillable = [
@@ -36,5 +40,7 @@ final class Post extends Model
         'locale',
         'status',
         'user_id',
+        'category_id',
+        'excerpt',
     ];
 }

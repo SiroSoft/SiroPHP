@@ -42,24 +42,6 @@ POST /auth/register:    147 ops/s (with validation)
 
 ```
 Static route match:     514,954 ops/s
-```
-App boot + dispatch:    0.87ms
-Memory overhead:        +16KB
-```
-
-### Warm Request Throughput
-
-```
-GET / (root):           522,459 ops/s
-GET /nonexistent:       831,214 ops/s
-POST /auth/login:       161 ops/s (with middleware)
-POST /auth/register:    147 ops/s (with validation)
-```
-
-### Router Performance
-
-```
-Static route match:     514,954 ops/s
 Param route match:      290,022 ops/s
 Multi-param route:      243,064 ops/s
 Grouped route:          893,736 ops/s ⭐
@@ -608,7 +590,7 @@ EXPLAIN SELECT * FROM users WHERE email = 'test@example.com';
 
 | Framework | Avg Ops/s | Memory | Dependencies | Boot Time |
 |-----------|-----------|--------|--------------|-----------|
-| **SiroPHP v0.22** | **398K** | **2MB** | **0** | **<1ms** |
+| **SiroPHP v0.32.0** | **398K** | **2MB** | **0** | **<1ms** |
 | Laravel | 100-200 | 10-20MB | 50+ | 50-100ms |
 | Slim | 5K-10K | 3-5MB | 5+ | 10-20ms |
 | Lumen | 2K-5K | 4-8MB | 10+ | 20-40ms |

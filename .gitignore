@@ -68,6 +68,8 @@ test_e2e.php
 test_http.php
 check_db.php
 cleanup_repo.php
+debug_trace.php
+debug_upload.php
 
 # Generated docs (tracked by source, not build output)
 /docs/openapi.json
@@ -87,3 +89,5 @@ openapi_test.json
 _ide_helper.php
 .phpstorm.meta.php
 
+
+/public/storage/uploads/

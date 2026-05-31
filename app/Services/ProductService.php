@@ -20,9 +20,14 @@ final class ProductService
     {
     }
 
-    /** Get paginated products with optional filters and sorting.
-     * @param array<string, mixed> $queryParams
-     * @return array<string, mixed>
+    /**
+     * Get paginated products with optional filters and sorting.
+     *
+     * Supports filtering by: category, status, price_min, price_max, search (name LIKE).
+     * Supports sorting by: id, name, price, stock, created_at (asc/desc).
+     *
+     * @param array<array-key, mixed> $queryParams Query parameters (sort, order, category, status, price_min, price_max, search)
+     * @return array{data: \Siro\Core\Model[], meta: array{page: int, per_page: int, total: int, last_page: int}}
      */
     public function getAll(array $queryParams = [], int $page = 1, int $perPage = 20): array
     {
@@ -62,16 +67,25 @@ final class ProductService
         return $this->repo->findAll($filters, $page, $perPage);
     }
 
-    /** Find a product by ID or null if not found. */
-    public function getById(int $id): mixed
+    /**
+     * Find a product by ID. Returns null if not found.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getById(int $id): ?array
     {
-        return $this->repo->findById($id);
+        $result = $this->repo->findById($id);
+        return $result !== null ? $result->toArray() : null;
     }
 
-    /** Create a new product with defaults for missing fields.
-     * @param array<string, mixed> $data
+    /**
+     * Create a new product with defaults for missing fields.
+     * Defaults: price=0, stock=0, status='active'.
+     *
+     * @param array<string, mixed> $data Validated product data
+     * @return \Siro\Core\Model Created product model
      */
-    public function create(array $data): mixed
+    public function create(array $data): \Siro\Core\Model
     {
         $rawPrice = $data['price'] ?? 0;
         $rawStock = $data['stock'] ?? 0;
@@ -84,10 +98,13 @@ final class ProductService
         return $this->repo->store($data);
     }
 
-    /** Update a product. Returns null if not found.
-     * @param array<string, mixed> $data
+    /**
+     * Update a product. Returns null if not found.
+     *
+     * @param array<string, mixed> $data Validated product data
+     * @return \Siro\Core\Model|null Updated product model, or null if not found
      */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?\Siro\Core\Model
     {
         if (isset($data['price'])) {
             $rawPrice = $data['price'];

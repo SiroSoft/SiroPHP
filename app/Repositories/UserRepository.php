@@ -37,28 +37,25 @@ final class UserRepository extends BaseRepository
     }
 
     /**
-     * @param array<string, string> $filters
-     * @return array{data: array<int, mixed>, meta: array<string, mixed>}
+     * @param array<string, mixed> $filters
+     * @return array{data: \Siro\Core\Model[], meta: array{page: int, per_page: int, total: int, last_page: int}}
      */
     public function findAll(array $filters = [], int $page = 1, int $perPage = 15): array
     {
-        return $this->model->query()->orderBy('id', 'DESC')->paginate($perPage, $page);
+        $query = $this->model->query()->orderBy('id', 'DESC');
+        if (isset($filters['status'])) {
+            $query->where('status', '=', $filters['status']);
+        }
+        if (isset($filters['role'])) {
+            $query->where('role', '=', $filters['role']);
+        }
+        return $query->paginate($perPage, $page);
     }
 
     /** @param array<string, mixed> $data */
     public function create(array $data): Model
     {
         return User::create($data);
-    }
-
-    /** @return array<string, mixed>|null */
-    public function findById(int $id): ?array
-    {
-        $user = User::find($id);
-        if ($user === null) return null;
-        $data = $user->toArray();
-        $data['password'] = $user->getAttribute('password');
-        return $data;
     }
 
     /** @param array<string, mixed> $data */

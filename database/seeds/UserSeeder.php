@@ -26,6 +26,13 @@ final class UserSeeder
             return;
         }
 
+        // Check if admin already exists (safe for re-seeding)
+        $existing = DB::table('users')->where('email', $adminEmail)->first();
+        if ($existing) {
+            echo "  [SKIP] Admin {$adminEmail} already exists\n";
+            return;
+        }
+
         $password = password_hash($adminPassword, PASSWORD_BCRYPT);
 
         DB::table('users')->insert([

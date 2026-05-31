@@ -1,0 +1,41 @@
+<?php
+
+declare(strict_types=1);
+
+use Siro\Core\DB;
+
+final class CategorySeeder
+{
+    public function run(): void
+    {
+        $categories = [
+            ['name' => 'Electronics', 'is_active' => 1],
+            ['name' => 'Clothing', 'is_active' => 1],
+            ['name' => 'Home & Living', 'is_active' => 1],
+            ['name' => 'Furniture', 'is_active' => 1],
+            ['name' => 'Accessories', 'is_active' => 1],
+            ['name' => 'Kitchen', 'is_active' => 1],
+            ['name' => 'Sports', 'is_active' => 1],
+            ['name' => 'Office', 'is_active' => 1],
+        ];
+
+        $now = date('Y-m-d H:i:s');
+        $inserted = 0;
+
+        foreach ($categories as $cat) {
+            $existing = DB::table('categories')->where('name', $cat['name'])->first();
+            if ($existing) {
+                continue;
+            }
+            DB::table('categories')->insert([
+                'name' => $cat['name'],
+                'is_active' => $cat['is_active'],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+            $inserted++;
+        }
+
+        echo "  Created {$inserted} categories (" . (count($categories) - $inserted) . " skipped)\n";
+    }
+}

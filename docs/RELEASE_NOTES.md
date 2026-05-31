@@ -7,12 +7,43 @@ sidebar_label: R EL EA SE N OT ES
 
 # Release Notes
 
+## v0.32.0 (2026-05-30)
+- API Response Contract v1 with standardized envelope format
+- OpenAPI generator now produces spec matching Response Contract
+- TypeScript types auto-generated from OpenAPI spec
+- Enterprise admin starters: Next.js 15 + Nuxt 3
+- 3 rounds security audit: 115 issues fixed
+- Upload helper: `App\Support\Uploader` — one-liner file upload
+- File storage: date-organized (`{type}/YYYY/MM/{uuid}.{ext}`)
+- PHPStan level max: zero errors across all source
+- Self-documenting code: PHPDoc on all controllers/services/routes
+- CONTRIBUTING.md with 6-step module creation guide
+
+## v0.31.0 (2026-05-28)
+- Role constants class (`App\Role::ADMIN` / `Role::USER`)
+- Standardized API conventions (pagination, validation, auth, upload)
+- Model fillable/hidden/casts standardization
+- Console version constant alignment
+- Bugfix: CORS header handling for X-Request-Id
+- Bugfix: refresh token parsing in auth interceptor
+- Bugfix: multiple file upload edge cases
+
+## v0.30.0 (2026-05-25)
+- Dashboard/stats endpoint with flat response structure
+- Profile update endpoint with avatar support
+- Settings endpoints (language, timezone, currency)
+- Order status update endpoint (PATCH)
+- Generic file upload endpoint (/api/upload)
+- MySQL/MariaDB portable installation support
+- PHP version manager (runtime:install/switch/list)
+- Improved migration system stability
+
 ## v0.29.6 — MCP Server GitHub Release (2026-05-22)
 
 ### 🤖 MCP Server
-- **MCP Server v0.1.0** published to GitHub: `SiroSoft/siro-mcp-server-`
+- **MCP Server v0.1.0** published to GitHub: `SiroSoft/siro-mcp-server`
 - Updated `sirosoft/mcp-server` constraint from `@dev` to `^0.1.0` with VCS repository
-- Local path repository replaced with GitHub VCS (`https://github.com/SiroSoft/siro-mcp-server-.git`)
+- Local path repository replaced with GitHub VCS (`https://github.com/SiroSoft/siro-mcp-server.git`)
 
 ## v0.29.5 — Bug Fixes (2026-05-22)
 
@@ -30,7 +61,6 @@ sidebar_label: R EL EA SE N OT ES
 - **CLI command**: `php siro mcp:serve` — starts JSON-RPC 2.0 server over stdio
 - **Sandbox security**: 31-command whitelist, blocklist (`tinker`, `shell`, `exec`), destructive gate with `--force`
 - **Auto-discovery** via `extra.siro.commands` in Composer
-- Full spec and docs at `docs/guides/MCP_SERVER.md`
 
 ### 📚 Documentation
 - Added complete MCP Server implementation guide

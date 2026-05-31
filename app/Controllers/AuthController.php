@@ -20,6 +20,18 @@ final class AuthController
     ) {
     }
 
+    /**
+     * Register a new user account.
+     *
+     * Creates a user with name, email, password. Returns JWT + refresh token on success.
+     * Rate limited: 30 requests per minute.
+     *
+     * POST /api/auth/register
+     * Body: { name: string, email: string, password: string }
+     *
+     * @param Request $request Incoming HTTP request with validated fields
+     * @return Response JSON with token, refresh_token, and user data (201) or error (422)
+     */
     public function register(Request $request): Response
     {
         $request->validate([
@@ -38,11 +50,11 @@ final class AuthController
             ]);
         } catch (DuplicateEmailException) {
             return Response::error('Validation failed', 422, [
-                'email' => ['The provided data is invalid'],
+                'email' => ['The email has already been taken'],
             ]);
         }
 
-        $userId = (int) $user->id;
+        $userId = $user->id;
         $tokens = $this->tokenPair($userId);
 
         return Response::created([
@@ -58,6 +70,19 @@ final class AuthController
         ], 'Register successful');
     }
 
+    /**
+     * Authenticate a user with email + password.
+     *
+     * Uses constant-time comparison to prevent user enumeration.
+     * Checks account status, lockout, and increments login attempts on failure.
+     * Rate limited: 60 requests per minute.
+     *
+     * POST /api/auth/login
+     * Body: { email: string, password: string }
+     *
+     * @param Request $request Incoming HTTP request with credentials
+     * @return Response JSON with JWT tokens (200) or error (401)
+     */
     public function login(Request $request): Response
     {
         $request->validate([
@@ -74,40 +99,29 @@ final class AuthController
             return Response::error('Invalid credentials', 401);
         }
 
-        /** @var array<string, mixed> $userData */
-        $status = $userData['status'] ?? 0;
-        /** @var int|string $status */
-        if ((int) $status !== 1) {
+        $status = isset($userData['status']) && is_numeric($userData['status']) ? (int) $userData['status'] : 0;
+        if ($status !== 1) {
             return Response::error('Invalid credentials', 401);
         }
 
-        $lockedUntil = $userData['locked_until'] ?? null;
-        /** @var string|null $lockedUntil */
+        $lockedUntil = isset($userData['locked_until']) && is_string($userData['locked_until']) ? $userData['locked_until'] : null;
         if ($lockedUntil !== null && $lockedUntil !== '' && strtotime($lockedUntil) > time()) {
             return Response::error('Invalid credentials', 401);
         }
 
         $hash = $userData['password'];
-        /** @var string $hash */
         if (!password_verify($request->string('password'), $hash)) {
-            $userId = $userData['id'];
-            /** @var int|string $userId */
-            $this->userService->incrementLoginAttempts((int) $userId);
+            $userId = isset($userData['id']) && is_numeric($userData['id']) ? (int) $userData['id'] : 0;
+            $this->userService->incrementLoginAttempts($userId);
             return Response::error('Invalid credentials', 401);
         }
 
-        $userId = $userData['id'];
-        /** @var int|string $userId */
-        $this->userService->resetLoginAttempts((int) $userId);
+        $userId = isset($userData['id']) && is_numeric($userData['id']) ? (int) $userData['id'] : 0;
+        $this->userService->resetLoginAttempts($userId);
 
         Session::instance()->regenerate();
 
-        $tokens = $this->tokenPair((int) $userId);
-
-        $name = $userData['name'] ?? '';
-        $emailField = $userData['email'] ?? '';
-        /** @var string $name */
-        /** @var string $emailField */
+        $tokens = $this->tokenPair($userId);
 
         return Response::success([
             'token' => $tokens['token'],
@@ -115,13 +129,26 @@ final class AuthController
             'token_type' => 'Bearer',
             'expires_in' => $tokens['ttl'],
             'user' => [
-                'id' => (int) $userId,
-                'name' => $name,
-                'email' => $emailField,
+                'id' => $userId,
+                'name' => is_string($userData['name'] ?? null) ? $userData['name'] : '',
+                'email' => is_string($userData['email'] ?? null) ? $userData['email'] : '',
             ],
         ], 'Login successful');
     }
 
+    /**
+     * Refresh an expired JWT using a refresh token (token rotation).
+     *
+     * Verifies the refresh token, revokes the old one, and issues a new token pair.
+     * Detects token theft and revokes all tokens for the affected user.
+     * Rate limited: 30 requests per minute.
+     *
+     * POST /api/auth/refresh
+     * Body: { refresh_token: string }
+     *
+     * @param Request $request Incoming HTTP request with refresh_token
+     * @return Response JSON with new token pair (200) or error (401)
+     */
     public function refresh(Request $request): Response
     {
         $request->validate(['refresh_token' => 'required']);
@@ -140,6 +167,17 @@ final class AuthController
         ], 'Token refreshed');
     }
 
+    /**
+     * Get the currently authenticated user's profile.
+     *
+     * Requires valid JWT via auth middleware. Returns fresh data from DB when possible.
+     *
+     * GET /api/auth/me
+     * Headers: Authorization: Bearer <token>
+     *
+     * @param Request $request Incoming HTTP request with authenticated user
+     * @return Response JSON with user profile (200) or error (401)
+     */
     public function me(Request $request): Response
     {
         $user = $request->user();
@@ -147,17 +185,34 @@ final class AuthController
             return Response::error('Unauthorized', 401);
         }
 
+        $userId = isset($user['id']) && is_numeric($user['id']) ? (int) $user['id'] : 0;
+        if ($userId > 0) {
+            $freshUser = $this->userService->getById($userId);
+            if ($freshUser !== null) {
+                return Response::success(\App\Resources\UserResource::make($freshUser), 'Authenticated user');
+            }
+        }
+
         unset($user['claims']);
         return Response::success($user, 'Authenticated user');
     }
 
+    /**
+     * Logout and revoke all tokens for the current user.
+     *
+     * Increments the user's token_version so existing JWTs become invalid.
+     * Rate limited: 60 requests per minute.
+     *
+     * POST /api/auth/logout
+     * Headers: Authorization: Bearer <token>
+     *
+     * @param Request $request Incoming HTTP request with authenticated user
+     * @return Response Success message (200) or error (401/500)
+     */
     public function logout(Request $request): Response
     {
         $user = $request->user();
-        /** @var array<string, mixed>|null $user */
-        $rawId = $user['id'] ?? 0;
-        /** @var int|string $rawId */
-        $userId = (int) $rawId;
+        $userId = is_array($user) && isset($user['id']) && is_numeric($user['id']) ? (int) $user['id'] : 0;
 
         if ($userId <= 0) {
             return Response::error('Unauthorized', 401);
@@ -170,6 +225,17 @@ final class AuthController
         return Response::success(null, 'Logout successful. Token revoked.');
     }
 
+    /**
+     * Verify a user's email address using a verification token.
+     *
+     * Rate limited: 10 requests per minute.
+     *
+     * POST /api/auth/verify-email
+     * Body: { token: string }
+     *
+     * @param Request $request Incoming HTTP request with verification token
+     * @return Response Success message (200) or error (400)
+     */
     public function verifyEmail(Request $request): Response
     {
         $request->validate(['token' => 'required']);
@@ -184,6 +250,18 @@ final class AuthController
         return Response::success(null, 'Email verified successfully');
     }
 
+    /**
+     * Send a password reset link to the given email.
+     *
+     * Always returns success to prevent email enumeration.
+     * Rate limited: 10 requests per minute.
+     *
+     * POST /api/auth/forgot-password
+     * Body: { email: string }
+     *
+     * @param Request $request Incoming HTTP request with email address
+     * @return Response Success message (200) regardless of whether email exists
+     */
     public function forgotPassword(Request $request): Response
     {
         $request->validate(['email' => 'required|email']);
@@ -194,6 +272,18 @@ final class AuthController
         return Response::success(null, 'If the email exists, a reset link has been sent.');
     }
 
+    /**
+     * Reset a user's password using a reset token (from forgot-password).
+     *
+     * Tokens expire after 1 hour. On success, all existing sessions are revoked.
+     * Rate limited: 10 requests per minute.
+     *
+     * POST /api/auth/reset-password
+     * Body: { token: string, password: string }
+     *
+     * @param Request $request Incoming HTTP request with reset token + new password
+     * @return Response Success message (200) or error (400)
+     */
     public function resetPassword(Request $request): Response
     {
         $request->validate([

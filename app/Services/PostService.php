@@ -19,9 +19,11 @@ final class PostService
     {
     }
 
-    /** Get paginated posts with optional locale/user_id filter.
-     * @param array<string, mixed> $queryParams
-     * @return array<string, mixed>
+    /**
+     * Get paginated posts with optional locale/user_id filter.
+     *
+     * @param array<array-key, mixed> $queryParams Query parameters (locale, user_id)
+     * @return array{data: \Siro\Core\Model[], meta: array{page: int, per_page: int, total: int, last_page: int}}
      */
     public function getAll(array $queryParams = [], int $page = 1, int $perPage = 20): array
     {
@@ -39,16 +41,25 @@ final class PostService
         return $this->repo->findAll($filters, $page, $perPage);
     }
 
-    /** Find a post by ID or null if not found. */
-    public function getById(int $id): mixed
+    /**
+     * Find a post by ID. Returns null if not found.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getById(int $id): ?array
     {
-        return $this->repo->findById($id);
+        $result = $this->repo->findById($id);
+        return $result !== null ? $result->toArray() : null;
     }
 
-    /** Create a new post with optional image upload.
-     * @param array<string, mixed> $validated
+    /**
+     * Create a new post with optional image upload.
+     *
+     * @param array<string, mixed> $validated Validated post data (title, body, locale, status, user_id, image)
+     * @param mixed $uploadedFile Optional uploaded file for cover image
+     * @return \Siro\Core\Model Created post model
      */
-    public function create(array $validated, mixed $uploadedFile = null): mixed
+    public function create(array $validated, mixed $uploadedFile = null): \Siro\Core\Model
     {
         $rawUid = $validated['user_id'] ?? 0;
         $data = [
@@ -67,9 +78,11 @@ final class PostService
         return $this->repo->store($data);
     }
 
-    /** Update a post. Returns null if not found.
-     * @param array<string, mixed> $validated
-     * @return array<string, mixed>|null
+    /**
+     * Update a post. Returns null if not found.
+     *
+     * @param array<string, mixed> $validated Validated post data
+     * @return array<string, mixed>|null Updated post as array, or null if not found
      */
     public function update(int $id, array $validated): ?array
     {

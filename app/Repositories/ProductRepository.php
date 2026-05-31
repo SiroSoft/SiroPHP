@@ -15,8 +15,8 @@ final class ProductRepository extends BaseRepository
     }
 
     /**
-     * @param array<string, string> $filters
-     * @return array{data: array<int, mixed>, meta: array<string, mixed>}
+     * @param array<string, mixed> $filters
+     * @return array{data: \Siro\Core\Model[], meta: array{page: int, per_page: int, total: int, last_page: int}}
      */
     public function findAll(array $filters = [], int $page = 1, int $perPage = 20): array
     {
@@ -30,22 +30,28 @@ final class ProductRepository extends BaseRepository
             $query->where('status', '=', $filters['status']);
         }
 
-        if (isset($filters['price_min']) && $filters['price_min'] !== '') {
-            $query->where('price', '>=', (float) $filters['price_min']);
+        $priceMin = $filters['price_min'] ?? '';
+        $priceMax = $filters['price_max'] ?? '';
+        $search = $filters['search'] ?? '';
+        $sort = $filters['sort'] ?? 'id';
+        $order = $filters['order'] ?? 'desc';
+
+        if (is_string($priceMin) && $priceMin !== '') {
+            $query->where('price', '>=', (float) $priceMin);
         }
 
-        if (isset($filters['price_max']) && $filters['price_max'] !== '') {
-            $query->where('price', '<=', (float) $filters['price_max']);
+        if (is_string($priceMax) && $priceMax !== '') {
+            $query->where('price', '<=', (float) $priceMax);
         }
 
-        if (isset($filters['search']) && $filters['search'] !== '') {
-            $search = str_replace(['%', '_'], ['\%', '\_'], $filters['search']);
-            $query->where('name', 'LIKE', '%' . $search . '%');
+        if (is_string($search) && $search !== '') {
+            $safeSearch = str_replace(['%', '_'], ['\%', '\_'], $search);
+            $query->where('name', 'LIKE', '%' . $safeSearch . '%');
         }
 
         return $query->orderBy(
-            $filters['sort'] ?? 'id',
-            $filters['order'] ?? 'desc'
+            is_string($sort) ? $sort : 'id',
+            is_string($order) ? $order : 'desc'
         )->paginate($perPage, $page);
     }
 }

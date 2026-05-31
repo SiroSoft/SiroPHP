@@ -48,6 +48,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // ──────────────────────────────────────────────
-// 2. All other requests → normal application bootstrap
+// 2. Serve uploaded files from storage/public/
+// ──────────────────────────────────────────────
+$rawUri = is_string($_SERVER['REQUEST_URI'] ?? null) ? $_SERVER['REQUEST_URI'] : '/';
+$requestUri = parse_url($rawUri, PHP_URL_PATH);
+if (is_string($requestUri) && str_starts_with($requestUri, '/storage/')) {
+    // Allow cross-origin access from admin panels
+    $origin = is_string($_SERVER['HTTP_ORIGIN'] ?? null) ? $_SERVER['HTTP_ORIGIN'] : '*';
+    header('Access-Control-Allow-Origin: ' . $origin);
+    header('Access-Control-Allow-Credentials: true');
+    header('Vary: Origin');
+
+    $relativePath = substr($requestUri, 9); // Remove '/storage/'
+    $storageFile = __DIR__ . '/../storage/public/' . $relativePath;
+    $realFile = realpath($storageFile);
+    $storagePublic = realpath(__DIR__ . '/../storage/public');
+    if ($realFile !== false && $storagePublic !== false && str_starts_with($realFile, $storagePublic) && is_file($realFile)) {
+        $mime = (function_exists('mime_content_type') ? mime_content_type($realFile) : 'application/octet-stream') ?: 'application/octet-stream';
+        header('Content-Type: ' . $mime);
+        header('Content-Length: ' . filesize($realFile));
+        header('Cache-Control: public, max-age=31536000');
+        readfile($realFile);
+        exit(0);
+    }
+}
+
+// ──────────────────────────────────────────────
+// 3. All other requests → normal application bootstrap
 // ──────────────────────────────────────────────
 require __DIR__ . '/index.php';

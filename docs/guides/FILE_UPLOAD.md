@@ -120,6 +120,24 @@ return Response::download($path, 'filename.pdf');
 return Response::file($path, 'application/pdf');
 ```
 
+## Using the Uploader Helper
+
+For one-liner file upload, use the `App\Support\Uploader` class:
+
+```php
+use App\Support\Uploader;
+
+// In a route closure:
+$router->post('/upload', fn(Request $r) => Uploader::response($r, 'file', 'uploads'));
+
+// In a controller:
+$result = Uploader::handle($request, 'avatar', 'avatars');
+if ($result['error']) return $result['response'];
+$url = $result['url']; // Full public URL
+```
+
+The Uploader automatically validates file extension, MIME type, and size.
+
 ## Security
 
 ### MIME Type Validation

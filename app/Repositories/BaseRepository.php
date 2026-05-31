@@ -22,7 +22,7 @@ abstract class BaseRepository
 
     /**
      * @param array<string, mixed> $filters
-     * @return array<string, mixed>
+     * @return array{data: \Siro\Core\Model[], meta: array{page: int, per_page: int, total: int, last_page: int}}
      */
     public function findAll(array $filters = [], int $page = 1, int $perPage = 20): array
     {
@@ -36,19 +36,19 @@ abstract class BaseRepository
         return $query->paginate($perPage, $page);
     }
 
-    public function findById(int $id): mixed
+    public function findById(int $id): ?Model
     {
         return $this->model->find($id);
     }
 
     /** @param array<string, mixed> $data */
-    public function store(array $data): mixed
+    public function store(array $data): Model
     {
         return $this->model->create($data + ['created_at' => date('Y-m-d H:i:s')]);
     }
 
     /** @param array<string, mixed> $data */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?Model
     {
         $item = $this->model->find($id);
         if ($item === null) return null;
@@ -61,5 +61,12 @@ abstract class BaseRepository
         $item = $this->model->find($id);
         if ($item === null) return false;
         return (bool) $item->delete();
+    }
+
+    public function count(): int
+    {
+        $result = \Siro\Core\Database::select("SELECT COUNT(*) as count FROM {$this->model->getTable()}");
+        $count = isset($result[0]['count']) && is_numeric($result[0]['count']) ? $result[0]['count'] : 0;
+        return (int) $count;
     }
 }

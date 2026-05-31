@@ -7,31 +7,30 @@ namespace App\Models;
 use Siro\Core\Model;
 
 /**
- * User model.
- *
  * @property int $id
  * @property string $name
  * @property string $email
  * @property string $password
+ * @property string $role
  * @property int $status
  * @property int $token_version
+ * @property int $login_attempts
+ * @property string|null $locked_until
+ * @property string|null $avatar
+ * @property string|null $phone
  * @property string|null $email_verified_at
  * @property string|null $verification_token
  * @property string|null $password_reset_token
  * @property string|null $password_reset_expires_at
- * @property \DateTimeInterface $created_at
- * @property \DateTimeInterface|null $updated_at
- *
- * @package App\Models
+ * @property string $created_at
+ * @property string|null $updated_at
  */
 final class User extends Model
 {
     protected string $table = 'users';
 
-    /** @var array<int, string> */
     protected array $hidden = ['password'];
 
-    /** @var array<string, string> */
     protected array $casts = [
         'id' => 'int',
         'status' => 'int',
@@ -39,22 +38,18 @@ final class User extends Model
         'login_attempts' => 'int',
         'locked_until' => 'datetime',
         'email_verified_at' => 'datetime',
+        'password_reset_expires_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'password_reset_expires_at' => 'datetime',
     ];
 
-    /** @var array<int, string> */
-    protected array $guarded = ['role', 'status'];
-
-    /** @var array<int, string> */
     protected array $fillable = [
         'name',
         'email',
         'password',
+        'role',
+        'status',
+        'avatar',
+        'phone',
     ];
-
-    // Example relationships (uncomment and adjust as needed):
-    // public function posts(): HasMany { return $this->hasMany(Post::class); }
-    // public function orders(): HasMany { return $this->hasMany(Order::class); }
 }

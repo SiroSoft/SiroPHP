@@ -10,6 +10,6 @@ final class DuplicateEmailException extends RuntimeException
 {
     public function __construct(string $email = '')
     {
-        parent::__construct("Email has already been taken");
+        parent::__construct("Email '{$email}' has already been taken");
     }
 }

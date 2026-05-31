@@ -15,10 +15,14 @@ sidebar_label: Q UI CK ST AR T
 
 ### Option 1: Create New Project (Recommended)
 
+**Windows:**
+```powershell
+iwr https://sirophp.com/downloads/install.ps1 -UseBasicParsing | iex
+```
+
+**Linux/macOS:**
 ```bash
-composer create-project sirosoft/api my-api
-cd my-api
-php siro serve
+curl -sS https://sirophp.com/downloads/install.sh | bash
 ```
 
 Visit: http://localhost:8080
@@ -27,8 +31,8 @@ Visit: http://localhost:8080
 
 ```bash
 composer require sirosoft/core
-```\n
-> **New in v0.29.2**: Packages auto-register CLI commands and service providers.
+```
+> **New in v0.32.0**: Packages auto-register CLI commands and service providers.
 > Just `composer require vendor/package` — no manual configuration needed.
 
 ---
@@ -232,57 +236,6 @@ php siro queue:work
 ```
 
 ---
-
-## 🧩 Package Ecosystem
-
-SiroPHP **v0.29.2+** auto-discovers CLI commands and service providers from any installed Composer package.
-
-### How Package Registration Works
-
-When you run `composer require vendor/package`, if that package has an `extra.siro` section in its `composer.json`:
-
-**Commands** — automatically appear in `php siro list`:
-```json
-{
-    "extra": {
-        "siro": {
-            "commands": {
-                "my:command": {
-                    "handler": "Vendor\\Package\\MyCommand",
-                    "desc": "Description"
-                }
-            }
-        }
-    }
-}
-```
-
-**Service providers** — automatically registered at boot time:
-```json
-{
-    "extra": {
-        "siro": {
-            "providers": [
-                "Vendor\\Package\\ServiceProvider"
-            ]
-        }
-    }
-}
-```
-
-### Example: Install a Package, Use Instantly
-
-```bash
-composer require vendor/siro-package
-php siro list               # New commands appear immediately
-php siro my:command          # Run package command
-```
-
-No files to edit, no cache to clear. Just `composer require` and go.
-
----
-
-
 
 ### Development
 

@@ -8,6 +8,7 @@ use App\Events\UserCreatedEvent;
 use App\Exceptions\DuplicateEmailException;
 use App\Exceptions\NoFieldsToUpdateException;
 use App\Models\User;
+use App\Role;
 use App\Repositories\RefreshTokenRepository;
 use App\Repositories\UserRepository;
 
@@ -19,6 +20,13 @@ final class UserService
     ) {
     }
 
+    /**
+     * Increment the token version for a user, invalidating all existing JWTs.
+     * Used on logout to revoke all active sessions.
+     *
+     * @param int $userId User ID
+     * @return bool True if successful, false if user not found
+     */
     public function incrementTokenVersion(int $userId): bool
     {
         if ($userId <= 0) {
@@ -36,12 +44,23 @@ final class UserService
         return true;
     }
 
-    /** @return array<string, mixed>|null */
+    /**
+     * Find a user by email address. Includes password hash in result.
+     *
+     * @return array<string, mixed>|null User data array with password, or null if not found
+     */
     public function getByEmail(string $email): ?array
     {
         return $this->repo->findByEmail($email);
     }
 
+    /**
+     * Get the current token version for a user.
+     * Used when encoding JWT to enforce token invalidation.
+     *
+     * @param int $userId User ID
+     * @return int Token version (minimum 1)
+     */
     public function getTokenVersion(int $userId): int
     {
         $user = $this->repo->findById($userId);
@@ -51,6 +70,12 @@ final class UserService
         return $rawVersion > 0 ? $rawVersion : 1;
     }
 
+    /**
+     * Verify a user's email using a verification token.
+     *
+     * @param string $token Raw verification token (hashed before lookup)
+     * @return bool True if verified, false if token invalid
+     */
     public function verifyEmail(string $token): bool
     {
         $hashedToken = hash('sha256', $token);
@@ -65,6 +90,13 @@ final class UserService
         return true;
     }
 
+    /**
+     * Initiate a password reset for the given email.
+     * Stores a hashed reset token with 1-hour expiry.
+     * Always succeeds silently to prevent email enumeration.
+     *
+     * @param string $email User's email address
+     */
     public function initiatePasswordReset(string $email): void
     {
         $resetToken = bin2hex(random_bytes(32));
@@ -75,6 +107,14 @@ final class UserService
         ]);
     }
 
+    /**
+     * Reset a user's password using a reset token.
+     * Revokes all refresh tokens and increments token_version on success.
+     *
+     * @param string $token Raw password reset token
+     * @param string $newPassword New plaintext password
+     * @return bool True if reset successful, false if token invalid/expired
+     */
     public function resetPassword(string $token, string $newPassword): bool
     {
         $hashedToken = hash('sha256', $token);
@@ -97,28 +137,30 @@ final class UserService
             'token_version' => (int) $tokenVersion + 1,
         ]);
         if ($affected === 0) return false;
-        $this->refreshTokenRepo->revokeAllByUserId($user['id']);
+        $this->refreshTokenRepo->revokeAllByUserId(isset($user['id']) && is_numeric($user['id']) ? (int) $user['id'] : 0);
         // M2: Session regeneration required after password reset (API context)
         return true;
     }
 
-    /** @return array<string, mixed> */
-    public function getAll(int $page = 1, int $perPage = 15): array
+    /** @param array<string, mixed> $filters
+     * @return array{data: \Siro\Core\Model[], meta: array{page: int, per_page: int, total: int, last_page: int}} */
+    public function getAll(int $page = 1, int $perPage = 15, array $filters = []): array
     {
-        return $this->repo->findAll([], $page, $perPage);
+        return $this->repo->findAll($filters, $page, $perPage);
     }
 
-    public function getById(int $id): mixed
+    /** @return \Siro\Core\Model|null */
+    public function getById(int $id): ?\Siro\Core\Model
     {
         return $this->repo->findById($id);
     }
 
     /**
      * @param array<string, mixed> $data
-     * @return User
+     * @return \Siro\Core\Model
      * @throws DuplicateEmailException
      */
-    public function create(array $data): User
+    public function create(array $data): \Siro\Core\Model
     {
         $rawEmail = $data['email'] ?? '';
         /** @var string $rawEmail */
@@ -132,12 +174,13 @@ final class UserService
         $rawPassword = $data['password'] ?? '';
         /** @var string $rawPassword */
         $verificationToken = hash('sha256', bin2hex(random_bytes(32)));
-        /** @var User $user */
+        $isFirst = $this->repo->count() === 0;
         $user = $this->repo->create([
             'name' => $data['name'],
             'email' => $email,
             'password' => self::hashPassword($rawPassword),
             'status' => 1,
+            'role' => $isFirst ? Role::ADMIN : Role::USER,
             'verification_token' => $verificationToken,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
@@ -147,11 +190,11 @@ final class UserService
 
     /**
      * @param array<string, mixed> $data
-     * @return array<string, mixed>|null
+     * @return \Siro\Core\Model|null
      * @throws DuplicateEmailException
      * @throws NoFieldsToUpdateException
      */
-    public function update(int $id, array $data): ?array
+    public function update(int $id, array $data): ?\Siro\Core\Model
     {
         $user = $this->repo->findById($id);
         if ($user === null) return null;
@@ -192,6 +235,11 @@ final class UserService
         return $this->repo->findById($id);
     }
 
+    /**
+     * Increment login attempts and lock the account for 15 minutes if >= 5 attempts.
+     *
+     * @param int $userId User ID
+     */
     public function incrementLoginAttempts(int $userId): void
     {
         $table = (new \App\Models\User())->getTable();
@@ -202,6 +250,11 @@ final class UserService
         );
     }
 
+    /**
+     * Reset login attempts counter and unlock the account.
+     *
+     * @param int $userId User ID
+     */
     public function resetLoginAttempts(int $userId): void
     {
         $this->repo->updateWhere('id', $userId, [
@@ -210,11 +263,18 @@ final class UserService
         ]);
     }
 
+    /**
+     * Hash a password using bcrypt with cost factor 12.
+     *
+     * @param string $password Plaintext password
+     * @return string Bcrypt hash
+     */
     private static function hashPassword(string $password): string
     {
         return password_hash($password, \PASSWORD_BCRYPT, ['cost' => 12]);
     }
 
+    /** Delete a user. Returns true if deleted, false if not found. */
     public function delete(int $id): bool
     {
         return $this->repo->destroy($id);

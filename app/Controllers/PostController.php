@@ -17,12 +17,21 @@ final class PostController extends Controller
     {
     }
 
+    /**
+     * List all blog posts with pagination and optional locale/user_id filtering.
+     *
+     * Non-admin users see only their own posts.
+     * Rate limited: 60 requests per minute.
+     *
+     * GET /api/posts?page=1&per_page=20&locale=en
+     *
+     * @param Request $request Incoming HTTP request with optional query params
+     * @return Response Paginated list of posts
+     */
     public function index(Request $request): Response
     {
-        $rawPage = $request->query('page', 1);
-        $rawPerPage = $request->query('per_page', 20);
-        /** @var int|string $rawPage */
-        /** @var int|string $rawPerPage */
+        $page = max(1, $request->queryInt('page', 1));
+        $perPage = min(100, max(1, $request->queryInt('per_page', 20)));
 
         $currentUser = $request->user();
         $currentUserId = 0;
@@ -37,26 +46,32 @@ final class PostController extends Controller
             $params['user_id'] = $currentUserId;
         }
 
-        /** @var array<string, mixed> $params */
-        $result = $this->service->getAll(
-            $params,
-            (int) $rawPage,
-            (int) $rawPerPage
-        );
-        /** @var array{data: array<int, array<string, mixed>>, meta: array{page: int, per_page: int, total: int, last_page: int}} $result */
-
+        $result = $this->service->getAll($params, $page, $perPage);
+        $data = [];
+        foreach ($result['data'] as $item) {
+            $data[] = $item->toArray();
+        }
         return $this->paginated(
-            PostResource::collection($result['data']),
+            PostResource::collection($data),
             $result['meta'],
             'Posts list'
         );
     }
 
+    /**
+     * Get a single blog post by ID.
+     *
+     * Non-admin users can only view their own posts.
+     *
+     * GET /api/posts/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response Post detail (200) or error (403/404/422)
+     */
     public function show(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         $currentUser = $request->user();
@@ -68,20 +83,31 @@ final class PostController extends Controller
         }
 
         $post = $this->service->getById($id);
-        /** @var \Siro\Core\Model|null $post */
         if ($post === null) {
             return $this->error('Post not found', 404);
         }
 
-        $postData = $post->toArray();
-        $postUserId = is_numeric($postData['user_id'] ?? null) ? (int) $postData['user_id'] : 0;
+        $postUserId = is_numeric($post['user_id'] ?? null) ? (int) $post['user_id'] : 0;
         if ($currentUserRole !== Role::ADMIN && $currentUserId !== $postUserId) {
             return $this->error('Forbidden', 403);
         }
 
-        return $this->success(PostResource::make($postData), 'Post detail');
+        return $this->success(PostResource::make($post), 'Post detail');
     }
 
+    /**
+     * Create a new blog post.
+     *
+     * Accepts title, body, locale (en/vi), status (draft/published).
+     * Optionally accepts a file upload for cover image (max 5MB, jpg/png/gif/webp).
+     *
+     * POST /api/posts
+     * Body: { title: string, body: string, locale: string, status?: string, cover_image?: string, category_id?: int, excerpt?: string }
+     * Multipart: image file
+     *
+     * @param Request $request Incoming HTTP request with post data and optional file
+     * @return Response Created post (201) or error (422)
+     */
     public function store(Request $request): Response
     {
         $validated = $this->validate([
@@ -98,10 +124,24 @@ final class PostController extends Controller
         }
         $validated['user_id'] = $currentUserId;
 
+        $rawBody = $request->all();
+        if (isset($rawBody['cover_image'])) {
+            $validated['image'] = $rawBody['cover_image'];
+        }
+        if (isset($rawBody['category_id']) && is_numeric($rawBody['category_id'])) {
+            $validated['category_id'] = (int) $rawBody['category_id'];
+        }
+        if (isset($rawBody['excerpt'])) {
+            $validated['excerpt'] = $rawBody['excerpt'];
+        }
+
         $file = $request->file('image');
         if ($file !== null && $file->isValid()) {
             $filePath = $file->getPathname();
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            if ($finfo === false) {
+                return $this->error('Unable to detect file type', 500);
+            }
             $mime = finfo_file($finfo, $filePath);
             finfo_close($finfo);
             $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -112,18 +152,28 @@ final class PostController extends Controller
             if ($file->getSize() > $maxSize) {
                 return $this->error('File too large. Maximum 5MB allowed.', 422);
             }
+            $validated['image'] = $file->store('posts');
         }
         $post = $this->service->create($validated, $file);
 
-        /** @var \Siro\Core\Model $post */
-        return $this->created(PostResource::make($post->toArray()), 'Post created');
+        return $this->created(PostResource::make($post), 'Post created');
     }
 
+    /**
+     * Update an existing blog post.
+     *
+     * Non-admin users can only update their own posts. Partial updates supported.
+     *
+     * PUT /api/posts/{id}
+     * Body: { title?: string, body?: string, locale?: string, status?: string, cover_image?: string, category_id?: int, excerpt?: string }
+     *
+     * @param Request $request Incoming HTTP request with post updates
+     * @return Response Updated post (200) or error (403/404/422)
+     */
     public function update(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         $existing = $this->service->getById($id);
@@ -138,8 +188,7 @@ final class PostController extends Controller
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
             $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
-        $existingData = $existing instanceof \Siro\Core\Model ? $existing->toArray() : (array) $existing;
-        $postUserId = is_numeric($existingData['user_id'] ?? null) ? (int) $existingData['user_id'] : 0;
+        $postUserId = is_numeric($existing['user_id'] ?? null) ? (int) $existing['user_id'] : 0;
         if ($currentUserRole !== Role::ADMIN && $currentUserId !== $postUserId) {
             return $this->error('Forbidden', 403);
         }
@@ -151,8 +200,18 @@ final class PostController extends Controller
             'status' => 'in:draft,published',
         ]);
 
+        $rawBody = $request->all();
+        if (isset($rawBody['cover_image'])) {
+            $validated['image'] = $rawBody['cover_image'];
+        }
+        if (isset($rawBody['category_id'])) {
+            $validated['category_id'] = is_numeric($rawBody['category_id']) ? (int) $rawBody['category_id'] : 0;
+        }
+        if (isset($rawBody['excerpt'])) {
+            $validated['excerpt'] = $rawBody['excerpt'];
+        }
+
         $post = $this->service->update($id, $validated);
-        /** @var array<string, mixed>|null $post */
         if ($post === null) {
             return $this->error('Post not found', 404);
         }
@@ -160,11 +219,21 @@ final class PostController extends Controller
         return $this->success(PostResource::make($post), 'Post updated');
     }
 
+    /**
+     * Delete a blog post by ID.
+     *
+     * Also deletes the associated cover image from storage.
+     * Non-admin users can only delete their own posts.
+     *
+     * DELETE /api/posts/{id}
+     *
+     * @param Request $request Incoming HTTP request with route param 'id'
+     * @return Response Empty (204) or error (403/404/422)
+     */
     public function delete(Request $request): Response
     {
         $rawId = $request->param('id');
-        /** @var int|string $rawId */
-        $id = (int) $rawId;
+        $id = is_numeric($rawId) ? (int) $rawId : 0;
         if ($id <= 0) return $this->error('Invalid id', 422);
 
         $currentUser = $request->user();
@@ -176,8 +245,7 @@ final class PostController extends Controller
         }
         $existing = $this->service->getById($id);
         if ($existing !== null) {
-            $existingData = $existing instanceof \Siro\Core\Model ? $existing->toArray() : (array) $existing;
-            $postUserId = is_numeric($existingData['user_id'] ?? null) ? (int) $existingData['user_id'] : 0;
+            $postUserId = is_numeric($existing['user_id'] ?? null) ? (int) $existing['user_id'] : 0;
             if ($currentUserRole !== Role::ADMIN && $currentUserId !== $postUserId) {
                 return $this->error('Forbidden', 403);
             }

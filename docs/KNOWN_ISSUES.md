@@ -7,7 +7,7 @@ sidebar_label: K NO WN I SS UE S
 
 # Known Issues & Limitations
 
-## v0.28 Known Issues
+## v0.32 Known Issues
 
 ### Database
 
