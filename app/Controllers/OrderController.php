@@ -48,6 +48,7 @@ final class OrderController extends Controller
             $params['user_id'] = $currentUserId;
         }
 
+        /** @var array<string, mixed> $params */
         $result = $this->service->getAll($params, $page, $perPage);
         $data = [];
         foreach ($result['data'] as $item) {
