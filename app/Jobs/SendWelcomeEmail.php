@@ -43,7 +43,6 @@ final class SendWelcomeEmail
         // TODO L3: Extract inline HTML template to a separate template file
         Mail::to($email)
             ->subject('Welcome to our platform!')
-            ->header('Content-Type', 'text/html; charset=utf-8')
             ->html($html)
             ->send();
     }

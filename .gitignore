@@ -91,3 +91,10 @@ _ide_helper.php
 
 
 /public/storage/uploads/
+
+# CLI test reports
+CLI_*.md
+# Local-only docs (keep on disk, not in repo)
+FRAMEWORK_ASSESSMENT_v0.31.0.md
+RELEASE_CHECKLIST_v0.31.0.md
+REPLAY_HARDENING_PLAN.md
