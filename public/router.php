@@ -18,6 +18,25 @@ declare(strict_types=1);
  */
 
 // ──────────────────────────────────────────────
+// 0. Load .env early for CORS (framework not booted yet)
+// ──────────────────────────────────────────────
+$envFile = __DIR__ . '/../.env';
+if (is_file($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    if (is_array($lines)) {
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line === '' || str_starts_with($line, '#')) continue;
+            $pos = strpos($line, '=');
+            if ($pos === false) continue;
+            $key = trim(substr($line, 0, $pos));
+            $value = trim(substr($line, $pos + 1));
+            if ($key !== '') putenv($key . '=' . $value);
+        }
+    }
+}
+
+// ──────────────────────────────────────────────
 // 1. OPTIONS preflight — respond without framework boot
 // ──────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
