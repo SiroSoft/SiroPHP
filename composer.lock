@@ -4,25 +4,28 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f3827bfcc2464a6e935d4cbe49d32202",
+    "content-hash": "04a2cd0f2b2ae1dc9115eef5424d9c87",
     "packages": [
         {
             "name": "sirosoft/core",
-            "version": "v0.28.2",
+            "version": "v0.33.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SiroSoft/siro-core.git",
-                "reference": "8fbbd7ad342289e2353bf5fe8ff72f97dda30444"
+                "reference": "16650855ef63f3120252241b3000f00e315a8b95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SiroSoft/siro-core/zipball/8fbbd7ad342289e2353bf5fe8ff72f97dda30444",
-                "reference": "8fbbd7ad342289e2353bf5fe8ff72f97dda30444",
+                "url": "https://api.github.com/repos/SiroSoft/siro-core/zipball/16650855ef63f3120252241b3000f00e315a8b95",
+                "reference": "16650855ef63f3120252241b3000f00e315a8b95",
                 "shasum": ""
             },
             "require": {
+                "ext-curl": "*",
+                "ext-fileinfo": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
+                "ext-openssl": "*",
                 "ext-pdo": "*",
                 "php": ">=8.2"
             },
@@ -35,9 +38,6 @@
                 "vimeo/psalm": "^5.0 || ^6.0"
             },
             "suggest": {
-                "ext-curl": "Required for HTTP Client",
-                "ext-fileinfo": "Required for UploadedFile MIME type detection",
-                "ext-openssl": "Required for Encrypter (AES-256 encryption)",
                 "ext-redis": "Required for Redis cache, session, and rate limiter drivers"
             },
             "type": "library",
@@ -50,7 +50,7 @@
             "license": [
                 "MIT"
             ],
-            "description": "Siro API Framework Core - Ultra-fast PHP micro-framework with built-in JWT auth, RBAC, rate limiting, migrations, ORM, and CRUD generator. Zero PHPStan errors.",
+            "description": "Core engine powering the Siro API Framework with zero external dependencies.",
             "homepage": "https://github.com/SiroSoft/siro-core",
             "keywords": [
                 "api",
@@ -70,45 +70,7 @@
                 "issues": "https://github.com/SiroSoft/siro-core/issues",
                 "source": "https://github.com/SiroSoft/siro-core"
             },
-            "time": "2026-05-20T10:05:03+00:00"
-        },
-        {
-            "name": "sirosoft/mcp-server",
-            "version": "dev-main",
-            "dist": {
-                "type": "path",
-                "url": "../siro-mcp-server",
-                "reference": "849162dab13e4d31bfbc11911b7a1db9dd92a7af"
-            },
-            "require": {
-                "ext-json": "*",
-                "php": ">=8.2",
-                "sirosoft/core": "^0.28 || ^0.29"
-            },
-            "type": "library",
-            "extra": {
-                "siro": {
-                    "commands": {
-                        "mcp:serve": {
-                            "handler": "SiroSoft\\McpServer\\Commands\\McpServeCommand",
-                            "desc": "Start MCP server for AI agents (Claude/GPT/Copilot)"
-                        }
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "SiroSoft\\McpServer\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "Siro MCP Server — AI Agent context engine for Siro PHP Framework. MCP protocol over stdio.",
-            "transport-options": {
-                "symlink": false,
-                "relative": true
-            }
+            "time": "2026-06-01T13:59:24+00:00"
         }
     ],
     "packages-dev": [
@@ -2027,9 +1989,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "sirosoft/mcp-server": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -2038,6 +1998,6 @@
         "ext-json": "*",
         "ext-mbstring": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }
