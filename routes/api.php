@@ -259,7 +259,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     $router->get('/settings', function (Request $req): Response {
         $userData = $req->user();
         $role = is_array($userData) && isset($userData['role']) ? $userData['role'] : '';
-        if ($role !== \App\Enums\Role::ADMIN) {
+        if ($role !== \App\Role::ADMIN) {
             return Response::error('Forbidden', 403);
         }
         try {
@@ -289,7 +289,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     $router->put('/settings', function (Request $req): Response {
         $userData = $req->user();
         $role = is_array($userData) && isset($userData['role']) ? $userData['role'] : '';
-        if ($role !== \App\Enums\Role::ADMIN) {
+        if ($role !== \App\Role::ADMIN) {
             return Response::error('Forbidden', 403);
         }
         $data = $req->all();
