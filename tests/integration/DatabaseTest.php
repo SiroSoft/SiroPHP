@@ -20,11 +20,11 @@ final class DatabaseTest extends TestCase
         $ct = self::createdAtDefault();
         $db->execute("CREATE TABLE IF NOT EXISTS test_integration_users (
             {$pk},
-            name TEXT NOT NULL,
-            email TEXT NOT NULL UNIQUE,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL UNIQUE,
             age INTEGER,
             created_at {$ct}
-        ");
+        )");
     }
 
     protected function tearDown(): void

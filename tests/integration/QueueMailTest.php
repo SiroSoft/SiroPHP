@@ -55,8 +55,8 @@ final class QueueMailTest extends TestCase
                 failed_at {$ct}
             )
         ");
-        Database::execute("DELETE FROM jobs");
-        Database::execute("DELETE FROM failed_jobs");
+        Database::execute("TRUNCATE TABLE jobs");
+        Database::execute("TRUNCATE TABLE failed_jobs");
         parent::setUp();
     }
 
