@@ -7,7 +7,7 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.2",
-        "sirosoft/core": "^0.33.0",
+        "sirosoft/core": "^0.33.1",
         "ext-pdo": "*",
         "ext-json": "*",
         "ext-mbstring": "*"
