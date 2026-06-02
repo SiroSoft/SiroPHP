@@ -72,11 +72,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $rawUri = is_string($_SERVER['REQUEST_URI'] ?? null) ? $_SERVER['REQUEST_URI'] : '/';
 $requestUri = parse_url($rawUri, PHP_URL_PATH);
 if (is_string($requestUri) && str_starts_with($requestUri, '/storage/')) {
-    // Allow cross-origin access from admin panels
-    $origin = is_string($_SERVER['HTTP_ORIGIN'] ?? null) ? $_SERVER['HTTP_ORIGIN'] : '*';
-    header('Access-Control-Allow-Origin: ' . $origin);
-    header('Access-Control-Allow-Credentials: true');
-    header('Vary: Origin');
+    // Allow cross-origin access from configured origins only
+    $origin = is_string($_SERVER['HTTP_ORIGIN'] ?? null) ? $_SERVER['HTTP_ORIGIN'] : '';
+    $allowedOrigins = array_map('trim', explode(',', getenv('CORS_ALLOWED_ORIGINS') ?: ''));
+    if ($origin !== '' && in_array($origin, $allowedOrigins, true)) {
+        header('Access-Control-Allow-Origin: ' . $origin);
+        header('Access-Control-Allow-Credentials: true');
+        header('Vary: Origin');
+    }
 
     $relativePath = substr($requestUri, 9); // Remove '/storage/'
     $storageFile = __DIR__ . '/../storage/public/' . $relativePath;

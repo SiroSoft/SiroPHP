@@ -20,7 +20,7 @@ use Siro\Core\Env;
 final class Uploader
 {
     // Keep in sync with Siro\Core\UploadedFile::ALLOWED_EXTENSIONS
-    private const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'pdf', 'txt', 'csv', 'json', 'xml', 'doc', 'docx', 'zip'];
+    private const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'txt', 'csv', 'json', 'xml', 'doc', 'docx', 'zip'];
     private const MAX_SIZE = 10 * 1024 * 1024; // 10MB
     private const MIME_MAP = [
         'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'png' => 'image/png',

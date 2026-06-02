@@ -256,7 +256,12 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     })->middleware(['auth', JsonMiddleware::class]);
 
     // -- Settings --
-    $router->get('/settings', function (): Response {
+    $router->get('/settings', function (Request $req): Response {
+        $userData = $req->user();
+        $role = is_array($userData) && isset($userData['role']) ? $userData['role'] : '';
+        if ($role !== \App\Role::ADMIN) {
+            return Response::error('Forbidden', 403);
+        }
         try {
             $rows = \Siro\Core\Database::select("SELECT `key`, `value` FROM settings");
             $settings = [];
@@ -282,6 +287,11 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     })->middleware(['auth', JsonMiddleware::class]);
 
     $router->put('/settings', function (Request $req): Response {
+        $userData = $req->user();
+        $role = is_array($userData) && isset($userData['role']) ? $userData['role'] : '';
+        if ($role !== \App\Role::ADMIN) {
+            return Response::error('Forbidden', 403);
+        }
         $data = $req->all();
         if ($data === []) {
             return Response::error('No settings provided', 422);
@@ -308,7 +318,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     $router->patch('/orders/{id}/status', [\App\Controllers\OrderController::class, 'updateStatus'])
         ->middleware(['auth', JsonMiddleware::class, 'throttle:60,1']);
 
-    // -- Server Info (public, used by dev dashboard) --
+    // -- Server Info (rate-limited, no sensitive DB details) --
     $router->get('/server/info', function (): Response {
         $sapi = php_sapi_name();
         $serverName = match (true) {
@@ -317,35 +327,20 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             default => 'PHP ' . PHP_VERSION . ' (' . $sapi . ')',
         };
 
-        // Detect database driver + version
+        // Detect database driver (name only, no version/PDO reflection)
         $dbDriver = 'unknown';
-        $dbVersion = '—';
         try {
             $conn = \Siro\Core\Database::connection();
-            $pdo = (function () use ($conn) {
-                $ref = new \ReflectionClass($conn);
-                $prop = $ref->getProperty('pdo');
-                $prop->setAccessible(true);
-                return $prop->getValue($conn);
-            })();
-            if ($pdo instanceof \PDO) {
-                $dbDriver = $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
-                $dbVersion = $pdo->getAttribute(\PDO::ATTR_SERVER_VERSION);
-            }
+            $dbDriver = $conn->getAttribute(\PDO::ATTR_DRIVER_NAME);
         } catch (\Throwable) {}
 
         return Response::success([
-            'php' => PHP_VERSION,
             'server' => $serverName,
-            'sapi' => $sapi,
-            'os' => PHP_OS_FAMILY,
+            'php' => PHP_VERSION,
             'db' => $dbDriver,
-            'db_version' => $dbVersion,
-            'env' => \Siro\Core\Env::get('APP_ENV', 'local'),
-            'debug' => \Siro\Core\Env::bool('APP_DEBUG', false),
             'time' => date('c'),
         ]);
-    });
+    })->middleware(['throttle:10,1']);
 
     // -- Dashboard --
     $router->get('/dashboard/stats', function (): Response {
