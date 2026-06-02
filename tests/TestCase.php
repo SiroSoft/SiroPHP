@@ -77,6 +77,9 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
         $this->basePath = dirname(__DIR__);
+        // Reset tables created flag for new test class (each class uses its own DB file)
+        self::$tablesCreated = false;
+        self::$dbDriver = '';
         Lang::setLocale('en');
 
         $rateDir = $this->basePath . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'rate_limit';
@@ -93,6 +96,12 @@ abstract class TestCase extends BaseTestCase
     {
         self::rollbackTransaction();
         parent::tearDown();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        $dbFile = dirname(__DIR__) . '/storage/tests/' . str_replace('\\', '_', static::class) . '.db';
+        if (is_file($dbFile)) { @unlink($dbFile); }
     }
 
     protected static function resetTransaction(): void
@@ -238,12 +247,14 @@ abstract class TestCase extends BaseTestCase
             }
         }
 
-        // Start transaction for test isolation
-        try {
-            if (!$pdo->inTransaction()) {
-                $pdo->beginTransaction();
+        // Start transaction for test isolation (MySQL only; SQLite DDL is transactional)
+        if (self::$dbDriver !== 'sqlite') {
+            try {
+                if (!$pdo->inTransaction()) {
+                    $pdo->beginTransaction();
+                }
+            } catch (\Throwable) {
             }
-        } catch (\Throwable) {
         }
     }
 
@@ -258,6 +269,20 @@ abstract class TestCase extends BaseTestCase
 
         $app = new App($this->basePath);
         $app->boot();
+        // Override to SQLite temp file for test speed + cross-request data sharing
+        \Siro\Core\Database::purgeAll();
+        $tempDb = $this->basePath . '/storage/tests/' . str_replace('\\', '_', static::class) . '.db';
+        $dir = dirname($tempDb);
+        if (!is_dir($dir)) { mkdir($dir, 0775, true); }
+        \Siro\Core\Database::configure([
+            'driver' => 'sqlite',
+            'host' => '127.0.0.1',
+            'port' => 0,
+            'database' => $tempDb,
+            'username' => '',
+            'password' => '',
+            'charset' => 'utf8',
+        ]);
         $_ENV['THROTTLE_FALLBACK'] = 'disabled';
         putenv('THROTTLE_FALLBACK=disabled');
         $app->loadRoutes($this->basePath . '/routes/api.php');
