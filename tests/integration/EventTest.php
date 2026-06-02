@@ -17,9 +17,10 @@ final class EventTest extends TestCase
         $this->createApp();
         Event::flush();
         $pdo = Database::connection();
+        $pk = self::autoIncrementPK();
         $pdo->exec("
             CREATE TABLE IF NOT EXISTS event_test_users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                {$pk},
                 name TEXT NOT NULL,
                 email TEXT NOT NULL,
                 created_at TEXT,
@@ -129,3 +130,4 @@ final class EventTest extends TestCase
         $this->assertSame(['deleting', 'deleted'], $events);
     }
 }
+

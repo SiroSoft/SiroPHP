@@ -36,6 +36,12 @@
         "siro"
     ],
     "scripts": {
+        "post-install-cmd": [
+            "composer dump-autoload 2>/dev/null || true"
+        ],
+        "post-update-cmd": [
+            "composer dump-autoload 2>/dev/null || true"
+        ],
         "test": "php vendor/bin/phpunit --no-coverage",
         "test:coverage": "php -d zend_extension=xdebug vendor/bin/phpunit --coverage-html coverage/html",
         "analyse": "php -d memory_limit=512M vendor/bin/phpstan analyse --level=max",

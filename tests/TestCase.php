@@ -30,6 +30,49 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
+    protected static function createdAtDefault(): string
+    {
+        try {
+            $driver = Database::connection()->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        } catch (\Throwable) {
+            $driver = 'sqlite';
+        }
+        return match ($driver) {
+            'mysql', 'mariadb' => 'DATETIME DEFAULT CURRENT_TIMESTAMP',
+            'pgsql', 'postgres', 'postgresql' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
+            default => 'TEXT DEFAULT (datetime(\'now\'))',
+        };
+    }
+
+    protected static function autoIncrementPK(): string
+    {
+        try {
+            $driver = Database::connection()->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        } catch (\Throwable) {
+            $driver = 'sqlite';
+        }
+        return match ($driver) {
+            'mysql', 'mariadb' => 'id INT AUTO_INCREMENT PRIMARY KEY',
+            'pgsql', 'postgres', 'postgresql' => 'id SERIAL PRIMARY KEY',
+            default => 'id INTEGER PRIMARY KEY AUTOINCREMENT',
+        };
+    }
+
+    /** @return array{ai:string, dt:string, ti:string} */
+    protected static function dbDialect(): array
+    {
+        try {
+            $driver = Database::connection()->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        } catch (\Throwable) {
+            $driver = 'sqlite';
+        }
+        return match ($driver) {
+            'mysql', 'mariadb' => ['ai' => 'INT AUTO_INCREMENT PRIMARY KEY', 'dt' => 'DATETIME', 'ti' => 'TINYINT'],
+            'pgsql', 'postgres', 'postgresql' => ['ai' => 'SERIAL PRIMARY KEY', 'dt' => 'TIMESTAMP', 'ti' => 'SMALLINT'],
+            default => ['ai' => 'INTEGER PRIMARY KEY AUTOINCREMENT', 'dt' => 'TEXT', 'ti' => 'INTEGER'], // sqlite
+        };
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -125,8 +168,9 @@ abstract class TestCase extends BaseTestCase
         $q = $quote; // shorthand
 
         // Create migrations table
+        $migId = self::$dbDriver === 'sqlite' ? 'id INTEGER PRIMARY KEY AUTOINCREMENT' : 'id INT AUTO_INCREMENT PRIMARY KEY';
         $pdo->exec("CREATE TABLE IF NOT EXISTS migrations (
-            id $ai,
+            $migId,
             migration VARCHAR(255) NOT NULL UNIQUE,
             batch INT NOT NULL DEFAULT 1,
             created_at $ts

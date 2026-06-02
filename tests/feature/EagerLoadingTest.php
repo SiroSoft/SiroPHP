@@ -30,8 +30,9 @@ final class EagerLoadingTest extends TestCase
         }
         Database::execute('DROP TABLE IF EXISTS test_eager_posts');
         Database::execute('DROP TABLE IF EXISTS test_eager_users');
-        Database::execute('CREATE TABLE test_eager_users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL)');
-        Database::execute('CREATE TABLE test_eager_posts (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, title TEXT NOT NULL, body TEXT)');
+        $pk = self::autoIncrementPK();
+        Database::execute("CREATE TABLE test_eager_users ({$pk}, name TEXT NOT NULL, email TEXT NOT NULL)");
+        Database::execute("CREATE TABLE test_eager_posts ({$pk}, user_id INTEGER NOT NULL, title TEXT NOT NULL, body TEXT)");
         for ($i = 1; $i <= 5; $i++) {
             Database::execute('INSERT INTO test_eager_users (name, email) VALUES (:name, :email)', ['name' => "User {$i}", 'email' => "user{$i}@test.com"]);
             for ($j = 1; $j <= 3; $j++) {

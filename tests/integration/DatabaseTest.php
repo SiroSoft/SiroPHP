@@ -16,13 +16,15 @@ final class DatabaseTest extends TestCase
         $this->createApp();
         $db = new Database();
         $db->execute('DROP TABLE IF EXISTS test_integration_users');
-        $db->execute('CREATE TABLE IF NOT EXISTS test_integration_users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+        $pk = self::autoIncrementPK();
+        $ct = self::createdAtDefault();
+        $db->execute("CREATE TABLE IF NOT EXISTS test_integration_users (
+            {$pk},
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
             age INTEGER,
-            created_at TEXT DEFAULT CURRENT_TIMESTAMP
-        )');
+            created_at {$ct}
+        ");
     }
 
     protected function tearDown(): void
@@ -113,3 +115,4 @@ final class DatabaseTest extends TestCase
         $this->assertCount(1, $users);
     }
 }
+
