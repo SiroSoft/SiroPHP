@@ -73,6 +73,8 @@ abstract class TestCase extends BaseTestCase
         };
     }
 
+    private ?App $cachedApp = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -80,6 +82,7 @@ abstract class TestCase extends BaseTestCase
         // Reset tables created flag for new test class (each class uses its own DB file)
         self::$tablesCreated = false;
         self::$dbDriver = '';
+        $this->cachedApp = null;
         Lang::setLocale('en');
 
         $rateDir = $this->basePath . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'rate_limit';
@@ -350,26 +353,26 @@ abstract class TestCase extends BaseTestCase
 
     protected function get(string $path, array $headers = []): TestResponse
     {
-        $app = $this->createApp();
-        return new TestResponse($this->dispatch($app, 'GET', $path, [], $headers));
+        if ($this->cachedApp === null) { $this->cachedApp = $this->createApp(); }
+        return new TestResponse($this->dispatch($this->cachedApp, 'GET', $path, [], $headers));
     }
 
     protected function post(string $path, array $body = [], array $headers = []): TestResponse
     {
-        $app = $this->createApp();
-        return new TestResponse($this->dispatch($app, 'POST', $path, $body, $headers));
+        if ($this->cachedApp === null) { $this->cachedApp = $this->createApp(); }
+        return new TestResponse($this->dispatch($this->cachedApp, 'POST', $path, $body, $headers));
     }
 
     protected function put(string $path, array $body = [], array $headers = []): TestResponse
     {
-        $app = $this->createApp();
-        return new TestResponse($this->dispatch($app, 'PUT', $path, $body, $headers));
+        if ($this->cachedApp === null) { $this->cachedApp = $this->createApp(); }
+        return new TestResponse($this->dispatch($this->cachedApp, 'PUT', $path, $body, $headers));
     }
 
     protected function delete(string $path, array $headers = []): TestResponse
     {
-        $app = $this->createApp();
-        return new TestResponse($this->dispatch($app, 'DELETE', $path, [], $headers));
+        if ($this->cachedApp === null) { $this->cachedApp = $this->createApp(); }
+        return new TestResponse($this->dispatch($this->cachedApp, 'DELETE', $path, [], $headers));
     }
 
     protected function assertDatabaseHas(string $table, array $conditions, ?string $connection = null): void
