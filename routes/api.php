@@ -205,7 +205,9 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     // -- Profile --
     $router->get('/profile', function (Request $req): array {
         $locale = $req->queryString('locale', 'en');
-        if (!in_array($locale, ['en', 'vi'])) $locale = 'en';
+        if (!in_array($locale, ['en', 'vi'])) {
+            $locale = 'en';
+        }
         Lang::setLocale($locale);
 
         $name = $req->query('name', 'Guest');
@@ -300,7 +302,9 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             foreach ($data as $key => $value) {
                 $strKey = (string) $key;
                 $strValue = is_scalar($value) ? (string) $value : '';
-                if ($strKey === '') continue;
+                if ($strKey === '') {
+                    continue;
+                }
                 $existing = \Siro\Core\Database::first("SELECT id FROM settings WHERE `key` = ?", [$strKey]);
                 if ($existing !== null) {
                     \Siro\Core\Database::execute("UPDATE settings SET `value` = ? WHERE `key` = ?", [$strValue, $strKey]);
@@ -332,7 +336,8 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
         try {
             $conn = \Siro\Core\Database::connection();
             $dbDriver = $conn->getAttribute(\PDO::ATTR_DRIVER_NAME);
-        } catch (\Throwable) {}
+        } catch (\Throwable) {
+        }
 
         return Response::success([
             'server' => $serverName,

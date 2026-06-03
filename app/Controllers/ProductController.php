@@ -89,7 +89,9 @@ final class ProductController extends Controller
     public function store(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
-        if ($forbidden !== null) return $forbidden;
+        if ($forbidden !== null) {
+            return $forbidden;
+        }
 
         $validated = $this->validate([
             'name' => 'required|min:1|max:255',
@@ -113,8 +115,11 @@ final class ProductController extends Controller
         if (isset($rawBody['category_id']) && is_numeric($rawBody['category_id'])) {
             try {
                 $cat = \Siro\Core\Database::first("SELECT name FROM categories WHERE id = ? LIMIT 1", [(int) $rawBody['category_id']]);
-                if ($cat) $validated['category'] = $cat['name'];
-            } catch (\Throwable) {}
+                if ($cat) {
+                    $validated['category'] = $cat['name'];
+                }
+            } catch (\Throwable) {
+            }
         }
 
         $currentUser = $request->user();
@@ -139,7 +144,9 @@ final class ProductController extends Controller
     public function update(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
-        if ($forbidden !== null) return $forbidden;
+        if ($forbidden !== null) {
+            return $forbidden;
+        }
 
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
@@ -168,8 +175,11 @@ final class ProductController extends Controller
         if (isset($rawBody['category_id']) && is_numeric($rawBody['category_id'])) {
             try {
                 $cat = \Siro\Core\Database::first("SELECT name FROM categories WHERE id = ? LIMIT 1", [(int) $rawBody['category_id']]);
-                if ($cat) $validated['category'] = $cat['name'];
-            } catch (\Throwable) {}
+                if ($cat) {
+                    $validated['category'] = $cat['name'];
+                }
+            } catch (\Throwable) {
+            }
         }
 
         $item = $this->service->update($id, $validated);
@@ -193,7 +203,9 @@ final class ProductController extends Controller
     public function delete(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
-        if ($forbidden !== null) return $forbidden;
+        if ($forbidden !== null) {
+            return $forbidden;
+        }
 
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;

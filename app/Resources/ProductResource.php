@@ -17,8 +17,11 @@ final class ProductResource extends Resource
         if (is_string($dbCategory) && $dbCategory !== '') {
             try {
                 $cat = \Siro\Core\Database::first("SELECT id FROM categories WHERE name = ? LIMIT 1", [$dbCategory]);
-                if (is_array($cat) && isset($cat['id']) && is_numeric($cat['id'])) $categoryId = (int) $cat['id'];
-            } catch (\Throwable) {}
+                if (is_array($cat) && isset($cat['id']) && is_numeric($cat['id'])) {
+                    $categoryId = (int) $cat['id'];
+                }
+            } catch (\Throwable) {
+            }
         }
 
         return [

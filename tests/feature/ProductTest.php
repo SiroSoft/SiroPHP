@@ -8,32 +8,40 @@ use App\Tests\TestCase;
 
 final class ProductTest extends TestCase
 {
-    private array $adminHeaders = [];
+    private static array $adminHeaders = [];
+    private static bool $initialized = false;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $app = $this->createApp();
-        $this->adminHeaders = $this->authenticate($app);
+        if (!self::$initialized) {
+            self::$initialized = true;
+            $dbFile = dirname(__DIR__, 2) . '/storage/tests/' . str_replace('\\', '_', static::class) . '.db';
+            if (file_exists($dbFile)) {
+                @unlink($dbFile);
+            }
+            $app = $this->createApp();
+            self::$adminHeaders = $this->authenticate($app);
+        }
     }
 
     public function testIndexReturns200(): void
     {
-        $this->get('/api/products', $this->adminHeaders)->assertOk();
+        $this->get('/api/products', self::$adminHeaders)->assertOk();
     }
 
     public function testShowReturns404ForInvalidId(): void
     {
-        $this->get('/api/products/999', $this->adminHeaders)->assertNotFound();
+        $this->get('/api/products/999', self::$adminHeaders)->assertNotFound();
     }
 
     public function testStoreReturns201WithValidData(): void
     {
-        $this->post('/api/products', ['name' => 'Test Product', 'price' => 10, 'stock' => 5], $this->adminHeaders)->assertCreated();
+        $this->post('/api/products', ['name' => 'Test Product', 'price' => 10, 'stock' => 5], self::$adminHeaders)->assertCreated();
     }
 
     public function testStoreReturns422WithoutRequiredFields(): void
     {
-        $this->post('/api/products', [], $this->adminHeaders)->assertValidationError();
+        $this->post('/api/products', [], self::$adminHeaders)->assertValidationError();
     }
 }

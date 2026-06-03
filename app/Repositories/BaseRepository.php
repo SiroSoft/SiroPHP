@@ -51,7 +51,9 @@ abstract class BaseRepository
     public function update(int $id, array $data): ?Model
     {
         $item = $this->model->find($id);
-        if ($item === null) return null;
+        if ($item === null) {
+            return null;
+        }
         $item->update($data);
         return $item;
     }
@@ -59,7 +61,9 @@ abstract class BaseRepository
     public function destroy(int $id): bool
     {
         $item = $this->model->find($id);
-        if ($item === null) return false;
+        if ($item === null) {
+            return false;
+        }
         return (bool) $item->delete();
     }
 

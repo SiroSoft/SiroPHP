@@ -11,6 +11,8 @@ use Siro\Core\ValidationException;
 use Siro\Core\ModelNotFoundException;
 use Siro\Core\DB\DatabaseConnectionException;
 use Siro\Core\Logger;
+use App\Exceptions\DuplicateEmailException;
+use App\Exceptions\NoFieldsToUpdateException;
 
 final class Handler
 {
@@ -22,6 +24,8 @@ final class Handler
             $e instanceof ValidationException => $e->toResponse(),
             $e instanceof ModelNotFoundException => Response::error($e->getMessage(), 404),
             $e instanceof DatabaseConnectionException => self::dbError($e),
+            $e instanceof DuplicateEmailException => Response::error($e->getMessage(), 409),
+            $e instanceof NoFieldsToUpdateException => Response::error($e->getMessage(), 400),
             default => self::defaultError($e),
         };
     }

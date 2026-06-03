@@ -33,7 +33,9 @@ final class UserController extends Controller
     public function index(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
-        if ($forbidden !== null) return $forbidden;
+        if ($forbidden !== null) {
+            return $forbidden;
+        }
 
         $page = max(1, $request->queryInt('page', 1));
         $perPage = min(100, max(1, $request->queryInt('per_page', 20)));
@@ -41,7 +43,9 @@ final class UserController extends Controller
         $filters = [];
         $status = $request->query('status');
         if (is_string($status) && $status !== '') {
-            $filters['status'] = match ($status) { 'inactive' => 0, 'suspended' => 2, default => 1 };
+            $filters['status'] = match ($status) {
+                'inactive' => 0, 'suspended' => 2, default => 1
+            };
         }
         $role = $request->query('role');
         if (is_string($role) && $role !== '') {
@@ -74,7 +78,9 @@ final class UserController extends Controller
     {
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
-        if ($id <= 0) return $this->error('Invalid id', 422);
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
 
         $currentUser = $request->user();
         $currentUserId = 0;
@@ -172,7 +178,9 @@ final class UserController extends Controller
     public function store(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
-        if ($forbidden !== null) return $forbidden;
+        if ($forbidden !== null) {
+            return $forbidden;
+        }
 
         $data = $this->validate([
             'name' => 'required|min:3|max:120',
@@ -185,7 +193,9 @@ final class UserController extends Controller
             $data['role'] = $rawBody['role'];
         }
         if (isset($rawBody['status']) && is_string($rawBody['status'])) {
-            $data['status'] = match ($rawBody['status']) { 'inactive' => 0, 'suspended' => 2, default => 1 };
+            $data['status'] = match ($rawBody['status']) {
+                'inactive' => 0, 'suspended' => 2, default => 1
+            };
         }
         if (isset($rawBody['avatar'])) {
             $data['avatar'] = $rawBody['avatar'];
@@ -245,7 +255,9 @@ final class UserController extends Controller
             $data['role'] = $rawBody['role'];
         }
         if (isset($rawBody['status']) && is_string($rawBody['status'])) {
-            $data['status'] = match ($rawBody['status']) { 'inactive' => 0, 'suspended' => 2, default => 1 };
+            $data['status'] = match ($rawBody['status']) {
+                'inactive' => 0, 'suspended' => 2, default => 1
+            };
         }
         if (isset($rawBody['avatar'])) {
             $data['avatar'] = $rawBody['avatar'];
