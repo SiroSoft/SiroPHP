@@ -97,7 +97,15 @@ final class ProductController extends Controller
             'name' => 'required|min:1|max:255',
             'description' => 'max:65535',
             'price' => 'required|numeric|min:0',
+            'compare_price' => 'numeric|min:0',
+            'cost_price' => 'numeric|min:0',
+            'barcode' => 'max:100',
             'stock' => 'required|integer|min:0',
+            'stock_min' => 'integer|min:0',
+            'weight' => 'numeric|min:0',
+            'width' => 'numeric|min:0',
+            'height' => 'numeric|min:0',
+            'length' => 'numeric|min:0',
             'category' => 'max:100',
             'status' => 'max:20',
             'cover_image' => 'max:2048',
@@ -107,6 +115,9 @@ final class ProductController extends Controller
         $rawBody = $request->all();
         if (isset($rawBody['is_active'])) {
             $validated['status'] = $rawBody['is_active'] ? 'active' : 'inactive';
+        }
+        if (isset($rawBody['is_featured'])) {
+            $validated['is_featured'] = (bool) $rawBody['is_featured'];
         }
         if (isset($rawBody['category_name'])) {
             $validated['category'] = $rawBody['category_name'];
@@ -158,7 +169,15 @@ final class ProductController extends Controller
             'name' => 'min:1|max:255',
             'description' => 'max:65535',
             'price' => 'numeric|min:0',
+            'compare_price' => 'numeric|min:0',
+            'cost_price' => 'numeric|min:0',
+            'barcode' => 'max:100',
             'stock' => 'integer|min:0',
+            'stock_min' => 'integer|min:0',
+            'weight' => 'numeric|min:0',
+            'width' => 'numeric|min:0',
+            'height' => 'numeric|min:0',
+            'length' => 'numeric|min:0',
             'category' => 'max:100',
             'status' => 'max:20',
             'cover_image' => 'max:2048',
@@ -168,6 +187,9 @@ final class ProductController extends Controller
         $rawBody = $request->all();
         if (isset($rawBody['is_active'])) {
             $validated['status'] = $rawBody['is_active'] ? 'active' : 'inactive';
+        }
+        if (isset($rawBody['is_featured'])) {
+            $validated['is_featured'] = (bool) $rawBody['is_featured'];
         }
         if (isset($rawBody['category_name'])) {
             $validated['category'] = $rawBody['category_name'];
