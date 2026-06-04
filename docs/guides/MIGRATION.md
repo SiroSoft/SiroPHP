@@ -11,7 +11,24 @@ sidebar_label: M IG RA TI ON
 
 ---
 
-## v0.22 → v0.23 (Current)
+## v0.33 → v0.34 (Current)
+
+```bash
+composer update sirosoft/core:^0.34
+```
+
+### Breaking Changes
+- Database::connection() returns PDO directly, use DB::table() for query builder
+
+### New (opt-in)
+- **API Versioning**: middleware `version` added to `/api` group
+- **ETag**: middleware `etag` auto-returns `304 Not Modified`
+- **Metrics**: GET `/metrics` endpoint (OpenMetrics format)
+- **Auth caching**: User DB query cached per request
+
+---
+
+## v0.22 → v0.23
 
 ```bash
 composer update sirosoft/core:^0.23

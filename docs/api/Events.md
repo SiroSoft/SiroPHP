@@ -41,13 +41,13 @@ final class UserCreatedEvent
 
 ```php
 // Dispatch with payload
-Event::dispatch(new UserCreatedEvent($user->id, $user->email));
+Event::emit(new UserCreatedEvent($user->id, $user->email));
 
 // Dispatch with string name + payload
-Event::dispatch('user.created', ['user_id' => $user->id, 'email' => $user->email]);
+Event::emit('user.created', ['user_id' => $user->id, 'email' => $user->email]);
 
 // Dispatch with wildcard
-Event::dispatch('user.*', $data);
+Event::emit('user.*', $data);
 ```
 
 ---
@@ -61,16 +61,16 @@ use App\Events\UserCreatedEvent;
 use App\Listeners\SendWelcomeEmailListener;
 
 // Class-based listener
-Event::listen(UserCreatedEvent::class, SendWelcomeEmailListener::class);
+Event::on(UserCreatedEvent::class, SendWelcomeEmailListener::class);
 
 // Closure listener
-Event::listen(UserCreatedEvent::class, function (UserCreatedEvent $event): void {
+Event::on(UserCreatedEvent::class, function (UserCreatedEvent $event): void {
     Mail::to($event->email)->send(new WelcomeMail($event->userId));
 });
 
 // Wildcard listener
-Event::listen('user.*', function (string $event, array $data): void {
-    Logger::info("User event: {$event}", $data);
+Event::on('user.*', function (string $event, array $data): void {
+    Logger::debug("User event: {$event}", $data);
 });
 ```
 
@@ -111,8 +111,8 @@ php siro make:listener SendWelcomeEmail
 
 ```php
 // Listener runs once, then removed
-Event::listenOnce('user.created', function ($event): void {
-    Logger::info('First user created');
+Event::once('user.created', function ($event): void {
+    Logger::debug('First user created');
 });
 ```
 
@@ -123,7 +123,7 @@ Event::listenOnce('user.created', function ($event): void {
 Return `false` from a listener to stop event propagation:
 
 ```php
-Event::listen('user.created', function ($event): void {
+Event::on('user.created', function ($event): void {
     if ($this->shouldBlock()) {
         return false; // Stops further listeners
     }
@@ -137,15 +137,15 @@ Event::listen('user.created', function ($event): void {
 Models automatically dispatch lifecycle events:
 
 ```php
-// Available model events
-Event::listen('model.creating', function ($model): void {});
-Event::listen('model.created', function ($model): void {});
-Event::listen('model.saving', function ($model): void {});
-Event::listen('model.saved', function ($model): void {});
-Event::listen('model.updating', function ($model): void {});
-Event::listen('model.updated', function ($model): void {});
-Event::listen('model.deleting', function ($model): void {});
-Event::listen('model.deleted', function ($model): void {});
+// Available model events (replace `{table}` with your model's table name)
+Event::on('{table}.creating', function ($model): void {});
+Event::on('{table}.created', function ($model): void {});
+Event::on('{table}.saving', function ($model): void {});
+Event::on('{table}.saved', function ($model): void {});
+Event::on('{table}.updating', function ($model): void {});
+Event::on('{table}.updated', function ($model): void {});
+Event::on('{table}.deleting', function ($model): void {});
+Event::on('{table}.deleted', function ($model): void {});
 ```
 
 ---
@@ -154,10 +154,10 @@ Event::listen('model.deleted', function ($model): void {});
 
 | Method | Description |
 |--------|-------------|
-| `dispatch(object\|string $event, mixed $payload)` | Dispatch event |
-| `listen(string $event, callable\|string $listener)` | Register listener |
-| `listenOnce(string $event, callable $listener)` | Register one-time listener |
-| `removeListener(string $event, callable $listener)` | Remove listener |
-| `getListeners(string $event)` | Get all listeners for event |
+| `emit(object\|string $event, mixed $payload)` | Emit event |
+| `on(string $event, callable\|string $listener)` | Register listener |
+| `once(string $event, callable $listener)` | Register one-time listener |
+| `off(string $event)` | Remove all listeners for event |
 | `hasListeners(string $event)` | Check if event has listeners |
+| `currentEvent()` | Get name of currently firing event |
 | `flush()` | Remove all listeners |

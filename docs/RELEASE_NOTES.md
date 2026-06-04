@@ -7,6 +7,22 @@ sidebar_label: R EL EA SE N OT ES
 
 # Release Notes
 
+## v0.34.0 — Enterprise 10-Round Audit (2026-06-04)
+- PHPStan level max: 0 errors (core + skeleton)
+- PHPUnit: 19190/19190 core, 463/463 skeleton — 0 failures
+- QueryBuilder UPSERT driver dispatch (MySQL/PgSQL/SQLite)
+- CLI: 19 help text mismatches fixed (ports, flags, descriptions)
+- Security: auth header redacted in traces, error handling for domain exceptions (409/400)
+- Testing: migration recording fix, prepared statements leak fix
+- DI: autowiring, singleton, contextual binding verified
+- Route matching: 14,971 ops/sec (17x improvement)
+- Admin starters: CSRF/security hardening, E2E tests added
+- MCP server: path traversal fixed, process timeout added
+- Landing page: 90/90 pages, security headers, catch-all routing
+
+## v0.33.0 — Security Audit & Hardening (2026-06-01)
+- OWASP Top 10 mitigations, auth timing attack fix, session CSRF token rotation, rate limiter, JWT_SECRET validation (64 chars)
+
 ## v0.32.0 (2026-05-30)
 - API Response Contract v1 with standardized envelope format
 - OpenAPI generator now produces spec matching Response Contract

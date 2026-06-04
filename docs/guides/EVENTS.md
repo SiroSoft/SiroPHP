@@ -18,7 +18,7 @@ use Siro\Core\Event;
 Event::on('user.registered', function (array $payload) {
     // Handle the event
     $userId = $payload['id'];
-    Log::info("User registered: $userId");
+    Logger::debug("User registered: $userId");
 });
 
 // Emit an event
@@ -94,7 +94,7 @@ Get the name of the currently firing event (useful in wildcard listeners):
 ```php
 Event::on('users.*', function ($payload) {
     $event = Event::currentEvent();  // 'users.created', 'users.updated', etc.
-    Log::info("$event fired");
+    Logger::debug("$event fired");
 });
 ```
 
@@ -132,6 +132,8 @@ Models automatically fire events during CRUD operations:
 | `{table}.created` | After insert | No |
 | `{table}.saving` | Before save | Yes (return `false`) |
 | `{table}.saved` | After save | No |
+| `{table}.updating` | Before update | Yes (return `false`) |
+| `{table}.updated` | After update | No |
 | `{table}.deleting` | Before delete | Yes (return `false`) |
 | `{table}.deleted` | After delete | No |
 
@@ -143,7 +145,7 @@ Event::on('users.creating', function ($model) {
 
 // The `created`/`saved`/`deleted` events receive no arguments
 Event::on('users.created', function () {
-    Log::info('User was created');
+    Logger::debug('User was created');
 });
 
 // Block deletion of protected users

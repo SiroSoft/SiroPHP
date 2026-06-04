@@ -34,7 +34,7 @@ class ProductObserver extends ModelObserver
     public function creating(Model $model): void
     {
         // Auto-set slug before creation
-        $model->setAttribute('slug', str_slug($model->getAttribute('name')));
+        $model->setAttribute('slug', Str::slug($model->getAttribute('name')));
     }
 
     public function created(Model $model): void
@@ -101,7 +101,7 @@ class MyObserver extends ModelObserver
 public function saving(Model $model): void
 {
     if ($model->getAttribute('slug') === null) {
-        $model->setAttribute('slug', str_slug($model->getAttribute('title')));
+        $model->setAttribute('slug', Str::slug($model->getAttribute('title')));
     }
 }
 

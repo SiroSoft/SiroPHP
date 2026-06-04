@@ -89,7 +89,7 @@ sidebar_label: R EF ER EN CE
 |-----------|-----------|-------------|
 | **Schedule** | [api/Schedule.md](api/Schedule.md) | Cron-like task scheduling |
 | **Console / Custom Commands** | [api/Console.md](api/Console.md) | Register custom CLI commands |
-| **CLI Reference** | [api/CLI.md](api/CLI.md) | Full 72-command reference with examples |
+| **CLI Reference** | [api/CLI.md](api/CLI.md) | Full 91-command reference with examples |
 
 ### Debug & Testing
 
@@ -269,7 +269,6 @@ LOG_MAX_SIZE_MB=1024
 | Code | Meaning |
 |------|---------|
 | 200 | Success |
-| 201 | Created |
 | 204 | No Content |
 | 400 | Bad Request |
 | 401 | Unauthorized (invalid/expired token) |

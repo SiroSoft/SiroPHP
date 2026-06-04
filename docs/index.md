@@ -92,7 +92,7 @@ sidebar_label: Overview
 - **[Observers](api/Observers.md)** - Model lifecycle hooks
 
 ### CLI & Debug
-- **[CLI Reference](api/CLI.md)** - All 72 commands
+- **[CLI Reference](api/CLI.md)** - All 91 commands
 - **[Custom Commands](api/Console.md)** - Register custom CLI commands
 - **[Debug](api/Debug.md)** - Trace system, request replay
 - **[Testing](api/Testing.md)** - HTTP test helpers
@@ -382,5 +382,5 @@ Want to improve documentation? We welcome contributions!
 ---
 
 *Last updated: May 30, 2026*  
-*Documentation version: 0.33.1*  
-*SiroPHP version: 0.33.1*
+*Documentation version: 0.34.0*  
+*SiroPHP version: 0.34.0*

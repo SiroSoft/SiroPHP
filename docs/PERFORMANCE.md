@@ -339,11 +339,11 @@ foreach (User::cursor() as $user) {
 ```php
 // Check current memory
 $memory = memory_get_usage(true) / 1024 / 1024; // MB
-Logger::info("Memory usage: {$memory}MB");
+Logger::debug("Memory usage: {$memory}MB");
 
 // Peak memory
 $peak = memory_get_peak_usage(true) / 1024 / 1024;
-Logger::info("Peak memory: {$peak}MB");
+Logger::debug("Peak memory: {$peak}MB");
 ```
 
 ---
@@ -416,7 +416,7 @@ $result = $this->processData();
 
 $duration = (microtime(true) - $start) * 1000;
 
-Logger::info('Processing completed', [
+Logger::debug('Processing completed', [
     'duration_ms' => round($duration, 2),
     'records_processed' => count($result),
 ]);
@@ -549,7 +549,7 @@ php siro log:trace <trace-id>
 **Diagnosis:**
 ```php
 // Add to controller
-Logger::info('Memory', [
+Logger::debug('Memory', [
     'current' => memory_get_usage(true) / 1024 / 1024,
     'peak' => memory_get_peak_usage(true) / 1024 / 1024,
 ]);
@@ -590,7 +590,7 @@ EXPLAIN SELECT * FROM users WHERE email = 'test@example.com';
 
 | Framework | Avg Ops/s | Memory | Dependencies | Boot Time |
 |-----------|-----------|--------|--------------|-----------|
-| **SiroPHP v0.33.1** | **398K** | **2MB** | **0** | **<1ms** |
+| **SiroPHP v0.34.0** | **398K** | **2MB** | **0** | **<1ms** |
 | Laravel | 100-200 | 10-20MB | 50+ | 50-100ms |
 | Slim | 5K-10K | 3-5MB | 5+ | 10-20ms |
 | Lumen | 2K-5K | 4-8MB | 10+ | 20-40ms |
