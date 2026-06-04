@@ -3295,17 +3295,12 @@
                         "type": "string",
                         "enum": [
                             "en",
-                            "vi"
+                            "vi",
+                            "de",
+                            "zh",
+                            "ja"
                         ],
                         "example": "en"
-                    },
-                    "status": {
-                        "type": "string",
-                        "enum": [
-                            "draft",
-                            "published"
-                        ],
-                        "example": "draft"
                     }
                 },
                 "required": [
@@ -3502,17 +3497,12 @@
                         "type": "string",
                         "enum": [
                             "en",
-                            "vi"
+                            "vi",
+                            "de",
+                            "zh",
+                            "ja"
                         ],
                         "example": "en"
-                    },
-                    "status": {
-                        "type": "string",
-                        "enum": [
-                            "draft",
-                            "published"
-                        ],
-                        "example": "draft"
                     }
                 }
             },

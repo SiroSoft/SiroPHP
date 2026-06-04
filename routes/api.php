@@ -205,7 +205,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     // -- Profile --
     $router->get('/profile', function (Request $req): array {
         $locale = $req->queryString('locale', 'en');
-        if (!in_array($locale, ['en', 'vi'])) {
+        if (!in_array($locale, ['en', 'vi', 'de', 'zh', 'ja'])) {
             $locale = 'en';
         }
         Lang::setLocale($locale);
@@ -222,7 +222,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
                 'locale' => $locale,
                 'greeting' => $greeting,
                 'messages_count' => $messagesCount,
-                'available_locales' => ['en', 'vi'],
+                'available_locales' => ['en', 'vi', 'de', 'zh', 'ja'],
             ],
         ];
     })->middleware(['auth']);
