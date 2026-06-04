@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * SiroPHP Debug Workflow Demo — 30-Second Pipeline
  *
- * Shows the complete debug cycle: test → fail → why → fix → retry → trace → replay.
+ * Shows the complete debug cycle: test → fail → why → fix → retry → trace → replay → diff → regression.
  *
  * Run: php siro demo
  * Or:  php scripts/demo.php
@@ -137,18 +137,59 @@ echo "    To execute: php siro replay b3e4f5a --force\n";
 echo "\n";
 usleep(500000);
 
+// Step 7 — Diff traces
+echo "  ── Step 7: Diff before vs after fix ────────────────\n";
+echo "\n";
+echo "  \$ php siro replay b3e4f5a --diff\n";
+echo "\n";
+echo "    ── Response Diff ─────────────────────────────────\n";
+echo "    ┌────────────────────┬─────────────────────┬──────┐\n";
+echo "    │ Field              │ Before (f8a2c1d)     │ After (b3e4f5a) │\n";
+echo "    ├────────────────────┼─────────────────────┼──────┤\n";
+echo "    │ Status             │ 422                 │ 201  │ ✓\n";
+echo "    │ errors             │ price is required   │ null │ ✓\n";
+echo "    │ data.price         │ null                │ 10   │ ✓\n";
+echo "    │ data.name          │ null                │ Test │ ✓\n";
+echo "    │ response_time      │ 12.3ms              │ 8.7ms│ ✓\n";
+echo "    └────────────────────┴─────────────────────┴──────┘\n";
+echo "\n";
+echo "    Result: ✅ All fields match expected output\n";
+echo "\n";
+usleep(500000);
+
+// Step 8 — Regression
+echo "  ── Step 8: Regression check ───────────────────────\n";
+echo "\n";
+echo "  \$ php siro test:regression\n";
+echo "\n";
+echo "    Running tests...\n";
+echo "    ✓ phpunit --no-coverage ............... 463/463 passed\n";
+echo "    ✓ test:fuzz ........................... 1,000 mutations, 0 failures\n";
+echo "    ✓ test:chaos .......................... 7 chaos tests, 0 failures\n";
+echo "    ✓ test:property ....................... 24 invariants, 0 failures\n";
+echo "\n";
+echo "    ── Regression Summary ───────────────────────────\n";
+echo "    Tests:      1,494 total\n";
+echo "    Passed:     1,494\n";
+echo "    Failed:     0\n";
+echo "    New issues: 0\n";
+echo "    Status:     ✅ No regression detected\n";
+echo "\n";
+usleep(500000);
+
 // Summary
 echo "  ╔══════════════════════════════════════════════════╗\n";
 echo "  ║  Complete debug cycle: 5 seconds                 ║\n";
 echo "  ║  Traditional approach: 2-5 minutes               ║\n";
 echo "  ╚══════════════════════════════════════════════════╝\n";
 echo "\n";
-echo "  Commands used in this demo:\n";
+echo   "  Commands used in this demo:\n";
 echo "    php siro api:test           Test any endpoint from CLI\n";
 echo "    php siro api:why            Explain why a test failed\n";
 echo "    php siro trace:list         Browse captured traces\n";
 echo "    php siro log:trace          Inspect full request context\n";
-echo "    php siro replay             Replay any past request\n";
+echo "    php siro replay --dif       Diff response before vs after fix\n";
+echo "    php siro test:regression    Run full suite + fuzz to detect regression\n";
 echo "\n";
 echo "  To learn more:\n";
 echo "    php siro <command> --help\n";
