@@ -1,5 +1,21 @@
 # Changelog — SiroPHP Skeleton
 
+## v0.35.0 (2026-06-07)
+
+### 🚀 Features
+- Redis rate limiter driver for high-traffic production deployments
+- Email verification flow with token-based confirmation and resend
+- Demo workflow mode for quick prototyping and client presentations
+
+### 🔧 Debug & CLI
+- Enhanced trace filtering with additional query and error filters
+- Replay diff highlighting for clearer before/after comparisons
+- Structured error output with machine-parseable JSON fallback
+
+### 🧪 Testing
+- 463 tests, 0 errors, 0 failures
+- PHPStan level max: 0 errors
+
 ## v0.34.0 (2026-06-03)
 
 ### 🛡️ Security

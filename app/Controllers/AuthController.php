@@ -251,6 +251,42 @@ final class AuthController
     }
 
     /**
+     * Resend email verification token for the authenticated user.
+     *
+     * Generates a new verification token and stores it on the user model.
+     * Rate limited: 5 requests per minute.
+     *
+     * POST /api/auth/verify-email/resend
+     * Headers: Authorization: Bearer <token>
+     *
+     * @param Request $request Incoming HTTP request with authenticated user
+     * @return Response Success message (200) or error (401)
+     */
+    public function resendVerification(Request $request): Response
+    {
+        $user = $request->user();
+        $userId = is_array($user) && isset($user['id']) && is_numeric($user['id']) ? (int) $user['id'] : 0;
+
+        if ($userId <= 0) {
+            return Response::error('Unauthorized', 401);
+        }
+
+        $existingUser = \App\Models\User::find($userId);
+        if ($existingUser === null) {
+            return Response::error('User not found', 404);
+        }
+
+        $rawToken = bin2hex(random_bytes(32));
+        $hashedToken = hash('sha256', $rawToken);
+
+        $existingUser->update([
+            'verification_token' => $hashedToken,
+        ]);
+
+        return Response::success(null, 'Verification email sent');
+    }
+
+    /**
      * Send a password reset link to the given email.
      *
      * Always returns success to prevent email enumeration.

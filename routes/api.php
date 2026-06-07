@@ -180,6 +180,9 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     $router->post('/auth/verify-email', [AuthController::class, 'verifyEmail'])
         ->middleware([JsonMiddleware::class, 'throttle:10,1']);
 
+    $router->post('/auth/verify-email/resend', [AuthController::class, 'resendVerification'])
+        ->middleware(['auth', JsonMiddleware::class, 'throttle:5,1']);
+
     // -- Auth (protected) --
     $router->get('/auth/me', [AuthController::class, 'me'])
         ->middleware(['auth', 'throttle:120,1']);
