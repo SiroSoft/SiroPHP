@@ -29,7 +29,9 @@ final class MassAssignmentTest extends TestCase
             $this->markTestSkipped('Could not determine database driver');
         }
         Database::execute('DROP TABLE IF EXISTS ma_test_users');
-        Database::execute('CREATE TABLE ma_test_users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL, role TEXT DEFAULT "user", is_admin INTEGER DEFAULT 0, created_at TEXT DEFAULT CURRENT_TIMESTAMP)');
+        $pk = self::autoIncrementPK();
+        $ct = self::createdAtDefault();
+        Database::execute("CREATE TABLE ma_test_users ({$pk}, name TEXT NOT NULL, email TEXT NOT NULL, role TEXT DEFAULT \"user\", is_admin INTEGER DEFAULT 0, created_at {$ct})");
         parent::setUp();
     }
 

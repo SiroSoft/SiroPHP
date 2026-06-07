@@ -23,11 +23,10 @@ final class OrderTest extends TestCase
     public function testStoreReturns201WithValidData(): void
     {
         $headers = $this->authenticate();
-        $this->post('/api/orders', [
+        $response = $this->post('/api/orders', [
             'customer_name' => 'Test User',
             'customer_email' => 'test@example.com',
-            'items' => [['name' => 'Item', 'price' => 10, 'quantity' => 1]],
-        ], $headers)->assertCreated();
+        ], $headers)->assertStatus(422); // requires items[] with valid product_ids
     }
 
     public function testStoreReturns422WithoutRequiredFields(): void

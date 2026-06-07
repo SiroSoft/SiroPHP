@@ -30,9 +30,11 @@ final class QueueMailTest extends TestCase
         } catch (\Throwable) {
             $this->markTestSkipped('Could not determine database driver');
         }
+        $pk = self::autoIncrementPK();
+        $ct = self::createdAtDefault();
         Database::execute("
             CREATE TABLE IF NOT EXISTS jobs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                {$pk},
                 job TEXT NOT NULL,
                 data TEXT NOT NULL,
                 attempts INTEGER NOT NULL DEFAULT 0,
@@ -41,20 +43,20 @@ final class QueueMailTest extends TestCase
                 timeout INTEGER NOT NULL DEFAULT 120,
                 available_at INTEGER NOT NULL DEFAULT 0,
                 locked_until INTEGER DEFAULT NULL,
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                created_at {$ct}
             )
         ");
         Database::execute("
             CREATE TABLE IF NOT EXISTS failed_jobs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                {$pk},
                 job TEXT NOT NULL,
                 data TEXT NOT NULL,
                 error TEXT NOT NULL,
-                failed_at TEXT DEFAULT CURRENT_TIMESTAMP
+                failed_at {$ct}
             )
         ");
-        Database::execute("DELETE FROM jobs");
-        Database::execute("DELETE FROM failed_jobs");
+        Database::execute("TRUNCATE TABLE jobs");
+        Database::execute("TRUNCATE TABLE failed_jobs");
         parent::setUp();
     }
 
@@ -228,3 +230,4 @@ final class FailingJob
     /** @param array<string, mixed> $data */
     public function handle(array $data = []): void { throw new \RuntimeException('Test failure'); }
 }
+

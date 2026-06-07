@@ -32,7 +32,7 @@ Visit: http://localhost:8080
 ```bash
 composer require sirosoft/core
 ```
-> **New in v0.32.0**: Packages auto-register CLI commands and service providers.
+> **New in v0.33.1**: Packages auto-register CLI commands and service providers.
 > Just `composer require vendor/package` — no manual configuration needed.
 
 ---

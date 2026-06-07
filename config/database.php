@@ -24,10 +24,15 @@ $defaultPorts = [
     'sqlite' => 0,
 ];
 
+$readHost = Env::get('DB_READ_HOST', '');
+$readPort = (int) Env::get('DB_READ_PORT', (string) ($defaultPorts[$driver] ?? 3306));
+
 return [
     'driver' => $driver,
     'host' => Env::get('DB_HOST', '127.0.0.1'),
     'port' => (int) Env::get('DB_PORT', (string) ($defaultPorts[$driver] ?? 3306)),
+    'read_host' => $readHost !== '' ? $readHost : null,
+    'read_port' => $readHost !== '' ? $readPort : null,
     'database' => Env::get('DB_DATABASE', ''),
     'username' => Env::get('DB_USERNAME', ''),
     'password' => Env::get('DB_PASSWORD', ''),

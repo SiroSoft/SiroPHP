@@ -30,10 +30,59 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
+    protected static function createdAtDefault(): string
+    {
+        try {
+            $driver = Database::connection()->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        } catch (\Throwable) {
+            $driver = 'sqlite';
+        }
+        return match ($driver) {
+            'mysql', 'mariadb' => 'DATETIME DEFAULT CURRENT_TIMESTAMP',
+            'pgsql', 'postgres', 'postgresql' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
+            default => 'TEXT DEFAULT (datetime(\'now\'))',
+        };
+    }
+
+    protected static function autoIncrementPK(): string
+    {
+        try {
+            $driver = Database::connection()->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        } catch (\Throwable) {
+            $driver = 'sqlite';
+        }
+        return match ($driver) {
+            'mysql', 'mariadb' => 'id INT AUTO_INCREMENT PRIMARY KEY',
+            'pgsql', 'postgres', 'postgresql' => 'id SERIAL PRIMARY KEY',
+            default => 'id INTEGER PRIMARY KEY AUTOINCREMENT',
+        };
+    }
+
+    /** @return array{ai:string, dt:string, ti:string} */
+    protected static function dbDialect(): array
+    {
+        try {
+            $driver = Database::connection()->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        } catch (\Throwable) {
+            $driver = 'sqlite';
+        }
+        return match ($driver) {
+            'mysql', 'mariadb' => ['ai' => 'INT AUTO_INCREMENT PRIMARY KEY', 'dt' => 'DATETIME', 'ti' => 'TINYINT'],
+            'pgsql', 'postgres', 'postgresql' => ['ai' => 'SERIAL PRIMARY KEY', 'dt' => 'TIMESTAMP', 'ti' => 'SMALLINT'],
+            default => ['ai' => 'INTEGER PRIMARY KEY AUTOINCREMENT', 'dt' => 'TEXT', 'ti' => 'INTEGER'], // sqlite
+        };
+    }
+
+    private ?App $cachedApp = null;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->basePath = dirname(__DIR__);
+        // Reset tables created flag for new test class (each class uses its own DB file)
+        self::$tablesCreated = false;
+        self::$dbDriver = '';
+        $this->cachedApp = null;
         Lang::setLocale('en');
 
         $rateDir = $this->basePath . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'rate_limit';
@@ -50,6 +99,12 @@ abstract class TestCase extends BaseTestCase
     {
         self::rollbackTransaction();
         parent::tearDown();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        $dbFile = dirname(__DIR__) . '/storage/tests/' . str_replace('\\', '_', static::class) . '.db';
+        if (is_file($dbFile)) { @unlink($dbFile); }
     }
 
     protected static function resetTransaction(): void
@@ -125,8 +180,9 @@ abstract class TestCase extends BaseTestCase
         $q = $quote; // shorthand
 
         // Create migrations table
+        $migId = self::$dbDriver === 'sqlite' ? 'id INTEGER PRIMARY KEY AUTOINCREMENT' : 'id INT AUTO_INCREMENT PRIMARY KEY';
         $pdo->exec("CREATE TABLE IF NOT EXISTS migrations (
-            id $ai,
+            $migId,
             migration VARCHAR(255) NOT NULL UNIQUE,
             batch INT NOT NULL DEFAULT 1,
             created_at $ts
@@ -194,12 +250,14 @@ abstract class TestCase extends BaseTestCase
             }
         }
 
-        // Start transaction for test isolation
-        try {
-            if (!$pdo->inTransaction()) {
-                $pdo->beginTransaction();
+        // Start transaction for test isolation (MySQL only; SQLite DDL is transactional)
+        if (self::$dbDriver !== 'sqlite') {
+            try {
+                if (!$pdo->inTransaction()) {
+                    $pdo->beginTransaction();
+                }
+            } catch (\Throwable) {
             }
-        } catch (\Throwable) {
         }
     }
 
@@ -214,6 +272,20 @@ abstract class TestCase extends BaseTestCase
 
         $app = new App($this->basePath);
         $app->boot();
+        // Override to SQLite temp file for test speed + cross-request data sharing
+        \Siro\Core\Database::purgeAll();
+        $tempDb = $this->basePath . '/storage/tests/' . str_replace('\\', '_', static::class) . '.db';
+        $dir = dirname($tempDb);
+        if (!is_dir($dir)) { mkdir($dir, 0775, true); }
+        \Siro\Core\Database::configure([
+            'driver' => 'sqlite',
+            'host' => '127.0.0.1',
+            'port' => 0,
+            'database' => $tempDb,
+            'username' => '',
+            'password' => '',
+            'charset' => 'utf8',
+        ]);
         $_ENV['THROTTLE_FALLBACK'] = 'disabled';
         putenv('THROTTLE_FALLBACK=disabled');
         $app->loadRoutes($this->basePath . '/routes/api.php');
@@ -281,26 +353,26 @@ abstract class TestCase extends BaseTestCase
 
     protected function get(string $path, array $headers = []): TestResponse
     {
-        $app = $this->createApp();
-        return new TestResponse($this->dispatch($app, 'GET', $path, [], $headers));
+        if ($this->cachedApp === null) { $this->cachedApp = $this->createApp(); }
+        return new TestResponse($this->dispatch($this->cachedApp, 'GET', $path, [], $headers));
     }
 
     protected function post(string $path, array $body = [], array $headers = []): TestResponse
     {
-        $app = $this->createApp();
-        return new TestResponse($this->dispatch($app, 'POST', $path, $body, $headers));
+        if ($this->cachedApp === null) { $this->cachedApp = $this->createApp(); }
+        return new TestResponse($this->dispatch($this->cachedApp, 'POST', $path, $body, $headers));
     }
 
     protected function put(string $path, array $body = [], array $headers = []): TestResponse
     {
-        $app = $this->createApp();
-        return new TestResponse($this->dispatch($app, 'PUT', $path, $body, $headers));
+        if ($this->cachedApp === null) { $this->cachedApp = $this->createApp(); }
+        return new TestResponse($this->dispatch($this->cachedApp, 'PUT', $path, $body, $headers));
     }
 
     protected function delete(string $path, array $headers = []): TestResponse
     {
-        $app = $this->createApp();
-        return new TestResponse($this->dispatch($app, 'DELETE', $path, [], $headers));
+        if ($this->cachedApp === null) { $this->cachedApp = $this->createApp(); }
+        return new TestResponse($this->dispatch($this->cachedApp, 'DELETE', $path, [], $headers));
     }
 
     protected function assertDatabaseHas(string $table, array $conditions, ?string $connection = null): void

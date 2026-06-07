@@ -382,5 +382,5 @@ Want to improve documentation? We welcome contributions!
 ---
 
 *Last updated: May 30, 2026*  
-*Documentation version: 0.32.0*  
-*SiroPHP version: 0.32.0*
+*Documentation version: 0.33.1*  
+*SiroPHP version: 0.33.1*
