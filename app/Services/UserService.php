@@ -64,7 +64,9 @@ final class UserService
     public function getTokenVersion(int $userId): int
     {
         $user = $this->repo->findById($userId);
-        if ($user === null) return 1;
+        if ($user === null) {
+            return 1;
+        }
         $tokenVersion = $user['token_version'];
         $rawVersion = is_numeric($tokenVersion) ? (int) $tokenVersion : 0;
         return $rawVersion > 0 ? $rawVersion : 1;
@@ -136,7 +138,9 @@ final class UserService
             'password_reset_expires_at' => null,
             'token_version' => (int) $tokenVersion + 1,
         ]);
-        if ($affected === 0) return false;
+        if ($affected === 0) {
+            return false;
+        }
         $this->refreshTokenRepo->revokeAllByUserId(isset($user['id']) && is_numeric($user['id']) ? (int) $user['id'] : 0);
         // M2: Session regeneration required after password reset (API context)
         return true;
@@ -197,7 +201,9 @@ final class UserService
     public function update(int $id, array $data): ?\Siro\Core\Model
     {
         $user = $this->repo->findById($id);
-        if ($user === null) return null;
+        if ($user === null) {
+            return null;
+        }
 
         $updateData = [];
 

@@ -99,7 +99,7 @@ For complex validation, create a dedicated FormRequest class:
 ```php
 use Siro\Core\Request;
 
-final class StoreProductRequest extends Request
+final class StoreProductRequest extends FormRequest
 {
     public function validate(): array
     {

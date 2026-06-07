@@ -49,9 +49,13 @@ final class TagController extends Controller
     {
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
-        if ($id <= 0) return $this->error('Invalid id', 422);
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
         $item = $this->service->getById($id);
-        if ($item === null) return $this->error('Tag not found', 404);
+        if ($item === null) {
+            return $this->error('Tag not found', 404);
+        }
         return $this->success(TagResource::make($item), 'Tag detail');
     }
 
@@ -69,7 +73,9 @@ final class TagController extends Controller
     public function store(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
-        if ($forbidden !== null) return $forbidden;
+        if ($forbidden !== null) {
+            return $forbidden;
+        }
 
         $item = $this->service->create($this->validate(['name' => 'required|min:1|max:100']));
         return $this->created(TagResource::make($item), 'Tag created');
@@ -89,13 +95,19 @@ final class TagController extends Controller
     public function update(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
-        if ($forbidden !== null) return $forbidden;
+        if ($forbidden !== null) {
+            return $forbidden;
+        }
 
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
-        if ($id <= 0) return $this->error('Invalid id', 422);
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
         $item = $this->service->update($id, $this->validate(['name' => 'min:1|max:100']));
-        if ($item === null) return $this->error('Tag not found', 404);
+        if ($item === null) {
+            return $this->error('Tag not found', 404);
+        }
         return $this->success(TagResource::make($item), 'Tag updated');
     }
 
@@ -112,11 +124,15 @@ final class TagController extends Controller
     public function delete(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
-        if ($forbidden !== null) return $forbidden;
+        if ($forbidden !== null) {
+            return $forbidden;
+        }
 
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
-        if ($id <= 0) return $this->error('Invalid id', 422);
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
         return $this->service->delete($id)
             ? $this->noContent()
             : $this->error('Tag not found', 404);

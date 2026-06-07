@@ -235,7 +235,7 @@ AuthTokenResponse:
   "message": "Avatar uploaded",
   "data": {
     "path": "avatars/abc123.jpg",
-    "url": "avatars/abc123.jpg",
+    "url": "/storage/avatars/abc123.jpg",
     "original_name": "profile.jpg",
     "size": 204800,
     "mime": "image/jpeg"
@@ -263,13 +263,7 @@ UploadResponse:
       properties:
         path:
           type: string
-          example: avatars/abc123.jpg
-        url:
-          type: string
-          example: avatars/abc123.jpg
-        original_name:
-          type: string
-          example: profile.jpg
+          example: /storage/avatars/abc123.jpg
         size:
           type: integer
           example: 204800

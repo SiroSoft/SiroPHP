@@ -219,16 +219,7 @@ abstract class TestCase extends BaseTestCase
             created_at $dt DEFAULT CURRENT_TIMESTAMP
         )");
 
-        // Create jobs table
-        $pdo->exec("CREATE TABLE IF NOT EXISTS jobs (
-            $idCol,
-            queue VARCHAR(255) NOT NULL DEFAULT 'default',
-            payload TEXT,
-            attempts INT DEFAULT 0,
-            reserved_at INT NULL,
-            available_at INT NOT NULL,
-            created_at INT NOT NULL
-        )");
+        // jobs and failed_jobs tables are created by migration
 
         // Record migration so system doesn't try to run them
         $existing = $pdo->query("SELECT migration FROM {$q}migrations{$q}")->fetchAll(\PDO::FETCH_COLUMN);
@@ -239,14 +230,22 @@ abstract class TestCase extends BaseTestCase
         foreach ($files as $file) {
             $name = basename($file);
             if (!isset($existingMigrations[$name])) {
-                $batch = 1;
                 try {
                     $migration = require $file;
                     if (is_object($migration) && method_exists($migration, 'up')) {
-                        try { $migration->up(); } catch (\Throwable) {}
+                        $migration->up();
                     }
-                    $pdo->prepare($insertMig)->execute(['m' => $name, 'b' => $batch]);
-                } catch (\Throwable) {}
+                    $pdo->prepare($insertMig)->execute(['m' => $name, 'b' => 1]);
+                } catch (\Throwable $e) {
+                    // Migration failed — do NOT record it so it can be retried
+                    error_log(sprintf(
+                        '[SiroPHP Test] Migration "%s" failed: %s in %s:%d',
+                        $name,
+                        $e->getMessage(),
+                        $e->getFile(),
+                        $e->getLine()
+                    ));
+                }
             }
         }
 

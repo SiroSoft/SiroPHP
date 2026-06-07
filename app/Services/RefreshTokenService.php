@@ -61,7 +61,9 @@ final class RefreshTokenService
         }
 
         /** @var array<string, mixed> $claims */
-        if (($claims['type'] ?? '') !== JWT::TYPE_REFRESH) return null;
+        if (($claims['type'] ?? '') !== JWT::TYPE_REFRESH) {
+            return null;
+        }
 
         $rawUserId = $claims['sub'] ?? 0;
         $rawJti = $claims['jti'] ?? '';
@@ -70,7 +72,9 @@ final class RefreshTokenService
         $userId = (int) $rawUserId;
         $jti = $rawJti;
 
-        if ($userId <= 0 || $jti === '') return null;
+        if ($userId <= 0 || $jti === '') {
+            return null;
+        }
 
         $stored = $this->refreshTokenRepo->findActiveByJti($jti);
         if ($stored === null) {

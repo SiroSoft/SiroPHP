@@ -51,7 +51,7 @@ $col->last();         // 3
 ### map
 
 ```php
-$col = collect([1, 2, 3]);
+$col = Collection::make([1, 2, 3]);
 $doubled = $col->map(fn($n) => $n * 2);
 // [2, 4, 6]
 ```
@@ -180,11 +180,11 @@ $unique = collect([1, 1, 2, 2, 3])->unique();
 ## Serialization
 
 ```php
-$col = collect(['name' => 'Siro', 'version' => '0.28']);
+$col = collect(['name' => 'Siro', 'version' => '0.34']);
 
-$col->toArray();         // ['name' => 'Siro', 'version' => '0.28']
-$col->toJson();          // '{"name":"Siro","version":"0.28"}'
-$col->implode(', ');     // 'Siro, 0.28'
+$col->toArray();         // ['name' => 'Siro', 'version' => '0.34']
+$col->toJson();          // '{"name":"Siro","version":"0.34"}'
+$col->implode(', ');     // 'Siro, 0.34'
 ```
 
 ---

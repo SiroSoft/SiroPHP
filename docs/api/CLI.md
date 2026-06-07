@@ -9,7 +9,7 @@ sidebar_label: CLI
 
 ## Overview
 
-Siro ships with **72+ CLI commands**. Every task — from project creation to production debugging — is done from the terminal. No GUI tools needed.
+Siro ships with **91 CLI commands**. Every task — from project creation to production debugging — is done from the terminal. No GUI tools needed.
 
 ```bash
 php siro                    # Core workflow overview
@@ -326,6 +326,6 @@ php siro optimize
 docker compose up -d
 ```
 
-**Commands used: 0**
+**Commands used: 14**
 **Third-party tools needed: 0**
 **Time to production-ready API: ~5 minutes**

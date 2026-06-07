@@ -46,7 +46,7 @@ final class User extends Model
 $user = User::create([
     'name' => 'John Doe',
     'email' => 'john@example.com',
-    'password' => bcrypt('secret'),
+    'password' => Hash::make('secret'),
 ]);
 
 // Find by ID
@@ -526,7 +526,7 @@ class User extends Model
     
     public function getAgeAttribute(): int
     {
-        return \Carbon\Carbon::parse($this->birth_date)->age;
+        return date_diff(date_create($this->birth_date), date_create('now'))->y;
     }
 }
 
@@ -868,11 +868,11 @@ $post = Post::create([
     'slug' => 'my-first-post',
     'content' => 'Content here...',
     'status' => 'draft',
-    'user_id' => auth()->id(),
+    'user_id' => $request->user()['id'],
 ]);
 
 // Publish post
-$post->update(['status' => 'published', 'published_at' => now()]);
+$post->update(['status' => 'published', 'published_at' => date('Y-m-d H:i:s')]);
 
 // Add tags
 $post->tags()->attach([1, 2, 3]);

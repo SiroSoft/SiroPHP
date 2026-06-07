@@ -45,6 +45,16 @@ php benchmark.php --json
 > "3.1M JSON/sec" is a synthetic micro-benchmark for `Response::success()` construction only,
 > not a real HTTP request throughput. Real-world throughput is ~864K ops/sec average.
 
+### Routing Performance
+
+| Benchmark | Avg (ms) | Ops/sec |
+|-----------|:--------:|:-------:|
+| Dynamic route matching (depth-grouped) | **0.0668** | **14,971** |
+| RouteMatcher depth-grouped dispatch | **0.0032** | **312,500** |
+
+> Dynamic route matching: **14,971 ops/sec** — 17x improvement over v0.29.
+> RouteMatcher uses depth-grouped matching for O(1) route lookup per depth level.
+
 ---
 
 ## Comparison

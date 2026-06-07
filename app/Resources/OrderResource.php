@@ -33,6 +33,10 @@ final class OrderResource extends Resource
             'status' => is_string($status) ? htmlspecialchars($status, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $status,
             'items' => $items,
             'payment_status' => is_string($status) ? htmlspecialchars($status, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $status,
+            'shipping_address' => $d['shipping_address'] ?? null,
+            'billing_address' => $d['billing_address'] ?? null,
+            'notes' => $d['notes'] ?? null,
+            'payment_method' => $d['payment_method'] ?? null,
             'created_at' => $d['created_at'] ?? null,
             'updated_at' => $d['updated_at'] ?? null,
         ];

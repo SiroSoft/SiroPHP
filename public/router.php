@@ -26,12 +26,18 @@ if (is_file($envFile)) {
     if (is_array($lines)) {
         foreach ($lines as $line) {
             $line = trim($line);
-            if ($line === '' || str_starts_with($line, '#')) continue;
+            if ($line === '' || str_starts_with($line, '#')) {
+                continue;
+            }
             $pos = strpos($line, '=');
-            if ($pos === false) continue;
+            if ($pos === false) {
+                continue;
+            }
             $key = trim(substr($line, 0, $pos));
             $value = trim(substr($line, $pos + 1));
-            if ($key !== '') putenv($key . '=' . $value);
+            if ($key !== '') {
+                putenv($key . '=' . $value);
+            }
         }
     }
 }

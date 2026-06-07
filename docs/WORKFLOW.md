@@ -401,7 +401,7 @@ php siro test --coverage
 
 ## 5d. Export API Docs (Swagger + Postman)
 
-Code xong → export spec ngay. Không cần viết annotation.
+Done coding → export spec immediately. No annotations needed.
 
 ```bash
 # Export OpenAPI 3.0.3 spec (27 endpoints, auto-detected)
@@ -416,28 +416,28 @@ php siro make:postman
 # → public/postman_collection.json
 ```
 
-**Mở Swagger UI trên trình duyệt:**
+**Open Swagger UI in browser:**
 
 ```
 http://localhost:8080/docs.html
 ```
 
-**Hoặc import vào Postman:**
+**Or import into Postman:**
 
 ```
 http://localhost:8080/postman_collection.json
 ```
 
-Mọi thứ đều dynamic — thêm API mới, export lại là spec tự cập nhật:
+Everything is dynamic — add new APIs, re-export and the spec auto-updates:
 
-| Thành phần | Cơ chế |
+| Component | Mechanism |
 |-----------|--------|
-| **Routes** | Tự động đọc từ app — thêm route là xuất hiện |
-| **Request body** | Parse từ `$this->validate([...])` trong Controller |
-| **Response body** | Parse từ `Resource::toArray()` |
-| **Tags/Folders** | Từ tên Controller (`ProductController` → `Products`) |
-| **Auth** | Tự động detect middleware `auth` → bearerAuth |
-| **Postman auth** | Pre-request script auto-login, tự động gắn token |
+| **Routes** | Auto-reads from app — add a route and it appears |
+| **Request body** | Parsed from `$this->validate([...])` in Controller |
+| **Response body** | Parsed from `Resource::toArray()` |
+| **Tags/Folders** | From Controller name (`ProductController` → `Products`) |
+| **Auth** | Auto-detects middleware `auth` → bearerAuth |
+| **Postman auth** | Pre-request script auto-login, auto-attaches token |
 
 ---
 

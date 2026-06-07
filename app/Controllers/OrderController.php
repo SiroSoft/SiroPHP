@@ -75,7 +75,9 @@ final class OrderController extends Controller
     {
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
-        if ($id <= 0) return $this->error('Invalid id', 422);
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
 
         $currentUser = $request->user();
         $currentUserId = 0;
@@ -86,7 +88,9 @@ final class OrderController extends Controller
         }
 
         $order = $this->service->getById($id);
-        if ($order === null) return $this->error('Order not found', 404);
+        if ($order === null) {
+            return $this->error('Order not found', 404);
+        }
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
         if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {
@@ -178,7 +182,9 @@ final class OrderController extends Controller
     {
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
-        if ($id <= 0) return $this->error('Invalid id', 422);
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
 
         $currentUser = $request->user();
         $currentUserId = 0;
@@ -189,7 +195,9 @@ final class OrderController extends Controller
         }
 
         $order = $this->service->getById($id);
-        if ($order === null) return $this->error('Order not found', 404);
+        if ($order === null) {
+            return $this->error('Order not found', 404);
+        }
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
         if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {
@@ -202,7 +210,9 @@ final class OrderController extends Controller
         ]);
 
         $order = $this->service->update($id, $validated);
-        if ($order === null) return $this->error('Order not found', 404);
+        if ($order === null) {
+            return $this->error('Order not found', 404);
+        }
 
         return $this->success(OrderResource::make($order), 'Order updated');
     }
@@ -268,7 +278,9 @@ final class OrderController extends Controller
     {
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
-        if ($id <= 0) return $this->error('Invalid id', 422);
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
 
         $currentUser = $request->user();
         $currentUserId = 0;
@@ -279,7 +291,9 @@ final class OrderController extends Controller
         }
 
         $order = $this->service->getById($id);
-        if ($order === null) return $this->error('Order not found', 404);
+        if ($order === null) {
+            return $this->error('Order not found', 404);
+        }
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
         if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {

@@ -45,5 +45,4 @@ final class SecurityHeadersMiddleware implements MiddlewareInterface
 
         return $response;
     }
-
 }

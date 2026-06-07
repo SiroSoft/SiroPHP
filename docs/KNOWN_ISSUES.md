@@ -7,7 +7,7 @@ sidebar_label: K NO WN I SS UE S
 
 # Known Issues & Limitations
 
-## v0.32 Known Issues
+## v0.34 Known Issues
 
 ### Database
 
@@ -15,7 +15,7 @@ sidebar_label: K NO WN I SS UE S
 |-------|----------|------------|
 | No transaction rollback in CLI | Low | Use `DB::transaction()` manually |
 | SQLite foreign keys off by default | Medium | Enable with `PRAGMA foreign_keys = ON` |
-| No partial rollback for specific migration | Low | `migrate:rollback --step=N` or `migrate:fresh` (v0.28.1) |
+| No partial rollback for specific migration | Low | Use `migrate:rollback --step=N` |
 
 ### Auth
 

@@ -21,7 +21,9 @@ final class UserResource extends Resource
             'avatar' => $d['avatar'] ?? null,
             'phone' => $d['phone'] ?? null,
             'role' => $d['role'] ?? 'user',
-            'status' => match (isset($d['status']) && is_numeric($d['status']) ? (int) $d['status'] : 1) { 0 => 'inactive', 2 => 'suspended', default => 'active' },
+            'status' => match (isset($d['status']) && is_numeric($d['status']) ? (int) $d['status'] : 1) {
+            0 => 'inactive', 2 => 'suspended', default => 'active'
+            },
             'created_at' => $d['created_at'] ?? null,
             'updated_at' => $d['updated_at'] ?? null,
         ];

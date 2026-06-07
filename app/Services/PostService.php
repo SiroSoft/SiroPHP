@@ -88,7 +88,9 @@ final class PostService
     {
         $result = $this->repo->update($id, $validated);
         /** @var \Siro\Core\Model|null $result */
-        if ($result === null) return null;
+        if ($result === null) {
+            return null;
+        }
 
         return $result->toArray();
     }
@@ -98,7 +100,9 @@ final class PostService
     {
         $post = $this->repo->findById($id);
         /** @var \Siro\Core\Model|null $post */
-        if ($post === null) return false;
+        if ($post === null) {
+            return false;
+        }
 
         $postData = $post->toArray();
         $image = $postData['image'] ?? '';

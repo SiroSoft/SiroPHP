@@ -72,7 +72,9 @@ final class PostController extends Controller
     {
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
-        if ($id <= 0) return $this->error('Invalid id', 422);
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
 
         $currentUser = $request->user();
         $currentUserId = 0;
@@ -174,7 +176,9 @@ final class PostController extends Controller
     {
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
-        if ($id <= 0) return $this->error('Invalid id', 422);
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
 
         $existing = $this->service->getById($id);
         if ($existing === null) {
@@ -234,7 +238,9 @@ final class PostController extends Controller
     {
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
-        if ($id <= 0) return $this->error('Invalid id', 422);
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
 
         $currentUser = $request->user();
         $currentUserId = 0;

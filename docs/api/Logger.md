@@ -31,47 +31,12 @@ LOG_MAX_SIZE_MB=1024        # Max total log storage
 
 ```php
 Logger::debug('Query executed', ['sql' => $sql, 'time' => '2.3ms']);
-Logger::info('User registered', ['user_id' => 42]);
-Logger::notice('Rate limit approaching', ['remaining' => 5]);
+Logger::request('GET /api/products — 200', ['duration_ms' => 12.3]);
+Logger::slowRequest('Query took 450ms', ['sql' => $sql, 'duration' => 450]);
 Logger::warning('Slow query detected', ['sql' => $sql, 'duration' => 500]);
 Logger::error('Payment failed', ['order_id' => 100, 'reason' => 'insufficient_funds']);
-Logger::critical('Database connection lost');
-Logger::alert('Disk space critical');
-Logger::emergency('System is down');
-```
-
----
-
-## Log Channels
-
-```php
-// Default channel
-Logger::info('Request completed');
-
-// Request log
-Logger::channel('request')->info('GET /api/products — 200');
-
-// Slow query log
-Logger::channel('slow')->warning('Query took 450ms', ['sql' => $sql]);
-
-// Security log (SIEM-ready)
-Logger::channel('security')->warning('Failed login attempt', [
-    'ip' => $ip,
-    'email' => $email,
-    'attempts' => 3,
-]);
-
-// Error log
-Logger::channel('error')->error('Unhandled exception', [
-    'exception' => get_class($e),
-    'message' => $e->getMessage(),
-]);
-
-// Debug log
-Logger::channel('debug')->debug('Variable dump', $data);
-
-// Trace log (per-request)
-Logger::channel('trace')->info('Trace captured', ['trace_id' => $traceId]);
+Logger::security('Failed login attempt', ['ip' => $ip, 'email' => $email]);
+Logger::trace('Trace captured', ['trace_id' => $traceId]);
 ```
 
 ---
@@ -82,7 +47,7 @@ Sensitive data is automatically redacted from logs:
 
 ```php
 // These values are REDACTED in log output
-Logger::info('Login', [
+Logger::debug('Login', [
     'password' => 'secret123',           // → [REDACTED]
     'token' => 'eyJ...',                 // → [REDACTED]  
     'authorization' => 'Bearer eyJ...',  // → [REDACTED]
@@ -92,23 +57,18 @@ Logger::info('Login', [
 ]);
 ```
 
-Sanitized fields: `authorization`, `cookie`, `x-api-key`, `password`, `passwd`, `token`, `secret`, `credit_card`, `cc_number`, `jwt`, `bearer`, `refresh_token`, `api_key`, `private_key`.
+Sanitized fields: `authorization`, `cookie`, `x-api-key`, `x-csrf-token`, `session-id`, `password`, `token`, `otp`, `secret`, `credit_card`, `credit-card`, `card_number`, `cvv`, `pin`, `ssn`, `passport`.
 
 ---
 
 ## Context Logging
 
-```php
-// Global context (included in every log entry)
-Logger::setContext([
-    'trace_id' => $traceId,
-    'user_id' => $userId,
-    'ip' => $request->ip(),
-]);
+Context data is passed as the second argument to any log method:
 
-// Log entries automatically include context
-Logger::info('Order created', ['order_id' => 100]);
-// Output: { "message": "Order created", "context": { "order_id": 100 }, "global": { "trace_id": "...", "user_id": 42 } }
+```php
+// Log entries with context
+Logger::debug('Order created', ['order_id' => 100, 'user_id' => 42]);
+// Output: { "message": "Order created", "context": { "order_id": 100, "user_id": 42 } }
 ```
 
 ---
@@ -153,15 +113,10 @@ Example:
 
 | Method | Description |
 |--------|-------------|
-| `debug(string $message, array $context)` | Debug level |
-| `info(string $message, array $context)` | Info level |
-| `notice(string $message, array $context)` | Notice level |
-| `warning(string $message, array $context)` | Warning level |
-| `error(string $message, array $context)` | Error level |
-| `critical(string $message, array $context)` | Critical level |
-| `alert(string $message, array $context)` | Alert level |
-| `emergency(string $message, array $context)` | Emergency level |
-| `channel(string $name)` | Get/create log channel |
-| `setContext(array $context)` | Set global context |
-| `sanitize(array $data)` | Sanitize sensitive data |
-| `log(string $level, string $message, array $context)` | Log at arbitrary level |
+| `debug(string $message, array $context = [])` | Debug level |
+| `request(string $message, array $context = [])` | Request logging |
+| `slowRequest(string $message, array $context = [])` | Slow request logging |
+| `warning(string $message, array $context = [])` | Warning level |
+| `error(string $message, array $context = [])` | Error level |
+| `security(string $message, array $context = [])` | Security events (SIEM-ready) |
+| `trace(string $message, array $context = [])` | Request trace capture |

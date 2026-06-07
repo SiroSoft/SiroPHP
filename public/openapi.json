@@ -2937,9 +2937,47 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "John Doe"
+                                "example": "Category Name"
+                            },
+                            "slug": {
+                                "type": "string",
+                                "nullable": true,
+                                "example": "category-name"
+                            },
+                            "description": {
+                                "type": "string",
+                                "nullable": true,
+                                "example": "Category description"
+                            },
+                            "color": {
+                                "type": "string",
+                                "nullable": true,
+                                "example": "#ff0000"
+                            },
+                            "icon": {
+                                "type": "string",
+                                "nullable": true,
+                                "example": "folder"
+                            },
+                            "parent_id": {
+                                "type": "integer",
+                                "nullable": true,
+                                "example": null
+                            },
+                            "sort_order": {
+                                "type": "integer",
+                                "example": 0
+                            },
+                            "is_active": {
+                                "type": "boolean",
+                                "example": true
                             },
                             "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "string"
+                            },
+                            "updated_at": {
                                 "type": "string",
                                 "format": "date-time",
                                 "example": "string"
@@ -3075,7 +3113,80 @@
                     },
                     "data": {
                         "type": "object",
-                        "properties": []
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "user_name": {
+                                "type": "string",
+                                "example": "John Doe"
+                            },
+                            "customer_email": {
+                                "type": "string",
+                                "format": "email",
+                                "example": "john@example.com"
+                            },
+                            "total": {
+                                "type": "number",
+                                "example": 99.99
+                            },
+                            "status": {
+                                "type": "string",
+                                "enum": ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"],
+                                "example": "pending"
+                            },
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "product_id": {
+                                            "type": "integer"
+                                        },
+                                        "product_name": {
+                                            "type": "string"
+                                        },
+                                        "quantity": {
+                                            "type": "integer"
+                                        },
+                                        "unit_price": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            },
+                            "payment_status": {
+                                "type": "string",
+                                "example": "pending"
+                            },
+                            "payment_method": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "shipping_address": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "billing_address": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "notes": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "string"
+                            },
+                            "updated_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "string"
+                            }
+                        }
                     }
                 }
             },
@@ -3184,17 +3295,12 @@
                         "type": "string",
                         "enum": [
                             "en",
-                            "vi"
+                            "vi",
+                            "de",
+                            "zh",
+                            "ja"
                         ],
                         "example": "en"
-                    },
-                    "status": {
-                        "type": "string",
-                        "enum": [
-                            "draft",
-                            "published"
-                        ],
-                        "example": "draft"
                     }
                 },
                 "required": [
@@ -3323,21 +3429,41 @@
                                 "type": "string",
                                 "example": "string"
                             },
-                            "body": {
+                            "content": {
                                 "type": "string",
                                 "example": "string"
+                            },
+                            "excerpt": {
+                                "type": "string",
+                                "nullable": true
                             },
                             "locale": {
                                 "type": "string",
-                                "example": "string"
+                                "example": "en"
                             },
                             "status": {
                                 "type": "string",
-                                "example": "active"
+                                "example": "draft",
+                                "enum": ["draft", "published", "archived"]
                             },
-                            "image": {
+                            "featured": {
+                                "type": "boolean",
+                                "example": false
+                            },
+                            "cover_image": {
                                 "type": "string",
-                                "example": "string"
+                                "nullable": true,
+                                "example": "https://example.com/image.jpg"
+                            },
+                            "user_id": {
+                                "type": "integer",
+                                "nullable": true,
+                                "example": 1
+                            },
+                            "category_id": {
+                                "type": "integer",
+                                "nullable": true,
+                                "example": 1
                             },
                             "created_at": {
                                 "type": "string",
@@ -3371,17 +3497,12 @@
                         "type": "string",
                         "enum": [
                             "en",
-                            "vi"
+                            "vi",
+                            "de",
+                            "zh",
+                            "ja"
                         ],
                         "example": "en"
-                    },
-                    "status": {
-                        "type": "string",
-                        "enum": [
-                            "draft",
-                            "published"
-                        ],
-                        "example": "draft"
                     }
                 }
             },
@@ -3644,29 +3765,107 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "John Doe"
+                                "example": "Product Name"
                             },
                             "description": {
                                 "type": "string",
-                                "example": "string"
+                                "nullable": true,
+                                "example": "Product description"
                             },
                             "price": {
                                 "type": "number",
+                                "nullable": true,
                                 "example": 9.99
+                            },
+                            "compare_price": {
+                                "type": "number",
+                                "nullable": true,
+                                "example": 12.99
+                            },
+                            "cost_price": {
+                                "type": "number",
+                                "nullable": true,
+                                "example": 5.00
+                            },
+                            "barcode": {
+                                "type": "string",
+                                "nullable": true,
+                                "example": "123456789"
                             },
                             "stock": {
                                 "type": "integer",
+                                "nullable": true,
                                 "example": 42
                             },
-                            "category": {
-                                "type": "string",
-                                "example": "string"
+                            "stock_min": {
+                                "type": "integer",
+                                "nullable": true,
+                                "example": 5
                             },
-                            "status": {
+                            "weight": {
+                                "type": "number",
+                                "nullable": true,
+                                "example": 1.5
+                            },
+                            "width": {
+                                "type": "number",
+                                "nullable": true,
+                                "example": 10
+                            },
+                            "height": {
+                                "type": "number",
+                                "nullable": true,
+                                "example": 5
+                            },
+                            "length": {
+                                "type": "number",
+                                "nullable": true,
+                                "example": 15
+                            },
+                            "cover_image": {
                                 "type": "string",
-                                "example": "active"
+                                "nullable": true,
+                                "example": "https://example.com/image.jpg"
+                            },
+                            "short_description": {
+                                "type": "string",
+                                "nullable": true,
+                                "example": "Short description"
+                            },
+                            "sku": {
+                                "type": "string",
+                                "nullable": true,
+                                "example": "SKU-001"
+                            },
+                            "slug": {
+                                "type": "string",
+                                "nullable": true,
+                                "example": "product-name"
+                            },
+                            "category_id": {
+                                "type": "integer",
+                                "nullable": true,
+                                "example": 1
+                            },
+                            "category_name": {
+                                "type": "string",
+                                "nullable": true,
+                                "example": "Electronics"
+                            },
+                            "is_active": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "is_featured": {
+                                "type": "boolean",
+                                "example": false
                             },
                             "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "string"
+                            },
+                            "updated_at": {
                                 "type": "string",
                                 "format": "date-time",
                                 "example": "string"
@@ -3883,9 +4082,33 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "John Doe"
+                                "example": "Tag Name"
+                            },
+                            "slug": {
+                                "type": "string",
+                                "nullable": true,
+                                "example": "tag-name"
+                            },
+                            "color": {
+                                "type": "string",
+                                "nullable": true,
+                                "example": "#00ff00"
+                            },
+                            "description": {
+                                "type": "string",
+                                "nullable": true,
+                                "example": "Tag description"
+                            },
+                            "is_active": {
+                                "type": "boolean",
+                                "example": true
                             },
                             "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "string"
+                            },
+                            "updated_at": {
                                 "type": "string",
                                 "format": "date-time",
                                 "example": "string"
@@ -4109,7 +4332,28 @@
                                 "format": "email",
                                 "example": "user@example.com"
                             },
+                            "role": {
+                                "type": "string",
+                                "example": "admin"
+                            },
+                            "status": {
+                                "type": "string",
+                                "example": "active"
+                            },
+                            "avatar": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "phone": {
+                                "type": "string",
+                                "nullable": true
+                            },
                             "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "string"
+                            },
+                            "updated_at": {
                                 "type": "string",
                                 "format": "date-time",
                                 "example": "string"

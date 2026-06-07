@@ -49,9 +49,13 @@ final class CategoryController extends Controller
     {
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
-        if ($id <= 0) return $this->error('Invalid id', 422);
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
         $item = $this->service->getById($id);
-        if ($item === null) return $this->error('Category not found', 404);
+        if ($item === null) {
+            return $this->error('Category not found', 404);
+        }
         return $this->success(CategoryResource::make($item), 'Category detail');
     }
 
@@ -69,7 +73,9 @@ final class CategoryController extends Controller
     public function store(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
-        if ($forbidden !== null) return $forbidden;
+        if ($forbidden !== null) {
+            return $forbidden;
+        }
 
         $validated = $this->validate(['name' => 'required|min:2|max:100']);
         $rawBody = $request->all();
@@ -106,11 +112,15 @@ final class CategoryController extends Controller
     public function update(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
-        if ($forbidden !== null) return $forbidden;
+        if ($forbidden !== null) {
+            return $forbidden;
+        }
 
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
-        if ($id <= 0) return $this->error('Invalid id', 422);
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
         $validated = $this->validate([
             'name' => 'min:2|max:100',
         ]);
@@ -131,7 +141,9 @@ final class CategoryController extends Controller
             $validated['parent_id'] = is_numeric($rawBody['parent_id']) ? (int) $rawBody['parent_id'] : null;
         }
         $item = $this->service->update($id, $validated);
-        if ($item === null) return $this->error('Category not found', 404);
+        if ($item === null) {
+            return $this->error('Category not found', 404);
+        }
         return $this->success(CategoryResource::make($item), 'Category updated');
     }
 
@@ -148,11 +160,15 @@ final class CategoryController extends Controller
     public function delete(Request $request): Response
     {
         $forbidden = $this->requireAdmin($request);
-        if ($forbidden !== null) return $forbidden;
+        if ($forbidden !== null) {
+            return $forbidden;
+        }
 
         $rawId = $request->param('id');
         $id = is_numeric($rawId) ? (int) $rawId : 0;
-        if ($id <= 0) return $this->error('Invalid id', 422);
+        if ($id <= 0) {
+            return $this->error('Invalid id', 422);
+        }
         return $this->service->delete($id)
             ? $this->noContent()
             : $this->error('Category not found', 404);
