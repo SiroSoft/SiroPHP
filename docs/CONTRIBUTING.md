@@ -294,7 +294,7 @@ $router->resource('brands', \App\Controllers\BrandController::class, ['auth', 't
 | Step | File | Purpose |
 |------|------|---------|
 | 1 | `database/migrations/..._create_brands_table.php` | Database schema |
-| 2 | `app/Models/Brand.php` | Eloquent-style model |
+| 2 | `app/Models/Brand.php` | SiroPHP model |
 | 3 | `app/Repositories/BrandRepository.php` + `app/Services/BrandService.php` | Data access + business logic |
 | 4 | `app/Controllers/BrandController.php` | HTTP request handling |
 | 5 | `app/Resources/BrandResource.php` | JSON response formatting |

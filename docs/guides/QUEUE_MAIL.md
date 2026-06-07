@@ -14,7 +14,7 @@ The queue system processes background jobs asynchronously using a database-drive
 ### Configuration
 
 ```env
-QUEUE_DRIVER=database
+QUEUE_DRIVER=db
 QUEUE_DEFAULT_MAX_ATTEMPTS=3
 ```
 

@@ -288,7 +288,7 @@ Commands that you type every day get shorthands:
 
 | Alias | Full Command |
 |-------|-------------|
-| `php siro why` | `php siro debug:last` |
+| `php siro why` | `php siro api:why` |
 | `php siro slow` | `php siro log:slow` |
 | `php siro t` | `php siro api:test` |
 | `php siro traces` | `php siro trace:list` |

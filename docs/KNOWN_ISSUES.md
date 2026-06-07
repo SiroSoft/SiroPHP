@@ -36,7 +36,7 @@ sidebar_label: K NO WN I SS UE S
 
 | Issue | Severity | Workaround |
 |-------|----------|------------|
-| Queue only DB-based (Redis driver planned for v1.0) | Low | Use database queue with retries |
+| Queue: DB driver (default), Redis driver (QUEUE_DRIVER=redis) | Low | Use database queue with retries |
 | No job retry UI | Low | Check `failed_jobs` table manually |
 
 ---
@@ -48,7 +48,7 @@ By design, not bugs:
 | Limitation | Why | Workaround |
 |------------|-----|------------|
 | No admin panel | API-only | Build with any frontend |
-| No WebSocket | HTTP-only | Use polling or Pusher |
+| No native WebSocket (Mercure/SSE available via FrankenPHP) | HTTP-only | Use polling or Pusher |
 | No GraphQL | REST-first | OpenAPI covers most needs |
 | No web debug bar | CLI-first | `log:trace`, `replay`, `why` |
 
