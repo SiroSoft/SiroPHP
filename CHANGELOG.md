@@ -3,6 +3,9 @@
 ## v0.35.0 (2026-06-07)
 
 ### 🚀 Features
+- Redis queue driver (`QUEUE_DRIVER=redis`) for high-throughput background job processing
+- Mercure/WebSocket integration: publish Server-Sent Events from PHP, auto-publish on Model create/update
+- Mercure CLI: `php siro mercure:subscribe <topic>` for terminal-based topic subscription
 - Redis rate limiter driver for high-traffic production deployments
 - Email verification flow with token-based confirmation and resend
 - Demo workflow mode for quick prototyping and client presentations
