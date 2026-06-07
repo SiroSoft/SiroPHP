@@ -12,12 +12,13 @@ use App\Repositories\ProductRepository;
  * Provides category/status/price/search filtering with
  * configurable sorting and pagination.
  */
-final class ProductService
+final class ProductService extends AbstractService
 {
     private const ALLOWED_SORTS = ['id', 'name', 'price', 'stock', 'created_at'];
 
-    public function __construct(private readonly ProductRepository $repo)
+    public function __construct(ProductRepository $repo)
     {
+        parent::__construct($repo);
     }
 
     /**
@@ -68,17 +69,6 @@ final class ProductService
     }
 
     /**
-     * Find a product by ID. Returns null if not found.
-     *
-     * @return array<string, mixed>|null
-     */
-    public function getById(int $id): ?array
-    {
-        $result = $this->repo->findById($id);
-        return $result !== null ? $result->toArray() : null;
-    }
-
-    /**
      * Create a new product with defaults for missing fields.
      * Defaults: price=0, stock=0, status='active'.
      *
@@ -118,11 +108,5 @@ final class ProductService
         }
 
         return $this->repo->update($id, $data);
-    }
-
-    /** Delete a product. Returns true if deleted, false if not found. */
-    public function delete(int $id): bool
-    {
-        return $this->repo->destroy($id);
     }
 }

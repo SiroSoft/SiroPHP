@@ -401,6 +401,8 @@ rm storage/cache/routes.php
 
 ## 📖 Learn More
 
+- **[Queue Guide](QUEUE.md)** - Background jobs with DB & Redis drivers
+- **[Mercure/WebSocket Guide](MERCURE.md)** - Real-time Server-Sent Events
 - **[Architecture Guide](../ARCHITECTURE.md)** - Understand design decisions
 - **[Security Guide](../SECURITY.md)** - Security best practices
 - **[Performance Guide](../PERFORMANCE.md)** - Optimization tips

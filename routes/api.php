@@ -248,15 +248,17 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
                 'new_password' => ['New password is required'],
             ]);
         }
-        $existingUser = \App\Models\User::find($userId);
-        if ($existingUser === null) {
-            return Response::error('User not found', 404);
+        $userService = new \App\Services\UserService(
+            new \App\Repositories\UserRepository(),
+            new \App\Repositories\RefreshTokenRepository()
+        );
+        $result = $userService->changePassword($userId, $currentPassword, $newPassword);
+        if (!$result['success']) {
+            return Response::error(
+                $result['error'] ?? 'Unknown error',
+                $result['code'] ?? 400
+            );
         }
-        $existingPassword = $existingUser->getAttribute('password');
-        if (!is_string($existingPassword) || !password_verify($currentPassword, $existingPassword)) {
-            return Response::error('Current password is incorrect', 400);
-        }
-        $existingUser->update(['password' => password_hash($newPassword, PASSWORD_BCRYPT)]);
         return Response::success(null, 'Password changed');
     })->middleware(['auth', JsonMiddleware::class]);
 

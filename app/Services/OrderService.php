@@ -11,10 +11,11 @@ use App\Repositories\OrderRepository;
  *
  * Handles items JSON encoding/decoding between API and storage.
  */
-final class OrderService
+final class OrderService extends AbstractService
 {
-    public function __construct(private readonly OrderRepository $repo)
+    public function __construct(OrderRepository $repo)
     {
+        parent::__construct($repo);
     }
 
     /**
@@ -37,17 +38,6 @@ final class OrderService
         }
 
         return $this->repo->findAll($filters, $page, $perPage);
-    }
-
-    /**
-     * Find an order by ID. Returns null if not found.
-     *
-     * @return array<string, mixed>|null
-     */
-    public function getById(int $id): ?array
-    {
-        $result = $this->repo->findById($id);
-        return $result !== null ? $result->toArray() : null;
     }
 
     /**
@@ -86,11 +76,5 @@ final class OrderService
         }
 
         return $this->repo->update($id, $data);
-    }
-
-    /** Delete an order. Returns true if deleted, false if not found. */
-    public function delete(int $id): bool
-    {
-        return $this->repo->destroy($id);
     }
 }

@@ -11,10 +11,10 @@ sidebar_label: M IG RA TI ON
 
 ---
 
-## v0.33 → v0.34 (Current)
+## v0.34 → v0.35.0 (Current)
 
 ```bash
-composer update sirosoft/core:^0.34
+composer update sirosoft/core:^0.35.0
 ```
 
 ### Breaking Changes

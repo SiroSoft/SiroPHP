@@ -99,24 +99,23 @@ final class AuthController
             return Response::error('Invalid credentials', 401);
         }
 
+        $userId = isset($userData['id']) && is_numeric($userData['id']) ? (int) $userData['id'] : 0;
+
         $status = isset($userData['status']) && is_numeric($userData['status']) ? (int) $userData['status'] : 0;
         if ($status !== 1) {
             return Response::error('Invalid credentials', 401);
         }
 
-        $lockedUntil = isset($userData['locked_until']) && is_string($userData['locked_until']) ? $userData['locked_until'] : null;
-        if ($lockedUntil !== null && $lockedUntil !== '' && strtotime($lockedUntil) > time()) {
+        if ($userId > 0 && $this->userService->isLocked($userId)) {
             return Response::error('Invalid credentials', 401);
         }
 
         $hash = $userData['password'];
         if (!password_verify($request->string('password'), $hash)) {
-            $userId = isset($userData['id']) && is_numeric($userData['id']) ? (int) $userData['id'] : 0;
-            $this->userService->incrementLoginAttempts($userId);
+            $this->userService->recordLoginAttempt($userId);
             return Response::error('Invalid credentials', 401);
         }
 
-        $userId = isset($userData['id']) && is_numeric($userData['id']) ? (int) $userData['id'] : 0;
         $this->userService->resetLoginAttempts($userId);
 
         Session::instance()->regenerate();
