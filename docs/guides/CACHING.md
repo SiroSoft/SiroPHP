@@ -108,8 +108,8 @@ Cache::forget('products:active');
 # Cache configuration files for faster boot
 php siro config:cache
 
-# Cache routes for faster routing
-php siro route:cache
+# Cache routes for faster routing (via optimize)
+php siro optimize
 
 # Full optimization
 php siro optimize

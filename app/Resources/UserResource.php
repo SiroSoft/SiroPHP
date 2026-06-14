@@ -18,6 +18,7 @@ final class UserResource extends Resource
             'id' => $d['id'] ?? null,
             'name' => is_string($name) ? htmlspecialchars($name, ENT_QUOTES | ENT_HTML5, 'UTF-8') : null,
             'email' => is_string($email) ? htmlspecialchars($email, ENT_QUOTES | ENT_HTML5, 'UTF-8') : null,
+            'email_verified_at' => $d['email_verified_at'] ?? null,
             'avatar' => $d['avatar'] ?? null,
             'phone' => $d['phone'] ?? null,
             'role' => $d['role'] ?? 'user',

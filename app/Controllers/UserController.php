@@ -52,7 +52,7 @@ final class UserController extends Controller
             $filters['role'] = $role;
         }
 
-        $result = $this->service->getAll($page, $perPage, $filters);
+        $result = $this->service->getAll($filters, $page, $perPage);
         $data = [];
         foreach ($result['data'] as $item) {
             $data[] = $item->toArray();

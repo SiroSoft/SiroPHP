@@ -134,7 +134,7 @@ Execute code when a binding is resolved or rebound:
 ```php
 $container->rebinding('cache', function ($c, $instance) {
     // Called when 'cache' binding is overwritten
-    $c->make(Logger::class)->info('Cache driver changed');
+    $c->make(Logger::class)->debug('Cache driver changed');
 });
 ```
 

@@ -11,20 +11,22 @@ sidebar_label: M IG RA TI ON
 
 ---
 
-## v0.33 → v0.34 (Current)
+## v0.34 → v0.35.0 (Current)
 
 ```bash
-composer update sirosoft/core:^0.34
+composer update sirosoft/core:^0.35.0
 ```
 
 ### Breaking Changes
 - Database::connection() returns PDO directly, use DB::table() for query builder
 
 ### New (opt-in)
-- **API Versioning**: middleware `version` added to `/api` group
-- **ETag**: middleware `etag` auto-returns `304 Not Modified`
-- **Metrics**: GET `/metrics` endpoint (OpenMetrics format)
-- **Auth caching**: User DB query cached per request
+- `Redis queue driver` — set `QUEUE_DRIVER=redis`
+- `Mercure/WebSocket integration` — real-time SSE via Mercure hub
+- `Rate limiter Redis driver` — shared Redis connection via CacheInstance
+- `Email verification flow` — `POST /api/auth/verify-email/resend`
+- `Validation nesting` — `items.*.product_id` syntax
+- `Debug workflow demo` — `php siro demo`
 
 ---
 

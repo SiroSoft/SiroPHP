@@ -99,24 +99,23 @@ final class AuthController
             return Response::error('Invalid credentials', 401);
         }
 
+        $userId = isset($userData['id']) && is_numeric($userData['id']) ? (int) $userData['id'] : 0;
+
         $status = isset($userData['status']) && is_numeric($userData['status']) ? (int) $userData['status'] : 0;
         if ($status !== 1) {
             return Response::error('Invalid credentials', 401);
         }
 
-        $lockedUntil = isset($userData['locked_until']) && is_string($userData['locked_until']) ? $userData['locked_until'] : null;
-        if ($lockedUntil !== null && $lockedUntil !== '' && strtotime($lockedUntil) > time()) {
+        if ($userId > 0 && $this->userService->isLocked($userId)) {
             return Response::error('Invalid credentials', 401);
         }
 
         $hash = $userData['password'];
         if (!password_verify($request->string('password'), $hash)) {
-            $userId = isset($userData['id']) && is_numeric($userData['id']) ? (int) $userData['id'] : 0;
-            $this->userService->incrementLoginAttempts($userId);
+            $this->userService->recordLoginAttempt($userId);
             return Response::error('Invalid credentials', 401);
         }
 
-        $userId = isset($userData['id']) && is_numeric($userData['id']) ? (int) $userData['id'] : 0;
         $this->userService->resetLoginAttempts($userId);
 
         Session::instance()->regenerate();
@@ -248,6 +247,42 @@ final class AuthController
         }
 
         return Response::success(null, 'Email verified successfully');
+    }
+
+    /**
+     * Resend email verification token for the authenticated user.
+     *
+     * Generates a new verification token and stores it on the user model.
+     * Rate limited: 5 requests per minute.
+     *
+     * POST /api/auth/verify-email/resend
+     * Headers: Authorization: Bearer <token>
+     *
+     * @param Request $request Incoming HTTP request with authenticated user
+     * @return Response Success message (200) or error (401)
+     */
+    public function resendVerification(Request $request): Response
+    {
+        $user = $request->user();
+        $userId = is_array($user) && isset($user['id']) && is_numeric($user['id']) ? (int) $user['id'] : 0;
+
+        if ($userId <= 0) {
+            return Response::error('Unauthorized', 401);
+        }
+
+        $existingUser = \App\Models\User::find($userId);
+        if ($existingUser === null) {
+            return Response::error('User not found', 404);
+        }
+
+        $rawToken = bin2hex(random_bytes(32));
+        $hashedToken = hash('sha256', $rawToken);
+
+        $existingUser->update([
+            'verification_token' => $hashedToken,
+        ]);
+
+        return Response::success(null, 'Verification email sent');
     }
 
     /**

@@ -113,7 +113,7 @@ Console::registerCommands([
 ## Built-in Version
 
 ```php
-$version = Console::getVersion();  // "0.34.0"
+$version = Console::getVersion();  // "0.35.0"
 ```
 
 ---

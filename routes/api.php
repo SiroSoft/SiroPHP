@@ -180,6 +180,9 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     $router->post('/auth/verify-email', [AuthController::class, 'verifyEmail'])
         ->middleware([JsonMiddleware::class, 'throttle:10,1']);
 
+    $router->post('/auth/verify-email/resend', [AuthController::class, 'resendVerification'])
+        ->middleware(['auth', JsonMiddleware::class, 'throttle:5,1']);
+
     // -- Auth (protected) --
     $router->get('/auth/me', [AuthController::class, 'me'])
         ->middleware(['auth', 'throttle:120,1']);
@@ -245,15 +248,17 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
                 'new_password' => ['New password is required'],
             ]);
         }
-        $existingUser = \App\Models\User::find($userId);
-        if ($existingUser === null) {
-            return Response::error('User not found', 404);
+        $userService = new \App\Services\UserService(
+            new \App\Repositories\UserRepository(),
+            new \App\Repositories\RefreshTokenRepository()
+        );
+        $result = $userService->changePassword($userId, $currentPassword, $newPassword);
+        if (!$result['success']) {
+            return Response::error(
+                $result['error'] ?? 'Unknown error',
+                $result['code'] ?? 400
+            );
         }
-        $existingPassword = $existingUser->getAttribute('password');
-        if (!is_string($existingPassword) || !password_verify($currentPassword, $existingPassword)) {
-            return Response::error('Current password is incorrect', 400);
-        }
-        $existingUser->update(['password' => password_hash($newPassword, PASSWORD_BCRYPT)]);
         return Response::success(null, 'Password changed');
     })->middleware(['auth', JsonMiddleware::class]);
 

@@ -18,26 +18,22 @@ interface BaseService
 
     /**
      * Find a single resource by ID. Returns null if not found.
-     *
-     * @return array<string, mixed>|null
      */
-    public function getById(int $id): ?array;
+    public function getById(int $id): ?\Siro\Core\Model;
 
     /**
      * Create a new resource from validated data. Returns the created resource.
      *
      * @param array<string, mixed> $data
-     * @return array<string, mixed>
      */
-    public function create(array $data): array;
+    public function create(array $data): \Siro\Core\Model;
 
     /**
      * Update an existing resource. Returns null if not found.
      *
      * @param array<string, mixed> $data
-     * @return array<string, mixed>|null
      */
-    public function update(int $id, array $data): ?array;
+    public function update(int $id, array $data): ?\Siro\Core\Model;
 
     /** Delete a resource. Returns true if deleted, false if not found. */
     public function delete(int $id): bool;

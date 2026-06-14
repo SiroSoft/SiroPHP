@@ -43,7 +43,9 @@ sidebar_label: Overview
 - **[File Upload Guide](guides/FILE_UPLOAD.md)** - File handling
 
 ### Advanced Guides
-- **[Queue & Mail](guides/QUEUE_MAIL.md)** - Background jobs
+- **[Queue Guide](guides/QUEUE.md)** - Background jobs (DB + Redis drivers)
+- **[Mercure/WebSocket Guide](guides/MERCURE.md)** - Real-time Server-Sent Events
+- **[Queue & Mail](guides/QUEUE_MAIL.md)** - Legacy queue/mail docs
 - **[Event System](guides/EVENTS.md)** - Pub/sub pattern
 - **[Caching Guide](guides/CACHING.md)** - Cache strategies
 - **[API Versioning](guides/API_VERSIONING.md)** - Version management
@@ -311,7 +313,7 @@ A: Use `$request->file()` method. See File Upload Guide.
 A: Yes! Configure in `.env`: `CACHE_DRIVER=redis`, `SESSION_DRIVER=redis`.
 
 **Q: Is there WebSocket support?**  
-A: Not yet. Planned for future release. Use external WebSocket server for now.
+A: Yes! Mercure/SSE integration built-in. See [Mercure Guide](guides/MERCURE.md).
 
 ### Deployment Questions
 
@@ -381,6 +383,6 @@ Want to improve documentation? We welcome contributions!
 
 ---
 
-*Last updated: May 30, 2026*  
-*Documentation version: 0.34.0*  
-*SiroPHP version: 0.34.0*
+*Last updated: June 07, 2026*  
+*Documentation version: 0.35.0*  
+*SiroPHP version: 0.35.0*

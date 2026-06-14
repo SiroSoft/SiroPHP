@@ -180,11 +180,11 @@ $unique = collect([1, 1, 2, 2, 3])->unique();
 ## Serialization
 
 ```php
-$col = collect(['name' => 'Siro', 'version' => '0.34']);
+$col = collect(['name' => 'Siro', 'version' => '0.35.0']);
 
-$col->toArray();         // ['name' => 'Siro', 'version' => '0.34']
-$col->toJson();          // '{"name":"Siro","version":"0.34"}'
-$col->implode(', ');     // 'Siro, 0.34'
+$col->toArray();         // ['name' => 'Siro', 'version' => '0.35.0']
+$col->toJson();          // '{"name":"Siro","version":"0.35.0"}'
+$col->implode(', ');     // 'Siro, 0.35.0'
 ```
 
 ---

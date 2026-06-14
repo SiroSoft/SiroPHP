@@ -13,10 +13,11 @@ use Siro\Core\Storage;
  *
  * Handles file upload (image), locale filtering, and storage cleanup on delete.
  */
-final class PostService
+final class PostService extends AbstractService
 {
-    public function __construct(private readonly PostRepository $repo)
+    public function __construct(PostRepository $repo)
     {
+        parent::__construct($repo);
     }
 
     /**
@@ -39,17 +40,6 @@ final class PostService
         }
 
         return $this->repo->findAll($filters, $page, $perPage);
-    }
-
-    /**
-     * Find a post by ID. Returns null if not found.
-     *
-     * @return array<string, mixed>|null
-     */
-    public function getById(int $id): ?array
-    {
-        $result = $this->repo->findById($id);
-        return $result !== null ? $result->toArray() : null;
     }
 
     /**
@@ -76,23 +66,6 @@ final class PostService
         }
 
         return $this->repo->store($data);
-    }
-
-    /**
-     * Update a post. Returns null if not found.
-     *
-     * @param array<string, mixed> $validated Validated post data
-     * @return array<string, mixed>|null Updated post as array, or null if not found
-     */
-    public function update(int $id, array $validated): ?array
-    {
-        $result = $this->repo->update($id, $validated);
-        /** @var \Siro\Core\Model|null $result */
-        if ($result === null) {
-            return null;
-        }
-
-        return $result->toArray();
     }
 
     /** Delete a post and its associated image. Returns true if deleted. */

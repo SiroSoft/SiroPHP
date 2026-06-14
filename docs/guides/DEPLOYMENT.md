@@ -520,12 +520,12 @@ Route::get('/health', function () {
         // Cache failed
     }
     
-    $status = collect($checks)->every(fn($v) => $v) ? 200 : 503;
+    $status = \Siro\Core\Collection::make($checks)->every(fn($v) => $v) ? 200 : 503;
     
     return Response::json([
         'status' => $status === 200 ? 'healthy' : 'unhealthy',
         'checks' => $checks,
-        'timestamp' => now()->toIso8601String(),
+        'timestamp' => date('c'),
     ], $status);
 });
 ```
