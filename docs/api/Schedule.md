@@ -30,7 +30,7 @@ Schedule::command('queue:work --queue=emails')
     ->withoutOverlapping();
 
 Schedule::call(function () {
-    DB::table('sessions')->where('expires_at', '<', now())->delete();
+    DB::table('sessions')->where('expires_at', '<', date('Y-m-d H:i:s'))->delete();
 })->hourly();
 ```
 

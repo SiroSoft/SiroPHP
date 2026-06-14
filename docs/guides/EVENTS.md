@@ -165,28 +165,11 @@ php siro make:event UserCreated
 ```
 
 ```php
-namespace App\Events;
-
-use Siro\Core\Event;
-
-final class UserCreatedEvent
-{
-    public static function dispatch(mixed $payload = null): void
-    {
-        Event::emit('user_created_event', $payload);
-    }
-
-    public static function listen(callable $callback): void
-    {
-        Event::on('user_created_event', $callback);
-    }
-}
-
 // Usage
-UserCreatedEvent::dispatch(['id' => 1, 'email' => 'user@example.com']);
+Event::emit('user.created', ['id' => 1, 'email' => 'user@example.com']);
 
 // Register listener
-UserCreatedEvent::listen(function ($payload) {
+Event::on('user.created', function ($payload) {
     // Handle event
 });
 ```
