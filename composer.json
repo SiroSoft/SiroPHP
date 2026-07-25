@@ -1,6 +1,7 @@
 {
     "name": "sirosoft/api",
     "description": "Production-first PHP API framework with built-in debugging, replay, and testing workflows",
+    "version": "0.35.0",
     "type": "project",
     "license": "MIT",
     "minimum-stability": "stable",
@@ -37,10 +38,12 @@
     ],
     "scripts": {
         "post-install-cmd": [
-            "composer dump-autoload 2>/dev/null || true"
+            "@php -r \"@unlink(ini_get('error_log'));\" 2>NUL",
+            "composer dump-autoload 2>NUL"
         ],
         "post-update-cmd": [
-            "composer dump-autoload 2>/dev/null || true"
+            "@php -r \"@unlink(ini_get('error_log'));\" 2>NUL",
+            "composer dump-autoload 2>NUL"
         ],
         "test": "php vendor/bin/phpunit --no-coverage",
         "test:coverage": "php -d zend_extension=xdebug vendor/bin/phpunit --coverage-html coverage/html",
