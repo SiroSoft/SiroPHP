@@ -109,12 +109,14 @@ final class ProductSeeder
 
         $now = date('Y-m-d H:i:s');
 
-        $existingUser = DB::table('users')->first();
-        $userId = $existingUser ? $existingUser['id'] : 1;
+        $existingCount = DB::table('products')->count();
+        if ($existingCount > 0) {
+            echo '  [SKIP] ' . $existingCount . " products already exist\n";
+            return;
+        }
 
         foreach ($products as $product) {
             DB::table('products')->insert([
-                'user_id' => $userId,
                 'name' => $product['name'],
                 'description' => $product['description'],
                 'price' => $product['price'],
