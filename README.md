@@ -7,7 +7,7 @@
 <div align="center">
 
 [![PHP 8.2+](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Tests](https://img.shields.io/badge/tests-19.496%20pass-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-19199%20pass-brightgreen)](tests/)
 [![PHPStan](https://img.shields.io/badge/PHPStan-Level%20Max-brightgreen)](https://phpstan.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Packagist](https://img.shields.io/packagist/v/sirosoft/api)](https://packagist.org/packages/sirosoft/api)
