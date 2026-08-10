@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "sirosoft/core",
-            "version": "v0.35.0",
+            "version": "0.35.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SiroSoft/siro-core.git",
-                "reference": "bc83390481efe15127d91eecf2aa1c616a894427"
+                "reference": "e843dbcd36e54615a6f904853d9d3e83a23b9518"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SiroSoft/siro-core/zipball/bc83390481efe15127d91eecf2aa1c616a894427",
-                "reference": "bc83390481efe15127d91eecf2aa1c616a894427",
+                "url": "https://api.github.com/repos/SiroSoft/siro-core/zipball/e843dbcd36e54615a6f904853d9d3e83a23b9518",
+                "reference": "e843dbcd36e54615a6f904853d9d3e83a23b9518",
                 "shasum": ""
             },
             "require": {
@@ -70,7 +70,7 @@
                 "issues": "https://github.com/SiroSoft/siro-core/issues",
                 "source": "https://github.com/SiroSoft/siro-core"
             },
-            "time": "2026-06-07T05:14:40+00:00"
+            "time": "2026-08-01T04:23:10+00:00"
         }
     ],
     "packages-dev": [
@@ -1989,7 +1989,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -1998,6 +1998,6 @@
         "ext-json": "*",
         "ext-mbstring": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }
