@@ -230,14 +230,15 @@ final class RepositoryServiceResourceMutationTest extends TestCase
         ]);
         $result = $repo->destroy($user->id);
         $this->assertTrue($result);
-        $this->assertNull($repo->findById($user->id));
+        $row = \Siro\Core\Database::first('SELECT id FROM users WHERE id = ?', [$user->id]);
+        $this->assertNull($row, 'User row should be removed from database after destroy');
     }
 
     public function testBaseRepositoryPaginate(): void
     {
         $repo = new UserRepository();
         $this->ensureTablesCreated();
-        $result = $repo->paginate(1, 10);
+        $result = $repo->findAll([], 1, 10);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('data', $result);
         $this->assertArrayHasKey('meta', $result);
@@ -284,6 +285,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
             'name' => 'Service Product',
             'price' => 29.99,
             'stock' => 10,
+            'user_id' => 1,
         ]);
         $this->assertNotNull($product);
         $this->assertSame('Service Product', $product['name']);
@@ -297,6 +299,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
             'name' => 'Update Service Product',
             'price' => 10.00,
             'stock' => 5,
+            'user_id' => 1,
         ]);
         $updated = $service->update($product->id, [
             'name' => 'Updated Service Product',
@@ -645,6 +648,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
             'price' => 10.00,
             'stock' => 5,
             'status' => 'active',
+            'user_id' => 1,
         ]);
         $resource = ProductResource::make($product);
         $this->assertIsArray($resource);
@@ -660,6 +664,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
             'price' => 15.00,
             'stock' => 3,
             'status' => 'active',
+            'user_id' => 1,
         ]);
         $collection = ProductResource::collection([$product->toArray()]);
         $this->assertIsArray($collection);
@@ -701,8 +706,8 @@ final class RepositoryServiceResourceMutationTest extends TestCase
     public function testCategoryResourceMake(): void
     {
         $this->ensureTablesCreated();
-        $cat = (new CategoryRepository())->create([
-            'name' => 'Res Category',
+        $cat = (new CategoryRepository())->store([
+            'name' => 'Res Category ' . uniqid(),
             'is_active' => 1,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
@@ -714,8 +719,8 @@ final class RepositoryServiceResourceMutationTest extends TestCase
     public function testTagResourceMake(): void
     {
         $this->ensureTablesCreated();
-        $tag = (new TagRepository())->create([
-            'name' => 'Res Tag',
+        $tag = (new TagRepository())->store([
+            'name' => 'Res Tag ' . uniqid(),
             'is_active' => 1,
             'created_at' => date('Y-m-d H:i:s'),
         ]);

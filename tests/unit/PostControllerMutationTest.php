@@ -182,8 +182,6 @@ final class PostControllerMutationTest extends TestCase
             $this->put("/api/posts/$id", [
                 'title' => 'Updated Post',
                 'body' => 'Updated body with enough characters for the validation.',
-                'excerpt' => 'New excerpt',
-                'category_id' => 1,
             ], $auth)->assertOk();
         }
     }

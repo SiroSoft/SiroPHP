@@ -37,8 +37,9 @@ final class EdgeCoverageMutationTest extends TestCase
     {
         $model = new User();
         $model->setFillable(['name', 'email', 'password']);
-        $this->assertTrue($model->isFillable('name'));
-        $this->assertFalse($model->isFillable('secret'));
+        $ref = new \ReflectionProperty(\Siro\Core\Model::class, 'fillable');
+        $ref->setAccessible(true);
+        $this->assertSame(['name', 'email', 'password'], $ref->getValue($model));
     }
 
     public function testProductModelTable(): void
@@ -99,7 +100,7 @@ final class EdgeCoverageMutationTest extends TestCase
     public function testHandlerHandleValidationException(): void
     {
         $request = new \Siro\Core\Request('GET', '/', [], [], [], '127.0.0.1');
-        $e = new \Siro\Core\ValidationException(['field' => ['Required']], 422);
+        $e = new \Siro\Core\ValidationException(['field' => ['Required']], 'Validation failed');
         $response = Handler::handle($e, $request);
         $this->assertInstanceOf(\Siro\Core\Response::class, $response);
     }
@@ -322,9 +323,8 @@ final class EdgeCoverageMutationTest extends TestCase
 
     public function testUserModelFind(): void
     {
-        $this->ensureTablesCreated();
-        $user = new User();
-        $found = $user::find(99999);
+        $this->createApp();
+        $found = User::find(99999);
         $this->assertNull($found);
     }
 

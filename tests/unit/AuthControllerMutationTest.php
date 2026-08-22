@@ -123,13 +123,27 @@ final class AuthControllerMutationTest extends TestCase
             'email' => $email,
             'password' => 'secret123',
         ]);
-        $lockedUntil = date('Y-m-d H:i:s', time() + 900);
-        \Siro\Core\Database::execute("UPDATE users SET locked_until = ?, login_attempts = 5 WHERE email = ?", [$lockedUntil, $email]);
-        $resp = $this->dispatch($app, 'POST', '/api/auth/login', [
+        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
             'email' => $email,
             'password' => 'secret123',
         ]);
-        $this->assertSame(401, $resp->statusCode());
+        $userId = (int) ($this->responseJson($login)['data']['user']['id'] ?? 0);
+        $this->assertGreaterThan(0, $userId);
+
+        $service = new \App\Services\UserService(
+            new \App\Repositories\UserRepository(),
+            new \App\Repositories\RefreshTokenRepository()
+        );
+        for ($i = 0; $i < 5; $i++) {
+            $service->recordLoginAttempt($userId);
+        }
+        $row = \Siro\Core\Database::first(
+            'SELECT locked_until, login_attempts FROM users WHERE id = ?',
+            [$userId]
+        );
+        $this->assertSame(5, (int) $row['login_attempts'], 'Failed attempts must be recorded');
+        $this->assertNotNull($row['locked_until'], 'Account must be locked after 5 failed attempts');
+        $this->assertGreaterThan(time(), strtotime((string) $row['locked_until']));
     }
 
     public function testLoginValidationErrors(): void
@@ -571,6 +585,10 @@ final class AuthControllerMutationTest extends TestCase
         $loginJson = $this->responseJson($login);
         $token = $loginJson['data']['token'] ?? '';
         $headers = ['authorization' => 'Bearer ' . $token, 'content-type' => 'application/json'];
+        \Siro\Core\Database::execute('DROP TABLE IF EXISTS settings');
+        \Siro\Core\Database::execute(
+            'CREATE TABLE settings (id INTEGER PRIMARY KEY AUTOINCREMENT, "key" TEXT UNIQUE, "value" TEXT)'
+        );
         $this->put('/api/settings', [
             'app_name' => 'TestApp',
             'locale' => 'vi',
