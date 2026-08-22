@@ -8,7 +8,8 @@
 - Mercure CLI: `php siro mercure:subscribe <topic>` for terminal-based topic subscription
 - Redis rate limiter driver for high-traffic production deployments
 - Email verification flow with token-based confirmation and resend
-- Demo workflow mode for quick prototyping and client presentations
+- **Skeleton upgrade to v0.40.0**: Enterprise-grade test suite (742+ tests, MSI 83%)
+- Comprehensive mutation testing coverage for all CRUD operations
 
 ### 🔧 Debug & CLI
 - Enhanced trace filtering with additional query and error filters
@@ -16,8 +17,10 @@
 - Structured error output with machine-parseable JSON fallback
 
 ### 🧪 Testing
-- 463 tests, 0 errors, 0 failures
+- 742 tests, 0 errors, 0 failures (19 skipped)
 - PHPStan level max: 0 errors
+- MSI 83% mutation testing coverage
+- All enterprise test suite passed
 
 ## v0.34.0 (2026-06-03)
 

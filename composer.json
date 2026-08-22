@@ -1,14 +1,14 @@
 {
     "name": "sirosoft/api",
     "description": "Production-first PHP API framework with built-in debugging, replay, and testing workflows",
-    "version": "0.35.1",
+    "version": "0.40.0",
     "type": "project",
     "license": "MIT",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
         "php": ">=8.2",
-        "sirosoft/core": "^0.35.0",
+        "sirosoft/core": "^0.40.0",
         "ext-pdo": "*",
         "ext-json": "*",
         "ext-mbstring": "*"
