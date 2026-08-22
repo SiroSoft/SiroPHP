@@ -4,10 +4,9 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.0.x   | :white_check_mark: |
-| 0.27.x  | :white_check_mark: |
-| 0.26.x  | :white_check_mark: |
-| < 0.26  | :x:                |
+| 0.40.x  | :white_check_mark: |
+| 0.35.x  | :white_check_mark: (security fixes only) |
+| < 0.35  | :x:                |
 
 ---
 
