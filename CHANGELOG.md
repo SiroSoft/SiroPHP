@@ -1,5 +1,28 @@
 # Changelog — SiroPHP Skeleton
 
+## v0.40.0 (2026-08-21)
+
+### 🏢 Enterprise Upgrade
+- Core dependency: `sirosoft/core` `^0.35.0` → `^0.40.0`
+- Enterprise-grade test suite: **742 tests, 1,126 assertions, 0 failures**
+- Mutation-style coverage across all layers: Controllers, Services, Repositories, Resources, Middleware, Exceptions
+
+### 🧪 Testing
+- 9 new mutation-test suites (`tests/unit/*MutationTest.php`) covering:
+  - AuthController (register/login/lockout/refresh/reset/settings/dashboard)
+  - User/Product/Order/Post/Category/Tag Controllers (full CRUD + RBAC 403 paths)
+  - Services: UserService, RefreshTokenService, ProductService, OrderService, PostService
+  - Repositories: BaseRepository, UserRepository, RefreshTokenRepository
+  - Resources: User, Product, Order, Post, Category, Tag
+- Deterministic admin auth via DB role assignment (no first-user race)
+- Per-suite SQLite isolation + table cleanup in `setUp()`
+
+### 🔒 Security
+- Untracked `config/deploy.json` (GitGuardian generic-key alert); `.gitignore` path corrected
+
+### 📦 Dependencies
+- `sirosoft/core`: `^0.35.0` → `^0.40.0`
+
 ## v0.35.0 (2026-06-07)
 
 ### 🚀 Features

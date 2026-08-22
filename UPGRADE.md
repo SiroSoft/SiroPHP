@@ -1,5 +1,27 @@
 # Upgrade Guide
 
+## v0.35.x → v0.40.0
+
+### Overview
+
+Non-breaking upgrade. Core engine bumped to `sirosoft/core ^0.40.0`
+which adds enterprise-grade test infrastructure and security hardening.
+
+### Steps
+
+```bash
+composer update sirosoft/core
+php vendor/bin/phpunit          # 742 tests, all green expected
+```
+
+### Notes
+
+- `config/deploy.json` is no longer tracked by git (keep your local copy).
+- New mutation-test suites live in `tests/unit/*MutationTest.php`.
+- Model identity map now invalidates correctly on insert/update/delete.
+
+---
+
 ## v0.27.x → v1.0.0
 
 ### Overview
