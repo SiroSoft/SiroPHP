@@ -7,7 +7,7 @@
 <div align="center">
 
 [![PHP 8.2+](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Tests](https://img.shields.io/badge/tests-742%20pass-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-745%20pass-brightgreen)](tests/)
 [![MSI](https://img.shields.io/badge/MSI-83%25-brightgreen)](coverage/)
 [![PHPStan](https://img.shields.io/badge/PHPStan-Level%20Max-brightgreen)](https://phpstan.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
@@ -141,13 +141,13 @@ my-api/
 ├── app/Models/         # 6 pre-built (User, Product, Category...)
 ├── app/Services/       # 8 pre-built (BaseService pattern)
 ├── database/           # 13 migrations + 2 seeders
-├── tests/              # **742 passing tests**
+├── tests/              # **745 passing tests**
 ├── docker-compose.yml  # FrankenPHP + Nginx + Caddy
 ├── Dockerfile          # Production build
 └── k8s/                # Helm chart
 ```
 
-**Not an empty skeleton — production-grade, ready to deploy with 742+ tests.**
+**Not an empty skeleton — production-grade, ready to deploy with 745+ tests.**
 
 ---
 
@@ -155,11 +155,11 @@ my-api/
 
 | Gate | Result | | Metric | |
 |------|--------|--|--------|---|
-| Core tests | **19,034 — 0 failures** | | Cold boot (Linux) | **~0.5 ms** |
-| App tests | **742 — 0 failures** | | Cold boot (Win) | **~2.4 ms** |
-| Fuzz tests | **17,851 — 0 failures** | | Route dispatch | **~361K ops/sec** |
+| Core unit/integration | **2,846 — 0 failures** | | Cold boot (Linux) | **~0.5 ms** (est.) |
+| App tests | **745 — 0 failures** | | Cold boot (Win) | **~2.4 ms** (measured) |
+| Fuzz tests | **17,981 — 0 failures** | | Route dispatch | **~361K ops/sec** |
 | DAST security | **157 — 0 failures** | | Memory baseline | **~4 MB** |
-| PHPStan | **Level Max — 0 errors** | | Full-stack | **~360K ops/sec** |
+| PHPStan | **Level Max — 0 errors** | | Full-stack | **~404K ops/sec** |
 | Composer audit | **0 vulnerabilities** | | | |
 | Mutation testing | **MSI 83%** | | Line coverage | **80%+** |
 | Mutation testing | **MSI 83%** | | Line coverage | **80%+** |
