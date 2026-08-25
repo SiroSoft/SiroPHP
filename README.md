@@ -157,7 +157,7 @@ my-api/
 |------|--------|--|--------|---|
 | Core tests | **19,034 — 0 failures** | | Cold boot (Linux) | **~0.5 ms** |
 | App tests | **742 — 0 failures** | | Cold boot (Win) | **~2.4 ms** |
-| Fuzz tests | **17,851 — 0 failures** | | Route dispatch | **~300K ops/sec** |
+| Fuzz tests | **17,851 — 0 failures** | | Route dispatch | **~361K ops/sec** |
 | DAST security | **157 — 0 failures** | | Memory baseline | **~4 MB** |
 | PHPStan | **Level Max — 0 errors** | | Full-stack | **~360K ops/sec** |
 | Composer audit | **0 vulnerabilities** | | | |
@@ -168,7 +168,7 @@ my-api/
 
 ## Built-in features
 
-Zero packages needed. JWT auth, ORM, migrations, queue, mail, cache, validation, rate limiting, CSP, CORS, CSRF, OpenAPI, Prometheus metrics, CLI (80 commands). [Full list →](https://sirophp.com/features)
+Zero packages needed. JWT auth, ORM, migrations, queue, mail, cache, validation, rate limiting, CSP, CORS, CSRF, OpenAPI, Prometheus metrics, CLI (99 commands). [Full list →](https://sirophp.com/features)
 
 ---
 
