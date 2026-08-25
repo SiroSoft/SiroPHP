@@ -73,9 +73,14 @@ php siro api:why POST /api/orders
     [e] php siro replay siro_a1b2c3d4 --edit
     [d] php siro replay siro_a1b2c3d4 --diff
     [t] php siro make:test --from-trace=siro_a1b2c3d4
+
+  ⚠ Side-effect risks detected: 2 DB writes, 1 outbound HTTP call
+  → Replay blocked by default. Use --force to execute.
 ```
 
 **No other framework — PHP, Node, Go, Rust, Python, Ruby — has this flow.**
+
+> Replay is risk-aware: Siro analyzes captured SQL writes, outbound HTTP calls, and queued jobs before replay. Risky traces require `--force`.
 
 ---
 
@@ -91,7 +96,7 @@ php siro deploy
 # 3. Why — debug production failure
 php siro why
 
-# 4. Replay & diff — so sánh trước/sau fix
+# 4. Replay & diff — so sánh trước/sau fix (risk-aware)
 php siro replay siro_a1b2c3d4 --diff
 ```
 

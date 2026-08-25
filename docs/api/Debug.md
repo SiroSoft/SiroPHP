@@ -15,7 +15,9 @@ Siro's debug system provides request tracing, replay, and production debugging t
 php siro why                     # Last request analysis
 php siro api:why POST /orders    # Trace specific request by method+path
 php siro log:trace <id>          # View full trace
-php siro log:replay <id>         # Replay request
+php siro log:replay <id>         # Replay request (risk-aware)
+php siro log:replay <id> --force # Replay risky trace (DB writes, HTTP calls)
+php siro log:replay <id> --dry-run  # Preview without executing
 php siro fix <id>                # Replay + verify fix
 php siro log:replay <id> --test  # Generate regression test from trace
 ```
@@ -79,13 +81,42 @@ Output includes:
 
 ## Request Replay
 
-The signature Siro feature — replay any captured request.
+The signature Siro feature — replay any captured request with **risk-aware safety**.
 
-### Safe Replay (production default)
+### How Replay Safety Works
+
+Before replaying, Siro analyzes the trace for potential side effects:
+
+- **DB writes**: INSERT, UPDATE, DELETE, REPLACE, TRUNCATE detected in captured SQL
+- **Outbound HTTP**: External API calls made through Siro's HTTP client
+- **Queue jobs**: Async jobs dispatched during the request
+
+```
+Potential replay side effects:
+  Database writes:   3
+  Outbound HTTP:     1
+  Queue dispatches:  1
+
+WARNING: This command re-executes the request against the target application.
+Database writes, external API calls, queued jobs, emails, or other
+application side effects may occur again.
+```
+
+**Guard behavior:**
+- GET + no risks → auto-executes (safe)
+- POST/PUT/DELETE/PATCH → requires `--force`
+- Any method + risks detected → requires `--force`
+
+> ⚠️ Siro detects and warns about side effects. It does **not** sandbox or isolate them. A forced replay of a checkout request may still create DB writes, call payment APIs, or dispatch jobs.
+
+### Safe Replay
 
 ```bash
-# Dry-run (default in production — no side effects)
+# Auto-executes if no risks detected
 php siro log:replay siro_a1b2c3d4
+
+# Preview without executing (always safe)
+php siro log:replay siro_a1b2c3d4 --dry-run
 
 # With diff (compare before/after fix)
 php siro log:replay siro_a1b2c3d4 --diff
@@ -110,7 +141,7 @@ php siro log:replay siro_a1b2c3d4 --format=httpie
 ### Force Execution
 
 ```bash
-# Execute replay with side effects (use with caution)
+# Execute replay (required for risky traces or write methods)
 php siro log:replay siro_a1b2c3d4 --force
 
 # With HTTPS
@@ -219,17 +250,19 @@ When a trace is captured, it includes:
 | `method` | HTTP method |
 | `path` | Request path |
 | `status_code` | Response status |
-| `headers` | Request headers (sensitive values redacted) |
-| `body` | Request body |
-| `queries` | Array of SQL queries with timing |
+| `request_headers` | Request headers (sensitive values redacted) |
+| `request_body` | Request body |
+| `response_body` | Response body |
+| `queries` | Array of SQL queries with timing and row counts |
 | `middleware` | Middleware execution timeline |
+| `outbound_http` | External HTTP calls via Siro\Http (method, URL, status, duration) |
+| `queue_jobs` | Jobs dispatched during request (job name, source trace ID) |
 | `exception` | Exception class and message |
-| `trace` | Stack trace (debug mode only) |
 | `duration_ms` | Total request duration |
-| `memory_mb` | Memory usage |
-| `n_plus_one` | N+1 query detection results |
 | `ip` | Client IP |
 | `timestamp` | Request timestamp |
+
+> **Note:** `outbound_http` only captures requests through `Siro\Core\Http`. Native cURL/Guzzle calls are not captured.
 
 ---
 
@@ -239,7 +272,7 @@ When a trace is captured, it includes:
 |---------|-------------|
 | `why` | Last request analysis with N+1 detection |
 | `log:trace <id>` | View trace details |
-| `log:replay <id>` | Replay request (--edit, --diff, --force) |
+| `log:replay <id>` | Replay request (risk-aware: --force for risky traces, --dry-run to preview) |
 | `log:tail` | Tail log files |
 | `log:slow` | Show slow requests |
 | `log:stats` | Log statistics |
