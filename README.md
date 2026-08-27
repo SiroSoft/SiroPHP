@@ -168,7 +168,7 @@ my-api/
 
 ## Built-in features
 
-Zero packages needed. JWT auth, ORM, migrations, queue, mail, cache, validation, rate limiting, CSP, CORS, CSRF, OpenAPI, Prometheus metrics, CLI (99 commands). [Full list →](https://sirophp.com/features)
+Zero packages needed. JWT auth, ORM, migrations, queue, mail, cache, validation, rate limiting, CSP, CORS, CSRF, OpenAPI, Prometheus metrics, CLI (95 commands). [Full list →](https://sirophp.com/features)
 
 ---
 
