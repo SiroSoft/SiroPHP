@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "96fe55d83d80dd48d841ce7cfec6e0bf",
+    "content-hash": "f28784895f62bcfdf556fc0496b7ced2",
     "packages": [
         {
             "name": "sirosoft/core",
-            "version": "v0.40.0",
+            "version": "v0.41.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SiroSoft/siro-core.git",
-                "reference": "73eeef8bc6234a2714f9c8bdf710f80dbc801453"
+                "reference": "0bb49bbe5bbd7097279bd54f546b948c155fbfbc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SiroSoft/siro-core/zipball/73eeef8bc6234a2714f9c8bdf710f80dbc801453",
-                "reference": "73eeef8bc6234a2714f9c8bdf710f80dbc801453",
+                "url": "https://api.github.com/repos/SiroSoft/siro-core/zipball/0bb49bbe5bbd7097279bd54f546b948c155fbfbc",
+                "reference": "0bb49bbe5bbd7097279bd54f546b948c155fbfbc",
                 "shasum": ""
             },
             "require": {
@@ -70,7 +70,7 @@
                 "issues": "https://github.com/SiroSoft/siro-core/issues",
                 "source": "https://github.com/SiroSoft/siro-core"
             },
-            "time": "2026-08-20T14:09:13+00:00"
+            "time": "2026-08-25T13:50:59+00:00"
         }
     ],
     "packages-dev": [
@@ -1989,7 +1989,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -1998,6 +1998,6 @@
         "ext-json": "*",
         "ext-mbstring": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }
