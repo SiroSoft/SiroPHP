@@ -92,7 +92,33 @@ abstract class TestCase extends BaseTestCase
             }
         }
 
+        // Roll back any transaction left over from the previous test before
+        // touching the per-class DB config (this must happen FIRST: once we
+        // reconfigure below, an eager connection would pin the per-class
+        // sqlite file and break test classes that unlink their own DB file).
         self::resetTransaction();
+
+        // Configure the per-class SQLite test database for EVERY test, not
+        // only those that boot the full app. Repository/Service tests hit the
+        // DB directly without calling createApp(); without this, the first
+        // such test in a class fails with "Database connection 'default' is
+        // not configured" (and on CI the default config points at a
+        // non-existent file, surfacing as a readonly-database error).
+        // purgeAll() also releases file handles so per-class DB files can be
+        // removed between runs.
+        $tempDb = $this->basePath . '/storage/tests/' . str_replace('\\', '_', static::class) . '.db';
+        $dir = dirname($tempDb);
+        if (!is_dir($dir)) { mkdir($dir, 0775, true); }
+        \Siro\Core\Database::purgeAll();
+        \Siro\Core\Database::configure([
+            'driver' => 'sqlite',
+            'host' => '127.0.0.1',
+            'port' => 0,
+            'database' => $tempDb,
+            'username' => '',
+            'password' => '',
+            'charset' => 'utf8',
+        ]);
     }
 
     protected function tearDown(): void
@@ -103,6 +129,9 @@ abstract class TestCase extends BaseTestCase
 
     public static function tearDownAfterClass(): void
     {
+        // Release any open PDO handles first so the per-class DB file is not
+        // locked (Windows) and can actually be removed.
+        \Siro\Core\Database::purgeAll();
         $dbFile = dirname(__DIR__) . '/storage/tests/' . str_replace('\\', '_', static::class) . '.db';
         if (is_file($dbFile)) { @unlink($dbFile); }
     }
