@@ -19,6 +19,12 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 
+      - name: Prepare env for tests
+        run: |
+          if [ ! -f .env ]; then
+            cp .env.testing .env
+          fi
+
       - name: Run strict technical gate
         run: composer release:check
 
