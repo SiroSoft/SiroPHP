@@ -55,6 +55,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
     public function testUserRepositoryFindByEmailNotFound(): void
     {
         $repo = new UserRepository();
+        $this->ensureTablesCreated();
         $this->assertNull($repo->findByEmail('nonexistent-' . uniqid() . '@test.com'));
     }
 
@@ -78,6 +79,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
     public function testUserRepositoryFindByNotFound(): void
     {
         $repo = new UserRepository();
+        $this->ensureTablesCreated();
         $this->assertNull($repo->findBy('email', 'nope-' . uniqid() . '@test.com'));
     }
 
@@ -130,6 +132,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testRefreshTokenRepositoryFindActiveByJtiNotFound(): void
     {
+        $this->ensureTablesCreated();
         $repo = new RefreshTokenRepository();
         $this->assertNull($repo->findActiveByJti('nonexistent-jti'));
     }
@@ -167,6 +170,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testRefreshTokenRepositoryFindRevokedByJtiNotFound(): void
     {
+        $this->ensureTablesCreated();
         $repo = new RefreshTokenRepository();
         $this->assertNull($repo->findRevokedByJti('no-such-jti'));
     }
@@ -193,6 +197,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testBaseRepositoryFindByIdNotFound(): void
     {
+        $this->ensureTablesCreated();
         $repo = new UserRepository();
         $this->assertNull($repo->findById(99999));
     }
@@ -577,6 +582,9 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testRefreshTokenServiceCreatePair(): void
     {
+        putenv('JWT_SECRET=test_secret_for_integration_testing_only_32chars!');
+        $_ENV['JWT_SECRET'] = 'test_secret_for_integration_testing_only_32chars!';
+        \Siro\Core\Env::reset();
         $userService = new UserService(new UserRepository(), new RefreshTokenRepository());
         $service = new RefreshTokenService(new RefreshTokenRepository(), $userService);
         $this->ensureTablesCreated();

@@ -200,14 +200,37 @@ php siro log:trace --method=POST --slow --limit=10
 ### Replay — the real moat
 
 ```bash
-php siro log:replay a1b2c3d4                # Dry-run (safe)
+php siro log:replay a1b2c3d4                # Replay (auto-blocks risky traces)
+php siro log:replay a1b2c3d4 --dry-run     # Preview without executing
 php siro log:replay a1b2c3d4 --edit         # Edit body before replay
 php siro log:replay a1b2c3d4 --diff         # Before/after comparison
-php siro log:replay a1b2c3d4 --force        # Execute (verify fix)
+php siro log:replay a1b2c3d4 --force        # Execute risky trace (DB writes, HTTP, queue)
 php siro log:replay a1b2c3d4 --set user_id=42  # Override field
 php siro log:replay a1b2c3d4 --format=curl  # Export as curl
 php siro log:replay a1b2c3d4 --https        # Use HTTPS
+
+# ⚠ Replay re-executes the request. Potential side effects detected from
+# captured SQL writes, outbound HTTP, and queued jobs are guarded by default.
+# --force explicitly allows execution.
 ```
+
+### Replay Safety
+
+Before replaying, Siro analyzes the captured trace for potential side effects:
+
+- **DB writes**: INSERT, UPDATE, DELETE detected in SQL queries
+- **Outbound HTTP**: External API calls through Siro's HTTP client
+- **Queue jobs**: Async jobs dispatched during the request
+
+Risky traces are blocked by default. Use `--force` to execute.
+
+```bash
+php siro log:replay abc123            # safe → auto-executes
+php siro log:replay abc123 --dry-run  # preview only
+php siro log:replay abc123 --force    # explicit risky execution
+```
+
+> ⚠️ Siro detects and warns about side effects but does not sandbox them. A forced replay may still create DB writes, call external APIs, or dispatch jobs.
 
 ---
 
@@ -398,7 +421,7 @@ docker compose up -d
 
 | Command | Description | Usage |
 |---|---|---|
-| `log:replay` | Replay request (--set, --seed) | `php siro log:replay <trace_id> [--force] [--set key=val] [--format=] [--safe] [--dry-run]` |
+| `log:replay` | Replay request (risk-aware: --force for risky traces) | `php siro log:replay <trace_id> [--force] [--dry-run] [--set key=val] [--format=] [--safe]` |
 | `log:trace` | View trace details (--full for more) | `php siro log:trace [<id>] [--status=500] [--limit=N] [--full]` |
 | `log:export` | Export trace (JSON/CSV/Postman) | `php siro log:export <trace_id> [--format=] [--output=] [--days=] [--curl]` |
 | `log:cleanup` | Clean old trace files | `php siro log:cleanup [--days=N] [--dry-run]` |
@@ -460,7 +483,7 @@ docker compose up -d
 | `route:rules` | Show validation rules | `php siro route:rules` |
 | `trace:list` | List recent traces (--limit=N) | `php siro trace:list [--limit=20]` |
 | `rate:status` | Rate limit dashboard | `php siro rate:status` |
-| `replay` | Replay last trace (or by id) | `php siro replay [trace_id] [--edit] [--diff]` |
+| `replay` | Replay last trace (risk-aware) | `php siro replay [trace_id] [--force] [--edit] [--diff] [--dry-run]` |
 | `runtime` | Siro Runtime manager (install, switch, list) | `php siro runtime [install\|switch\|list\|remove\|current\|path]` |
 | `db` | Database manager (init, start, stop) | `php siro db [init\|start\|stop\|status\|remove]` |
 | `demo` | 30s debug workflow demo — test, fail, why, fix, trace | `php siro demo` |

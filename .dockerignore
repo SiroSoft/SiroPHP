@@ -12,4 +12,3 @@ storage/cache/
 storage/rate_limit/
 storage/traces/
 *.md
-composer.lock
