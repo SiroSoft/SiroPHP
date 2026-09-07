@@ -1,5 +1,22 @@
 # Changelog — SiroPHP Skeleton
 
+## v1.0.0 (2026-09-07)
+
+First stable release of the skeleton, aligned with engine `sirosoft/core` v1.0.0
+(API stability promise in effect).
+
+### ⬆️ Engine
+- **`sirosoft/core` `^1.0.0`** — new `composer create-project` installs get the stable
+engine out of the box, including the dogfood hardening fixes (env inline comments,
+DB connection reconfigure, throttle error transparency, queue auto-registration,
+`make:job` interface fix).
+- No breaking changes from v0.40.0: application code written against v0.40.x works unchanged.
+
+### ✅ Verification
+- 742 tests green against engine v1.0.0 (21 skipped, environment-dependent).
+
+---
+
 ## v0.40.0 (2026-08-21)
 
 ### 🏢 Enterprise Upgrade

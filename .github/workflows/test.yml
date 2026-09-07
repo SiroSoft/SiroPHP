@@ -71,6 +71,11 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Prepare env
+        run: |
+          if [ ! -f .env ]; then
+            cp .env.testing .env
+          fi
       - name: PHPUnit Unit tests
         run: php vendor/bin/phpunit --testsuite=Unit --no-progress
 

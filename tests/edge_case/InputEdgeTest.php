@@ -20,6 +20,7 @@ final class InputEdgeTest extends TestCase
         $resp = $this->post('/api/products', [
             'name' => 'Edge Product',
             'price' => 10,
+            'stock' => 5,
             'nonexistent_field' => 'should be ignored',
         ], $auth);
         $this->assertContains($resp->status(), [200, 201, 403]);
@@ -31,6 +32,7 @@ final class InputEdgeTest extends TestCase
         $resp = $this->post('/api/products', [
             'name' => '<script>alert("xss")</script>',
             'price' => 10,
+            'stock' => 5,
         ], $auth);
         $this->assertContains($resp->status(), [200, 201, 403]);
     }
