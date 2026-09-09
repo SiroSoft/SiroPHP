@@ -25,8 +25,34 @@ if ($withProdDoctor) {
 
 $failures = 0;
 
-// Version-consistency gate: composer.json version == runtime core version,
-// and static pages/spec must not drift (e.g. footer v0.32.0 while core is 1.0.0).
+// Version-consistency gate: composer.json version == CHANGELOG head == page
+// footers == openapi.json, and the installed core engine must satisfy the
+// sirosoft/core constraint (skeleton and engine versions may differ, e.g.
+// skeleton 1.0.1 on engine 1.0.0).
+function versionSatisfiesConstraint(string $version, string $constraint): bool
+{
+    $constraint = trim($constraint);
+    if ($constraint === '' || $constraint === '*') {
+        return true;
+    }
+    if (str_starts_with($constraint, '^')) {
+        $min = substr($constraint, 1);
+        $parts = explode('.', $min);
+        $major = (int) ($parts[0] ?? 0);
+        $upper = $major > 0 ? ($major + 1) . '.0.0' : '0.' . (((int) ($parts[1] ?? 0)) + 1) . '.0';
+        return version_compare($version, $min, '>=') && version_compare($version, $upper, '<');
+    }
+    if (str_starts_with($constraint, '~')) {
+        $min = substr($constraint, 1);
+        $parts = explode('.', $min);
+        $upper = $parts[0] . '.' . (((int) ($parts[1] ?? 0)) + 1) . '.0';
+        return version_compare($version, $min, '>=') && version_compare($version, $upper, '<');
+    }
+    if (preg_match('/^(>=|<=|>|<|=|==)?\s*(\d+\.\d+\.\d+)$/', $constraint, $m)) {
+        return version_compare($version, $m[2], $m[1] !== '' ? $m[1] : '==');
+    }
+    return true;
+}
 fwrite(STDOUT, "\n==> Version gate\n");
 $versionGateOk = (function () use ($root): bool {
     $composerFile = $root . '/composer.json';
@@ -41,13 +67,14 @@ $versionGateOk = (function () use ($root): bool {
         fwrite(STDERR, "[FAIL] Version gate: CHANGELOG head '" . ($cm[1] ?? '?') . "' != composer.json '{$appVersion}'\n");
         return false;
     }
+    $constraint = is_array($composer) ? (string) ($composer['require']['sirosoft/core'] ?? '') : '';
     $runtimeVersion = null;
     $consoleFile = $root . '/vendor/sirosoft/core/Console.php';
     if (is_file($consoleFile) && preg_match("/const VERSION = '([^']+)'/", (string) file_get_contents($consoleFile), $m)) {
         $runtimeVersion = $m[1];
     }
-    if ($runtimeVersion !== null && $runtimeVersion !== $appVersion) {
-        fwrite(STDERR, "[FAIL] Version gate: runtime core '{$runtimeVersion}' != skeleton '{$appVersion}' (run composer update)\n");
+    if ($runtimeVersion !== null && $constraint !== '' && !versionSatisfiesConstraint($runtimeVersion, $constraint)) {
+        fwrite(STDERR, "[FAIL] Version gate: runtime core '{$runtimeVersion}' does not satisfy '{$constraint}' (run composer update)\n");
         return false;
     }
     foreach (['public/index.html' => 'SiroPHP v' . $appVersion, 'public/index-prod.html' => 'v' . $appVersion] as $file => $needle) {

@@ -1,5 +1,21 @@
 # Changelog — SiroPHP Skeleton
 
+## v1.0.1 (2026-09-10)
+
+Patch: every surface that prints the skeleton version now reports `1.0.1`
+(engine stays `sirosoft/core 1.0.0`).
+
+### 🔧 Fixed
+- Dev Dashboard (`public/index.html`) and production page (`public/index-prod.html`)
+  footers: hardcoded `v0.32.0` → `v1.0.1`.
+- OpenAPI spec (`public/openapi.json`): `info.version` + health schema example
+  `0.15.0` → `1.0.1` (regenerate with `php siro make:openapi --version=1.0.1 --force`).
+- No breaking changes from v1.0.0.
+
+### 🛡️ Release engineering
+- `scripts/release-check.php` gains a version-consistency gate: `composer.json`
+  version must match runtime core, CHANGELOG head, page footers, and OpenAPI spec.
+
 ## v1.0.0 (2026-09-07)
 
 First stable release of the skeleton, aligned with engine `sirosoft/core` v1.0.0
