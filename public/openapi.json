@@ -2,7 +2,7 @@
     "openapi": "3.0.3",
     "info": {
         "title": "Siro API",
-        "version": "0.15.0",
+        "version": "1.0.1",
         "description": "Siro API Framework",
         "contact": {
             "name": "SiroSoft Team",
@@ -2733,7 +2733,7 @@
                             },
                             "version": {
                                 "type": "string",
-                                "example": "0.15.0"
+                                "example": "1.0.1"
                             },
                             "php": {
                                 "type": "string",
