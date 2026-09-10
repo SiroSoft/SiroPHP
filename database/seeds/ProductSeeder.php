@@ -115,6 +115,13 @@ final class ProductSeeder
             return;
         }
 
+        $owner = DB::table('users')->orderBy('id')->first();
+        if ($owner === null) {
+            echo "  [SKIP] No users found. Run UserSeeder first (ADMIN_EMAIL/ADMIN_PASSWORD).\n";
+            return;
+        }
+        $ownerId = (int) ($owner['id'] ?? 0);
+
         foreach ($products as $product) {
             DB::table('products')->insert([
                 'name' => $product['name'],
@@ -123,6 +130,7 @@ final class ProductSeeder
                 'stock' => $product['stock'],
                 'category' => $product['category'],
                 'status' => $product['status'],
+                'user_id' => $ownerId,
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
