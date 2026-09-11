@@ -41,7 +41,9 @@ final class DemoSeeder
             'password' => password_hash($password, PASSWORD_BCRYPT),
             'status' => 1,
             'token_version' => 1,
-            'role' => 'viewer',
+            // admin so read endpoints pass RBAC; writes still blocked
+            // by DemoGuardMiddleware via the demo email match.
+            'role' => 'admin',
             'email_verified_at' => date('Y-m-d H:i:s'),
             'created_at' => date('Y-m-d H:i:s'),
         ]);
