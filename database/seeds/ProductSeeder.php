@@ -6,6 +6,15 @@ use Siro\Core\DB;
 
 final class ProductSeeder
 {
+    /**
+     * Deterministic demo image per product (picsum seed).
+     */
+    public static function coverUrl(string $name): string
+    {
+        $slug = strtolower((string) preg_replace('/[^a-z0-9]+/i', '-', $name));
+        return 'https://picsum.photos/seed/siro-' . trim($slug, '-') . '/640/480';
+    }
+
     public function run(): void
     {
         $products = [
@@ -109,6 +118,14 @@ final class ProductSeeder
 
         $now = date('Y-m-d H:i:s');
 
+        // Backfill cover images for DBs seeded before images existed.
+        foreach ($products as $product) {
+            DB::table('products')
+                ->where('name', $product['name'])
+                ->whereNull('cover_image')
+                ->update(['cover_image' => self::coverUrl($product['name'])]);
+        }
+
         $existingCount = DB::table('products')->count();
         if ($existingCount > 0) {
             echo '  [SKIP] ' . $existingCount . " products already exist\n";
@@ -130,6 +147,7 @@ final class ProductSeeder
                 'stock' => $product['stock'],
                 'category' => $product['category'],
                 'status' => $product['status'],
+                'cover_image' => self::coverUrl($product['name']),
                 'user_id' => $ownerId,
                 'created_at' => $now,
                 'updated_at' => $now,
