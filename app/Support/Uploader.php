@@ -20,7 +20,7 @@ use Siro\Core\Env;
 final class Uploader
 {
     // Keep in sync with Siro\Core\UploadedFile::ALLOWED_EXTENSIONS
-    private const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'txt', 'csv', 'json', 'xml
+    private const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'txt', 'csv', 'json', 'xml', 'doc', 'docx', 'zip'];
     private const DEFAULT_MAX_MB = 10;
 
     private static function maxBytes(): int
