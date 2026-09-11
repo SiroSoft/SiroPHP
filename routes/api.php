@@ -7,6 +7,7 @@ use Siro\Core\Middleware\CorsMiddleware;
 use Siro\Core\Middleware\JsonMiddleware;
 use App\Middleware\SecurityHeadersMiddleware;
 use App\Middleware\DemoGuardMiddleware;
+use App\Middleware\FeGuardMiddleware;
 use Siro\Core\Lang;
 use Siro\Core\Metrics;
 use Siro\Core\Request;
@@ -160,7 +161,7 @@ $app->router->get('/', function (Request $req): mixed {
 // ---------------------------------------------------------------------------
 // API v1 — Authenticated routes
 // ---------------------------------------------------------------------------
-$app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::class, 'version', 'etag', 'metrics', 'audit'], function (\Siro\Core\Router $router): void {
+$app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::class, FeGuardMiddleware::class, 'version', 'etag', 'metrics', 'audit'], function (\Siro\Core\Router $router): void {
 
     // -- Auth (public) --
     $router->post('/auth/register', [AuthController::class, 'register'])
