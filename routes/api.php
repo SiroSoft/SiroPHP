@@ -6,6 +6,7 @@ use App\Controllers\AuthController;
 use Siro\Core\Middleware\CorsMiddleware;
 use Siro\Core\Middleware\JsonMiddleware;
 use App\Middleware\SecurityHeadersMiddleware;
+use App\Middleware\DemoGuardMiddleware;
 use Siro\Core\Lang;
 use Siro\Core\Metrics;
 use Siro\Core\Request;
@@ -191,19 +192,19 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
         ->middleware(['auth', 'throttle:60,1']);
 
     // -- CRUD Resources --
-    $router->resource('products', \App\Controllers\ProductController::class, ['auth', 'throttle:60,1']);
-    $router->resource('categories', \App\Controllers\CategoryController::class, ['auth', 'throttle:60,1']);
-    $router->resource('tags', \App\Controllers\TagController::class, ['auth', 'throttle:60,1']);
-    $router->resource('orders', \App\Controllers\OrderController::class, ['auth', 'throttle:60,1']);
-    $router->resource('posts', \App\Controllers\PostController::class, ['auth', 'throttle:60,1']);
-    $router->resource('users', \App\Controllers\UserController::class, ['auth', 'throttle:60,1']);
+    $router->resource('products', \App\Controllers\ProductController::class, ['auth', DemoGuardMiddleware::class, 'throttle:60,1']);
+    $router->resource('categories', \App\Controllers\CategoryController::class, ['auth', DemoGuardMiddleware::class, 'throttle:60,1']);
+    $router->resource('tags', \App\Controllers\TagController::class, ['auth', DemoGuardMiddleware::class, 'throttle:60,1']);
+    $router->resource('orders', \App\Controllers\OrderController::class, ['auth', DemoGuardMiddleware::class, 'throttle:60,1']);
+    $router->resource('posts', \App\Controllers\PostController::class, ['auth', DemoGuardMiddleware::class, 'throttle:60,1']);
+    $router->resource('users', \App\Controllers\UserController::class, ['auth', DemoGuardMiddleware::class, 'throttle:60,1']);
 
     // -- File Upload (using App\Support\Uploader) --
     $router->post('/upload/avatar', fn(Request $req): Response => \App\Support\Uploader::response($req, 'avatar', 'avatars'))
-        ->middleware(['auth', 'throttle:10,1']);
+        ->middleware(['auth', DemoGuardMiddleware::class, 'throttle:10,1']);
 
     $router->post('/upload', fn(Request $req): Response => \App\Support\Uploader::response($req, 'file', 'uploads'))
-        ->middleware(['auth', 'throttle:10,1']);
+        ->middleware(['auth', DemoGuardMiddleware::class, 'throttle:10,1']);
 
     // -- Profile --
     $router->get('/profile', function (Request $req): array {
@@ -231,7 +232,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
     })->middleware(['auth']);
 
     $router->put('/profile', [\App\Controllers\UserController::class, 'updateProfile'])
-        ->middleware(['auth', JsonMiddleware::class]);
+        ->middleware(['auth', DemoGuardMiddleware::class, JsonMiddleware::class]);
 
     $router->put('/profile/password', function (Request $req): Response {
         $data = $req->all();
@@ -260,7 +261,7 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
             );
         }
         return Response::success(null, 'Password changed');
-    })->middleware(['auth', JsonMiddleware::class]);
+    })->middleware(['auth', DemoGuardMiddleware::class, JsonMiddleware::class]);
 
     // -- Settings --
     $router->get('/settings', function (Request $req): Response {
@@ -321,11 +322,11 @@ $app->router->group('/api', [SecurityHeadersMiddleware::class, CorsMiddleware::c
         } catch (\Throwable $e) {
             return Response::error('Settings update failed: ' . $e->getMessage(), 500);
         }
-    })->middleware(['auth', JsonMiddleware::class]);
+    })->middleware(['auth', DemoGuardMiddleware::class, JsonMiddleware::class]);
 
     // -- Orders: status update --
     $router->patch('/orders/{id}/status', [\App\Controllers\OrderController::class, 'updateStatus'])
-        ->middleware(['auth', JsonMiddleware::class, 'throttle:60,1']);
+        ->middleware(['auth', DemoGuardMiddleware::class, JsonMiddleware::class, 'throttle:60,1']);
 
     // -- Server Info (rate-limited, no sensitive DB details) --
     $router->get('/server/info', function (): Response {

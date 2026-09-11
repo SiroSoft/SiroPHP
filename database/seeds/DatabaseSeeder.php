@@ -15,6 +15,7 @@ final class DatabaseSeeder
         UserSeeder::class,
         CategorySeeder::class,
         ProductSeeder::class,
+        DemoSeeder::class,
     ];
 
     public function run(): void
