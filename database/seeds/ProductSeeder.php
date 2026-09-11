@@ -7,12 +7,38 @@ use Siro\Core\DB;
 final class ProductSeeder
 {
     /**
-     * Deterministic demo image per product (picsum seed).
+     * Self-hosted demo image per product.
+     *
+     * Assets live in database/seed-assets/ and are copied into
+     * storage/public/uploads/seed/ on seed, so demos never depend on
+     * external image hosts. URL is a local /storage/... web path.
      */
-    public static function coverUrl(string $name): string
+    public static function coverSlug(string $name): string
     {
         $slug = strtolower((string) preg_replace('/[^a-z0-9]+/i', '-', $name));
-        return 'https://picsum.photos/seed/siro-' . trim($slug, '-') . '/640/480';
+        return 'siro-' . trim($slug, '-');
+    }
+
+    public static function coverUrl(string $name): string
+    {
+        return '/storage/uploads/seed/' . self::coverSlug($name) . '.jpg';
+    }
+
+    private static function publishCovers(): void
+    {
+        $base = defined('BASE_PATH') && is_string(BASE_PATH) ? BASE_PATH : dirname(__DIR__, 2);
+        $srcDir = $base . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'seed-assets';
+        $destDir = $base . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'public'
+            . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'seed';
+        if (!is_dir($destDir)) {
+            mkdir($destDir, 0775, true);
+        }
+        foreach (glob($srcDir . DIRECTORY_SEPARATOR . '*.jpg') ?: [] as $src) {
+            $dest = $destDir . DIRECTORY_SEPARATOR . basename($src);
+            if (!is_file($dest)) {
+                copy($src, $dest);
+            }
+        }
     }
 
     public function run(): void
@@ -118,12 +144,21 @@ final class ProductSeeder
 
         $now = date('Y-m-d H:i:s');
 
-        // Backfill cover images for DBs seeded before images existed.
+        self::publishCovers();
+
+        // Backfill cover images for DBs seeded before images existed
+        // (or with the old external picsum URLs).
         foreach ($products as $product) {
-            DB::table('products')
-                ->where('name', $product['name'])
-                ->whereNull('cover_image')
-                ->update(['cover_image' => self::coverUrl($product['name'])]);
+            $row = DB::table('products')->where('name', $product['name'])->first();
+            if ($row === null) {
+                continue;
+            }
+            $current = (string) ($row['cover_image'] ?? '');
+            if ($current === '' || str_contains($current, 'picsum.photos')) {
+                DB::table('products')
+                    ->where('name', $product['name'])
+                    ->update(['cover_image' => self::coverUrl($product['name'])]);
+            }
         }
 
         $existingCount = DB::table('products')->count();
