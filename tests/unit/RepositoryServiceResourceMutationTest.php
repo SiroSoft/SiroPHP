@@ -253,6 +253,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testProductServiceGetAll(): void
     {
+        $this->ensureTablesCreated();
         $service = new ProductService(new ProductRepository());
         $result = $service->getAll();
         $this->assertIsArray($result);
@@ -262,6 +263,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testProductServiceGetAllWithFilters(): void
     {
+        $this->ensureTablesCreated();
         $service = new ProductService(new ProductRepository());
         $result = $service->getAll([
             'sort' => 'price',
@@ -277,6 +279,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testProductServiceGetAllInvalidSort(): void
     {
+        $this->ensureTablesCreated();
         $service = new ProductService(new ProductRepository());
         $result = $service->getAll(['sort' => 'invalid', 'order' => 'invalid']);
         $this->assertIsArray($result);
@@ -317,6 +320,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testProductServiceUpdateNotFound(): void
     {
+        $this->ensureTablesCreated();
         $service = new ProductService(new ProductRepository());
         $this->assertNull($service->update(99999, ['name' => 'Nope']));
     }
@@ -325,6 +329,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testOrderServiceGetAll(): void
     {
+        $this->ensureTablesCreated();
         $service = new OrderService(new OrderRepository());
         $result = $service->getAll();
         $this->assertIsArray($result);
@@ -333,6 +338,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testOrderServiceGetAllWithFilters(): void
     {
+        $this->ensureTablesCreated();
         $service = new OrderService(new OrderRepository());
         $result = $service->getAll(['status' => 'pending', 'user_id' => 1]);
         $this->assertIsArray($result);
@@ -412,6 +418,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testPostServiceGetAll(): void
     {
+        $this->ensureTablesCreated();
         $service = new PostService(new PostRepository());
         $result = $service->getAll();
         $this->assertIsArray($result);
@@ -420,6 +427,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testPostServiceGetAllWithFilters(): void
     {
+        $this->ensureTablesCreated();
         $service = new PostService(new PostRepository());
         $result = $service->getAll(['locale' => 'en', 'user_id' => 1]);
         $this->assertIsArray($result);
@@ -441,12 +449,14 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testPostServiceDeleteNotFound(): void
     {
+        $this->ensureTablesCreated();
         $service = new PostService(new PostRepository());
         $this->assertFalse($service->delete(99999));
     }
 
     public function testPostServiceNotFoundMessage(): void
     {
+        $this->ensureTablesCreated();
         $service = new PostService(new PostRepository());
         $msg = $service->notFoundMessage();
         $this->assertIsString($msg);
@@ -457,6 +467,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testAbstractServiceGetAll(): void
     {
+        $this->ensureTablesCreated();
         $service = new CategoryService(new CategoryRepository());
         $result = $service->getAll();
         $this->assertIsArray($result);
@@ -465,6 +476,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testAbstractServiceGetById(): void
     {
+        $this->ensureTablesCreated();
         $service = new TagService(new TagRepository());
         $this->assertNull($service->getById(99999));
     }
@@ -473,12 +485,14 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testUserServiceGetByEmail(): void
     {
+        $this->ensureTablesCreated();
         $service = new UserService(new UserRepository(), new RefreshTokenRepository());
         $this->assertNull($service->getByEmail('nonexistent-' . uniqid() . '@test.com'));
     }
 
     public function testUserServiceGetTokenVersion(): void
     {
+        $this->ensureTablesCreated();
         $service = new UserService(new UserRepository(), new RefreshTokenRepository());
         $version = $service->getTokenVersion(99999);
         $this->assertSame(1, $version);
@@ -486,6 +500,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testUserServiceIncrementTokenVersionInvalid(): void
     {
+        $this->ensureTablesCreated();
         $service = new UserService(new UserRepository(), new RefreshTokenRepository());
         $this->assertFalse($service->incrementTokenVersion(0));
         $this->assertFalse($service->incrementTokenVersion(99999));
@@ -493,6 +508,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testUserServiceIsLocked(): void
     {
+        $this->ensureTablesCreated();
         $service = new UserService(new UserRepository(), new RefreshTokenRepository());
         $this->assertFalse($service->isLocked(99999));
     }
@@ -517,6 +533,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testUserServiceUpdateNotFound(): void
     {
+        $this->ensureTablesCreated();
         $service = new UserService(new UserRepository(), new RefreshTokenRepository());
         $this->assertNull($service->update(99999, ['name' => 'Test']));
     }
@@ -539,6 +556,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testUserServiceChangePasswordUserNotFound(): void
     {
+        $this->ensureTablesCreated();
         $service = new UserService(new UserRepository(), new RefreshTokenRepository());
         $result = $service->changePassword(99999, 'old', 'new');
         $this->assertFalse($result['success']);
@@ -607,6 +625,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testRefreshTokenServiceVerifyAndRotateInvalidToken(): void
     {
+        $this->ensureTablesCreated();
         $userService = new UserService(new UserRepository(), new RefreshTokenRepository());
         $service = new RefreshTokenService(new RefreshTokenRepository(), $userService);
         $this->assertNull($service->verifyAndRotate('invalid-token'));
@@ -771,6 +790,7 @@ final class RepositoryServiceResourceMutationTest extends TestCase
 
     public function testRoleConstants(): void
     {
+        $this->ensureTablesCreated();
         $this->assertSame('admin', Role::ADMIN);
         $this->assertSame('user', Role::USER);
     }
