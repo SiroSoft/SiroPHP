@@ -29,5 +29,8 @@ fi
 php /app/siro config:cache 2>/dev/null || true
 php /app/siro env:cache 2>/dev/null || true
 
+# Expose uploads: link public/storage -> storage/public (idempotent)
+php /app/siro storage:link 2>/dev/null || true
+
 # Execute the main command
 exec "$@"

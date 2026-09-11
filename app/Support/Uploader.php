@@ -20,8 +20,16 @@ use Siro\Core\Env;
 final class Uploader
 {
     // Keep in sync with Siro\Core\UploadedFile::ALLOWED_EXTENSIONS
-    private const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'txt', 'csv', 'json', 'xml', 'doc', 'docx', 'zip'];
-    private const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    private const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'txt', 'csv', 'json', 'xml
+    private const DEFAULT_MAX_MB = 10;
+
+    private static function maxBytes(): int
+    {
+        // Single source of truth via env; must stay <= core MAX_BODY_SIZE_MB
+        // and PHP upload_max_filesize/post_max_size (see .env.example).
+        $mb = (int) Env::get('UPLOAD_MAX_MB', (string) self::DEFAULT_MAX_MB);
+        return max(1, $mb) * 1024 * 1024;
+    }
     private const MIME_MAP = [
         'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'png' => 'image/png',
         'gif' => 'image/gif', 'webp' => 'image/webp', 'svg' => 'image/svg+xml',
@@ -55,8 +63,9 @@ final class Uploader
         }
 
         // Size check
-        if ($file->getSize() > self::MAX_SIZE) {
-            $maxMB = self::MAX_SIZE / 1024 / 1024;
+        $maxBytes = self::maxBytes();
+        if ($file->getSize() > $maxBytes) {
+            $maxMB = $maxBytes / 1024 / 1024;
             return [
                 'error' => true,
                 'response' => Response::error("File too large. Maximum {$maxMB}MB allowed.", 422),
@@ -86,6 +95,9 @@ final class Uploader
             // Enterprise directory structure: {type}/YYYY/MM/
             $dateDir = date('Y') . '/' . date('m');
             $fullDir = $type . '/' . $dateDir;
+            // UploadedFile::store() already returns a web path with the
+            // /storage prefix (storage/public exposed via public/storage
+            // symlink — php siro storage:link). Do NOT prefix again.
             $path = $file->store($fullDir);
             $baseUrl = rtrim((string) Env::get('APP_URL', 'http://localhost:8080'), '/');
             $cleanPath = '/' . ltrim($path, '/');
