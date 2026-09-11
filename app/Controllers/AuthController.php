@@ -90,6 +90,17 @@ final class AuthController
             'password' => 'required|min:8|max:255',
         ]);
 
+        if (\App\Support\Turnstile::isConfigured()) {
+            $turnstileToken = is_string($request->input('cf-turnstile-response') ?? null)
+                ? (string) $request->input('cf-turnstile-response')
+                : '';
+            if (!\App\Support\Turnstile::verify($turnstileToken, $request->ip())) {
+                return Response::error('Validation failed', 422, [
+                    'cf-turnstile-response' => ['Human verification failed. Please try again.'],
+                ]);
+            }
+        }
+
         $email = strtolower(trim($request->string('email')));
         $userData = $this->userService->getByEmail($email);
 
