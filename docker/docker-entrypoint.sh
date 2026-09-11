@@ -29,7 +29,15 @@ fi
 php /app/siro config:cache 2>/dev/null || true
 php /app/siro env:cache 2>/dev/null || true
 
-# Expose uploads: link public/storage -> storage/public (idempotent)
+# Expose uploads: link public/storage -> storage/public (idempotent).
+# The image may bake in a real public/storage dir (from .gitkeep); a plain
+# dir shadows the symlink and breaks uploaded-file URLs, so remove it first
+# ONLY when it is not already a symlink and holds no real uploads.
+if [ ! -L /app/public/storage ] && [ -d /app/public/storage ]; then
+    if [ -z "$(ls -A /app/public/storage 2>/dev/null | grep -v '^\.gitkeep$')" ]; then
+        rm -rf /app/public/storage
+    fi
+fi
 php /app/siro storage:link 2>/dev/null || true
 
 # Execute the main command
