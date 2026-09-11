@@ -85,7 +85,7 @@ $app->router->get('/health/live', function (): array {
             'time' => date('c'),
         ],
     ];
-})->middleware('throttle:30,1');
+})->middleware([CorsMiddleware::class, 'throttle:30,1']);
 
 // Readiness probe (checks DB)
 $app->router->get('/health/ready', function (): array {
@@ -105,7 +105,7 @@ $app->router->get('/health/ready', function (): array {
             'time' => date('c'),
         ],
     ];
-});
+})->middleware([CorsMiddleware::class, 'throttle:30,1']);
 
 // Combined health endpoint (throttled)
 $app->router->get('/health', function (): array {
@@ -128,7 +128,7 @@ $app->router->get('/health', function (): array {
         'message' => 'OK',
         'data' => $data,
     ];
-})->middleware('throttle:30,1');
+})->middleware([CorsMiddleware::class, 'throttle:30,1']);
 
 // Root welcome
 $app->router->get('/', function (Request $req): mixed {
