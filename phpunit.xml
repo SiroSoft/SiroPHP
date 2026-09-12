@@ -23,6 +23,9 @@
         <testsuite name="EdgeCase">
             <directory suffix="Test.php">tests/edge_case</directory>
         </testsuite>
+        <testsuite name="Cli">
+            <directory suffix="Test.php">tests/cli</directory>
+        </testsuite>
     </testsuites>
 
     <source>

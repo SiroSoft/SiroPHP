@@ -80,6 +80,7 @@ final class TestHelperTest extends TestCase
 
     public function testAssertDatabaseMissing(): void
     {
+        $this->ensureTablesCreated();
         $this->assertDatabaseMissing('users', ['email' => 'nonexistent-' . uniqid() . '@test.com']);
     }
 

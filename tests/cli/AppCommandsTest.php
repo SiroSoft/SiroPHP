@@ -35,7 +35,7 @@ class AppCommandsTest extends TestCase
     public function testSiroVersionViaCli(): void
     {
         $output = (string) shell_exec('php ' . escapeshellarg($this->basePath . '/siro') . ' --version 2>&1');
-        $this->assertStringContainsString('0.26.2', $output, 'CLI should report v0.26.2');
+        $this->assertStringContainsString('SiroPHP v1.0', $output, 'CLI should report v1.0.x');
     }
 
     public function testRateStatus(): void
@@ -78,7 +78,7 @@ class AppCommandsTest extends TestCase
         $exitCode = $this->console->run(['siro', 'make:controller']);
         $output = ob_get_clean() ?: '';
         $this->assertEquals(1, $exitCode, 'make:controller without args should exit 1');
-        $this->assertStringContainsString('usage', strtolower($output), 'Should show usage info');
+        $this->assertStringContainsString('controller name is required', strtolower($output), 'Should show usage info');
     }
 
     public function testHealthCheckRouteExists(): void

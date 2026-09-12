@@ -14,7 +14,11 @@ final class DatabaseSeeder
     public array $calls = [
         UserSeeder::class,
         CategorySeeder::class,
+        TagSeeder::class,
         ProductSeeder::class,
+        OrderSeeder::class,
+        PostSeeder::class,
+        DemoSeeder::class,
     ];
 
     public function run(): void

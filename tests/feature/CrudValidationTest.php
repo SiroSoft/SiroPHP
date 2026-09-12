@@ -72,8 +72,10 @@ final class CrudValidationTest extends TestCase
 
     public function testDeleteWithoutIdReturns403ForNonAdmin(): void
     {
-        $auth = $this->authenticate();
-        $resp = $this->delete('/api/products/999999', $auth);
+        // First registered user is admin; the second one is a plain user.
+        $this->authenticate();
+        $nonAdmin = $this->authenticate();
+        $resp = $this->delete('/api/products/999999', $nonAdmin);
         $this->assertEquals(403, $resp->status(), 'Non-admin user should get 403 for delete');
     }
 
