@@ -33,6 +33,9 @@ php siro key:generate && php siro make:auth && php siro migrate && php siro serv
 
 Your API is live — JWT auth, user CRUD, migrations ran. No config files. No Postman.
 
+For the complete copy-run path, including CRUD generation, OpenAPI, contract checks,
+Docker, and deployment, see [the starter template guide](docs/guides/STARTER_TEMPLATE.md).
+
 ```
 > Tip: `php siro t GET /api/auth/me` — shorthand for `api:test`, auto-auth.
 ```

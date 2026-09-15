@@ -15,9 +15,10 @@ sidebar_label: Overview
 
 ### New to SiroPHP?
 1. **[Quick Start Guide](guides/QUICKSTART.md)** - Build your first API in 5 minutes
-2. **[README](../README.md)** - Overview and features
-3. **[Installation](../README.md)** - Setup instructions
-4. **[Workflow Guide](WORKFLOW.md)** - Complete dev flow from zero to production
+2. **[Starter Template Guide](guides/STARTER_TEMPLATE.md)** - Copy, run, and ship a starter
+3. **[README](../README.md)** - Overview and features
+4. **[Installation](../README.md)** - Setup instructions
+5. **[Workflow Guide](WORKFLOW.md)** - Complete dev flow from zero to production
 
 ### Ready to Deploy?
 - **[Deployment Guide](guides/DEPLOYMENT.md)** - Production deployment
@@ -30,6 +31,7 @@ sidebar_label: Overview
 
 ### Essential Guides
 - **[Quick Start](guides/QUICKSTART.md)** ⭐ - 5-minute tutorial
+- **[Starter Template](guides/STARTER_TEMPLATE.md)** ⭐ - Copy-run project workflow
 - **[Deployment](guides/DEPLOYMENT.md)** ⭐ - Production deployment
 - **[Architecture](ARCHITECTURE.md)** - Design decisions (ADRs)
 - **[Security](SECURITY.md)** - Security best practices
