@@ -1,8 +1,8 @@
 ---
-title: Q UI CK ST AR T
-description: SiroPHP Q UI CK ST AR T reference
+title: Quick Start
+description: Build and ship a SiroPHP API in five minutes
 sidebar_position: 11
-sidebar_label: Q UI CK ST AR T
+sidebar_label: Quick Start
 ---
 
 # SiroPHP Quick Start Guide
