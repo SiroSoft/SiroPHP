@@ -1,6 +1,6 @@
 ---
-title: i nd ex
-description: SiroPHP i nd ex reference
+title: Overview
+description: SiroPHP documentation and task-based guides
 sidebar_position: 0
 sidebar_label: Overview
 ---
@@ -18,12 +18,19 @@ sidebar_label: Overview
 2. **[Starter Template Guide](guides/STARTER_TEMPLATE.md)** - Copy, run, and ship a starter
 3. **[README](../README.md)** - Overview and features
 4. **[Installation](../README.md)** - Setup instructions
-5. **[Workflow Guide](WORKFLOW.md)** - Complete dev flow from zero to production
+5. **[Laravel Migration Guide](guides/LARAVEL_MIGRATION.md)** - Move an API incrementally
+6. **[Workflow Guide](WORKFLOW.md)** - Complete dev flow from zero to production
 
 ### Ready to Deploy?
 - **[Deployment Guide](guides/DEPLOYMENT.md)** - Production deployment
 - **[Security Guide](SECURITY.md)** - Security hardening
 - **[Performance Guide](PERFORMANCE.md)** - Optimization tips
+
+### Production References
+- **[ERP Lite case study](case-studies/ERP_LITE.md)** - SiroPHP in a production ERP
+- **[Production benchmark](https://github.com/SiroSoft/SiroERP-Lilte/blob/main/docs/BENCHMARK.md)** - Throughput and p95 evidence
+- **[Next.js admin starter](https://github.com/SiroSoft/siro-admin-next)** - Deployed React admin consumer
+- **[Nuxt admin starter](https://github.com/SiroSoft/siro-admin-nuxt)** - Deployed Vue admin consumer
 
 ---
 
@@ -32,6 +39,7 @@ sidebar_label: Overview
 ### Essential Guides
 - **[Quick Start](guides/QUICKSTART.md)** ⭐ - 5-minute tutorial
 - **[Starter Template](guides/STARTER_TEMPLATE.md)** ⭐ - Copy-run project workflow
+- **[Laravel Migration](guides/LARAVEL_MIGRATION.md)** - Incremental migration path
 - **[Deployment](guides/DEPLOYMENT.md)** ⭐ - Production deployment
 - **[Architecture](ARCHITECTURE.md)** - Design decisions (ADRs)
 - **[Security](SECURITY.md)** - Security best practices
