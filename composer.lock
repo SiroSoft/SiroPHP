@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "02c11c5da3d7c66519c958a5f83ecdbf",
+    "content-hash": "c74b102bf84dabaa9b1a65fc0d71a30b",
     "packages": [
         {
             "name": "sirosoft/core",
