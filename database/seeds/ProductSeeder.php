@@ -153,7 +153,7 @@ final class ProductSeeder
             if ($row === null) {
                 continue;
             }
-            $current = (string) ($row['cover_image'] ?? '');
+            $current = is_string($row['cover_image'] ?? null) ? $row['cover_image'] : '';
             if ($current === '' || str_contains($current, 'picsum.photos')) {
                 DB::table('products')
                     ->where('name', $product['name'])
@@ -172,7 +172,7 @@ final class ProductSeeder
             echo "  [SKIP] No users found. Run UserSeeder first (ADMIN_EMAIL/ADMIN_PASSWORD).\n";
             return;
         }
-        $ownerId = (int) ($owner['id'] ?? 0);
+        $ownerId = is_numeric($owner['id'] ?? null) ? (int) $owner['id'] : 0;
 
         foreach ($products as $product) {
             DB::table('products')->insert([

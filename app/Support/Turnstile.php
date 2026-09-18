@@ -49,7 +49,7 @@ final class Turnstile
         }
 
         try {
-            $res = Http::post(self::VERIFY_URL, $payload, ['Content-Type: application/x-www-form-urlencoded']);
+            $res = Http::post(self::VERIFY_URL, $payload, ['Content-Type' => 'application/x-www-form-urlencoded']);
             if (!$res->ok()) {
                 return false;
             }
