@@ -30,8 +30,23 @@ final class Turnstile
     }
 
     /**
+     * User-facing message for a failed check, distinguishing a missing
+     * token (widget blocked or not solved yet) from a rejected token.
+     */
+    public static function failureMessage(string $token): string
+    {
+        if (trim($token) === '') {
+            return 'Security check did not complete. Please wait for the human-verification box and try again.';
+        }
+        return 'Human verification failed. Please try again.';
+    }
+
+    /**
      * @param string $token Value of cf-turnstile-response from the client
-     * @param string|null $remoteIp Optional client IP for verification
+     * @param string|null $remoteIp Ignored (kept for backward compatibility).
+     *   Cloudflare's remoteip is optional, and the app runs behind
+     *   Cloudflare + nginx + Docker where Request::ip() resolves to a proxy
+     *   address, which makes siteverify reject otherwise valid tokens.
      */
     public static function verify(string $token, ?string $remoteIp = null): bool
     {
@@ -44,9 +59,6 @@ final class Turnstile
         }
 
         $payload = ['secret' => $secret, 'response' => $token];
-        if ($remoteIp !== null && $remoteIp !== '') {
-            $payload['remoteip'] = $remoteIp;
-        }
 
         try {
             $res = Http::post(self::VERIFY_URL, $payload, ['Content-Type' => 'application/x-www-form-urlencoded']);

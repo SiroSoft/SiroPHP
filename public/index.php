@@ -9,6 +9,42 @@ define('BASE_PATH', dirname(__DIR__));
 
 require BASE_PATH . '/vendor/autoload.php';
 
+// Handle API preflight before route matching so OPTIONS requests receive the
+// same CORS policy as the endpoint they are preparing to call.
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    $allowedOrigins = '';
+    $envFile = BASE_PATH . '/.env';
+    if (is_file($envFile)) {
+        foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
+            $line = trim($line);
+            if ($line !== '' && !str_starts_with($line, '#') && str_starts_with($line, 'CORS_ALLOWED_ORIGINS=')) {
+                $allowedOrigins = trim(substr($line, strlen('CORS_ALLOWED_ORIGINS=')));
+                break;
+            }
+        }
+    }
+
+    $origin = (string) ($_SERVER['HTTP_ORIGIN'] ?? '');
+    $origins = array_filter(array_map('trim', explode(',', $allowedOrigins)));
+    if ($allowedOrigins === '*' || in_array($origin, $origins, true)) {
+        header('Access-Control-Allow-Origin: ' . ($allowedOrigins === '*' ? '*' : $origin));
+        header('Access-Control-Allow-Credentials: true');
+    }
+    header('Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS,PATCH');
+    $defaultHeaders = 'Content-Type,Authorization,X-Requested-With,X-CSRF-TOKEN,X-Request-Id,X-Siro-FE,X-Locale,Cache-Control,Accept,Origin';
+    $requestedHeaders = (string) ($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'] ?? '');
+    $allowHeaders = $defaultHeaders;
+    if ($requestedHeaders !== '') {
+        $merged = array_unique(array_filter(array_map('trim', array_merge(explode(',', $defaultHeaders), explode(',', $requestedHeaders)))));
+        $allowHeaders = implode(',', $merged);
+    }
+    header('Access-Control-Allow-Headers: ' . $allowHeaders);
+    header('Access-Control-Max-Age: 86400');
+    header('Vary: Origin');
+    http_response_code(204);
+    exit(0);
+}
+
 function siroJsonError(int $statusCode, string $message, ?Throwable $e = null): never
 {
     static $recursionGuard = false;
