@@ -24,7 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         }
     }
 
-    $origin = (string) ($_SERVER['HTTP_ORIGIN'] ?? '');
+    $originValue = $_SERVER['HTTP_ORIGIN'] ?? '';
+    $origin = is_string($originValue) ? $originValue : '';
     $origins = array_filter(array_map('trim', explode(',', $allowedOrigins)));
     if ($allowedOrigins === '*' || in_array($origin, $origins, true)) {
         header('Access-Control-Allow-Origin: ' . ($allowedOrigins === '*' ? '*' : $origin));
@@ -32,7 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     }
     header('Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS,PATCH');
     $defaultHeaders = 'Content-Type,Authorization,X-Requested-With,X-CSRF-TOKEN,X-Request-Id,X-Siro-FE,X-Locale,Cache-Control,Accept,Origin';
-    $requestedHeaders = (string) ($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'] ?? '');
+    $requestedHeadersValue = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'] ?? '';
+    $requestedHeaders = is_string($requestedHeadersValue) ? $requestedHeadersValue : '';
     $allowHeaders = $defaultHeaders;
     if ($requestedHeaders !== '') {
         $merged = array_unique(array_filter(array_map('trim', array_merge(explode(',', $defaultHeaders), explode(',', $requestedHeaders)))));
