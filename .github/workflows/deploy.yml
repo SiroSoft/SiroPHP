@@ -96,7 +96,10 @@ jobs:
             echo "tag=${{ github.sha }}" >> $GITHUB_OUTPUT
           fi
 
+      # Real clusters only: PRs and environments without KUBECONFIG skip
+      # instead of failing against localhost.
       - name: Deploy with Helm upgrade
+        if: ${{ github.event_name != 'pull_request' && secrets.KUBECONFIG != '' }}
         run: |
           helm upgrade --install siro-api ./helm/siro-api \
             --namespace siro-system \
