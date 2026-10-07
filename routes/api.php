@@ -12,10 +12,12 @@ use Siro\Core\Request;
 use Siro\Core\Response;
 
 // A degraded rate-limit backend must not silently disable abuse controls in
-// staging/production. Local test/dev may opt out explicitly.
+// staging/production. Local and testing envs may opt out explicitly (CI sets
+// THROTTLE_FALLBACK=disabled and has no Redis; forcing fail_closed there
+// would 503 every throttled route).
 $throttleFallback = strtolower((string) \Siro\Core\Env::get('THROTTLE_FALLBACK', 'file'));
 if (!in_array($throttleFallback, ['file', 'fail_closed'], true)
-    && \Siro\Core\Env::get('APP_ENV', 'production') !== 'local') {
+    && !in_array(\Siro\Core\Env::get('APP_ENV', 'production'), ['local', 'testing'], true)) {
     $_ENV['THROTTLE_FALLBACK'] = 'fail_closed';
     putenv('THROTTLE_FALLBACK=fail_closed');
 }
