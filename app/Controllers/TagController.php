@@ -142,7 +142,7 @@ final class TagController extends Controller
     {
         $user = $request->user();
         $role = is_array($user) && isset($user['role']) && is_string($user['role']) ? $user['role'] : Role::USER;
-        if ($role !== Role::ADMIN) {
+        if (!Role::isAdmin($role)) {
             return Response::error('Forbidden', 403);
         }
         return null;

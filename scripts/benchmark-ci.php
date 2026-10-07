@@ -76,6 +76,7 @@ $current = [];
 $endpointName = null;
 $lines = explode("\n", $output);
 foreach ($lines as $line) {
+    $line = preg_replace('/\x1B\[[0-?]*[ -\/]*[@-~]/', '', $line) ?? $line;
     if (preg_match('/^Testing:\s+(.+?)\.\.\./', $line, $m)) {
         $endpointName = trim($m[1]);
     }

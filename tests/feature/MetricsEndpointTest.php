@@ -23,11 +23,11 @@ final class MetricsEndpointTest extends TestCase
 
     public function testHealthEndpoint(): void
     {
-        $resp = $this->get('/health');
+        $resp = $this->get('/health/live');
         $resp->assertOk();
         $json = $resp->json();
         $this->assertArrayHasKey('data', $json);
         $jsonData = $json['data'] ?? [];
-        $this->assertEquals('healthy', $jsonData['status'] ?? '');
+        $this->assertEquals('alive', $jsonData['status'] ?? '');
     }
 }

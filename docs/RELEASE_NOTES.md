@@ -7,6 +7,15 @@ sidebar_label: R EL EA SE N OT ES
 
 # Release Notes
 
+## v1.1.0 — Error-response hardening (2026-10-07)
+- Exception handler no longer leaks internals: generic messages for 404/409/
+  400/500, no stack traces or driver details in responses.
+- DB connection failure now returns 503 (was 500) for correct alerting.
+- Throttle backend defaults to `fail_closed` outside local env so degraded
+  rate limiting never silently disables abuse controls.
+- Auth middleware added to the status route group.
+- Requires `sirosoft/core` v1.1.0+ (throttle 503 semantics, `malformed_body`).
+
 ## v0.35.0 — Redis Queue, Mercure/WebSocket & Rate Limiter (2026-06-07)
 - Redis queue driver (`QUEUE_DRIVER=redis`) for high-throughput background job processing
 - Mercure/WebSocket integration: publish Server-Sent Events from PHP, auto-publish on Model create/update

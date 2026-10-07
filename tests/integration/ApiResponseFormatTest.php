@@ -10,7 +10,7 @@ final class ApiResponseFormatTest extends TestCase
 {
     public function testSuccessResponseHasCorrectFormat(): void
     {
-        $resp = $this->get('/health');
+        $resp = $this->get('/health', $this->authenticate());
         $json = $resp->json();
         $this->assertTrue($json['success']);
         $this->assertIsString($json['message']);
@@ -73,8 +73,9 @@ final class ApiResponseFormatTest extends TestCase
 
     public function testHealthEndpointResponseTime(): void
     {
+        $auth = $this->authenticate();
         $start = microtime(true);
-        $this->get('/health');
+        $this->get('/health', $auth);
         $elapsed = (microtime(true) - $start) * 1000;
         $this->assertLessThan(500, $elapsed, 'Health check under 500ms');
     }
@@ -99,7 +100,7 @@ final class ApiResponseFormatTest extends TestCase
 
     public function testHealthReturnsDatabaseConnected(): void
     {
-        $resp = $this->get('/health');
+        $resp = $this->get('/health', $this->authenticate());
         $json = $resp->json();
         $jsonData = $json['data'] ?? [];
         /** @var array<string, mixed> $jsonData */
@@ -108,7 +109,7 @@ final class ApiResponseFormatTest extends TestCase
 
     public function testHealthReturnsStatus(): void
     {
-        $resp = $this->get('/health');
+        $resp = $this->get('/health', $this->authenticate());
         $json = $resp->json();
         $jsonData = $json['data'] ?? [];
         /** @var array<string, mixed> $jsonData */

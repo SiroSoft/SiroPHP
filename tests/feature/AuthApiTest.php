@@ -10,7 +10,8 @@ final class AuthApiTest extends TestCase
 {
     public function testHealthEndpoint(): void
     {
-        $this->get('/health')->assertOk()->assertJson(['success' => true]);
+        // /health and /health/ready require auth; the public liveness probe is /health/live.
+        $this->get('/health/live')->assertOk()->assertJson(['success' => true]);
     }
 
     public function testRootEndpoint(): void
@@ -111,8 +112,8 @@ final class AuthApiTest extends TestCase
 
     public function testHealthResponseStatus(): void
     {
-        $resp = $this->get('/health');
+        $resp = $this->get('/health/live');
         $json = $resp->json();
-        $this->assertEquals('healthy', $json['data']['status'] ?? '');
+        $this->assertEquals('alive', $json['data']['status'] ?? '');
     }
 }

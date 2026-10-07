@@ -204,19 +204,19 @@ final class EdgeCoverageMutationTest extends TestCase
     public function testHealthLive(): void
     {
         $resp = $this->get('/health/live');
-        $this->assertContains($resp->status(), [200, 429]);
+        $this->assertSame(200, $resp->status());
     }
 
     public function testHealthReady(): void
     {
         $resp = $this->get('/health/ready');
-        $this->assertContains($resp->status(), [200, 429]);
+        $this->assertSame(401, $resp->status());
     }
 
     public function testHealth(): void
     {
         $resp = $this->get('/health');
-        $this->assertContains($resp->status(), [200, 429]);
+        $this->assertSame(401, $resp->status());
     }
 
     public function testRoot(): void

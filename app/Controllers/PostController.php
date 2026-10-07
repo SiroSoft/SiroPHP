@@ -42,7 +42,7 @@ final class PostController extends Controller
         }
 
         $params = $request->all();
-        if ($currentUserRole !== Role::ADMIN) {
+        if (!Role::isAdmin($currentUserRole)) {
             $params['user_id'] = $currentUserId;
         }
 
@@ -90,7 +90,7 @@ final class PostController extends Controller
         }
 
         $postUserId = is_numeric($post['user_id'] ?? null) ? (int) $post['user_id'] : 0;
-        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $postUserId) {
+        if (!Role::isAdmin($currentUserRole) && $currentUserId !== $postUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -193,7 +193,7 @@ final class PostController extends Controller
             $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
         $postUserId = is_numeric($existing['user_id'] ?? null) ? (int) $existing['user_id'] : 0;
-        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $postUserId) {
+        if (!Role::isAdmin($currentUserRole) && $currentUserId !== $postUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -252,7 +252,7 @@ final class PostController extends Controller
         $existing = $this->service->getById($id);
         if ($existing !== null) {
             $postUserId = is_numeric($existing['user_id'] ?? null) ? (int) $existing['user_id'] : 0;
-            if ($currentUserRole !== Role::ADMIN && $currentUserId !== $postUserId) {
+            if (!Role::isAdmin($currentUserRole) && $currentUserId !== $postUserId) {
                 return $this->error('Forbidden', 403);
             }
         }

@@ -29,4 +29,27 @@ final class UserResource extends Resource
             'updated_at' => $d['updated_at'] ?? null,
         ];
     }
+
+    /**
+     * Admin list/detail projection. Contact data is not needed for administration
+     * and must not become an accidental bulk-export surface.
+     *
+     * @param array<string, mixed>|\Siro\Core\Model $item
+     * @return array<string, mixed>
+     */
+    public static function admin(array|\Siro\Core\Model $item): array
+    {
+        $data = is_array($item) ? $item : $item->toArray();
+        return [
+            'id' => $data['id'] ?? null,
+            'name' => isset($data['name']) && is_string($data['name'])
+                ? htmlspecialchars($data['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : null,
+            'role' => $data['role'] ?? 'user',
+            'status' => match (isset($data['status']) && is_numeric($data['status']) ? (int) $data['status'] : 1) {
+                0 => 'inactive', 2 => 'suspended', default => 'active'
+            },
+            'created_at' => $data['created_at'] ?? null,
+            'updated_at' => $data['updated_at'] ?? null,
+        ];
+    }
 }
