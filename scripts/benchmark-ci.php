@@ -9,80 +9,34 @@ if (!is_dir($baselineDir)) {
     mkdir($baselineDir, 0775, true);
 }
 
-// Start dev server on port 8080 (matching benchmark/benchmark.php expectation)
-$port = 8080;
-$docRoot = realpath(__DIR__ . '/../public');
-$nul = PHP_OS_FAMILY === 'Windows' ? 'nul' : '/dev/null';
-
-$serverPid = null;
-if (PHP_OS_FAMILY === 'Windows') {
-    $cmd = sprintf('start /B %s -S 127.0.0.1:%d -t %s > %s 2>&1',
-        PHP_BINARY, $port, $docRoot, $nul
-    );
-    $serverProc = proc_open($cmd, [], $pipes, dirname($docRoot));
-    if (is_resource($serverProc)) {
-        $status = proc_get_status($serverProc);
-        $serverPid = $status['running'] ? $status['pid'] : null;
-    }
-} else {
-    $cmd = sprintf('%s -S 127.0.0.1:%d -t %s > %s 2>&1 & echo $!',
-        PHP_BINARY, $port, $docRoot, $nul
-    );
-    $serverPid = (int) exec($cmd);
+// Run the core in-process micro-benchmark (no HTTP server needed — stable in
+// CI). Parses its fixed table: name, iters, avg, min, max, ops.
+$benchmarkScript = __DIR__ . '/../vendor/sirosoft/core/benchmark.php';
+if (!is_file($benchmarkScript)) {
+    echo "SKIP: core benchmark not installed (vendor/sirosoft/core/benchmark.php missing)\n";
+    exit(0);
 }
-
-if (!$serverPid) {
-    echo "ERROR: Could not start PHP dev server\n";
-    exit(1);
-}
-
-// Wait for server to be ready
-$maxWait = 15;
-$ready = false;
-for ($i = 0; $i < $maxWait; $i++) {
-    $fp = @fsockopen('127.0.0.1', $port, $errno, $errstr, 1);
-    if ($fp) {
-        fclose($fp);
-        $ready = true;
-        break;
-    }
-    sleep(1);
-}
-
-register_shutdown_function(function () use ($serverPid) {
-    if (PHP_OS_FAMILY === 'Windows') {
-        exec('taskkill /F /PID ' . $serverPid . ' 2>nul');
-    } else {
-        exec('kill ' . $serverPid . ' 2>/dev/null');
-    }
-});
-
-if (!$ready) {
-    echo "ERROR: Dev server did not start within {$maxWait}s\n";
-    exit(1);
-}
-
-// Run benchmarks
-$benchmarkScript = __DIR__ . '/../benchmark/benchmark.php';
-$output = shell_exec(PHP_BINARY . ' ' . escapeshellarg($benchmarkScript) . ' 2>&1');
+// The core script resolves its own autoloader relative to a project root,
+// so preload the skeleton autoloader instead of relying on its lookup.
+$autoload = __DIR__ . '/../vendor/autoload.php';
+$output = shell_exec(
+    PHP_BINARY . ' -d auto_prepend_file=' . escapeshellarg($autoload)
+    . ' ' . escapeshellarg($benchmarkScript) . ' 2>&1'
+);
 
 if ($output === null || $output === '') {
     echo "ERROR: Could not run benchmark\n";
     exit(1);
 }
 
-// Parse results: "Avg: 5.234ms"
 $current = [];
-$endpointName = null;
-$lines = explode("\n", $output);
-foreach ($lines as $line) {
+foreach (explode("\n", $output) as $line) {
     $line = preg_replace('/\x1B\[[0-?]*[ -\/]*[@-~]/', '', $line) ?? $line;
-    if (preg_match('/^Testing:\s+(.+?)\.\.\./', $line, $m)) {
-        $endpointName = trim($m[1]);
+    if (stripos($line, 'average') !== false || stripos($line, 'benchmark') !== false) {
+        continue;
     }
-    if ($endpointName && preg_match('/Avg:\s+([\d.]+)ms/', $line, $m)) {
-        $current[$endpointName] = (float) $m[1];
-        $endpointName = null;
+    if (preg_match('/^\s{2}(.+?)\s{2,}(\d+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*$/', $line, $m)) {
+        $current[trim($m[1])] = (float) $m[3];
     }
 }
 

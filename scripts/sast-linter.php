@@ -73,9 +73,18 @@ final class SastLinter
     public function getWarningCount(): int { return $this->warnings; }
 }
 
-// Run the linter
+// Run the linter on shipped code only. Dev-only code (scripts, tests),
+// dependencies (vendor) and runtime data (storage) are out of scope:
+// - the linter's own rule strings would self-flag,
+// - tests/scripts legitimately use exec()/shell helpers.
 $linter = new SastLinter();
-$linter->scanDirectory(__DIR__ . '/../');
+$root = realpath(__DIR__ . '/../');
+foreach (['app', 'routes', 'config', 'database', 'public'] as $dir) {
+    $path = $root . DIRECTORY_SEPARATOR . $dir;
+    if (is_dir($path)) {
+        $linter->scanDirectory($path);
+    }
+}
 
 echo "\n=== SAST Linter Summary ===\n";
 echo "Errors: {$linter->getErrorCount()}\n";
