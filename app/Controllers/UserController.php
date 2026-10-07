@@ -55,10 +55,10 @@ final class UserController extends Controller
         $result = $this->service->getAll($filters, $page, $perPage);
         $data = [];
         foreach ($result['data'] as $item) {
-            $data[] = $item->toArray();
+            $data[] = UserResource::admin($item);
         }
         return $this->paginated(
-            UserResource::collection($data),
+            $data,
             $result['meta'],
             'Users retrieved',
         );
@@ -89,7 +89,7 @@ final class UserController extends Controller
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
             $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
-        if ($currentUserId !== $id && $currentUserRole !== Role::ADMIN) {
+        if ($currentUserId !== $id && !Role::isAdmin($currentUserRole)) {
             return $this->error('Forbidden', 403);
         }
 
@@ -99,7 +99,10 @@ final class UserController extends Controller
             return $this->error('User not found', 404);
         }
 
-        return $this->success(UserResource::make($user), 'User retrieved');
+        return $this->success(
+            $currentUserId === $id ? UserResource::make($user) : UserResource::admin($user),
+            'User retrieved'
+        );
     }
 
     /**
@@ -212,7 +215,7 @@ final class UserController extends Controller
             ]);
         }
 
-        return $this->created(UserResource::make($user), 'User created');
+        return $this->created(UserResource::admin($user), 'User created');
     }
 
     /**
@@ -239,7 +242,7 @@ final class UserController extends Controller
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
             $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
-        if ($currentUserId !== $id && $currentUserRole !== Role::ADMIN) {
+        if ($currentUserId !== $id && !Role::isAdmin($currentUserRole)) {
             return $this->error('Forbidden', 403);
         }
 
@@ -294,7 +297,7 @@ final class UserController extends Controller
             return $this->error('User not found', 404);
         }
 
-        return $this->success(UserResource::make($userData), 'User updated');
+        return $this->success(UserResource::admin($userData), 'User updated');
     }
 
     /**
@@ -320,7 +323,7 @@ final class UserController extends Controller
             $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
             $currentUserRole = is_string($currentUser['role'] ?? null) ? $currentUser['role'] : Role::USER;
         }
-        if ($currentUserId !== $id && $currentUserRole !== Role::ADMIN) {
+        if ($currentUserId !== $id && !Role::isAdmin($currentUserRole)) {
             return $this->error('Forbidden', 403);
         }
 
@@ -337,7 +340,9 @@ final class UserController extends Controller
     {
         $user = $request->user();
         $role = is_array($user) && isset($user['role']) && is_string($user['role']) ? $user['role'] : Role::USER;
-        if ($role !== Role::ADMIN) {
+        // This app is single-tenant until tenant_id is introduced in the schema.
+        // platform_admin is reserved for an explicit cross-tenant capability.
+        if (!Role::isAdmin($role)) {
             return Response::error('Forbidden', 403);
         }
         return null;

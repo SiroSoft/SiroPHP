@@ -42,7 +42,7 @@ final class OrderController extends Controller
         }
 
         $params = $request->all();
-        if ($currentUserRole !== Role::ADMIN) {
+        if (!Role::isAdmin($currentUserRole)) {
             $allowed = ['status', 'user_id'];
             $params = array_intersect_key($params, array_flip($allowed));
             $params['user_id'] = $currentUserId;
@@ -93,7 +93,7 @@ final class OrderController extends Controller
         }
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
-        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {
+        if (!Role::isAdmin($currentUserRole) && $currentUserId !== $orderUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -200,7 +200,7 @@ final class OrderController extends Controller
         }
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
-        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {
+        if (!Role::isAdmin($currentUserRole) && $currentUserId !== $orderUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -252,7 +252,7 @@ final class OrderController extends Controller
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
         $currentUserId = is_numeric($currentUser['id'] ?? null) ? (int) $currentUser['id'] : 0;
-        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {
+        if (!Role::isAdmin($currentUserRole) && $currentUserId !== $orderUserId) {
             return $this->error('Forbidden', 403);
         }
 
@@ -296,7 +296,7 @@ final class OrderController extends Controller
         }
 
         $orderUserId = is_numeric($order['user_id'] ?? null) ? (int) $order['user_id'] : 0;
-        if ($currentUserRole !== Role::ADMIN && $currentUserId !== $orderUserId) {
+        if (!Role::isAdmin($currentUserRole) && $currentUserId !== $orderUserId) {
             return $this->error('Forbidden', 403);
         }
 

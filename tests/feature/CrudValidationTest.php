@@ -81,7 +81,7 @@ final class CrudValidationTest extends TestCase
 
     public function testHealthWorks(): void
     {
-        $this->get('/health')->assertOk();
+        $this->get('/health/live')->assertOk();
     }
 
     public function testUsersEndpointReturnsSuccess(): void

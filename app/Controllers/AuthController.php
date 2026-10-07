@@ -46,7 +46,7 @@ final class AuthController
                 : '';
             if (!\App\Support\Turnstile::verify($turnstileToken, $request->ip())) {
                 return Response::error('Validation failed', 422, [
-                    'cf-turnstile-response' => ['Human verification failed. Please try again.'],
+                    'cf-turnstile-response' => [\App\Support\Turnstile::failureMessage($turnstileToken)],
                 ]);
             }
         }
@@ -107,7 +107,7 @@ final class AuthController
                 : '';
             if (!\App\Support\Turnstile::verify($turnstileToken, $request->ip())) {
                 return Response::error('Validation failed', 422, [
-                    'cf-turnstile-response' => ['Human verification failed. Please try again.'],
+                    'cf-turnstile-response' => [\App\Support\Turnstile::failureMessage($turnstileToken)],
                 ]);
             }
         }
@@ -329,7 +329,7 @@ final class AuthController
                 : '';
             if (!\App\Support\Turnstile::verify($turnstileToken, $request->ip())) {
                 return Response::error('Validation failed', 422, [
-                    'cf-turnstile-response' => ['Human verification failed. Please try again.'],
+                    'cf-turnstile-response' => [\App\Support\Turnstile::failureMessage($turnstileToken)],
                 ]);
             }
         }

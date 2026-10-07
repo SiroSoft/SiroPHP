@@ -19,7 +19,7 @@ final class OrderSeeder
             echo "  [SKIP] No users found. Run UserSeeder first.\n";
             return;
         }
-        $ownerId = (int) ($owner['id'] ?? 0);
+        $ownerId = is_numeric($owner['id'] ?? null) ? (int) $owner['id'] : 0;
 
         $products = DB::table('products')->orderBy('id')->limit(6)->get();
         if ($products === []) {
@@ -45,10 +45,10 @@ final class OrderSeeder
         foreach ($customers as $i => [$name, $email]) {
             $line = $products[$i % count($products)];
             $qty = ($i % 3) + 1;
-            $price = (float) ($line['price'] ?? 0);
+            $price = is_numeric($line['price'] ?? null) ? (float) $line['price'] : 0.0;
             $items = [[
-                'product_id' => (int) ($line['id'] ?? 0),
-                'name' => (string) ($line['name'] ?? ''),
+                'product_id' => is_numeric($line['id'] ?? null) ? (int) $line['id'] : 0,
+                'name' => is_string($line['name'] ?? null) ? $line['name'] : '',
                 'quantity' => $qty,
                 'price' => $price,
             ]];

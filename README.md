@@ -7,12 +7,14 @@
 <div align="center">
 
 [![PHP 8.2+](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Tests](https://img.shields.io/badge/tests-745%20pass-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-761%20pass-brightgreen)](tests/)
 [![MSI](https://img.shields.io/badge/MSI-83%25-brightgreen)](coverage/)
 [![PHPStan](https://img.shields.io/badge/PHPStan-Level%20Max-brightgreen)](https://phpstan.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Packagist](https://img.shields.io/packagist/v/sirosoft/api)](https://packagist.org/packages/sirosoft/api)
 [![Coverage](https://img.shields.io/badge/coverage-80%25%20%2B-brightgreen)](coverage/)
+
+<p>Boot <strong>~0.5 ms</strong> · dispatch <strong>~361K ops/sec</strong> · <strong>0</strong> runtime dependencies · <strong>95</strong> CLI commands</p>
 
 </div>
 
@@ -81,7 +83,7 @@ php siro api:why POST /api/orders
   → Replay blocked by default. Use --force to execute.
 ```
 
-**No other framework — PHP, Node, Go, Rust, Python, Ruby — has this flow.**
+**As far as we know, no other framework — PHP, Node, Go, Rust, Python or Ruby — ships risk-aware production request replay. Found one? Open an issue and we'll correct this line.**
 
 > Replay is risk-aware: Siro analyzes captured SQL writes, outbound HTTP calls, and queued jobs before replay. Risky traces require `--force`.
 
@@ -144,13 +146,13 @@ my-api/
 ├── app/Models/         # 6 pre-built (User, Product, Category...)
 ├── app/Services/       # 8 pre-built (BaseService pattern)
 ├── database/           # 13 migrations + 2 seeders
-├── tests/              # **745 passing tests**
+├── tests/              # **761 passing tests**
 ├── docker-compose.yml  # FrankenPHP + Nginx + Caddy
 ├── Dockerfile          # Production build
 └── k8s/                # Helm chart
 ```
 
-**Not an empty skeleton — production-grade, ready to deploy with 745+ tests.**
+**Not an empty skeleton — production-grade, ready to deploy with 761 tests.**
 
 ---
 
@@ -158,13 +160,12 @@ my-api/
 
 | Gate | Result | | Metric | |
 |------|--------|--|--------|---|
-| Core unit/integration | **2,846 — 0 failures** | | Cold boot (Linux) | **~0.5 ms** (est.) |
-| App tests | **745 — 0 failures** | | Cold boot (Win) | **~2.4 ms** (measured) |
+| Core unit/integration | **21,391 — 0 failures** (core v1.1.0) | | Cold boot (Linux) | **~0.5 ms** (benchmark.php) |
+| App tests | **761 — 0 failures** | | Cold boot (Win) | **~2.4 ms** (measured) |
 | Fuzz tests | **17,981 — 0 failures** | | Route dispatch | **~361K ops/sec** |
 | DAST security | **157 — 0 failures** | | Memory baseline | **~4 MB** |
 | PHPStan | **Level Max — 0 errors** | | Full-stack | **~404K ops/sec** |
 | Composer audit | **0 vulnerabilities** | | | |
-| Mutation testing | **MSI 83%** | | Line coverage | **80%+** |
 | Mutation testing | **MSI 83%** | | Line coverage | **80%+** |
 
 ---

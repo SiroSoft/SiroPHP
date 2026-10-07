@@ -117,7 +117,7 @@ final class Uploader
         } catch (\Throwable $e) {
             return [
                 'error' => true,
-                'response' => Response::error('Upload failed: ' . $e->getMessage(), 500),
+                'response' => Response::error('Upload failed', 500),
             ];
         }
     }

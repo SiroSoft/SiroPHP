@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Exceptions;
 
-use Siro\Core\Env;
 use Siro\Core\Request;
 use Siro\Core\Response;
 use Siro\Core\ValidationException;
@@ -22,32 +21,21 @@ final class Handler
 
         return match (true) {
             $e instanceof ValidationException => $e->toResponse(),
-            $e instanceof ModelNotFoundException => Response::error($e->getMessage(), 404),
-            $e instanceof DatabaseConnectionException => self::dbError($e),
-            $e instanceof DuplicateEmailException => Response::error($e->getMessage(), 409),
-            $e instanceof NoFieldsToUpdateException => Response::error($e->getMessage(), 400),
-            default => self::defaultError($e),
+            $e instanceof ModelNotFoundException => Response::error('Resource not found', 404),
+            $e instanceof DatabaseConnectionException => self::dbError(),
+            $e instanceof DuplicateEmailException => Response::error('Validation failed', 409),
+            $e instanceof NoFieldsToUpdateException => Response::error('No fields to update', 400),
+            default => self::defaultError(),
         };
     }
 
-    private static function defaultError(\Throwable $e): Response
+    private static function defaultError(): Response
     {
-        $debug = Env::bool('APP_DEBUG', false);
-
-        $message = $debug ? $e->getMessage() : 'Internal Server Error';
-        $data = $debug ? ['trace' => $e->getTraceAsString()] : [];
-
-        return Response::error($message, 500, $data);
+        return Response::error('Internal Server Error', 500);
     }
 
-    private static function dbError(DatabaseConnectionException $e): Response
+    private static function dbError(): Response
     {
-        $debug = Env::bool('APP_DEBUG', false);
-
-        return Response::error(
-            $debug ? $e->getMessage() : 'Database connection failed. Please check your database configuration.',
-            500,
-            $debug ? ['driver' => $e->getDriver(), 'host' => $e->getDbHost()] : []
-        );
+        return Response::error('Service temporarily unavailable', 503);
     }
 }

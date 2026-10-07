@@ -185,7 +185,6 @@ final class UserService extends AbstractService
             'status' => 1,
             'role' => $isFirst ? Role::ADMIN : Role::USER,
             'verification_token' => $verificationToken,
-            'created_at' => date('Y-m-d H:i:s'),
         ]);
         UserCreatedEvent::dispatch(['id' => $user->id, 'email' => $email, 'name' => $data['name']]);
         return $user;

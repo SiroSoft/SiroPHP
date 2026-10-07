@@ -19,7 +19,7 @@ final class PostSeeder
             echo "  [SKIP] No users found. Run UserSeeder first.\n";
             return;
         }
-        $ownerId = (int) ($owner['id'] ?? 0);
+        $ownerId = is_numeric($owner['id'] ?? null) ? (int) $owner['id'] : 0;
 
         $posts = [
             [

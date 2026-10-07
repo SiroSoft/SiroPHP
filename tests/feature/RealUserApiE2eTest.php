@@ -11,7 +11,7 @@ final class RealUserApiE2eTest extends TestCase
     public function test_health_endpoint(): void
     {
         $app = $this->createApp();
-        $r = $this->dispatch($app, 'GET', '/health');
+        $r = $this->dispatch($app, 'GET', '/health/live');
         $this->assertEquals(200, $r->statusCode());
     }
 
