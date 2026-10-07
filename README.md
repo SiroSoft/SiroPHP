@@ -14,6 +14,8 @@
 [![Packagist](https://img.shields.io/packagist/v/sirosoft/api)](https://packagist.org/packages/sirosoft/api)
 [![Coverage](https://img.shields.io/badge/coverage-80%25%20%2B-brightgreen)](coverage/)
 
+<p>Boot <strong>~0.5 ms</strong> · dispatch <strong>~361K ops/sec</strong> · <strong>0</strong> runtime dependencies · <strong>95</strong> CLI commands</p>
+
 </div>
 
 ---
@@ -81,7 +83,7 @@ php siro api:why POST /api/orders
   → Replay blocked by default. Use --force to execute.
 ```
 
-**No other framework — PHP, Node, Go, Rust, Python, Ruby — has this flow.**
+**As far as we know, no other framework — PHP, Node, Go, Rust, Python or Ruby — ships risk-aware production request replay. Found one? Open an issue and we'll correct this line.**
 
 > Replay is risk-aware: Siro analyzes captured SQL writes, outbound HTTP calls, and queued jobs before replay. Risky traces require `--force`.
 
@@ -158,13 +160,12 @@ my-api/
 
 | Gate | Result | | Metric | |
 |------|--------|--|--------|---|
-| Core unit/integration | **2,846 — 0 failures** | | Cold boot (Linux) | **~0.5 ms** (est.) |
+| Core unit/integration | **2,846 — 0 failures** | | Cold boot (Linux) | **~0.5 ms** (benchmark.php) |
 | App tests | **745 — 0 failures** | | Cold boot (Win) | **~2.4 ms** (measured) |
 | Fuzz tests | **17,981 — 0 failures** | | Route dispatch | **~361K ops/sec** |
 | DAST security | **157 — 0 failures** | | Memory baseline | **~4 MB** |
 | PHPStan | **Level Max — 0 errors** | | Full-stack | **~404K ops/sec** |
 | Composer audit | **0 vulnerabilities** | | | |
-| Mutation testing | **MSI 83%** | | Line coverage | **80%+** |
 | Mutation testing | **MSI 83%** | | Line coverage | **80%+** |
 
 ---
