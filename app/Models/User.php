@@ -51,5 +51,14 @@ final class User extends Model
         'status',
         'avatar',
         'phone',
+        // System-managed auth fields (server-side only — never accept these
+        // from request input; controllers pass validated whitelists).
+        'verification_token',
+        'email_verified_at',
+        'password_reset_token',
+        'password_reset_expires_at',
+        'token_version',
+        'login_attempts',
+        'locked_until',
     ];
 }

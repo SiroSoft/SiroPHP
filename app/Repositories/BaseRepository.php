@@ -44,7 +44,9 @@ abstract class BaseRepository
     /** @param array<string, mixed> $data */
     public function store(array $data): Model
     {
-        return $this->model->create($data + ['created_at' => date('Y-m-d H:i:s')]);
+        // Model auto-manages created_at/updated_at ($timestamps); passing them
+        // explicitly only triggers fillable-discard noise.
+        return $this->model->create($data);
     }
 
     /** @param array<string, mixed> $data */
