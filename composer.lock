@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "sirosoft/core",
-            "version": "v1.3.0",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SiroSoft/siro-core.git",
-                "reference": "bf3930838f11ebf69e1d3f2dff2658ed3d6e6e3a"
+                "reference": "b86ef792426ca28c851f17b25d75c4731698a544"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SiroSoft/siro-core/zipball/bf3930838f11ebf69e1d3f2dff2658ed3d6e6e3a",
-                "reference": "bf3930838f11ebf69e1d3f2dff2658ed3d6e6e3a",
+                "url": "https://api.github.com/repos/SiroSoft/siro-core/zipball/b86ef792426ca28c851f17b25d75c4731698a544",
+                "reference": "b86ef792426ca28c851f17b25d75c4731698a544",
                 "shasum": ""
             },
             "require": {
@@ -50,7 +50,7 @@
             "license": [
                 "MIT"
             ],
-            "description": "Core engine powering the Siro API Framework with zero external dependencies.",
+            "description": "Core engine powering the Siro API Framework with minimal runtime surface.",
             "homepage": "https://github.com/SiroSoft/siro-core",
             "keywords": [
                 "api",
@@ -70,7 +70,7 @@
                 "issues": "https://github.com/SiroSoft/siro-core/issues",
                 "source": "https://github.com/SiroSoft/siro-core"
             },
-            "time": "2026-10-07T12:24:57+00:00"
+            "time": "2026-10-07T18:27:53+00:00"
         }
     ],
     "packages-dev": [
@@ -2005,7 +2005,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -2014,6 +2014,6 @@
         "ext-json": "*",
         "ext-mbstring": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }
