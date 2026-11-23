@@ -77,7 +77,11 @@ function siroJsonError(int $statusCode, string $message, ?Throwable $e = null): 
         }
     }
 
-    $json = json_encode($error, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR);
+    // Escape <, >, &, ' and " in the JSON body (defense-in-depth: the error
+    // message may contain user-influenced data, and a consumer that injects
+    // this JSON straight into HTML would otherwise get a live XSS vector).
+    // Same family as siro-core Response::json() (see core P0-1).
+    $json = json_encode($error, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
     echo $json !== false ? $json : '{"success":false,"message":"Internal error"}';
     exit(1);
 }
