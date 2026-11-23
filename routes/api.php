@@ -16,8 +16,10 @@ use Siro\Core\Response;
 // THROTTLE_FALLBACK=disabled and has no Redis; forcing fail_closed there
 // would 503 every throttled route).
 $throttleFallback = strtolower((string) \Siro\Core\Env::get('THROTTLE_FALLBACK', 'file'));
-if (!in_array($throttleFallback, ['file', 'fail_closed'], true)
-    && !in_array(\Siro\Core\Env::get('APP_ENV', 'production'), ['local', 'testing'], true)) {
+if (
+    !in_array($throttleFallback, ['file', 'fail_closed'], true)
+    && !in_array(\Siro\Core\Env::get('APP_ENV', 'production'), ['local', 'testing'], true)
+) {
     $_ENV['THROTTLE_FALLBACK'] = 'fail_closed';
     putenv('THROTTLE_FALLBACK=fail_closed');
 }
