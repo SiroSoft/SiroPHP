@@ -121,8 +121,7 @@ jobs:
               echo "ERROR: Neither .env.testing nor .env.example exists!"
               exit 1
             fi
-            
-          else
+            else
             echo ".env already exists, skipping copy"
           fi
           # Verify .env was created
