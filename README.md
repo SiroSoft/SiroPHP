@@ -1,20 +1,20 @@
 <div align="center">
   <h1>⚡ Siro</h1>
   <p><strong>Production-first API framework for PHP.</strong><br>
-  Debug real production requests from your terminal. Zero dependencies.</p>
+  Debug real production requests from your terminal. One runtime dependency: the core engine.</p>
 </div>
 
 <div align="center">
 
 [![PHP 8.2+](https://img.shields.io/badge/php-%3E%3D8.2-brightgreen.svg)](https://php.net)
-[![Tests](https://img.shields.io/badge/tests-761%20pass-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-763%20tests-brightgreen)](tests/)
 [![MSI](https://img.shields.io/badge/MSI-83%25-brightgreen)](coverage/)
 [![PHPStan](https://img.shields.io/badge/PHPStan-Level%20Max-brightgreen)](https://phpstan.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Packagist](https://img.shields.io/packagist/v/sirosoft/api)](https://packagist.org/packages/sirosoft/api)
 [![Coverage](https://img.shields.io/badge/coverage-80%25%20%2B-brightgreen)](coverage/)
 
-<p>Boot <strong>~0.5 ms</strong> · dispatch <strong>~361K ops/sec</strong> · <strong>0</strong> runtime dependencies · <strong>95</strong> CLI commands</p>
+<p>Boot <strong>~0.5 ms</strong> · dispatch <strong>~361K ops/sec</strong> · <strong>1</strong> runtime dependency (sirosoft/core) · <strong>96</strong> CLI commands</p>
 
 </div>
 
@@ -144,15 +144,15 @@ php siro test:regression --fail
 my-api/
 ├── app/Controllers/    # 7 pre-built (Auth + 6 CRUD)
 ├── app/Models/         # 6 pre-built (User, Product, Category...)
-├── app/Services/       # 8 pre-built (BaseService pattern)
-├── database/           # 13 migrations + 2 seeders
-├── tests/              # **761 passing tests**
+├── app/Services/       # 9 pre-built (BaseService pattern)
+├── database/           # 16 migrations + 8 seeders
+├── tests/              # **763 tests**
 ├── docker-compose.yml  # FrankenPHP + Nginx + Caddy
 ├── Dockerfile          # Production build
-└── k8s/                # Helm chart
+└── deploy/helm/siro-api/ # Helm chart
 ```
 
-**Not an empty skeleton — production-grade, ready to deploy with 761 tests.**
+**Not an empty skeleton — production-grade, ready to deploy with 763 tests.**
 
 ---
 
@@ -161,7 +161,7 @@ my-api/
 | Gate | Result | | Metric | |
 |------|--------|--|--------|---|
 | Core unit/integration | **21,391 — 0 failures** (core v1.1.0) | | Cold boot (Linux) | **~0.5 ms** (benchmark.php) |
-| App tests | **761 — 0 failures** | | Cold boot (Win) | **~2.4 ms** (measured) |
+| App tests | **763 — 1 pre-existing failure** (`testRouteRules`) | | Cold boot (Win) | **~2.4 ms** (measured) |
 | Fuzz tests | **17,981 — 0 failures** | | Route dispatch | **~361K ops/sec** |
 | DAST security | **157 — 0 failures** | | Memory baseline | **~4 MB** |
 | PHPStan | **Level Max — 0 errors** | | Full-stack | **~404K ops/sec** |
@@ -172,7 +172,7 @@ my-api/
 
 ## Built-in features
 
-Zero packages needed. JWT auth, ORM, migrations, queue, mail, cache, validation, rate limiting, CSP, CORS, CSRF, OpenAPI, Prometheus metrics, CLI (95 commands). [Full list →](https://sirophp.com/features)
+One runtime package (sirosoft/core). JWT auth, ORM, migrations, queue, mail, cache, validation, rate limiting, CSP, CORS, CSRF, OpenAPI, Prometheus metrics, CLI (96 commands). [Full list →](https://sirophp.com/features)
 
 ---
 
