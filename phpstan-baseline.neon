@@ -153,6 +153,12 @@ parameters:
 		-
 			message: '#^Cannot access offset ''status'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: tests/feature/HealthTest.php
+
+		-
+			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayNotHasKey\(\) expects array\<mixed\>\|ArrayAccess\<\(int\|string\), mixed\>, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: tests/feature/HealthTest.php
 
@@ -187,6 +193,18 @@ parameters:
 			path: tests/feature/I18nTest.php
 
 		-
+			message: '#^Property App\\Tests\\Feature\\I18nTest\:\:\$authHeaders type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/feature/I18nTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with int will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 2
+			path: tests/feature/MassAssignmentTest.php
+
+		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array will always evaluate to true\.$#'
 			identifier: method.alreadyNarrowedType
 			count: 1
@@ -199,13 +217,481 @@ parameters:
 			path: tests/feature/MetricsEndpointTest.php
 
 		-
-			message: '#^Parameter \#2 \$array of method PHPUnit\\Framework\\Assert\:\:assertArrayHasKey\(\) expects array\<mixed\>\|ArrayAccess\<\(int\|string\), mixed\>, mixed given\.$#'
-			identifier: argument.type
+			message: '#^Property App\\Tests\\Feature\\ProductTest\:\:\$adminHeaders type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
 			count: 1
 			path: tests/feature/ProductTest.php
 
 		-
-			message: '#^Property App\\Tests\\Feature\\ProductTest\:\:\$authHeaders type has no value type specified in iterable type array\.$#'
+			message: '#^Cannot access offset ''path'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/feature/UploadE2eTest.php
+
+		-
+			message: '#^Cannot access offset ''token'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/feature/UploadE2eTest.php
+
+		-
+			message: '#^Cannot access offset ''url'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/feature/UploadE2eTest.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 3
+			path: tests/feature/UploadE2eTest.php
+
+		-
+			message: '#^Method App\\Tests\\Feature\\UploadE2eTest\:\:curl\(\) has parameter \$postFields with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: tests/feature/ProductTest.php
+			path: tests/feature/UploadE2eTest.php
+
+		-
+			message: '#^Method App\\Tests\\Feature\\UploadE2eTest\:\:curlRawJson\(\) has parameter \$payload with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/feature/UploadE2eTest.php
+
+		-
+			message: '#^Method App\\Tests\\Feature\\UploadE2eTest\:\:curlRawJson\(\) should return array\<string, mixed\> but returns array\<mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: tests/feature/UploadE2eTest.php
+
+		-
+			message: '#^Offset ''running'' on array\{command\: string, pid\: int, running\: bool, signaled\: bool, stopped\: bool, exitcode\: int, termsig\: int, stopsig\: int\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: tests/feature/UploadE2eTest.php
+
+		-
+			message: '#^Parameter \#3 \$headers of static method App\\Tests\\Feature\\UploadE2eTest\:\:curl\(\) expects array\<string, string\>, array\<int, string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/feature/UploadE2eTest.php
+
+		-
+			message: '#^Parameter \#3 \$value of function curl_setopt expects array\<int, string\>, array\<string, string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/feature/UploadE2eTest.php
+
+		-
+			message: '#^Parameter \#3 \$value of function curl_setopt expects non\-empty\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/feature/UploadE2eTest.php
+
+		-
+			message: '#^Static property App\\Tests\\Feature\\UploadE2eTest\:\:\$pipes \(resource\|null\) is never assigned resource so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: tests/feature/UploadE2eTest.php
+
+		-
+			message: '#^Static property App\\Tests\\Feature\\UploadE2eTest\:\:\$pipes is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: tests/feature/UploadE2eTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with int will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/integration/EventTest.php
+
+		-
+			message: '#^Offset ''response'' might not exist on array\{error\: true, response\?\: Siro\\Core\\Response, url\?\: string, path\?\: string\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: tests/integration/SecurityGuardsTest.php
+
+		-
+			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 18
+			path: tests/unit/AuthControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/unit/AuthControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''refresh_token'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/unit/AuthControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''token'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 18
+			path: tests/unit/AuthControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''user'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/unit/AuthControllerMutationTest.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 2
+			path: tests/unit/AuthControllerMutationTest.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: tests/unit/AuthControllerMutationTest.php
+
+		-
+			message: '#^Offset ''locked_until'' might not exist on array\<string, mixed\>\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: tests/unit/AuthControllerMutationTest.php
+
+		-
+			message: '#^Offset ''login_attempts'' might not exist on array\<string, mixed\>\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: tests/unit/AuthControllerMutationTest.php
+
+		-
+			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 4
+			path: tests/unit/CategoryControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: tests/unit/CategoryControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''token'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: tests/unit/CategoryControllerMutationTest.php
+
+		-
+			message: '#^Method App\\Tests\\Unit\\CategoryControllerMutationTest\:\:auth\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/unit/CategoryControllerMutationTest.php
+
+		-
+			message: '#^Part \$id \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 3
+			path: tests/unit/CategoryControllerMutationTest.php
+
+		-
+			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 5
+			path: tests/unit/EdgeCoverageMutationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with App\\Events\\UserCreatedEvent will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/unit/EdgeCoverageMutationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with App\\Jobs\\ProcessPendingNotifications will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/unit/EdgeCoverageMutationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with App\\Jobs\\SendWelcomeEmail will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/unit/EdgeCoverageMutationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with App\\Mails\\WelcomeMail will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/unit/EdgeCoverageMutationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with App\\Middleware\\SecurityHeadersMiddleware will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/unit/EdgeCoverageMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''token'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 5
+			path: tests/unit/EdgeCoverageMutationTest.php
+
+		-
+			message: '#^Class App\\Events\\UserCreatedEvent does not have a constructor and must be instantiated without any parameters\.$#'
+			identifier: new.noConstructor
+			count: 1
+			path: tests/unit/EdgeCoverageMutationTest.php
+
+		-
+			message: '#^Class App\\Jobs\\SendWelcomeEmail does not have a constructor and must be instantiated without any parameters\.$#'
+			identifier: new.noConstructor
+			count: 1
+			path: tests/unit/EdgeCoverageMutationTest.php
+
+		-
+			message: '#^Class App\\Mails\\WelcomeMail does not have a constructor and must be instantiated without any parameters\.$#'
+			identifier: new.noConstructor
+			count: 1
+			path: tests/unit/EdgeCoverageMutationTest.php
+
+		-
+			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: tests/unit/OrderControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 5
+			path: tests/unit/OrderControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''token'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/unit/OrderControllerMutationTest.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: tests/unit/OrderControllerMutationTest.php
+
+		-
+			message: '#^Method App\\Tests\\Unit\\OrderControllerMutationTest\:\:auth\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/unit/OrderControllerMutationTest.php
+
+		-
+			message: '#^Method App\\Tests\\Unit\\OrderControllerMutationTest\:\:createProduct\(\) has parameter \$auth with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/unit/OrderControllerMutationTest.php
+
+		-
+			message: '#^Part \$orderId \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 4
+			path: tests/unit/OrderControllerMutationTest.php
+
+		-
+			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 4
+			path: tests/unit/PostControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 6
+			path: tests/unit/PostControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''token'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: tests/unit/PostControllerMutationTest.php
+
+		-
+			message: '#^Method App\\Tests\\Unit\\PostControllerMutationTest\:\:auth\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/unit/PostControllerMutationTest.php
+
+		-
+			message: '#^Part \$id \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 6
+			path: tests/unit/PostControllerMutationTest.php
+
+		-
+			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 4
+			path: tests/unit/ProductControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: tests/unit/ProductControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''token'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: tests/unit/ProductControllerMutationTest.php
+
+		-
+			message: '#^Method App\\Tests\\Unit\\ProductControllerMutationTest\:\:auth\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/unit/ProductControllerMutationTest.php
+
+		-
+			message: '#^Part \$id \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 4
+			path: tests/unit/ProductControllerMutationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array\<int, array\<string, mixed\>\> will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 4
+			path: tests/unit/RepositoryServiceResourceMutationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array\<string, mixed\> will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 6
+			path: tests/unit/RepositoryServiceResourceMutationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array\{data\: array\<Siro\\Core\\Model\>, meta\: array\{page\: int, per_page\: int, total\: int, last_page\: int\}\} will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 9
+			path: tests/unit/RepositoryServiceResourceMutationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsInt\(\) with int will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/unit/RepositoryServiceResourceMutationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertIsString\(\) with string will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: tests/unit/RepositoryServiceResourceMutationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with Siro\\Core\\Model will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 3
+			path: tests/unit/RepositoryServiceResourceMutationTest.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
+			count: 2
+			path: tests/unit/RepositoryServiceResourceMutationTest.php
+
+		-
+			message: '#^Offset ''code'' might not exist on array\{success\: false, error\?\: string, code\?\: int\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 2
+			path: tests/unit/RepositoryServiceResourceMutationTest.php
+
+		-
+			message: '#^Offset ''name'' might not exist on Siro\\Core\\Model\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: tests/unit/RepositoryServiceResourceMutationTest.php
+
+		-
+			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 4
+			path: tests/unit/TagControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: tests/unit/TagControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''token'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: tests/unit/TagControllerMutationTest.php
+
+		-
+			message: '#^Method App\\Tests\\Unit\\TagControllerMutationTest\:\:auth\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/unit/TagControllerMutationTest.php
+
+		-
+			message: '#^Part \$id \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 3
+			path: tests/unit/TagControllerMutationTest.php
+
+		-
+			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 3
+			path: tests/unit/UserControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 6
+			path: tests/unit/UserControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''token'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: tests/unit/UserControllerMutationTest.php
+
+		-
+			message: '#^Cannot access offset ''user'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 6
+			path: tests/unit/UserControllerMutationTest.php
+
+		-
+			message: '#^Method App\\Tests\\Unit\\UserControllerMutationTest\:\:adminAuth\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/unit/UserControllerMutationTest.php
+
+		-
+			message: '#^Method App\\Tests\\Unit\\UserControllerMutationTest\:\:userAuth\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/unit/UserControllerMutationTest.php
+
+		-
+			message: '#^Part \$userId \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 5
+			path: tests/unit/UserControllerMutationTest.php
+
+		-
+			message: '#^Part \$userId2 \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: tests/unit/UserControllerMutationTest.php
+
+		-
+			message: '#^Property App\\Tests\\Unit\\UserControllerMutationTest\:\:\$adminAuth type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/unit/UserControllerMutationTest.php
