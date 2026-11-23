@@ -1,5 +1,66 @@
 # Upgrade Guide
 
+## v1.0.x → v1.1.0
+
+### Overview
+
+Error-response hardening + throttle fail-closed default. No data migration
+needed. Three behavioral changes can break existing clients/monitors — read
+the items below before upgrading production.
+
+### Behavioral changes
+
+#### 1. Throttle defaults to `fail_closed` outside local env
+`routes/api.php` now forces `THROTTLE_FALLBACK=fail_closed` whenever the
+configured value is neither `file` nor `fail_closed` and `APP_ENV` is not
+`local`. A degraded rate-limit backend (e.g. Redis down) now rejects
+requests instead of silently letting them through unthrottled.
+
+**Impact**: if your throttle backend is down, clients see rate-limit
+rejections instead of unthrottled access. This is the intended behavior.
+
+**Opt-out** (only if you accept fail-open): set `THROTTLE_FALLBACK=file`
+explicitly in `.env`. The testing env is exempt (CI has no Redis).
+
+#### 2. DB connection failure returns 503 (was 500)
+A failed DB connection now returns HTTP 503 instead of 500, so alerting can
+distinguish "dependency down" from "application error".
+
+**Impact**: update any monitor/alert that keys on 500s for DB outages to
+also watch 503s.
+
+#### 3. Error responses no longer leak internals
+404/409/400/500 responses now carry generic messages only — no stack traces,
+no driver details, no exception text (`app/Exceptions/Handler.php`,
+`routes/api.php` settings endpoint).
+
+**Impact**: clients that parsed exception text out of error responses will
+see generic messages instead. Debug details are still available server-side
+via `APP_DEBUG=true` logs/traces.
+
+#### 4. Auth required on status routes
+`GET /health` and `GET /health/ready` now require the `auth` middleware
+(`GET /health/live` stays public for liveness probes).
+
+**Impact**: unauthenticated health probes (load balancers, uptime monitors)
+will get 401. Point liveness checks at `/health/live`, or send an
+authenticated request to `/health` / `/health/ready`.
+
+### Steps
+
+```bash
+composer update sirosoft/core   # requires sirosoft/core v1.1.0+
+php vendor/bin/phpunit          # 761 tests, all green expected
+```
+
+### Notes
+
+- Requires `sirosoft/core` v1.1.0+ (throttle 503 semantics, `malformed_body`).
+- No breaking changes to application code: controllers, services, models and
+  migrations work unchanged.
+
+---
+
 ## v0.35.x → v0.40.0
 
 ### Overview
