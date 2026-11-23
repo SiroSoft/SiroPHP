@@ -9,9 +9,12 @@ parameters:
         - database/
         - routes/
         - public/
+        # tests/ is analysed too: the baseline below suppresses the 261 known
+        # test-code errors, and any NEW test-code error fails the build.
+        # (Before v1.1.1, tests/ was excluded, so the baseline never applied.)
+        - tests/
     excludePaths:
         - vendor/
         - storage/
-        - tests/
     universalObjectCratesClasses:
         - Siro\Core\Model
