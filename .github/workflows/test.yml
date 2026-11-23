@@ -30,9 +30,14 @@ jobs:
           tools: composer:v2
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
+      # PSR-12 gate (blocking): shipped app code only.
+      # - tests/ excluded: 700+ pre-existing style violations (separate cleanup).
+      # - database/seeds/ excluded: seeders live in the global namespace BY
+      #   DESIGN (SeedCommand scans it); PSR-12 flags them as false positives.
+      # - scripts/ + _ide_helper.php excluded: dev/debug + generated files.
+      # - --warning-severity=0: line-length warnings don't block; errors do.
       - name: PHP_CodeSniffer (PSR-12)
-        continue-on-error: true
-        run: vendor/bin/phpcs --standard=PSR12 --ignore=vendor,storage .
+        run: vendor/bin/phpcs --standard=PSR12 --ignore=database/seeds --warning-severity=0 app/ config/ routes/ database/ public/
 
   static-analysis:
     runs-on: ubuntu-latest
@@ -104,15 +109,13 @@ jobs:
           echo "Listing all .env files:"
           ls -la .env* 2>&1 || echo "No .env files found at all"
           echo ""
-          
           # Try to create .env from .env.testing or .env.example
           if [ ! -f .env ]; then
             if [ -f .env.testing ]; then
               echo "Copying .env.testing to .env..."
               cp .env.testing .env
             elif [ -f .env.example ]; then
-              echo "Copying .env.example to .env..."
-              cp .env.example .env
+              echo "Copying .env.example to .env"
             else
               echo "ERROR: Neither .env.testing nor .env.example exists!"
               exit 1
@@ -120,7 +123,6 @@ jobs:
           else
             echo ".env already exists, skipping copy"
           fi
-          
           # Verify .env was created
           if [ ! -f .env ]; then
             echo "FATAL ERROR: .env file does not exist after copy attempt!"
@@ -128,15 +130,12 @@ jobs:
             ls -la
             exit 1
           fi
-          
           echo ".env file exists: YES"
           echo ".env file size: $(wc -c < .env) bytes"
           echo ""
-          
           # Configure for testing
           sed -i 's|DB_DATABASE=.*|DB_DATABASE=storage/test.db|g' .env
           sed -i 's|CACHE_DRIVER=.*|CACHE_DRIVER=file|g' .env
-          
           echo "Configuration updated:"
           grep -E "^(DB_DATABASE|CACHE_DRIVER|JWT_SECRET)" .env || echo "Warning: Could not find expected config keys"
           echo ""
@@ -146,8 +145,8 @@ jobs:
           echo "=== ENV PREPARATION COMPLETE ==="
       - name: Migrate
         run: php siro migrate
-      - name: PHPUnit Feature & Integration tests
-        run: php vendor/bin/phpunit --testsuite=Feature,Integration --no-progress
+      - name: PHPUnit Feature, Integration, Cli & EdgeCase tests
+        run: php vendor/bin/phpunit --testsuite=Feature,Integration,Cli,EdgeCase --no-progress
 
   technical-gate:
     runs-on: ubuntu-latest
@@ -175,13 +174,11 @@ jobs:
               exit 1
             fi
           fi
-          
           if [ ! -f .env ]; then
             echo "FATAL: .env not created!"
             ls -la
             exit 1
           fi
-          
           sed -i 's|DB_DATABASE=.*|DB_DATABASE=storage/test.db|g' .env
           sed -i 's|CACHE_DRIVER=.*|CACHE_DRIVER=file|g' .env
           echo ".env prepared successfully ($(wc -c < .env) bytes)"
