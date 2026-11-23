@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist
       - name: Composer Audit
-        run: composer audit --format=table || echo "::warning::Composer audit found vulnerabilities"
+        run: composer audit --format=table
       - name: Generate SBOM
         run: php scripts/generate-sbom.php
       - name: Upload SBOM artifact
