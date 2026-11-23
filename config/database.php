@@ -1,9 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
-use Siro\Core\Env;
-
 /**
  * Database configuration.
  *
@@ -12,6 +8,10 @@ use Siro\Core\Env;
  *
  * @return array<string, mixed>
  */
+
+declare(strict_types=1);
+
+use Siro\Core\Env;
 
 $driver = Env::get('DB_CONNECTION', 'mysql');
 
