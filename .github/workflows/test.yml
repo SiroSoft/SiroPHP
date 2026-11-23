@@ -116,10 +116,12 @@ jobs:
               cp .env.testing .env
             elif [ -f .env.example ]; then
               echo "Copying .env.example to .env"
+              cp .env.example .env
             else
               echo "ERROR: Neither .env.testing nor .env.example exists!"
               exit 1
             fi
+            
           else
             echo ".env already exists, skipping copy"
           fi
