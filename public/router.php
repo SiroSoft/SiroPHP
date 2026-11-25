@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Router script for PHP built-in development server.
  *
@@ -16,6 +14,8 @@ declare(strict_types=1);
  * - Virtual paths (e.g. /api/v1/auth/login) → routed here → index.php
  * - OPTIONS preflight → handled here → 204 with CORS headers → exit
  */
+
+declare(strict_types=1);
 
 // ──────────────────────────────────────────────
 // 0. Load .env early for CORS (framework not booted yet)

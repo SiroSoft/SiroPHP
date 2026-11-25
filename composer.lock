@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "855353397b0b7122cd5ea4854c428d38",
+    "content-hash": "22c1d3fe92880834d95411a9d8c2085e",
     "packages": [
         {
             "name": "sirosoft/core",
-            "version": "v1.3.0",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SiroSoft/siro-core.git",
-                "reference": "bf3930838f11ebf69e1d3f2dff2658ed3d6e6e3a"
+                "reference": "b86ef792426ca28c851f17b25d75c4731698a544"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SiroSoft/siro-core/zipball/bf3930838f11ebf69e1d3f2dff2658ed3d6e6e3a",
-                "reference": "bf3930838f11ebf69e1d3f2dff2658ed3d6e6e3a",
+                "url": "https://api.github.com/repos/SiroSoft/siro-core/zipball/b86ef792426ca28c851f17b25d75c4731698a544",
+                "reference": "b86ef792426ca28c851f17b25d75c4731698a544",
                 "shasum": ""
             },
             "require": {
@@ -50,7 +50,7 @@
             "license": [
                 "MIT"
             ],
-            "description": "Core engine powering the Siro API Framework with zero external dependencies.",
+            "description": "Core engine powering the Siro API Framework with minimal runtime surface.",
             "homepage": "https://github.com/SiroSoft/siro-core",
             "keywords": [
                 "api",
@@ -70,7 +70,8 @@
                 "issues": "https://github.com/SiroSoft/siro-core/issues",
                 "source": "https://github.com/SiroSoft/siro-core"
             },
-            "time": "2026-10-07T12:24:57+00:00"
+            "time": "2026-10-07T18:27:53+00:00",
+            "published-time": "2026-10-07T18:28:06+00:00"
         }
     ],
     "packages-dev": [
@@ -312,11 +313,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.2.13",
+            "version": "2.3.7",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9ba9ac76ee9c5cf5b56d58eb5deec6315b7a0260",
-                "reference": "9ba9ac76ee9c5cf5b56d58eb5deec6315b7a0260",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/90c91c2498849ab8cc4e873864bbf1cb2bf6ea12",
+                "reference": "90c91c2498849ab8cc4e873864bbf1cb2bf6ea12",
                 "shasum": ""
             },
             "require": {
@@ -372,7 +373,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-03T20:38:19+00:00"
+            "time": "2026-11-19T10:31:11+00:00",
+            "published-time": "2026-11-19T10:31:27+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2005,7 +2007,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -2014,6 +2016,6 @@
         "ext-json": "*",
         "ext-mbstring": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.11.0"
 }

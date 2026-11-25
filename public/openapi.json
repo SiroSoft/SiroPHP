@@ -2,7 +2,7 @@
     "openapi": "3.0.3",
     "info": {
         "title": "Siro API",
-        "version": "1.0.1",
+        "version": "1.1.1",
         "description": "Siro API Framework",
         "contact": {
             "name": "SiroSoft Team",

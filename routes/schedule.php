@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Scheduled task definitions.
  *
@@ -11,6 +9,8 @@ declare(strict_types=1);
  *
  * @package App
  */
+
+declare(strict_types=1);
 
 /** @var \Siro\Core\Schedule $schedule */
 $schedule->command('queue:work')->everyMinute();

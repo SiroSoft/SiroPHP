@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Web routes (HTML pages, redirects, etc.)
  *
@@ -9,3 +7,5 @@ declare(strict_types=1);
  *
  * $app->router->get('/dashboard', [DashboardController::class, 'index']);
  */
+
+declare(strict_types=1);

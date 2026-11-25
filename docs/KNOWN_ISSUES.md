@@ -7,15 +7,19 @@ sidebar_label: K NO WN I SS UE S
 
 # Known Issues & Limitations
 
-## v0.35 Known Issues
+## v1.1.1 Known Issues (verified 2026-11-22 against `sirosoft/core` v1.3.0)
+
+> Entries below were re-checked against the v1.1.1 tree. Items that could
+> not be verified are marked as such — do not treat this file as a promise
+> that an item is fixed just because its version heading moved.
 
 ### Database
 
 | Issue | Severity | Workaround |
 |-------|----------|------------|
-| No transaction rollback in CLI | Low | Use `DB::transaction()` manually |
-| SQLite foreign keys off by default | Medium | Enable with `PRAGMA foreign_keys = ON` |
-| No partial rollback for specific migration | Low | Use `migrate:rollback --step=N` |
+| No transaction rollback in CLI | Low | Use `Database::transaction()` manually (`Siro\Core\Database::transaction()`) |
+| SQLite foreign keys off by default | Medium | Issue `PRAGMA foreign_keys = ON` per connection. Note: `.env.example` ships `DB_FOREIGN_KEYS=ON`, but core v1.3.0 does not read that variable — the setting alone does not enable enforcement (core gap, to be raised upstream) |
+| Rollback is by step count only, not by named migration | Low | Use `migrate:rollback --step=N` (reverts the last N batches) |
 
 ### Auth
 
