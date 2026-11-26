@@ -46,7 +46,11 @@ final class UploadE2eTest extends TestCase
             self::markTestSkipped('Port ' . self::PORT . ' is busy; cannot boot e2e server.');
         }
 
-        $descriptors = [0 => ['file', 'NUL', 'r'], 1 => ['file', 'NUL', 'w'], 2 => ['file', 'NUL', 'w']];
+        // 'NUL' is a Windows-only device. On Linux proc_open with 'NUL'
+        // fails (and even creates a stray file named NUL in the cwd),
+        // so setUpBeforeClass skipped both e2e tests. Use /dev/null.
+        $nul = DIRECTORY_SEPARATOR === '\\' ? 'NUL' : '/dev/null';
+        $descriptors = [0 => ['file', $nul, 'r'], 1 => ['file', $nul, 'w'], 2 => ['file', $nul, 'w']];
         // Plain php -S with the framework router (same stack manual QA uses).
         // TCP connect = ready (never blocks on app-level health checks).
         $cmd = 'php -S 127.0.0.1:' . self::PORT
