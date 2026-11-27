@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.4'
           tools: composer:v2
       - name: PHP syntax check
         run: find . -type f -name "*.php" -not -path "./vendor/*" -not -path "./storage/*" -print0 | xargs -0 -n1 php -l
@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.4'
           tools: composer:v2
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
@@ -46,7 +46,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.4'
           tools: composer:v2
       - name: Cache dependencies
         uses: actions/cache@v4
@@ -66,7 +66,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.4'
           tools: composer:v2
       - name: Cache dependencies
         uses: actions/cache@v4
@@ -91,7 +91,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.4'
           tools: composer:v2
       - name: Cache dependencies
         uses: actions/cache@v4
@@ -156,7 +156,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.4'
           tools: composer:v2
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
