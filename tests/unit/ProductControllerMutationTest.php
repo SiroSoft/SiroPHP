@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit;
 
+use App\Role;
 use App\Tests\TestCase;
 
 final class ProductControllerMutationTest extends TestCase
@@ -175,21 +176,8 @@ final class ProductControllerMutationTest extends TestCase
 
     public function testStoreForbiddenForNonAdmin(): void
     {
-        $app = $this->createApp();
-        $email = 'nonadmin-' . uniqid() . '@test.com';
-        $this->dispatch($app, 'POST', '/api/auth/register', [
-            'name' => 'Regular',
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $loginJson = $this->responseJson($login);
-        $token = $loginJson['data']['token'] ?? '';
-        $headers = ['authorization' => 'Bearer ' . $token, 'content-type' => 'application/json'];
-        $this->post('/api/products', ['name' => 'Nope', 'price' => 10, 'stock' => 1], $headers)->assertForbidden();
+        $user = $this->registerUser('nonadmin-');
+        $this->post('/api/products', ['name' => 'Nope', 'price' => 10, 'stock' => 1], $user['headers'])->assertForbidden();
     }
 
     // ─── Update ──────────────────────────────────────────────────────
@@ -247,21 +235,16 @@ final class ProductControllerMutationTest extends TestCase
 
     public function testUpdateForbiddenForNonAdmin(): void
     {
-        $app = $this->createApp();
-        $email = 'nonadmin-up-' . uniqid() . '@test.com';
-        $this->dispatch($app, 'POST', '/api/auth/register', [
-            'name' => 'Regular',
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $loginJson = $this->responseJson($login);
-        $token = $loginJson['data']['token'] ?? '';
-        $headers = ['authorization' => 'Bearer ' . $token, 'content-type' => 'application/json'];
-        $this->put('/api/products/1', ['name' => 'Nope'], $headers)->assertForbidden();
+        $admin = $this->registerUser('prod-admin-', Role::ADMIN);
+        $createResp = $this->dispatch($app = $this->createApp(), 'POST', '/api/products', [
+            'name' => 'Target Product',
+            'price' => 20.00,
+            'stock' => 10,
+        ], $admin['headers']);
+        $id = $this->responseJson($createResp)['data']['id'] ?? 0;
+        $this->assertGreaterThan(0, $id, 'Failed to create target product.');
+        $user = $this->registerUser('nonadmin-up-');
+        $this->put("/api/products/$id", ['name' => 'Nope'], $user['headers'])->assertForbidden();
     }
 
     // ─── Delete ──────────────────────────────────────────────────────
@@ -294,20 +277,15 @@ final class ProductControllerMutationTest extends TestCase
 
     public function testDeleteForbiddenForNonAdmin(): void
     {
-        $app = $this->createApp();
-        $email = 'nonadmin-del-' . uniqid() . '@test.com';
-        $this->dispatch($app, 'POST', '/api/auth/register', [
-            'name' => 'Regular',
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $loginJson = $this->responseJson($login);
-        $token = $loginJson['data']['token'] ?? '';
-        $headers = ['authorization' => 'Bearer ' . $token, 'content-type' => 'application/json'];
-        $this->delete('/api/products/1', $headers)->assertForbidden();
+        $admin = $this->registerUser('prod-admin-', Role::ADMIN);
+        $createResp = $this->dispatch($app = $this->createApp(), 'POST', '/api/products', [
+            'name' => 'Target Product',
+            'price' => 15.00,
+            'stock' => 3,
+        ], $admin['headers']);
+        $id = $this->responseJson($createResp)['data']['id'] ?? 0;
+        $this->assertGreaterThan(0, $id, 'Failed to create target product.');
+        $user = $this->registerUser('nonadmin-del-');
+        $this->delete("/api/products/$id", $user['headers'])->assertForbidden();
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use App\Role;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Siro\Core\App;
 use Siro\Core\Database;
@@ -376,6 +377,62 @@ abstract class TestCase extends BaseTestCase
         return [
             'authorization' => 'Bearer ' . $token,
             'content-type' => 'application/json',
+        ];
+    }
+
+    /**
+     * Register a user with a DETERMINISTIC role and return its auth headers,
+     * id and email.
+     *
+     * Why this exists: UserService makes the FIRST registered user in a
+     * (per-class) database an admin. A test that registers one user and
+     * assumes it is a plain user is therefore order-dependent — in
+     * defects-first order it runs first, its user IS the admin, and a
+     * forbidden-action assertion sees 200/201 instead of 403 (and a
+     * hardcoded resource id 1 may not exist yet, giving 404 instead).
+     * Forcing the role via SQL after registration (the same trick the
+     * per-class auth() helpers already use for admins) makes the test
+     * pass in ANY execution order.
+     *
+     * @return array{headers: array<string,string>, id: int, email: string}
+     */
+    protected function registerUser(string $prefix, string $role = Role::USER): array
+    {
+        $app = $this->createApp();
+        $email = $prefix . uniqid() . '@test.com';
+
+        $register = $this->dispatch($app, 'POST', '/api/auth/register', [
+            'name' => 'Test User',
+            'email' => $email,
+            'password' => 'secret123',
+            'password_confirmation' => 'secret123',
+        ]);
+        $registerJson = $this->responseJson($register);
+        $data = $registerJson['data'] ?? null;
+        $this->assertIsArray($data, 'Register response has no data object.');
+        $user = $data['user'] ?? null;
+        $this->assertIsArray($user, 'Register response has no user object.');
+        $id = $user['id'] ?? 0;
+        $this->assertIsInt($id, 'Register response has no integer user id.');
+        $this->assertGreaterThan(0, $id, 'Failed to register test user.');
+
+        Database::execute('UPDATE users SET role = ? WHERE email = ?', [$role, $email]);
+
+        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
+            'email' => $email,
+            'password' => 'secret123',
+        ]);
+        $loginJson = $this->responseJson($login);
+        $token = $loginJson['data']['token'] ?? '';
+        $this->assertNotSame('', $token, 'Auth token missing from login response.');
+
+        return [
+            'headers' => [
+                'authorization' => 'Bearer ' . $token,
+                'content-type' => 'application/json',
+            ],
+            'id' => $id,
+            'email' => $email,
         ];
     }
 

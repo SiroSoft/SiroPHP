@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit;
 
+use App\Role;
 use App\Tests\TestCase;
 
 final class UserControllerMutationTest extends TestCase
@@ -136,8 +137,9 @@ final class UserControllerMutationTest extends TestCase
 
     public function testShowOtherUserForbidden(): void
     {
-        $userAuth = $this->userAuth();
-        $this->get('/api/users/1', $userAuth)->assertForbidden();
+        $admin = $this->registerUser('usr-admin-', Role::ADMIN);
+        $user = $this->registerUser('usr-user-');
+        $this->get("/api/users/{$admin['id']}", $user['headers'])->assertForbidden();
     }
 
     // ─── Store ───────────────────────────────────────────────────────
@@ -221,8 +223,9 @@ final class UserControllerMutationTest extends TestCase
 
     public function testUpdateForbiddenForNonAdmin(): void
     {
-        $userAuth = $this->userAuth();
-        $this->put('/api/users/1', ['name' => 'Hacked'], $userAuth)->assertForbidden();
+        $admin = $this->registerUser('usr-admin-', Role::ADMIN);
+        $user = $this->registerUser('usr-user-');
+        $this->put("/api/users/{$admin['id']}", ['name' => 'Hacked'], $user['headers'])->assertForbidden();
     }
 
     public function testUpdateInvalidId(): void
@@ -321,8 +324,9 @@ final class UserControllerMutationTest extends TestCase
 
     public function testDeleteForbiddenForNonAdmin(): void
     {
-        $userAuth = $this->userAuth();
-        $this->delete('/api/users/1', $userAuth)->assertForbidden();
+        $admin = $this->registerUser('usr-admin-', Role::ADMIN);
+        $user = $this->registerUser('usr-user-');
+        $this->delete("/api/users/{$admin['id']}", $user['headers'])->assertForbidden();
     }
 
     public function testDeleteInvalidId(): void

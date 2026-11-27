@@ -551,21 +551,8 @@ final class AuthControllerMutationTest extends TestCase
 
     public function testGetSettingsForbidden(): void
     {
-        $app = $this->createApp();
-        $email = 'settings-user-' . uniqid() . '@test.com';
-        $this->dispatch($app, 'POST', '/api/auth/register', [
-            'name' => 'Regular',
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $loginJson = $this->responseJson($login);
-        $token = $loginJson['data']['token'] ?? '';
-        $headers = ['authorization' => 'Bearer ' . $token, 'content-type' => 'application/json'];
-        $this->get('/api/settings', $headers)->assertForbidden();
+        $user = $this->registerUser('settings-user-');
+        $this->get('/api/settings', $user['headers'])->assertForbidden();
     }
 
     public function testUpdateSettings(): void
@@ -617,21 +604,8 @@ final class AuthControllerMutationTest extends TestCase
 
     public function testUpdateSettingsForbidden(): void
     {
-        $app = $this->createApp();
-        $email = 'settings-upd-' . uniqid() . '@test.com';
-        $this->dispatch($app, 'POST', '/api/auth/register', [
-            'name' => 'Regular',
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $loginJson = $this->responseJson($login);
-        $token = $loginJson['data']['token'] ?? '';
-        $headers = ['authorization' => 'Bearer ' . $token, 'content-type' => 'application/json'];
-        $this->put('/api/settings', ['key' => 'val'], $headers)->assertForbidden();
+        $user = $this->registerUser('settings-upd-');
+        $this->put('/api/settings', ['key' => 'val'], $user['headers'])->assertForbidden();
     }
 
     // ─── Dashboard ───────────────────────────────────────────────────

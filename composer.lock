@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a219238e906416b4877f1e8eae03916b",
+    "content-hash": "35f8716535656d4169e5b9221e30bed8",
     "packages": [
         {
             "name": "sirosoft/core",
-            "version": "v1.4.0",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SiroSoft/siro-core.git",
-                "reference": "9f40d62be8ea9d7cd23c416f90fbc541e65d98d6"
+                "reference": "85c4f4b0d424803adccd96ccfa6a495294e409f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SiroSoft/siro-core/zipball/9f40d62be8ea9d7cd23c416f90fbc541e65d98d6",
-                "reference": "9f40d62be8ea9d7cd23c416f90fbc541e65d98d6",
+                "url": "https://api.github.com/repos/SiroSoft/siro-core/zipball/85c4f4b0d424803adccd96ccfa6a495294e409f7",
+                "reference": "85c4f4b0d424803adccd96ccfa6a495294e409f7",
                 "shasum": ""
             },
             "require": {
@@ -27,18 +27,22 @@
                 "ext-mbstring": "*",
                 "ext-openssl": "*",
                 "ext-pdo": "*",
-                "php": ">=8.2"
+                "php": ">=8.4.1"
             },
             "require-dev": {
                 "cyclonedx/cyclonedx-php-composer": "^6.0",
-                "infection/infection": "^0.29 || ^0.30",
+                "infection/infection": "^0.35",
+                "laminas/laminas-diactoros": "^3.0",
+                "league/oauth2-server": "^9.5",
                 "phpstan/phpstan": "^2.1",
-                "phpunit/phpunit": "^11.5.55",
+                "phpunit/phpunit": "^13.4",
                 "squizlabs/php_codesniffer": "^3.0",
-                "vimeo/psalm": "^5.0 || ^6.0"
+                "vimeo/psalm": "^7.0"
             },
             "suggest": {
-                "ext-redis": "Required for Redis cache, session, and rate limiter drivers"
+                "ext-redis": "Required for Redis cache, session, and rate limiter drivers",
+                "laminas/laminas-diactoros": "PSR-7 implementation used by the OAuth2 bridge",
+                "league/oauth2-server": "Required for the OAuth2 authorization server (grants, PKCE, scopes)"
             },
             "type": "library",
             "autoload": {
@@ -70,8 +74,8 @@
                 "issues": "https://github.com/SiroSoft/siro-core/issues",
                 "source": "https://github.com/SiroSoft/siro-core"
             },
-            "time": "2026-11-25T05:56:48+00:00",
-            "published-time": "2026-11-25T06:03:08+00:00"
+            "time": "2026-11-27T00:42:11+00:00",
+            "published-time": "2026-11-27T02:54:17+00:00"
         }
     ],
     "packages-dev": [
@@ -2011,7 +2015,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.2",
+        "php": ">=8.4.1",
         "ext-pdo": "*",
         "ext-json": "*",
         "ext-mbstring": "*"

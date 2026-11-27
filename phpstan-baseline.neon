@@ -3,13 +3,13 @@ parameters:
 		-
 			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 1
+			count: 2
 			path: tests/TestCase.php
 
 		-
 			message: '#^Cannot access offset ''token'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 2
 			path: tests/TestCase.php
 
 		-
@@ -315,7 +315,7 @@ parameters:
 		-
 			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 18
+			count: 16
 			path: tests/unit/AuthControllerMutationTest.php
 
 		-
@@ -333,7 +333,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''token'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 18
+			count: 16
 			path: tests/unit/AuthControllerMutationTest.php
 
 		-
@@ -369,19 +369,19 @@ parameters:
 		-
 			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 4
+			count: 1
 			path: tests/unit/CategoryControllerMutationTest.php
 
 		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
+			count: 5
 			path: tests/unit/CategoryControllerMutationTest.php
 
 		-
 			message: '#^Cannot access offset ''token'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
+			count: 1
 			path: tests/unit/CategoryControllerMutationTest.php
 
 		-
@@ -393,7 +393,7 @@ parameters:
 		-
 			message: '#^Part \$id \(mixed\) of encapsed string cannot be cast to string\.$#'
 			identifier: encapsedStringPart.nonString
-			count: 3
+			count: 5
 			path: tests/unit/CategoryControllerMutationTest.php
 
 		-
@@ -531,19 +531,19 @@ parameters:
 		-
 			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 4
+			count: 1
 			path: tests/unit/ProductControllerMutationTest.php
 
 		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
+			count: 6
 			path: tests/unit/ProductControllerMutationTest.php
 
 		-
 			message: '#^Cannot access offset ''token'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
+			count: 1
 			path: tests/unit/ProductControllerMutationTest.php
 
 		-
@@ -555,7 +555,7 @@ parameters:
 		-
 			message: '#^Part \$id \(mixed\) of encapsed string cannot be cast to string\.$#'
 			identifier: encapsedStringPart.nonString
-			count: 4
+			count: 6
 			path: tests/unit/ProductControllerMutationTest.php
 
 		-
@@ -615,19 +615,19 @@ parameters:
 		-
 			message: '#^Binary operation "\." between ''Bearer '' and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 4
+			count: 1
 			path: tests/unit/TagControllerMutationTest.php
 
 		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
+			count: 5
 			path: tests/unit/TagControllerMutationTest.php
 
 		-
 			message: '#^Cannot access offset ''token'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
+			count: 1
 			path: tests/unit/TagControllerMutationTest.php
 
 		-
@@ -639,7 +639,7 @@ parameters:
 		-
 			message: '#^Part \$id \(mixed\) of encapsed string cannot be cast to string\.$#'
 			identifier: encapsedStringPart.nonString
-			count: 3
+			count: 5
 			path: tests/unit/TagControllerMutationTest.php
 
 		-

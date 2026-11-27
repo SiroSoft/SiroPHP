@@ -65,8 +65,8 @@ final class CrudValidationTest extends TestCase
 
     public function testPutWithoutIdReturns403ForNonAdmin(): void
     {
-        $auth = $this->authenticate();
-        $resp = $this->put('/api/products/999999', ['name' => 'Test'], $auth);
+        $user = $this->registerUser('crud-user-');
+        $resp = $this->put('/api/products/999999', ['name' => 'Test'], $user['headers']);
         $this->assertEquals(403, $resp->status(), 'Non-admin user should get 403 for update');
     }
 

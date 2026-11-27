@@ -7,6 +7,11 @@ sidebar_label: R EL EA SE N OT ES
 
 # Release Notes
 
+## v1.2.0 — Core v1.5.0 pin (2026-11-27)
+- Requires `sirosoft/core` v1.5.0+ (OAuth2 bridge, auto-CRUD, RFC 7807, webhooks, throttle tiers, contract coverage — all opt-in).
+- PHP floor rises to >= 8.4.1 (core requirement); CI matrix moves to PHP 8.4.
+- `composer release:check` now also runs `api:contract --strict --coverage` against the skeleton's own spec + routes.
+
 ## v1.1.0 — Error-response hardening (2026-10-07)
 - Exception handler no longer leaks internals: generic messages for 404/409/
   400/500, no stack traces or driver details in responses.
