@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit;
 
+use App\Role;
 use App\Tests\TestCase;
 
 final class TagControllerMutationTest extends TestCase
@@ -89,21 +90,8 @@ final class TagControllerMutationTest extends TestCase
 
     public function testStoreForbiddenForNonAdmin(): void
     {
-        $app = $this->createApp();
-        $email = 'tag-user-' . uniqid() . '@test.com';
-        $this->dispatch($app, 'POST', '/api/auth/register', [
-            'name' => 'Regular',
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $loginJson = $this->responseJson($login);
-        $token = $loginJson['data']['token'] ?? '';
-        $headers = ['authorization' => 'Bearer ' . $token, 'content-type' => 'application/json'];
-        $this->post('/api/tags', ['name' => 'Nope'], $headers)->assertForbidden();
+        $user = $this->registerUser('tag-user-');
+        $this->post('/api/tags', ['name' => 'Nope'], $user['headers'])->assertForbidden();
     }
 
     // ─── Update ──────────────────────────────────────────────────────
@@ -135,21 +123,14 @@ final class TagControllerMutationTest extends TestCase
 
     public function testUpdateForbiddenForNonAdmin(): void
     {
-        $app = $this->createApp();
-        $email = 'tag-upd-' . uniqid() . '@test.com';
-        $this->dispatch($app, 'POST', '/api/auth/register', [
-            'name' => 'Regular',
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $loginJson = $this->responseJson($login);
-        $token = $loginJson['data']['token'] ?? '';
-        $headers = ['authorization' => 'Bearer ' . $token, 'content-type' => 'application/json'];
-        $this->put('/api/tags/1', ['name' => 'Nope'], $headers)->assertForbidden();
+        $admin = $this->registerUser('tag-admin-', Role::ADMIN);
+        $createResp = $this->dispatch($app = $this->createApp(), 'POST', '/api/tags', [
+            'name' => 'Target Tag',
+        ], $admin['headers']);
+        $id = $this->responseJson($createResp)['data']['id'] ?? 0;
+        $this->assertGreaterThan(0, $id, 'Failed to create target tag.');
+        $user = $this->registerUser('tag-upd-');
+        $this->put("/api/tags/$id", ['name' => 'Nope'], $user['headers'])->assertForbidden();
     }
 
     // ─── Delete ──────────────────────────────────────────────────────
@@ -179,20 +160,13 @@ final class TagControllerMutationTest extends TestCase
 
     public function testDeleteForbiddenForNonAdmin(): void
     {
-        $app = $this->createApp();
-        $email = 'tag-del-' . uniqid() . '@test.com';
-        $this->dispatch($app, 'POST', '/api/auth/register', [
-            'name' => 'Regular',
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $loginJson = $this->responseJson($login);
-        $token = $loginJson['data']['token'] ?? '';
-        $headers = ['authorization' => 'Bearer ' . $token, 'content-type' => 'application/json'];
-        $this->delete('/api/tags/1', $headers)->assertForbidden();
+        $admin = $this->registerUser('tag-admin-', Role::ADMIN);
+        $createResp = $this->dispatch($app = $this->createApp(), 'POST', '/api/tags', [
+            'name' => 'Target Tag',
+        ], $admin['headers']);
+        $id = $this->responseJson($createResp)['data']['id'] ?? 0;
+        $this->assertGreaterThan(0, $id, 'Failed to create target tag.');
+        $user = $this->registerUser('tag-del-');
+        $this->delete("/api/tags/$id", $user['headers'])->assertForbidden();
     }
 }

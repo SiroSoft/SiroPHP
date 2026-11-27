@@ -1,5 +1,44 @@
 # Changelog — SiroPHP Skeleton
 
+## v1.2.0 (2026-11-27)
+
+Pin release: skeleton now runs on `sirosoft/core` **v1.5.0** (was v1.4.0).
+PHP floor rises to **>= 8.4.1** (core v1.5.0 requirement). No breaking
+changes for application code — every core v1.5.0 feature is opt-in.
+
+### ⬆️ Core upgrade
+- `sirosoft/core` `^1.4.0` → `^1.5.0` (locked to v1.5.0). Core v1.5.0
+  brings: PHP 8.4 floor + PHPUnit 13, optional OAuth2 bridge
+  (`league/oauth2-server`, authorization_code + PKCE / client_credentials /
+  refresh_token), auto-CRUD (`Router::apiResource()`), RFC 7807 problem
+  details (opt-in), HMAC-signed webhooks, throttle tiers, and
+  `api:contract --coverage`. See core `CHANGELOG.md` / `UPGRADE.md` for
+  the full list.
+- `composer.json` `php` requirement `>= 8.2` → `>= 8.4.1` to match the
+  core floor. CI matrix moves from PHP 8.2 to PHP 8.4.
+- `composer release:check` technical gate now also runs
+  `api:contract --strict --coverage` against this skeleton's own
+  `public/openapi.json` + routes (mirrors core v1.5.0 CI), so spec drift
+  fails the build instead of shipping silently.
+- Fixed two pre-existing test-gate defects so the suite is green in any
+  execution order: (1) the `*ForbiddenForNonAdmin` / `*ForbiddenForOtherUser`
+  mutation tests assumed a freshly registered user was a plain user, but
+  the first user in a per-class DB is auto-admin — they now use the new
+  `TestCase::registerUser()` helper (role forced via SQL) and seed their own
+  target resource instead of hardcoding id 1; (2) the release-check PHPUnit
+  step now passes `--no-coverage` — `phpunit.xml` configures coverage
+  reports, so a plain run warned "XDEBUG_MODE=coverage has to be set" and
+  PHPUnit exited 1 with 0 failures. Coverage keeps its own CI job.
+- Core v1.5.0 also fixes the pre-existing `testRouteRules` failure
+  (`route:rules` now exits 0).
+
+### ⚠️ Upgrade note
+- Core v1.4.0 changed `json`-cast attributes to return the decoded native
+  value; apps upgrading from core ≤ 1.3.x that hand-decode a `json`-cast
+  attribute (`json_decode($model->attr)`) must drop the second decode.
+  This skeleton declares **no** `json` casts, so nothing to change here —
+  the note is recorded in `UPGRADE.md` for apps built on the skeleton.
+
 ## v1.1.1 (2026-11-22)
 
 Sync release: fixes the v1.1.0 release-process gaps (version surfaces,

@@ -1,5 +1,38 @@
 # Upgrade Guide
 
+## v1.1.1 → v1.2.0
+
+### Overview
+
+Core pin `^1.4.0` → `^1.5.0` and PHP floor `>= 8.2` → `>= 8.4.1`.
+**No breaking changes.** All core v1.5.0 features are opt-in: the legacy
+error envelope stays the default, the old flat `throttle` signature keeps
+working, and OAuth2, webhooks and the contract gate add nothing unless
+explicitly enabled/used.
+
+### What you get (opt-in)
+- OAuth2 partner auth via optional `league/oauth2-server` bridge
+  (`make:oauth-client`, `make:oauth-keys`).
+- Auto-CRUD: `Router::apiResource()` generates 5 routes with
+  `?filter/?sort/?include/?fields/?page&per_page` (whitelist mandatory,
+  default DENY policy).
+- RFC 7807 problem details when the client sends
+  `Accept: application/problem+json`.
+- HMAC-signed webhooks (`make:webhook`, `webhook:test`) and throttle tiers.
+- `api:contract --coverage`: every route needs a spec operation, every
+  spec operation needs a route + declared response.
+
+### Migration note — `json` cast (core v1.4.0, still applies)
+If your app upgrades from core ≤ 1.3.x, remove any hand-decoding of
+`json`-cast attributes (`json_decode($model->attr)` — the attribute is
+already decoded; a second decode returns `null`). This skeleton declares
+no `json` casts, so the skeleton itself needs no change.
+
+### Before deploying
+- Runtime must be PHP >= 8.4.1 (`composer install` enforces it).
+- Run `composer release:check` — it now also runs
+  `api:contract --strict --coverage` against your spec + routes.
+
 ## v1.0.x → v1.1.0
 
 ### Overview

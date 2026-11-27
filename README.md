@@ -14,7 +14,7 @@
 [![Packagist](https://img.shields.io/packagist/v/sirosoft/api)](https://packagist.org/packages/sirosoft/api)
 [![Coverage](https://img.shields.io/badge/coverage-80%25%20%2B-brightgreen)](coverage/)
 
-<p>Boot <strong>~0.5 ms</strong> · dispatch <strong>~361K ops/sec</strong> · <strong>1</strong> runtime dependency (sirosoft/core) · <strong>96</strong> CLI commands</p>
+<p>Boot <strong>~0.5 ms</strong> · dispatch <strong>~361K ops/sec</strong> · <strong>1</strong> runtime dependency (sirosoft/core) · <strong>100</strong> CLI commands</p>
 
 </div>
 
@@ -160,8 +160,8 @@ my-api/
 
 | Gate | Result | | Metric | |
 |------|--------|--|--------|---|
-| Core unit/integration | **21,391 — 0 failures** (core v1.1.0) | | Cold boot (Linux) | **~0.5 ms** (benchmark.php) |
-| App tests | **763 — 1 pre-existing failure** (`testRouteRules`) | | Cold boot (Win) | **~2.4 ms** (measured) |
+| Core unit/integration | **21,795 — 0 failures** (core v1.5.0) | | Cold boot (Linux) | **~0.5 ms** (benchmark.php) |
+| App tests | **763 — 0 failures** in default and defects-first order (core v1.5.0 fixed the pre-existing `testRouteRules` failure; v1.2.0 fixed the order-dependent RBAC test-isolation defect) | | Cold boot (Win) | **~2.4 ms** (measured) |
 | Fuzz tests | **17,981 — 0 failures** | | Route dispatch | **~361K ops/sec** |
 | DAST security | **157 — 0 failures** | | Memory baseline | **~4 MB** |
 | PHPStan | **Level Max — 0 errors** | | Full-stack | **~404K ops/sec** |
@@ -172,7 +172,7 @@ my-api/
 
 ## Built-in features
 
-One runtime package (sirosoft/core). JWT auth, ORM, migrations, queue, mail, cache, validation, rate limiting, CSP, CORS, CSRF, OpenAPI, Prometheus metrics, CLI (96 commands). [Full list →](https://sirophp.com/features)
+One runtime package (sirosoft/core). JWT auth, ORM, migrations, queue, mail, cache, validation, rate limiting, CSP, CORS, CSRF, OpenAPI, Prometheus metrics, CLI (100 commands). [Full list →](https://sirophp.com/features)
 
 ---
 

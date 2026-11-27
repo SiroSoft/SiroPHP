@@ -14,7 +14,18 @@ $withProdDoctor = in_array('--with-prod-doctor', $args, true);
 $steps = [
     ['name' => 'Composer audit', 'cmd' => 'composer audit --no-interaction'],
     ['name' => 'PHPStan', 'cmd' => 'php vendor/bin/phpstan analyse --no-progress --memory-limit=1G'],
-    ['name' => 'PHPUnit', 'cmd' => 'php vendor/bin/phpunit --no-progress'],
+    // v1.2.0: contract gate (mirrors core v1.5.0 CI). Every spec operation
+    // needs a matching route + declared response (--strict) and every
+    // route needs a spec operation (--coverage). The skeleton's spec lives
+    // at public/openapi.json, not docs/openapi/openapi.json.
+    ['name' => 'API contract --strict --coverage', 'cmd' => 'php siro api:contract --spec=public/openapi.json --strict --coverage'],
+    // v1.2.0: --no-coverage. phpunit.xml configures <coverage> reports, so a
+    // plain run asks PHPUnit to collect coverage; without a coverage driver
+    // (xdebug.mode=coverage) that is a test-runner warning and PHPUnit exits
+    // 1 even with 0 failures — the gate could never pass on a plain box.
+    // Coverage has its own CI job (ci.yml --coverage-text); the release
+    // gate only needs the tests to pass.
+    ['name' => 'PHPUnit', 'cmd' => 'php vendor/bin/phpunit --no-progress --no-coverage'],
 ];
 
 if ($withProdDoctor) {

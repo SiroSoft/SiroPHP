@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit;
 
+use App\Role;
 use App\Tests\TestCase;
 
 final class CategoryControllerMutationTest extends TestCase
@@ -125,21 +126,8 @@ final class CategoryControllerMutationTest extends TestCase
 
     public function testStoreForbiddenForNonAdmin(): void
     {
-        $app = $this->createApp();
-        $email = 'cat-user-' . uniqid() . '@test.com';
-        $this->dispatch($app, 'POST', '/api/auth/register', [
-            'name' => 'Regular',
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $loginJson = $this->responseJson($login);
-        $token = $loginJson['data']['token'] ?? '';
-        $headers = ['authorization' => 'Bearer ' . $token, 'content-type' => 'application/json'];
-        $this->post('/api/categories', ['name' => 'Nope'], $headers)->assertForbidden();
+        $user = $this->registerUser('cat-user-');
+        $this->post('/api/categories', ['name' => 'Nope'], $user['headers'])->assertForbidden();
     }
 
     // ─── Update ──────────────────────────────────────────────────────
@@ -176,21 +164,14 @@ final class CategoryControllerMutationTest extends TestCase
 
     public function testUpdateForbiddenForNonAdmin(): void
     {
-        $app = $this->createApp();
-        $email = 'cat-upd-' . uniqid() . '@test.com';
-        $this->dispatch($app, 'POST', '/api/auth/register', [
-            'name' => 'Regular',
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $loginJson = $this->responseJson($login);
-        $token = $loginJson['data']['token'] ?? '';
-        $headers = ['authorization' => 'Bearer ' . $token, 'content-type' => 'application/json'];
-        $this->put('/api/categories/1', ['name' => 'Nope'], $headers)->assertForbidden();
+        $admin = $this->registerUser('cat-admin-', Role::ADMIN);
+        $createResp = $this->dispatch($app = $this->createApp(), 'POST', '/api/categories', [
+            'name' => 'Target Category',
+        ], $admin['headers']);
+        $id = $this->responseJson($createResp)['data']['id'] ?? 0;
+        $this->assertGreaterThan(0, $id, 'Failed to create target category.');
+        $user = $this->registerUser('cat-upd-');
+        $this->put("/api/categories/$id", ['name' => 'Nope'], $user['headers'])->assertForbidden();
     }
 
     // ─── Delete ──────────────────────────────────────────────────────
@@ -220,20 +201,13 @@ final class CategoryControllerMutationTest extends TestCase
 
     public function testDeleteForbiddenForNonAdmin(): void
     {
-        $app = $this->createApp();
-        $email = 'cat-del-' . uniqid() . '@test.com';
-        $this->dispatch($app, 'POST', '/api/auth/register', [
-            'name' => 'Regular',
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $login = $this->dispatch($app, 'POST', '/api/auth/login', [
-            'email' => $email,
-            'password' => 'secret123',
-        ]);
-        $loginJson = $this->responseJson($login);
-        $token = $loginJson['data']['token'] ?? '';
-        $headers = ['authorization' => 'Bearer ' . $token, 'content-type' => 'application/json'];
-        $this->delete('/api/categories/1', $headers)->assertForbidden();
+        $admin = $this->registerUser('cat-admin-', Role::ADMIN);
+        $createResp = $this->dispatch($app = $this->createApp(), 'POST', '/api/categories', [
+            'name' => 'Target Category',
+        ], $admin['headers']);
+        $id = $this->responseJson($createResp)['data']['id'] ?? 0;
+        $this->assertGreaterThan(0, $id, 'Failed to create target category.');
+        $user = $this->registerUser('cat-del-');
+        $this->delete("/api/categories/$id", $user['headers'])->assertForbidden();
     }
 }
